@@ -69,7 +69,7 @@ Commands:
 - **Location:** `recurrator/io.py`
 - **Attributes:** `id` (int), `description` (str), `context` (Context), `skip_count` (int), `starred` (bool), `latest_date` (date | None)
 - **Context Enum:** `Context.LAPTOP = "laptop"` (extend as needed)
-- **Design Decision:** Raw CSV dates (`date_1`-`date_4`, `skipped_date`) are NOT exposed as Task attributes "for now, maybe later"
+- **Design Decision:** Raw CSV dates (`date_1`-`date_4`, `skipped_date`) are NOT exposed as Task attributes
 - **Computed Properties:** `latest_date` is computed from `date_4` and `skipped_date` using `compute_latest_date()`
 
 #### New Functions Implemented
