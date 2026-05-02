@@ -28,3 +28,6 @@ def test_import_tasks_from_csv(csv_path):
     expected_skip_count = 1
     obtained_skip_count = first_task.skip_count
     assert obtained_skip_count == expected_skip_count
+    expected_starred = False
+    obtained_starred = first_task.starred
+    assert obtained_starred == expected_starred
