@@ -65,6 +65,22 @@ Commands:
   - `skipped_date`: Date of last skip (`NA` if never skipped)
   - `starred`: Starred status (0 = no, 1 = yes)
 
+#### Task Class (Python)
+- **Location:** `recurrator/io.py`
+- **Attributes:** `id` (int), `description` (str), `context` (Context), `skip_count` (int), `starred` (bool), `skipped_date` (date | None)
+- **Context Enum:** `Context.LAPTOP = "laptop"` (extend as needed)
+
+#### CSV Value Conversion Rules
+- `starred`: `0` → `False`, `1` → `True` (use `bool(int(row["starred"]))`)
+- `skip_count`: Direct `int()` conversion
+- `id`: Direct `int()` conversion
+- Date fields (`skipped_date`, `date_1`-`date_4`): `"NA"` → `None`, otherwise parse as `date.fromisoformat()`
+- `context`: String matched to `Context` enum member
+
+#### Import Conventions
+- Use explicit imports in `__init__.py` (e.g., `from .compute import compute_intervals`) instead of wildcards
+- Group imports with comments: internal pure functions vs I/O utilities
+
 #### Consistency Rules
 - Use hyphen-case for CLI, snake_case for internal functions.
 - Do not use `get_*` unless paired with `set_*`.
