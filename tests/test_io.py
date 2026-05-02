@@ -35,3 +35,6 @@ def test_import_tasks_from_csv(csv_path):
     expected_latest_date = date(2025, 11, 17)
     obtained_latest_date = first_task.latest_date
     assert obtained_latest_date == expected_latest_date
+    expected_recurrence_days = 14
+    obtained_recurrence_days = first_task.recurrence_days
+    assert obtained_recurrence_days == expected_recurrence_days
