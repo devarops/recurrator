@@ -7,3 +7,6 @@ from .compute import compute_intervals, compute_latest_date, compute_recurrence_
 
 # I/O utilities
 from .io import Context, Task, import_tasks_from_csv  # noqa
+
+# CLI
+from .cli import app  # noqa

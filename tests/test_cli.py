@@ -1,0 +1,20 @@
+from recurrator.cli import app
+from typer.testing import CliRunner
+
+runner = CliRunner()
+
+
+def test_help():
+    result = runner.invoke(app, ["--help"])
+    assert result.exit_code == 0
+    assert "Usage" in result.stdout
+
+
+def test_list_all_help():
+    result = runner.invoke(app, ["list-all", "--help"])
+    assert result.exit_code == 0
+
+
+def test_list_all():
+    result = runner.invoke(app, ["list-all", "--help"])
+    assert result.exit_code == 0
