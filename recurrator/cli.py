@@ -9,3 +9,4 @@ def list_all(name: str = typer.Argument(None)):
     from .io import import_tasks_from_csv
     tasks = import_tasks_from_csv("tests/data/test_single_task.csv")
     print("id")
+    print(tasks[0].id)

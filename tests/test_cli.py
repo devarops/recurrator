@@ -19,3 +19,4 @@ def test_list_all():
     assert result.exit_code == 0
     # Verify that the output contains expected task information (id, description, context, etc.)
     assert "id" in result.stdout
+    assert "8" in result.stdout  # ID of the single task in the test CSV
