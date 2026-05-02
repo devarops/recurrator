@@ -50,3 +50,7 @@ def test_import_tasks_from_csv(csv_path):
     expected_recurrence_days = 14
     obtained_recurrence_days = first_task.recurrence_days
     assert obtained_recurrence_days == expected_recurrence_days
+
+    expected_due_date = date(2025, 12, 1)
+    obtained_due_date = first_task.due_date
+    assert obtained_due_date == expected_due_date
