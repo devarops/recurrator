@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from statistics import median
 from typing import Union
 
@@ -29,3 +29,8 @@ def compute_recurrence_days(intervals: Union[list[int], list[int | None]]) -> in
     if not valid_intervals:
         return DEFAULT_RECURRENCE_DAYS
     return round(median(valid_intervals))
+
+
+def compute_due_date(latest_date: date, recurrence_days: int) -> date:
+    """Return the next due date by adding recurrence_days to latest_date."""
+    return latest_date + timedelta(days=recurrence_days)
