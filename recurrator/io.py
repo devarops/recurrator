@@ -21,7 +21,7 @@ class Task:
         context: Context,
         skip_count: int,
         starred: bool,
-        latest_date: date | None,
+        latest_date: date,
     ):
         self.id = id
         self.description = description
