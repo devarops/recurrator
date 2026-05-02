@@ -1,6 +1,7 @@
 import pytest
 
 import recurrator.io as io
+from recurrator.io import Context
 
 
 @pytest.fixture
@@ -21,3 +22,4 @@ def test_import_tasks_from_csv(csv_path):
     expected_description = "TypeLit.io"
     obtained_description = first_task.description
     assert obtained_description == expected_description
+    assert isinstance(first_task.context, Context)
