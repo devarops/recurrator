@@ -14,7 +14,8 @@ def test_list_all_help():
     result = runner.invoke(app, ["list-all", "--help"])
     assert result.exit_code == 0
 
-
 def test_list_all():
-    result = runner.invoke(app, ["list-all", "--help"])
+    result = runner.invoke(app, ["list-all"])
     assert result.exit_code == 0
+    # Verify that the output contains expected task information (id, description, context, etc.)
+    assert "id" in result.stdout
