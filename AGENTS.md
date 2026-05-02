@@ -104,3 +104,16 @@ Commands:
 - Avoid abbreviations (e.g., use `context` not `ctx`).
 - Avoid mixing multiple verbs in a single function name.
 - CLI verbs (add, list, etc.) are for the interface; internal verbs (compute, is, filter) are for logic only.
+
+### Commit Message Conventions
+
+Follow a structured pattern for all commits:
+
+1. **Emoji Prefix**:
+   - ✅ `Implement/Fix`: Functional changes or bug fixes.
+   - 📝 `Docs`: Documentation updates.
+   - ♻️ `Refactor`: Code changes that don't change behavior.
+   - 🛑🧪 `Failing Test`: Adding expected failing tests (TDD).
+2. **Summary Line**: Concise, imperative description (e.g., "Implement feature X").
+3. **Detailed Description**: Explain the "why" and "how," referencing design decisions or patterns.
+4. **Tone**: Professional, technical, and direct.
