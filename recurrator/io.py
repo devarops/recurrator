@@ -23,10 +23,15 @@ class Task:
         self.latest_date = latest_date
 
 
+def _parse_date(date_str: str) -> date | None:
+    """Parse an ISO 8601 date string, returning None for 'NA'."""
+    return date.fromisoformat(date_str) if date_str != "NA" else None
+
+
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
-    date_4 = date.fromisoformat(row["date_4"]) if row["date_4"] != "NA" else None
-    skipped_date = date.fromisoformat(row["skipped_date"]) if row["skipped_date"] != "NA" else None
+    date_4 = _parse_date(row["date_4"])
+    skipped_date = _parse_date(row["skipped_date"])
     latest_date = compute_latest_date(date_4, skipped_date)
     return Task(
         id=int(row["id"]),
