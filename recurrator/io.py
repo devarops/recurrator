@@ -14,7 +14,15 @@ class Context(Enum):
 class Task:
     """Represents a task imported from CSV."""
 
-    def __init__(self, id: int, description: str, context: Context, skip_count: int, starred: bool, latest_date: date | None):
+    def __init__(
+        self,
+        id: int,
+        description: str,
+        context: Context,
+        skip_count: int,
+        starred: bool,
+        latest_date: date | None,
+    ):
         self.id = id
         self.description = description
         self.context = context
