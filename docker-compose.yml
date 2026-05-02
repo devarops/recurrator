@@ -1,0 +1,9 @@
+services:
+  devarops:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: devarops/recurrator:latest
+    command: bash
+    volumes:
+      - $PWD:/workdir
