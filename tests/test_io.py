@@ -18,3 +18,6 @@ def test_import_tasks_from_csv(csv_path):
     expected_id = 8
     obteined_id = first_task.id
     assert obteined_id == expected_id
+    expected_description = "TypeLit.io"
+    obteined_description = first_task.description
+    assert obteined_description == expected_description
