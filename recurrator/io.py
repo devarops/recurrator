@@ -45,8 +45,7 @@ def _row_to_task(row: dict) -> Task:
     skipped_date = _parse_date(row["skipped_date"])
     latest_date = compute_latest_date(date_4, skipped_date)
     dates = [_parse_date(row[f"date_{i}"]) for i in range(1, 5)]
-    valid_dates = [d for d in dates if d is not None]
-    intervals = compute_intervals(valid_dates)
+    intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
     return Task(
         id=int(row["id"]),
