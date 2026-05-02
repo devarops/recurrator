@@ -27,3 +27,11 @@ def test_compute_recurrence_days():
     expected_recurrence_days = 2
     obtained_recurrence_days = rc.compute_recurrence_days(intervals)
     assert obtained_recurrence_days == expected_recurrence_days
+    intervals_with_none = [None, None, 14]
+    expected_recurrence_days = 14
+    obtained_recurrence_days = rc.compute_recurrence_days(intervals_with_none)
+    assert obtained_recurrence_days == expected_recurrence_days
+    intervals_all_none = [None, None, None]
+    expected_recurrence_days = 14
+    obtained_recurrence_days = rc.compute_recurrence_days(intervals_all_none)
+    assert obtained_recurrence_days == expected_recurrence_days
