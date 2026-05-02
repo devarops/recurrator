@@ -2,7 +2,12 @@ import csv
 from datetime import date
 from enum import Enum
 
-from .compute import compute_due_date, compute_intervals, compute_latest_date, compute_recurrence_days
+from .compute import (
+    compute_due_date,
+    compute_intervals,
+    compute_latest_date,
+    compute_recurrence_days,
+)
 
 
 class Context(Enum):
@@ -23,6 +28,7 @@ class Task:
         starred: bool,
         latest_date: date,
         recurrence_days: int,
+        due_date: date,
     ):
         self.id = id
         self.description = description
@@ -31,10 +37,7 @@ class Task:
         self.starred = starred
         self.latest_date = latest_date
         self.recurrence_days = recurrence_days
-
-    @property
-    def due_date(self) -> date:
-        return compute_due_date(self.latest_date, self.recurrence_days)
+        self.due_date = due_date
 
 
 def _parse_date(date_str: str) -> date | None:
@@ -55,6 +58,8 @@ def _row_to_task(row: dict) -> Task:
     intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
 
+    due_date = compute_due_date(latest_date, recurrence_days)
+
     return Task(
         id=int(row["id"]),
         description=row["description"],
@@ -63,6 +68,7 @@ def _row_to_task(row: dict) -> Task:
         starred=bool(int(row["starred"])),
         latest_date=latest_date,
         recurrence_days=recurrence_days,
+        due_date=due_date,
     )
 
 
