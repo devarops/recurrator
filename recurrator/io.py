@@ -1,4 +1,5 @@
 import csv
+from dataclasses import dataclass
 from datetime import date
 from enum import Enum
 
@@ -16,6 +17,15 @@ class Context(Enum):
     LAPTOP = "laptop"
 
 
+@dataclass
+class ComputedDates:
+    """Computed date attributes for a task."""
+
+    latest_date: date
+    recurrence_days: int
+    due_date: date
+
+
 class Task:
     """Represents a task imported from CSV."""
 
@@ -26,18 +36,16 @@ class Task:
         context: Context,
         skip_count: int,
         starred: bool,
-        latest_date: date,
-        recurrence_days: int,
-        due_date: date,
+        computed_dates: ComputedDates,
     ):
         self.id = id
         self.description = description
         self.context = context
         self.skip_count = skip_count
         self.starred = starred
-        self.latest_date = latest_date
-        self.recurrence_days = recurrence_days
-        self.due_date = due_date
+        self.latest_date = computed_dates.latest_date
+        self.recurrence_days = computed_dates.recurrence_days
+        self.due_date = computed_dates.due_date
 
 
 def _parse_date(date_str: str) -> date | None:
@@ -45,11 +53,11 @@ def _parse_date(date_str: str) -> date | None:
     return date.fromisoformat(date_str) if date_str != "NA" else None
 
 
-def _compute_dates(row: dict) -> tuple[date, int, date]:
+def _compute_dates(row: dict) -> ComputedDates:
     """Compute latest_date, recurrence_days, and due_date from CSV row.
 
     Returns:
-        Tuple of (latest_date, recurrence_days, due_date)
+        ComputedDates object with computed values
     """
     date_4 = _parse_date(row["date_4"])
     assert date_4 is not None
@@ -63,12 +71,16 @@ def _compute_dates(row: dict) -> tuple[date, int, date]:
 
     due_date = compute_due_date(latest_date, recurrence_days)
 
-    return latest_date, recurrence_days, due_date
+    return ComputedDates(
+        latest_date=latest_date,
+        recurrence_days=recurrence_days,
+        due_date=due_date,
+    )
 
 
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
-    latest_date, recurrence_days, due_date = _compute_dates(row)
+    computed_dates = _compute_dates(row)
 
     return Task(
         id=int(row["id"]),
@@ -76,9 +88,7 @@ def _row_to_task(row: dict) -> Task:
         context=Context(row["context"]),
         skip_count=int(row["skip_count"]),
         starred=bool(int(row["starred"])),
-        latest_date=latest_date,
-        recurrence_days=recurrence_days,
-        due_date=due_date,
+        computed_dates=computed_dates,
     )
 
 
