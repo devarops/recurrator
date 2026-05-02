@@ -3,14 +3,24 @@ from enum import Enum
 
 
 class Context(Enum):
+    """Valid task contexts."""
+
     LAPTOP = "laptop"
 
 
 class Task:
-    pass
+    """Represents a task imported from CSV."""
 
 
 def import_tasks_from_csv(path):
+    """Import tasks from a CSV file.
+
+    Args:
+        path: Path to the CSV file.
+
+    Returns:
+        List of Task objects with attributes from CSV rows.
+    """
     tasks = []
     with open(path, newline="") as csvfile:
         reader = csv.DictReader(csvfile)

@@ -3,6 +3,7 @@ from datetime import date
 
 
 def test_compute_intervals():
+    """Verify compute_intervals returns correct day intervals."""
     date1 = date(2024, 1, 1)
     date2 = date(2024, 1, 2)
     date3 = date(2024, 1, 3)

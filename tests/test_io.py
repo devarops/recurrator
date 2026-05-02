@@ -6,10 +6,12 @@ from recurrator.io import Context
 
 @pytest.fixture
 def csv_path():
+    """Path to test CSV file with one task record."""
     return "tests/data/test_single_task.csv"
 
 
 def test_import_tasks_from_csv(csv_path):
+    """Verify import_tasks_from_csv returns valid task from CSV file."""
     task_list = io.import_tasks_from_csv(csv_path)
     assert isinstance(task_list, list)
     expected_list_length = 1
