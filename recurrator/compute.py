@@ -13,7 +13,11 @@ def compute_intervals(dates: list[date | None]) -> list[int]:
 
 
 def compute_latest_date(date_4: date, skipped_date: date | None) -> date:
-    """Return the latest (max) of the two dates"""
+    """Return the latest (max) of the two dates.
+
+    date_4 is required (never None from CSV parsing).
+    skipped_date may be None if the task was never skipped.
+    """
     if skipped_date is None:
         return date_4
     return max(date_4, skipped_date)

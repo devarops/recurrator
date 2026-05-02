@@ -1,4 +1,4 @@
-The system is a cloud-based, single-user API with a minimal HTML interface limited to listing today’s tasks, retrieving a single task, and marking completion or skip actions.
+The system is a cloud-based, single-user API with a minimal HTML interface limited to listing today's tasks, retrieving a single task, and marking completion or skip actions.
 Task creation, updates, and deletion are handled through CLI or direct API access.
 Each task stores the timestamps of its last four completions, and the next due date is computed as the median interval derived from those completions.
 Scheduling is deterministic and executed via a lightweight background process that runs at midnight.
@@ -38,7 +38,7 @@ Commands:
 
 **In-memory (no side effects)**
 - **Verbs:** `compute`, `create`, `filter`, `get`, `is`, `remove`, `set`, `update`
-- **Nouns:** `description`, `due_date`, `due` `intervals`, `recurrence_days`, `task`
+- **Nouns:** `description`, `due_date`, `due`, `intervals`, `recurrence_days`, `task`
 - **Valid Examples:**
   - `compute_due_date(task)`
   - `compute_intervals(dates)`
@@ -67,24 +67,34 @@ Commands:
 
 #### Task Class (Python)
 - **Location:** `recurrator/io.py`
-- **Attributes:** `id` (int), `description` (str), `context` (Context), `skip_count` (int), `starred` (bool), `latest_date` (date | None)
+- **Attributes:** `id` (int), `description` (str), `context` (Context), `skip_count` (int), `starred` (bool), `latest_date` (date), `recurrence_days` (int)
 - **Context Enum:** `Context.LAPTOP = "laptop"` (extend as needed)
 - **Design Decision:** Raw CSV dates (`date_1`-`date_4`, `skipped_date`) are NOT exposed as Task attributes
-- **Computed Properties:** `latest_date` is computed from `date_4` and `skipped_date` using `compute_latest_date()`
+- **Computed Properties:** 
+  - `latest_date` is computed from `date_4` and `skipped_date` using `compute_latest_date()`
+  - `recurrence_days` is computed from date intervals using `compute_recurrence_days()`
 
 #### New Functions Implemented
-- `compute_latest_date(date_4, skipped_date) -> date | None` (in `compute.py`): Returns max of two dates, handling None values
+- `compute_intervals(dates: list[date | None]) -> list[int]` (in `compute.py`): Compute intervals in days between consecutive non-None dates
+- `compute_latest_date(date_4, skipped_date) -> date` (in `compute.py`): Returns max of two dates, handling None for skipped_date only
+- `compute_recurrence_days(intervals) -> int` (in `compute.py`): Compute recurrence days as median of intervals, defaulting to 14 days
 - `_parse_date(date_str) -> date | None` (in `io.py`): Helper to parse ISO 8601 strings, returns None for "NA"
 - `_row_to_task(row: dict) -> Task` (in `io.py`): Helper to convert CSV row to Task object
+- `import_tasks_from_csv(path) -> list[Task]` (in `io.py`): Import tasks from CSV file
 
 #### The Gold (TDD Target)
 - Explicitly defined as: **creating the function `import_tasks_from_csv(path)`**
-- This is the sole TDD target for the current session, not the full week-one CLI
+- Status: **Completed** ✅
 
 #### Refactoring Approach
 - Follows **Martin Fowler's Refactoring Catalog (2nd Edition)**
 - Key principle: *"The purpose of refactoring is not to reduce the number of lines, but to make the code more readable"*
-- Applied refactorings: Extract Function (`_parse_date`, `_row_to_task`), Add Parameter (`Task.__init__`), Replace Loop with Pipeline (list comprehensions)
+- Applied refactorings: 
+  - Extract Function (`_parse_date`, `_row_to_task`)
+  - Add Parameter (`Task.__init__` — added `recurrence_days`)
+  - Replace Loop with Pipeline (list comprehensions)
+  - Replace Magic Number with Symbolic Constant (`DEFAULT_RECURRENCE_DAYS = 14`)
+  - Standardize None Handling (made `compute_intervals` handle None internally like `compute_latest_date`)
 - Rejected refactorings that sacrificed readability for fewer lines
 
 #### CSV Value Conversion Rules

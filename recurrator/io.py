@@ -42,11 +42,15 @@ def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
     date_4 = _parse_date(row["date_4"])
     assert date_4 is not None
+
     skipped_date = _parse_date(row["skipped_date"])
     latest_date = compute_latest_date(date_4, skipped_date)
+
+    # Compute recurrence days from all four date columns
     dates = [_parse_date(row[f"date_{i}"]) for i in range(1, 5)]
     intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
+
     return Task(
         id=int(row["id"]),
         description=row["description"],
