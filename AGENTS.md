@@ -97,6 +97,40 @@ Commands:
   - Standardize None Handling (made `compute_intervals` handle None internally like `compute_latest_date`)
 - Rejected refactorings that sacrificed readability for fewer lines
 
+#### Readability Rules
+
+**Use extracted variables to express intent clearly.**
+
+Avoid inlining values when it obscures meaning. Instead, extract values into well-named variables that express *what* is being tested or computed:
+
+**Good (extracted variables):**
+```python
+# Test example
+expected_value = 42
+obtained_value = some_function()
+assert obtained_value == expected_value
+
+# Production code example
+valid_dates = [d for d in dates if d is not None]
+intervals = compute_intervals(valid_dates)
+recurrence_days = compute_recurrence_days(intervals)
+```
+
+**Bad (inlined, hard to debug):**
+```python
+# Test example (avoid)
+assert some_function() == 42
+
+# Production code example (avoid)
+return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for d in dates if d is not None][1:])]
+```
+
+**Why this matters:**
+1. **Clear intent**: Variable names express *what* we expect and *what* we got
+2. **Debugable**: On failure, both values are visible in the debugger
+3. **Readable**: The code tells a story — "I expect X, I got Y, they should match"
+4. **Consistent**: All code in the project follows this pattern
+
 #### CSV Value Conversion Rules
 - `starred`: `0` → `False`, `1` → `True` (use `bool(int(row["starred"]))`)
 - `skip_count`: Direct `int()` conversion
