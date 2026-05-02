@@ -14,3 +14,7 @@ def test_import_tasks_from_csv(csv_path):
     expected_list_length = 1
     obteined_list_length = len(task_list)
     assert obteined_list_length == expected_list_length
+    first_task = task_list[0]
+    expected_id = 8
+    obteined_id = first_task.id
+    assert obteined_id == expected_id
