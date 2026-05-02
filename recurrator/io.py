@@ -11,11 +11,12 @@ class Context(Enum):
 class Task:
     """Represents a task imported from CSV."""
 
-    def __init__(self, id: int, description: str, context: Context, skip_count: int):
+    def __init__(self, id: int, description: str, context: Context, skip_count: int, starred: bool):
         self.id = id
         self.description = description
         self.context = context
         self.skip_count = skip_count
+        self.starred = starred
 
 
 def import_tasks_from_csv(path):
@@ -35,6 +36,7 @@ def import_tasks_from_csv(path):
                 description=row["description"],
                 context=Context(row["context"]),
                 skip_count=int(row["skip_count"]),
+                starred=bool(int(row["starred"])),
             )
             for row in reader
         ]
