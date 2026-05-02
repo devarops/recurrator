@@ -7,6 +7,18 @@ If more than six tasks share the maximum skip count, selection is refined by cho
 Completing a task resets its skip count, while skipping a task increments it by one.
 Storage should be abstracted, with an initial implementation using flat files such as CSV or JSON and the option to migrate to a relational database.
 
+### Documentation Structure
+
+Separation of concerns across markdown files:
+
+| File | Audience | Purpose | Change Frequency |
+|------|-----------|---------|------------------|
+| **README.md** | End user (finale user) | What the app does, how to use it | Rare |
+| **AGENTS.md** | Developer | Constants, conventions, slow-changing rules and patterns | Very slow |
+| **TODO.md** | Developer | Active work items, current Gold, implementation status | Frequent |
+
+**Key principle**: If information changes frequently (e.g., "Functions Implemented", "Refactorings Applied"), it belongs in TODO.md, not AGENTS.md.
+
 ### Minimal CLI (week one)
 
 Using **Typer**
@@ -85,13 +97,8 @@ Commands:
 #### Refactoring Approach
 - Follows **Martin Fowler's Refactoring Catalog (2nd Edition)**
 - Key principle: *"The purpose of refactoring is not to reduce the number of lines, but to make the code more readable"*
-- Applied refactorings: 
-  - Extract Function (`_parse_date`, `_row_to_task`)
-  - Add Parameter (`Task.__init__` — added `recurrence_days`)
-  - Replace Loop with Pipeline (list comprehensions)
-  - Replace Magic Number with Symbolic Constant (`DEFAULT_RECURRENCE_DAYS = 14`)
-  - Standardize None Handling (made `compute_intervals` handle None internally like `compute_latest_date`)
 - Rejected refactorings that sacrificed readability for fewer lines
+- (Applied refactorings tracked in TODO.md)
 
 #### Readability Rules
 
