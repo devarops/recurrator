@@ -43,7 +43,7 @@ def _row_to_task(row: dict) -> Task:
     )
 
 
-def import_tasks_from_csv(path):
+def import_tasks_from_csv(path: str) -> list[Task]:
     """Import tasks from a CSV file.
 
     Args:

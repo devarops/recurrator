@@ -1,4 +1,5 @@
 from datetime import date
+from statistics import median
 
 
 def compute_intervals(dates: list[date]) -> list[int]:
@@ -17,11 +18,7 @@ def compute_latest_date(date_4: date | None, skipped_date: date | None) -> date 
     return max(date_4, skipped_date)
 
 
-def compute_recurrence_days(intervals: list[int]) -> int:
-    """Compute recurrence days as the median of intervals."""
-    sorted_intervals = sorted(intervals)
-    n = len(sorted_intervals)
-    mid = n // 2
-    if n % 2 == 1:
-        return sorted_intervals[mid]
-    return (sorted_intervals[mid-1] + sorted_intervals[mid]) // 2
+def compute_recurrence_days(intervals: list[int | None]) -> int:
+    """Compute recurrence days as the median of non-None intervals."""
+    valid_intervals = [i for i in intervals if i is not None]
+    return round(median(valid_intervals))

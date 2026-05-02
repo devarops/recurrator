@@ -3,7 +3,7 @@
 __version__ = "0.1.0"
 
 # Internal pure functions
-from .compute import compute_intervals, compute_latest_date  # noqa
+from .compute import compute_intervals, compute_latest_date, compute_recurrence_days  # noqa
 
 # I/O utilities
 from .io import Context, Task, import_tasks_from_csv  # noqa
