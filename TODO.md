@@ -1,1 +1,1 @@
-- [ ] Verify `compute_latest_date(date_4, skipped_date)` returns `date_4` if `skipped_date` is `None`
+- [x] Verify `compute_latest_date(date_4, skipped_date)` returns `date_4` if `skipped_date` is `None`
