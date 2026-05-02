@@ -58,6 +58,12 @@ Commands:
 - **Examples:**
   - `export_tasks_to_csv(tasks, path)`
   - `import_tasks_from_csv(path)`
+- **CSV Schema:**
+  - Columns: `id`, `context`, `description`, `date_1`, `date_2`, `date_3`, `date_4`, `skip_count`, `skipped_date`, `starred`
+  - `date_1` through `date_4`: Last four completion timestamps (ISO 8601 dates, `NA` for missing)
+  - `skip_count`: Consecutive skip count (integer, starts at 0)
+  - `skipped_date`: Date of last skip (`NA` if never skipped)
+  - `starred`: Starred status (0 = no, 1 = yes)
 
 #### Consistency Rules
 - Use hyphen-case for CLI, snake_case for internal functions.

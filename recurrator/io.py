@@ -1,2 +1,2 @@
-def import_tasks_from_csv(csv_path):
+def import_tasks_from_csv(path):
     pass
