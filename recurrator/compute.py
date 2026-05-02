@@ -1,5 +1,6 @@
 from datetime import date
 from statistics import median
+from typing import Union
 
 # Default recurrence of two weeks when no interval data exists
 DEFAULT_RECURRENCE_DAYS = 14
@@ -17,7 +18,7 @@ def compute_latest_date(date_4: date, skipped_date: date | None) -> date:
     return max(date_4, skipped_date)
 
 
-def compute_recurrence_days(intervals: list[int | None]) -> int:
+def compute_recurrence_days(intervals: Union[list[int], list[int | None]]) -> int:
     """Compute recurrence days as the median of non-None intervals."""
     valid_intervals = [i for i in intervals if i is not None]
     if not valid_intervals:
