@@ -1,6 +1,9 @@
 from datetime import date
 from statistics import median
 
+# Default recurrence of two weeks when no interval data exists
+DEFAULT_RECURRENCE_DAYS = 14
+
 
 def compute_intervals(dates: list[date]) -> list[int]:
     """Compute intervals in days between consecutive dates."""
@@ -18,5 +21,5 @@ def compute_recurrence_days(intervals: list[int | None]) -> int:
     """Compute recurrence days as the median of non-None intervals."""
     valid_intervals = [i for i in intervals if i is not None]
     if not valid_intervals:
-        return 14
+        return DEFAULT_RECURRENCE_DAYS
     return round(median(valid_intervals))
