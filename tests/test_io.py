@@ -17,17 +17,36 @@ def test_import_tasks_from_csv(csv_path):
 
     # Returns a list with one Task
     assert isinstance(task_list, list)
-    assert len(task_list) == 1
+    expected_list_length = 1
+    obtained_list_length = len(task_list)
+    assert obtained_list_length == expected_list_length
 
-    task = task_list[0]
+    first_task = task_list[0]
 
     # Basic attributes from CSV
-    assert task.id == 8
-    assert task.description == "TypeLit.io"
-    assert isinstance(task.context, Context)
-    assert task.skip_count == 1
-    assert task.starred is False
+    expected_id = 8
+    obtained_id = first_task.id
+    assert obtained_id == expected_id
+
+    expected_description = "TypeLit.io"
+    obtained_description = first_task.description
+    assert obtained_description == expected_description
+
+    assert isinstance(first_task.context, Context)
+
+    expected_skip_count = 1
+    obtained_skip_count = first_task.skip_count
+    assert obtained_skip_count == expected_skip_count
+
+    expected_starred = False
+    obtained_starred = first_task.starred
+    assert obtained_starred == expected_starred
 
     # Computed attributes
-    assert task.latest_date == date(2025, 11, 17)
-    assert task.recurrence_days == 14
+    expected_latest_date = date(2025, 11, 17)
+    obtained_latest_date = first_task.latest_date
+    assert obtained_latest_date == expected_latest_date
+
+    expected_recurrence_days = 14
+    obtained_recurrence_days = first_task.recurrence_days
+    assert obtained_recurrence_days == expected_recurrence_days
