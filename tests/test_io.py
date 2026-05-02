@@ -25,3 +25,6 @@ def test_import_tasks_from_csv(csv_path):
     obtained_description = first_task.description
     assert obtained_description == expected_description
     assert isinstance(first_task.context, Context)
+    expected_skip_count = 1
+    obtained_skip_count = first_task.skip_count
+    assert obtained_skip_count == expected_skip_count
