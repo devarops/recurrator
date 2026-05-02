@@ -82,10 +82,6 @@ Commands:
 - `_row_to_task(row: dict) -> Task` (in `io.py`): Helper to convert CSV row to Task object
 - `import_tasks_from_csv(path) -> list[Task]` (in `io.py`): Import tasks from CSV file
 
-#### The Gold (TDD Target)
-- Explicitly defined as: **creating the function `import_tasks_from_csv(path)`**
-- Status: **Completed** ✅
-
 #### Refactoring Approach
 - Follows **Martin Fowler's Refactoring Catalog (2nd Edition)**
 - Key principle: *"The purpose of refactoring is not to reduce the number of lines, but to make the code more readable"*
