@@ -19,6 +19,17 @@ class Task:
         self.starred = starred
 
 
+def _row_to_task(row: dict) -> Task:
+    """Convert a CSV row dictionary to a Task object."""
+    return Task(
+        id=int(row["id"]),
+        description=row["description"],
+        context=Context(row["context"]),
+        skip_count=int(row["skip_count"]),
+        starred=bool(int(row["starred"])),
+    )
+
+
 def import_tasks_from_csv(path):
     """Import tasks from a CSV file.
 
@@ -30,13 +41,4 @@ def import_tasks_from_csv(path):
     """
     with open(path, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
-        return [
-            Task(
-                id=int(row["id"]),
-                description=row["description"],
-                context=Context(row["context"]),
-                skip_count=int(row["skip_count"]),
-                starred=bool(int(row["starred"])),
-            )
-            for row in reader
-        ]
+        return [_row_to_task(row) for row in reader]
