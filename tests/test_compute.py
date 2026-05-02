@@ -20,3 +20,9 @@ def test_compute_latest_date():
     expected_latest_date = date_4
     obtained_latest_date = rc.compute_latest_date(date_4, skipped_date)
     assert obtained_latest_date == expected_latest_date
+
+def test_compute_recurrence_days():
+    intervals = [1, 2, 3]
+    expected_recurrence_days = 2
+    obtained_recurrence_days = rc.compute_recurrence_days(intervals)
+    assert obtained_recurrence_days == expected_recurrence_days
