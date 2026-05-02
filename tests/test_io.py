@@ -1,4 +1,5 @@
 import pytest
+from datetime import date
 
 import recurrator.io as io
 from recurrator.io import Context
@@ -31,3 +32,6 @@ def test_import_tasks_from_csv(csv_path):
     expected_starred = False
     obtained_starred = first_task.starred
     assert obtained_starred == expected_starred
+    expected_latest_date = date(2025, 11, 17)
+    obtained_latest_date = first_task.latest_date
+    assert obtained_latest_date == expected_latest_date
