@@ -14,6 +14,5 @@ requires = [
 ]
 requires-python=">=3.9"
 
-[tool.mutmut]
-paths_to_mutate = [ "recurrator/" ]
-tests_dir = [ "tests/" ]
+[tool.flit.scripts]
+recurrator = "recurrator.cli:app"
