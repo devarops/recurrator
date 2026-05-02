@@ -11,6 +11,11 @@ class Context(Enum):
 class Task:
     """Represents a task imported from CSV."""
 
+    def __init__(self, id: int, description: str, context: Context):
+        self.id = id
+        self.description = description
+        self.context = context
+
 
 def import_tasks_from_csv(path):
     """Import tasks from a CSV file.
@@ -21,13 +26,13 @@ def import_tasks_from_csv(path):
     Returns:
         List of Task objects with attributes from CSV rows.
     """
-    tasks = []
     with open(path, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
-        for row in reader:
-            task = Task()
-            task.id = int(row["id"])
-            task.description = row["description"]
-            task.context = Context(row["context"])
-            tasks.append(task)
-    return tasks
+        return [
+            Task(
+                id=int(row["id"]),
+                description=row["description"],
+                context=Context(row["context"]),
+            )
+            for row in reader
+        ]
