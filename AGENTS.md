@@ -20,47 +20,44 @@ Commands:
 ### Naming Conventions
 
 #### CLI Commands (verbs → nouns, hyphen-case)
-- **Verbs:** `list`, `mark`, `add`, `update`, `remove`, `show`, `reset`
-- **Nouns:** `tasks`, `task`, `today`, `context`, `starred`, `done`, `skips`, `all`
+- **Verbs:** `add`, `list`, `mark`, `remove`, `reset`, `show`, `update`
+- **Nouns:** `all`, `context`, `done`, `skips`, `starred`, `task`, `today`
 - **Recommended Combinations:**
-  - `list-tasks`, `list-today`, `list-all`
-  - `show-task`
   - `add-task`
-  - `update-task`
-  - `remove-task`
+  - `list-all`
+  - `list-context`
+  - `list-starred`
+  - `list-today`
   - `mark-done`
+  - `remove-task`
   - `reset-skips`
+  - `show-task`
+  - `update-task`
 
 #### Internal Functions (verbs → nouns, snake_case)
 
 **In-memory (no side effects)**
-- **Verbs:** `compute`, `is`, `select`, `filter`, `sort`
-- **Nouns:** `intervals`, `median_interval`, `recurrence_days`, `due_date`, `due_tasks`, `description`, `tasks`, `due`
+- **Verbs:** `compute`, `create`, `filter`, `get`, `is`, `remove`, `set`, `update`
+- **Nouns:** `description`, `due_date`, `due` `intervals`, `recurrence_days`, `task`
 - **Valid Examples:**
-  - `compute_intervals(dates)`
-  - `compute_median_interval(intervals)`
   - `compute_due_date(task)`
-  - `is_due(task, today)`
-  - `select_tasks(tasks, context)`
+  - `compute_intervals(dates)`
+  - `compute_recurrence_days(intervals)`
+  - `create_task(task)`
+  - `filter_by_context(tasks, context)`
   - `filter_starred(tasks)`
-  - `sort_tasks_by_due_date(tasks)`
-  - `description(task)` (Noun allowed for simple accessors)
+  - `get_description(task)`
+  - `is_due(task, today)`
+  - `remove_task(task)`
+  - `set_description(task, description)`
+  - `update_task(task)`
 
 **Disk I/O (CSV/JSON)**
 - **Verbs:** `import`, `export`
-- **Nouns:** `tasks`, `tasks_csv`
+- **Nouns:** `tasks`, `csv`
 - **Examples:**
-  - `import_tasks_from_csv(path)`
   - `export_tasks_to_csv(tasks, path)`
-
-**Application-level (controlled side effects)**
-- **Verbs:** `create`, `update`, `remove`, `mark`
-- **Nouns:** `task`, `tasks`, `completion`, `done`
-- **Examples:**
-  - `create_task(task, path)`
-  - `update_task(task, path)`
-  - `remove_task(id, path)`
-  - `mark_task_done(id, date, path)`
+  - `import_tasks_from_csv(path)`
 
 #### Consistency Rules
 - Use hyphen-case for CLI, snake_case for internal functions.
