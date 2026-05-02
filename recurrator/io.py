@@ -1,10 +1,11 @@
 import csv
 
 
-def import_tasks_from_csv(path):
-    class Task:
-        pass
+class Task:
+    pass
 
+
+def import_tasks_from_csv(path):
     tasks = []
     with open(path, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
