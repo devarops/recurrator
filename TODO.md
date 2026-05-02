@@ -39,6 +39,34 @@
 
 ---
 
+## Pending Refactorings
+
+### Centralize Configuration in JSON File
+- **Status**: Planned
+- **Description**: Create a JSON configuration file at `~/.config/recurrator/config.json` to serve as the single source of truth for project-wide constants.
+- **Motivation**: Constants `DEFAULT_RECURRENCE_DAYS` (in `compute.py`) and `DEFAULT_TASKS_CSV_PATH` (in `cli.py`) are scattered across modules. Centralizing them improves maintainability and follows the project's principle of clear intent.
+- **Design Decisions**:
+  - Config location: `~/.config/recurrator/config.json` (XDG Base Directory standard)
+  - Production CSV path: `~/.config/recurrator/tasks.csv`
+  - Test CSV files remain in `tests/data/` (for testing only, not production)
+- **Implementation Steps**:
+  1. Create `~/.config/recurrator/config.json` with initial values:
+     ```json
+     {
+       "default_recurrence_days": 14,
+       "default_tasks_csv_path": "~/.config/recurrator/tasks.csv"
+     }
+     ```
+  2. Create `recurrator/config_loader.py` with `load_config()` function that:
+     - Resolves `~/.config/recurrator/config.json`
+     - Loads and returns the JSON as a dict
+  3. Update `compute.py`: remove `DEFAULT_RECURRENCE_DAYS`, load from config
+  4. Update `cli.py`: remove `DEFAULT_TASKS_CSV_PATH`, load from config
+  5. Ensure tests continue to pass (tests use `tests/data/` artifacts, not production path)
+- **Files Affected**: `compute.py`, `cli.py`, new `config_loader.py`, new `config.json`
+
+---
+
 ## Chores
 
 - [x] Verify `compute_latest_date(date_4, skipped_date)` returns `date_4` if `skipped_date` is `None`
