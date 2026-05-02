@@ -45,20 +45,30 @@ def _parse_date(date_str: str) -> date | None:
     return date.fromisoformat(date_str) if date_str != "NA" else None
 
 
-def _row_to_task(row: dict) -> Task:
-    """Convert a CSV row dictionary to a Task object."""
+def _compute_dates(row: dict) -> tuple[date, int, date]:
+    """Compute latest_date, recurrence_days, and due_date from CSV row.
+
+    Returns:
+        Tuple of (latest_date, recurrence_days, due_date)
+    """
     date_4 = _parse_date(row["date_4"])
     assert date_4 is not None
 
     skipped_date = _parse_date(row["skipped_date"])
     latest_date = compute_latest_date(date_4, skipped_date)
 
-    # Compute recurrence days from all four date columns
     dates = [_parse_date(row[f"date_{i}"]) for i in range(1, 5)]
     intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
 
     due_date = compute_due_date(latest_date, recurrence_days)
+
+    return latest_date, recurrence_days, due_date
+
+
+def _row_to_task(row: dict) -> Task:
+    """Convert a CSV row dictionary to a Task object."""
+    latest_date, recurrence_days, due_date = _compute_dates(row)
 
     return Task(
         id=int(row["id"]),
