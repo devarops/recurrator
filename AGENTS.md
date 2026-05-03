@@ -113,27 +113,27 @@ Separation of concerns across markdown files:
 #### Internal Functions (verbs → nouns, snake_case)
 
 **In-memory (no side effects)**
-- **Verbs:** `compute`, `create`, `filter`, `get`, `is`, `remove`, `set`, `update`
+- **Verbs:** `compute`, `filter`, `get`, `is`, `set`
 - **Nouns:** `description`, `due_date`, `due`, `intervals`, `recurrence_days`, `task`
 - **Valid Examples:**
   - `compute_due_date(task)`
   - `compute_intervals(dates)`
   - `compute_recurrence_days(intervals)`
-  - `create_task(task)`
   - `filter_by_context(tasks, context)`
   - `filter_starred(tasks)`
   - `get_description(task)`
   - `is_due(task, today)`
-  - `remove_task(task)`
   - `set_description(task, description)`
-  - `update_task(task)`
 
 **Disk I/O (CSV/JSON)**
-- **Verbs:** `import`, `export`
+- **Verbs:** `import`, `export`, `create`, `update`, `remove`
 - **Nouns:** `tasks`, `csv`
 - **Examples:**
   - `export_tasks_to_csv(tasks, path)`
   - `import_tasks_from_csv(path)`
+  - `create_task_in_csv(task, path)`
+  - `update_task_in_csv(task_id, updates, path)`
+  - `remove_task_from_csv(task_id, path)`
 - **CSV Schema:**
   - Columns: `id`, `context`, `description`, `date_1`, `date_2`, `date_3`, `date_4`, `skip_count`, `skipped_date`, `starred`
   - `date_1` through `date_4`: Last four completion timestamps (ISO 8601 dates, `NA` for missing)
