@@ -43,15 +43,15 @@ Separation of concerns across markdown files:
 ### REST API Endpoints
 
 #### Reads (GET)
-- `GET /tasks/` → Returns list of task IDs only
+- ✅ `GET /tasks/` → Returns list of task IDs only (implemented)
   - Response: `[{"id": 8}]` (JSON array of IDs)
   - Use case: Quick listing without full task data
-- `GET /tasks/:id` → Returns full task object
+- ✅ `GET /tasks/:id` → Returns full task object (implemented)
   - Response: `{"id": 8, "description": "TypeLit.io", "context": "laptop", "skip_count": 1, "starred": false, "latest_date": "2025-08-19", "recurrence_days": 14, "due_date": "2025-09-02"}`
   - Use case: Display complete task information
 
 #### Writes (POST)
-- `POST /tasks/:id/done` → Mark task as done
+- ⏳ `POST /tasks/:id/done` → Mark task as done (not yet implemented)
   - Response: `{"status": "success", "id": 8}`
   - Behavior:
     1. Reset `skip_count` to 0
@@ -75,15 +75,34 @@ Separation of concerns across markdown files:
 
 ### CLI Commands (Optional Thin Wrapper)
 
-Using **Typer** — calls the API at `http://localhost:8000`
+Using **Typer** — calls the API at `http://api:8000` (Docker internal DNS)
 
 Commands:
 
-* `recurrator list-all` → calls `GET /tasks/`
-* `recurrator show-task --id <id>` → calls `GET /tasks/:id`
-* `recurrator mark-done --id <id>` → calls `POST /tasks/:id/done`
+* ✅ `recurrator list-all` → calls `GET /tasks/` (implemented)
+* ⏳ `recurrator show-task --id <id>` → calls `GET /tasks/:id` (not yet implemented)
+* ⏳ `recurrator mark-done --id <id>` → calls `POST /tasks/:id/done` (not yet implemented)
 
 **Note**: CLI may not expose all API features. API is the primary interface.
+
+### Implementation Notes
+
+**CLI**:
+- CLI is a thin HTTP wrapper calling the FastAPI backend
+- No direct CSV imports in CLI — all data access through API
+- `API_BASE_URL = "http://api:8000"` is currently hardcoded (will be moved to config file later)
+
+**Testing Approach**:
+- No mocks in test suite — tests assume API is running
+- Tests are integration-style, not unit tests
+- Run tests with: `docker exec recurrator_ci make tests`
+- The `make init` step is required to set up the test environment in the recurrator_ci container before running tests
+
+**Docker Compose Architecture**:
+- Two services: `api` (FastAPI + uvicorn) and `cli` (Typer + pytest + bash)
+- `cli` service has `depends_on: api` for startup order
+- Both services share `~/.config/recurrator/` volume mount for CSV persistence and configuration
+- Internal Docker DNS resolves `api` to the API service container
 
 ### Naming Conventions
 

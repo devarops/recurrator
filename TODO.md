@@ -6,21 +6,29 @@
 **Primary Interface**: FastAPI REST API (single source of truth)
 **Secondary Interface**: CLI thin wrapper (optional, calls API)
 **Storage**: CSV at `~/.config/recurrator/tasks.csv` (mounted via Docker volume)
-**Deployment**: Docker Compose
+**Deployment**: Docker Compose (two services: `api` + `cli`)
 
 **Features**:
 - ✅ API: `GET /tasks/` — List task IDs only
-- ⏳ API: `GET /tasks/:id` — Get single task with all fields
+- ✅ API: `GET /tasks/:id` — Get single task with all fields
 - ⏳ API: `POST /tasks/:id/done` — Mark task as done (resets skip_count, rotates dates)
-- ⏳ CLI: `list-all`, `show-task`, `mark-done` (thin wrappers calling API)
+- ✅ CLI: `list-all` — List all tasks (thin wrapper calling API)
+- ⏳ CLI: `show-task` — Show single task (thin wrapper calling API)
+- ⏳ CLI: `mark-done` — Mark task as done (thin wrapper calling API)
 
-**Current Vertical Slice**: API Layer - List Tasks
-- Status: 🚧 In Progress
-- Next: Implement `GET /tasks/` endpoint returning list of task IDs
+**Current Vertical Slice**: API Layer - Complete (Reads)
+- Status: ✅ Complete
+- Next: Implement write operations (POST /tasks/:id/done)
 
 ---
 
 ## Implementation Status
+
+### Architecture Status
+- ✅ FastAPI app created in `recurrator/api.py`
+- ✅ Two-service Docker Compose (`api` + `cli`) with `depends_on: api`
+- ✅ CLI migrated to HTTP calls (Plan A - thin wrapper calling API)
+- ✅ All 13 tests passing (no mocks, integration-style)
 
 ### Core Functions (compute.py)
 - ✅ `compute_intervals(dates)` — Compute intervals in days between consecutive non-None dates
@@ -37,18 +45,18 @@
 ### Data Classes (io.py)
 - ✅ `ComputedDates` — Dataclass grouping computed date attributes
 
-### API Functions (api.py) — Planned
-- ⏳ `GET /tasks/` endpoint
-- ⏳ `GET /tasks/:id` endpoint
-- ⏳ `POST /tasks/:id/done` endpoint
+### API Functions (api.py) — Implemented
+- ✅ `GET /tasks/` endpoint — Returns list of task IDs
+- ✅ `GET /tasks/:id` endpoint — Returns full task object
+- ⏳ `POST /tasks/:id/done` endpoint — Mark task as done (pending)
 
 ### Write Operations (services.py) — Planned
 - ⏳ `mark_task_done(task_id)` — Update task on completion
 
-### CLI Commands (cli.py) — Refactoring Pending
-- 🚧 `list-all` — Currently prints task IDs; needs refactoring to call API
-- ⏳ `show-task` — Thin wrapper around `GET /tasks/:id`
-- ⏳ `mark-done` — Thin wrapper around `POST /tasks/:id/done`
+### CLI Commands (cli.py) — Partially Implemented
+- ✅ `list-all` — Calls `GET /tasks/` via API (implemented)
+- ⏳ `show-task` — Calls `GET /tasks/:id` via API (pending)
+- ⏳ `mark-done` — Calls `POST /tasks/:id/done` via API (pending)
 
 ---
 
@@ -60,10 +68,20 @@
 - Standardize None Handling: Made `compute_intervals()` handle None internally
 - Replace Magic Number with Symbolic Constant: `DEFAULT_RECURRENCE_DAYS = 14`
 
-### CLI Module (cli.py) — Latest
-- Move import to module level (PEP 8 standard)
-- Extract magic string constant: `DEFAULT_TASKS_CSV_PATH`
-- Extract function: `_print_task_ids()` for output logic
+### API Module (api.py) — Latest
+- Extract Function: `_resolve_csv_path()` for CSV path resolution
+- Extract Function: `_find_task_by_id()` for task lookup
+- Extract Function: `_task_to_dict()` for Task to dict conversion
+- Add Type Hints: `_task_to_dict(task: Task) -> dict`
+- Rename Constant: `DEFAULT_TASKS_CSV_PATH` (clearer naming)
+
+### CLI Module (cli.py) — Migrated to Plan A
+- Remove CSV Import: Removed `from .io import import_tasks_from_csv`
+- Remove Local Constant: Removed `DEFAULT_TASKS_CSV_PATH` (now in API)
+- Add HTTP Client: Added `import requests` and `API_BASE_URL = "http://api:8000"`
+- Refactor `list_all()`: Now calls `GET /tasks/` via HTTP
+- Update `_print_task_ids()`: Handles dicts from API JSON response
+- Add Error Handling: Clear message when API unavailable, exit code 1
 
 ---
 
