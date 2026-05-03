@@ -33,7 +33,7 @@
 ## Infrastructure
 - [x] **FastAPI app**: Create FastAPI app.
 - [x] **Docker Compose**: Two-service setup.
-- [x] **All tests passing**: 13 tests.
+- [x] **All tests passing**: 16 tests.
 - [x] **CORS middleware**: file:// protocol support.
 
 ## Refactoring
