@@ -142,6 +142,17 @@ def _format_csv_line(fieldnames: Sequence[str] | None, row: dict) -> str:
     return ",".join(line_parts)
 
 
+def _update_task_dates(row: dict, task_id: int, dates: list[date | None]) -> bool:
+    """Update date fields for matching task. Returns True if updated."""
+    if int(row["id"]) == task_id:
+        row["date_1"] = _format_date(dates[0])
+        row["date_2"] = _format_date(dates[1])
+        row["date_3"] = _format_date(dates[2])
+        row["date_4"] = _format_date(dates[3])
+        return True
+    return False
+
+
 def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> None:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
@@ -149,11 +160,7 @@ def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> No
         fieldnames = reader.fieldnames
 
     for row in rows:
-        if int(row["id"]) == task_id:
-            row["date_1"] = _format_date(dates[0])
-            row["date_2"] = _format_date(dates[1])
-            row["date_3"] = _format_date(dates[2])
-            row["date_4"] = _format_date(dates[3])
+        _update_task_dates(row, task_id, dates)
 
     assert fieldnames is not None
     with open(path, "w", newline="") as f:
