@@ -142,9 +142,8 @@ def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> No
 
     assert fieldnames is not None
     with open(path, "w", newline="") as f:
-        for i, row in enumerate(rows):
-            if i == 0:
-                f.write(",".join(fieldnames) + "\n")
+        f.write(",".join(fieldnames) + "\n")
+        for row in rows:
             line_parts = []
             for field in fieldnames:
                 value = row[field]
