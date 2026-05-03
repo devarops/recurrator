@@ -124,6 +124,23 @@ def test_update_task_dates_in_csv():
     assert final_checksum == original_checksum, "CSV was modified after undo"
 
 
+def test_update_task_skip_count_in_csv():
+    """Verify update_task_skip_count_in_csv correctly updates skip count."""
+    import hashlib
+
+    task_id = 2
+    csv_path = "tests/data/test_two_contexts.csv"
+
+    # Capture checksum before test
+    with open(csv_path, "rb") as f:
+        original_checksum = hashlib.md5(f.read()).hexdigest()
+
+    expected_skip_count = 5
+    io.update_task_skip_count(task_id, expected_skip_count, csv_path)
+    obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
+    assert obtained_skip_count == expected_skip_count
+
+
 def test_update_task_as_done_in_csv():
     """Verify update_task_as_done_in_csv correctly updates dates and skip count."""
     import hashlib
