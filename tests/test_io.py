@@ -69,3 +69,11 @@ def test_import_tasks_from_csv_two_contexts():
     expected_id = 5
     obtained_id = last_task.id
     assert obtained_id == expected_id
+
+
+def test_import_dates_from_csv():
+    """Verify import_dates_from_csv correctly parses dates from CSV file."""
+    csv_path = "tests/data/test_two_contexts.csv"
+    dates = io.import_dates_from_csv(task_id, csv_path)
+
+    assert isinstance(dates, list)
