@@ -153,7 +153,7 @@ def _update_task_dates(row: dict, task_id: int, dates: list[date | None]) -> boo
     return False
 
 
-def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> None:
+def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) -> None:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
