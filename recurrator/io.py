@@ -55,6 +55,11 @@ def _parse_date(date_str: str) -> date | None:
     return date.fromisoformat(date_str) if date_str != "NA" else None
 
 
+def _format_date(d: date | None) -> str:
+    """Format a date to ISO 8601 string, or 'NA' for None."""
+    return d.isoformat() if d is not None else "NA"
+
+
 def _compute_dates(row: dict) -> ComputedDates:
     """Compute latest_date, recurrence_days, and due_date from CSV row.
 
@@ -123,4 +128,19 @@ def import_dates_from_csv(task_id: int, path: str):
 
 
 def export_dates_to_csv(task_id, dates, path):
-    pass
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        fieldnames = reader.fieldnames
+
+    for row in rows:
+        if int(row["id"]) == task_id:
+            row["date_1"] = _format_date(dates[0])
+            row["date_2"] = _format_date(dates[1])
+            row["date_3"] = _format_date(dates[2])
+            row["date_4"] = _format_date(dates[3])
+
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
