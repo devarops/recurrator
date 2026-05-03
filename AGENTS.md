@@ -1,4 +1,3 @@
-The system is a cloud-based, single-user API with a minimal HTML interface limited to listing today's tasks, retrieving a single task, and marking completion or skip actions.
 Task creation, updates, and deletion are handled through API or CLI access.
 Each task stores the timestamps of its last four completions, and the next due date is computed as the median interval derived from those completions.
 Scheduling is deterministic and executed via a lightweight background process that runs at midnight.

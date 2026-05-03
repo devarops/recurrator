@@ -30,6 +30,15 @@
 - ✅ CLI migrated to HTTP calls (Plan A - thin wrapper calling API)
 - ✅ All 13 tests passing (no mocks, integration-style)
 
+### Static Frontend (public/index.html)
+- ✅ Created decoupled HTML task viewer (42 lines)
+- ✅ Pico.css styling (10KB CDN) for clean presentation
+- ✅ Minimal JavaScript (~15 lines) for fetch and render
+- ✅ HTML table layout for task details
+- ✅ CSV parameter support (`?csv=tests/data/test_two_contexts.csv`)
+- ✅ CORS middleware added to API for file:// protocol support
+- ✅ Error handling for API unavailability
+
 ### Core Functions (compute.py)
 - ✅ `compute_intervals(dates)` — Compute intervals in days between consecutive non-None dates
 - ✅ `compute_latest_date(date_4, skipped_date)` — Return max of two dates, handling None for skipped_date
@@ -140,3 +149,21 @@ When `POST /tasks/:id/done` is called:
 - **Explicit imports**: All dependencies visible at module level (PEP 8)
 - **Single responsibility**: Helper functions (`_parse_date`, `_print_task_ids`, etc.) do one thing well
 - **Test-driven**: Only implement what tests require; generalize safely
+
+---
+
+## Future Features
+
+### Gamification System
+**Status**: Planned  
+**Motivation**: Add point accumulation for completed tasks. Points accumulate daily and can be expended.
+
+**Design**:
+- Task completion awards configurable points
+- Points stored in task metadata or separate ledger
+- Daily point accumulation
+- Point expenditure mechanism (TBD)
+
+**Implementation**: Deferred until after write operations (mark-done) are complete
+
+**User Story**: "A small gamification layer awards points for each completed task, and these points accumulate daily until you choose to expend them."
