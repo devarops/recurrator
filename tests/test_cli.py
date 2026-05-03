@@ -14,6 +14,7 @@ def test_list_all_help():
     result = runner.invoke(app, ["list-all", "--help"])
     assert result.exit_code == 0
 
+
 def test_list_all():
     result = runner.invoke(app, ["list-all"])
     assert result.exit_code == 0
