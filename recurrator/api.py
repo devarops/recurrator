@@ -4,12 +4,12 @@ from .io import Task, import_tasks_from_csv
 
 app = FastAPI()
 
-DEFAULT_CSV_PATH = "tests/data/test_single_task.csv"
+DEFAULT_TASKS_CSV_PATH = "tests/data/test_single_task.csv"
 
 
 def _resolve_csv_path(csv: str = None) -> str:
     """Resolve CSV path from query parameter or default."""
-    return csv or DEFAULT_CSV_PATH
+    return csv or DEFAULT_TASKS_CSV_PATH
 
 
 def _find_task_by_id(tasks, task_id: int):
