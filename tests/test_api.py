@@ -5,9 +5,21 @@ from recurrator.api import app
 client = TestClient(app)
 
 
-def test_get_tasks_ids():
+def test_get_task_ids():
     """Verify GET /tasks/ returns a list of task ID objects."""
     response = client.get("/tasks/")
+
+    expected_status_code = 200
+    obtained_status_code = response.status_code
+    assert obtained_status_code == expected_status_code
+
+    expected_data = [{"id": 8}]
+    obtained_data = response.json()
+    assert obtained_data == expected_data
+
+def test_get_task_by_id():
+    """Verify GET /tasks/{id} returns the correct task details."""
+    response = client.get("/tasks/8")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
