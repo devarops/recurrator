@@ -106,3 +106,12 @@ def import_tasks_from_csv(path: str) -> list[Task]:
     with open(path, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
         return [_row_to_task(row) for row in reader]
+
+
+def import_dates_from_csv(task_id: int, path: str):
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if int(row["id"]) == task_id:
+                return list(row.values())
+    return None

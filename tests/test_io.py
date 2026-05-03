@@ -73,6 +73,7 @@ def test_import_tasks_from_csv_two_contexts():
 
 def test_import_dates_from_csv():
     """Verify import_dates_from_csv correctly parses dates from CSV file."""
+    task_id = 2
     csv_path = "tests/data/test_two_contexts.csv"
     dates = io.import_dates_from_csv(task_id, csv_path)
 
