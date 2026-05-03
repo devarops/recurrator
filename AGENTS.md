@@ -160,14 +160,6 @@ Commands:
   - `latest_date` is computed from `date_4` and `skipped_date` using `compute_latest_date()`
   - `recurrence_days` is computed from date intervals using `compute_recurrence_days()`
 
-#### New Functions Implemented
-- `compute_intervals(dates: list[date | None]) -> list[int]` (in `compute.py`): Compute intervals in days between consecutive non-None dates
-- `compute_latest_date(date_4, skipped_date) -> date` (in `compute.py`): Returns max of two dates, handling None for skipped_date only
-- `compute_recurrence_days(intervals) -> int` (in `compute.py`): Compute recurrence days as median of intervals, defaulting to 14 days
-- `_parse_date(date_str) -> date | None` (in `io.py`): Helper to parse ISO 8601 strings, returns None for "NA"
-- `_row_to_task(row: dict) -> Task` (in `io.py`): Helper to convert CSV row to Task object
-- `import_tasks_from_csv(path) -> list[Task]` (in `io.py`): Import tasks from CSV file
-
 #### Refactoring Approach
 - Follows **Martin Fowler's Refactoring Catalog (2nd Edition)**
 - Key principle: *"The purpose of refactoring is not to reduce the number of lines, but to make the code more readable"*
@@ -225,6 +217,13 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 - Avoid abbreviations (e.g., use `context` not `ctx`).
 - Avoid mixing multiple verbs in a single function name.
 - CLI verbs (add, list, etc.) are for the interface; internal verbs (compute, is, filter) are for logic only.
+
+### Design Principles
+
+- **Readability over brevity**: Clear variable names and extracted functions express intent
+- **Explicit imports**: All dependencies visible at module level (PEP 8)
+- **Single responsibility**: Helper functions do one thing well
+- **Test-driven**: Only implement what tests require; generalize safely
 
 ### Commit Message Conventions
 
