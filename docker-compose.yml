@@ -1,5 +1,17 @@
 services:
-  devarops:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: devarops/recurrator:latest
+    command: uvicorn recurrator.api:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - $PWD:/workdir
+      - ~/.config/recurrator:/root/.config/recurrator
+
+  cli:
     build:
       context: .
       dockerfile: Dockerfile
@@ -7,3 +19,6 @@ services:
     command: bash
     volumes:
       - $PWD:/workdir
+      - ~/.config/recurrator:/root/.config/recurrator
+    depends_on:
+      - api

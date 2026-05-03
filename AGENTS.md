@@ -23,9 +23,10 @@ The system uses a **layered, API-first design**:
 - Flexibility: CLI remains useful for developers and scripting
 
 **Deployment**:
-- API runs in Docker container via `docker-compose up`
-- CLI runs locally and makes HTTP requests to the API
-- CSV data mounted as a Docker volume at `~/.config/recurrator/`
+- Two-container Docker architecture managed via `docker-compose`
+- `api` service: Runs FastAPI with uvicorn (exposes port 8000), mounts `~/.config/recurrator/` for CSV persistence
+- `cli` service: Interactive bash shell for CLI commands, tests, and development; depends on `api` service; shares the same CSV volume mount
+- Both services use the same Docker image built from the project's Dockerfile
 
 ### Documentation Structure
 
