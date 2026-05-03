@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query
 
-from .io import import_tasks_from_csv
+from .io import Task, import_tasks_from_csv
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ def _find_task_by_id(tasks, task_id: int):
     return next((t for t in tasks if t.id == task_id), None)
 
 
-def _task_to_dict(task) -> dict:
+def _task_to_dict(task: Task) -> dict:
     """Convert Task object to API response dictionary."""
     return {
         "id": task.id,
