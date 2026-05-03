@@ -5,14 +5,9 @@ import recurrator.io as io
 from recurrator.io import Context
 
 
-@pytest.fixture
-def csv_path():
-    """Path to test CSV file with one task record."""
-    return "tests/data/test_single_task.csv"
-
-
-def test_import_tasks_from_csv(csv_path):
+def test_import_tasks_from_csv_single_task():
     """Verify import_tasks_from_csv returns valid task from CSV file."""
+    csv_path = "tests/data/test_single_task.csv"
     task_list = io.import_tasks_from_csv(csv_path)
 
     # Returns a list with one Task
@@ -54,3 +49,23 @@ def test_import_tasks_from_csv(csv_path):
     expected_due_date = date(2025, 12, 1)
     obtained_due_date = first_task.due_date
     assert obtained_due_date == expected_due_date
+
+
+def test_import_tasks_from_csv_two_contexts():
+    """Verify import_tasks_from_csv correctly handles multiple contexts in CSV file."""
+    csv_path = "tests/data/test_two_contexts.csv"
+    task_list = io.import_tasks_from_csv(csv_path)
+
+    # Returns a list with three Tasks
+    assert isinstance(task_list, list)
+    expected_list_length = 3
+    obtained_list_length = len(task_list)
+    assert obtained_list_length == expected_list_length
+
+    last_task_index = len(task_list) - 1
+    last_task = task_list[last_task_index]
+
+    # Basic attributes from CSV
+    expected_id = 5
+    obtained_id = last_task.id
+    assert obtained_id == expected_id

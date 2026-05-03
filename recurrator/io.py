@@ -14,7 +14,9 @@ from .compute import (
 class Context(Enum):
     """Valid task contexts."""
 
+    CASA = "casa"
     LAPTOP = "laptop"
+    LIMPIAR = "limpiar"
 
 
 @dataclass
