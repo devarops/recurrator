@@ -17,6 +17,7 @@ def test_get_task_ids():
     obtained_data = response.json()
     assert obtained_data == expected_data
 
+
 def test_get_task_ids_multiple():
     """Verify GET /tasks/ returns a list of task ID objects when multiple tasks are present."""
     response = client.get("/tasks/?csv=tests/data/test_two_contexts.csv")
@@ -24,6 +25,7 @@ def test_get_task_ids_multiple():
     expected_data = [{"id": 2}, {"id": 3}, {"id": 5}]
     obtained_data = response.json()
     assert obtained_data == expected_data
+
 
 def test_get_task_by_id():
     """Verify GET /tasks/{id} returns the correct task details."""
