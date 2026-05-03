@@ -195,6 +195,7 @@ def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None
             row["skip_count"] = str(skip_count)
     with open(csv_path, "w", newline="") as f:
         assert fieldnames is not None
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+        f.write(",".join(fieldnames) + "\n")
+        for row in rows:
+            line = _format_csv_line(fieldnames, row)
+            f.write(line + "\n")
