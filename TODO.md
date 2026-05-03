@@ -2,9 +2,6 @@
 
 ## Gold
 - [ ] **POST /tasks/{id}/done API endpoint**: Mark task as done.
-  - [ ] **update_task_as_done()**: Function to rotate dates and reset skip_count in CSV.
-
-## API Endpoints
 
 ## Features
 - [ ] **Gamification System**: Add point accumulation for completed tasks.
@@ -27,6 +24,7 @@
 - [x] `_parse_date(date_str) -> date | None` (in `io.py`): Helper to parse ISO 8601 strings, returns None for "NA"
 - [x] `_row_to_task(row: dict) -> Task` (in `io.py`): Helper to convert CSV row to Task object
 - [x] `import_tasks_from_csv(path) -> list[Task]` (in `io.py`): Import tasks from CSV file
+- [x] `update_task_as_done(task_id, csv_path) -> None` (in `io.py`): Reset skip_count to 0 in CSV
 
 ## Features
 - [x] **Static Frontend**: HTML task viewer with Pico.css.
@@ -34,7 +32,7 @@
 ## Infrastructure
 - [x] **FastAPI app**: Create FastAPI app.
 - [x] **Docker Compose**: Two-service setup.
-- [x] **All tests passing**: 16 tests.
+- [x] **All tests passing**: 18 tests.
 - [x] **CORS middleware**: file:// protocol support.
 
 ## Refactoring
