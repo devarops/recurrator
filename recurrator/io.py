@@ -142,6 +142,14 @@ def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> No
 
     assert fieldnames is not None
     with open(path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, quoting=csv.QUOTE_NONNUMERIC)
-        writer.writeheader()
-        writer.writerows(rows)
+        for i, row in enumerate(rows):
+            if i == 0:
+                f.write(",".join(fieldnames) + "\n")
+            line_parts = []
+            for field in fieldnames:
+                value = row[field]
+                if field == "description":
+                    line_parts.append(f'"{value}"')
+                else:
+                    line_parts.append(value)
+            f.write(",".join(line_parts) + "\n")
