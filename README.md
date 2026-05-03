@@ -27,13 +27,3 @@ Get a single task with all fields:
 curl http://localhost:8000/tasks/8
 ```
 
-### Using the CLI (Optional)
-
-The CLI is a thin wrapper around the API and requires the server to be running:
-
-```bash
-recurrator list-all
-recurrator show-task --id 8
-recurrator mark-done --id 8
-```
-

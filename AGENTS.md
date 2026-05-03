@@ -1,4 +1,4 @@
-Task creation, updates, and deletion are handled through API or CLI access.
+Task creation, updates, and deletion are handled through API access.
 Each task stores the timestamps of its last four completions, and the next due date is computed as the median interval derived from those completions.
 Scheduling is deterministic and executed via a lightweight background process that runs at midnight.
 Task selection is capped at six per day and is driven by a prioritization algorithm that first ranks tasks by consecutive skip count.
@@ -17,26 +17,37 @@ docker exec recurrator_ci make tests
 ```
 
 
-### Architecture: API-First with Optional CLI Wrapper
+### Architecture: API-First Design
 
 The system uses a **layered, API-first design**:
 
 - **FastAPI (Primary Interface)**: RESTful API serving reads and writes over HTTP
-- **CLI (Optional Wrapper)**: Thin Typer-based command-line client that calls the API
-- **Business Logic (Shared)**: Pure functions used by both API and CLI
+- **Business Logic**: Pure functions used by the API
 - **Storage (CSV)**: Persistent task data in CSV format at `~/.config/recurrator/tasks.csv`
+- **CLI (Thin Wrapper)**: A thin Typer-based client. It serves as a implementation of the "Thin Wrapper" pattern, containing zero business logic and communicating exclusively with the API.
 
 **Design Rationale**:
 - Single source of truth: API owns all business logic
-- No duplication: CLI and API both call the same functions
 - Scalability: Easy to add web UI or mobile app (all call the same API)
-- Flexibility: CLI remains useful for developers and scripting
+- Architectural Integrity: The CLI demonstrates that the API is fully decoupled and self-sufficient.
 
 **Deployment**:
-- Two-container Docker architecture managed via `docker-compose`
+- Docker-based architecture managed via `docker-compose`
 - `api` service: Runs FastAPI with uvicorn (exposes port 8000), mounts `~/.config/recurrator/` for CSV persistence
-- `cli` service: Interactive bash shell for CLI commands, tests, and development; depends on `api` service; shares the same CSV volume mount
+- `cli` service: Finalized command-line environment for task management and automated testing.
 - Both services use the same Docker image built from the project's Dockerfile
+
+### CLI Specification
+
+- **Thin Wrapper Pattern**: The CLI is a stateless HTTP client.
+- **Zero-Logic Client**: The CLI does not import `io.py` or `compute.py`, proving a strict separation of concerns.
+- **Mandatory Configuration**: The CLI enforces the `--csv` flag at the interface level, ensuring API-side data consistency.
+- **Subcommand Preservation**: The CLI uses a minimal command registry to maintain a robust, extensible subcommand structure.
+
+**Commands:**
+- `recurrator list-all --csv <path>`: Lists task IDs (by querying the API).
+- `recurrator version`: Displays current system version.
+
 
 ### Documentation Structure
 
@@ -83,24 +94,7 @@ Separation of concerns across markdown files:
 }
 ```
 
-### CLI Commands (Optional Thin Wrapper)
-
-Using **Typer** — calls the API at `http://api:8000` (Docker internal DNS)
-
-Commands:
-
-* ✅ `recurrator list-all` → calls `GET /tasks/` (implemented)
-* ⏳ `recurrator show-task --id <id>` → calls `GET /tasks/:id` (not yet implemented)
-* ⏳ `recurrator mark-done --id <id>` → calls `POST /tasks/:id/done` (not yet implemented)
-
-**Note**: CLI may not expose all API features. API is the primary interface.
-
 ### Implementation Notes
-
-**CLI**:
-- CLI is a thin HTTP wrapper calling the FastAPI backend
-- No direct CSV imports in CLI — all data access through API
-- `API_BASE_URL = "http://api:8000"` is currently hardcoded (will be moved to config file later)
 
 **Testing Approach**:
 - No mocks in test suite — tests assume API is running
@@ -109,27 +103,12 @@ Commands:
 - The `make init` step is required to set up the test environment in the recurrator_ci container before running tests
 
 **Docker Compose Architecture**:
-- Two services: `api` (FastAPI + uvicorn) and `cli` (Typer + pytest + bash)
+- Two services: `api` (FastAPI + uvicorn) and `cli` (Test environment)
 - `cli` service has `depends_on: api` for startup order
 - Both services share `~/.config/recurrator/` volume mount for CSV persistence and configuration
 - Internal Docker DNS resolves `api` to the API service container
 
 ### Naming Conventions
-
-#### CLI Commands (verbs → nouns, hyphen-case)
-- **Verbs:** `add`, `list`, `mark`, `remove`, `reset`, `show`, `update`
-- **Nouns:** `all`, `context`, `done`, `skips`, `starred`, `task`, `today`
-- **Recommended Combinations:**
-  - `add-task`
-  - `list-all`
-  - `list-context`
-  - `list-starred`
-  - `list-today`
-  - `mark-done`
-  - `remove-task`
-  - `reset-skips`
-  - `show-task`
-  - `update-task`
 
 #### Internal Functions (verbs → nouns, snake_case)
 
@@ -223,11 +202,10 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 - Group imports with comments: internal pure functions vs I/O utilities
 
 #### Consistency Rules
-- Use hyphen-case for CLI, snake_case for internal functions.
+- Use snake_case for internal functions.
 - Do not use `get_*` unless paired with `set_*`.
 - Avoid abbreviations (e.g., use `context` not `ctx`).
 - Avoid mixing multiple verbs in a single function name.
-- CLI verbs (add, list, etc.) are for the interface; internal verbs (compute, is, filter) are for logic only.
 
 ### Design Principles
 

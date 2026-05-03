@@ -5,10 +5,6 @@
 
 ## API Endpoints
 
-## CLI Commands
-- [ ] **show-task**: Show single task.
-- [ ] **mark-done**: Mark task as done.
-
 ## Features
 - [ ] **Gamification System**: Add point accumulation for completed tasks.
 
@@ -22,9 +18,6 @@
 ## API Endpoints
 - [x] **GET /tasks/**: List task IDs.
 - [x] **GET /tasks/:id**: Get single task.
-
-## CLI Commands
-- [x] **list-all**: List all tasks.
 
 ## Functions
 - [x] `compute_intervals(dates: list[date | None]) -> list[int]` (in `compute.py`): Compute intervals in days between consecutive non-None dates
@@ -40,11 +33,9 @@
 ## Infrastructure
 - [x] **FastAPI app**: Create FastAPI app.
 - [x] **Docker Compose**: Two-service setup.
-- [x] **CLI migration**: HTTP calls wrapper.
 - [x] **All tests passing**: 13 tests.
 - [x] **CORS middleware**: file:// protocol support.
 
 ## Refactoring
 - [x] **I/O Module**: Extract Function, Introduce Parameter Object, Standardize None Handling, Replace Magic Number.
 - [x] **API Module**: Extract Function, Add Type Hints, Rename Constant.
-- [x] **CLI Module**: Remove CSV Import, Add HTTP Client, Refactor list_all(), Update _print_task_ids(), Add Error Handling.
