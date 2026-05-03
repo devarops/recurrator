@@ -113,5 +113,10 @@ def import_dates_from_csv(task_id: int, path: str):
         reader = csv.DictReader(f)
         for row in reader:
             if int(row["id"]) == task_id:
-                return list(row.values())
+                return [
+                    _parse_date(row["date_1"]),
+                    _parse_date(row["date_2"]),
+                    _parse_date(row["date_3"]),
+                    _parse_date(row["date_4"]),
+                ]
     return None
