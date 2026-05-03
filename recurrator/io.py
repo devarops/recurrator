@@ -171,18 +171,7 @@ def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) 
 
 
 def update_task_as_done(task_id: int, csv_path: str) -> None:
-    with open(csv_path, newline="") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-        fieldnames = reader.fieldnames
-    for row in rows:
-        if int(row["id"]) == task_id:
-            row["skip_count"] = "0"
-    with open(csv_path, "w", newline="") as f:
-        assert fieldnames is not None
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    update_task_skip_count(task_id, 0, csv_path)
 
 
 def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
