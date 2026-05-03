@@ -131,6 +131,9 @@ Separation of concerns across markdown files:
 - **Examples:**
   - `export_tasks_to_csv(tasks, path)`
   - `import_tasks_from_csv(path)`
+  - `update_task_dates_in_csv(task_id, dates, path)`
+  - `update_task_skip_count(task_id, skip_count, csv_path)`
+  - `update_task_as_done(task_id, csv_path)`
   - `create_task_in_csv(task, path)`
   - `update_task_in_csv(task_id, updates, path)`
   - `remove_task_from_csv(task_id, path)`
@@ -206,6 +209,18 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 - Do not use `get_*` unless paired with `set_*`.
 - Avoid abbreviations (e.g., use `context` not `ctx`).
 - Avoid mixing multiple verbs in a single function name.
+
+**Parameter Ordering**
+- `task_id` first (specific identifier)
+- Other parameters in middle (specific to general)
+- `csv_path` last (general file path)
+- Examples: `update_task_as_done(task_id, csv_path)`, `update_task_skip_count(task_id, skip_count, csv_path)`
+
+**Helper Functions**
+- Functions prefixed with `_` are private/internal helpers
+- Not exposed in `__init__.py` for external import
+- Used to reduce duplication within a module
+- Example: `_update_task_in_csv(task_id, modify_row, csv_path)` is an internal helper called by `update_task_dates_in_csv()` and `update_task_skip_count()`
 
 ### Design Principles
 
