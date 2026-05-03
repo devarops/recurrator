@@ -1,34 +1,37 @@
 from fastapi import FastAPI, Query
 
+from .io import import_tasks_from_csv
+
 app = FastAPI()
 
-
-def _build_task_ids(csv_path: str):
-    """Build list of task ID objects from CSV."""
-    if csv_path == "tests/data/test_two_contexts.csv":
-        return [{"id": 2}, {"id": 3}, {"id": 5}]
-    return [{"id": 8}]
+DEFAULT_CSV_PATH = "tests/data/test_single_task.csv"
 
 
-def _build_task_8():
-    """Build task 8 object."""
+def _task_to_dict(task) -> dict:
+    """Convert Task object to API response dictionary."""
     return {
-        "id": 8,
-        "description": "TypeLit.io",
-        "context": "laptop",
-        "skip_count": 1,
-        "starred": False,
-        "latest_date": "2025-08-19",
-        "recurrence_days": 14,
-        "due_date": "2025-09-02",
+        "id": task.id,
+        "description": task.description,
+        "context": task.context.value,
+        "skip_count": task.skip_count,
+        "starred": task.starred,
+        "latest_date": task.latest_date.isoformat(),
+        "recurrence_days": task.recurrence_days,
+        "due_date": task.due_date.isoformat(),
     }
 
 
 @app.get("/tasks/")
 def get_tasks(csv: str = Query(None)):
-    return _build_task_ids(csv)
+    csv_path = csv or DEFAULT_CSV_PATH
+    tasks = import_tasks_from_csv(csv_path)
+    return [{"id": task.id} for task in tasks]
 
 
-@app.get("/tasks/8")
-def get_task_8():
-    return _build_task_8()
+@app.get("/tasks/{task_id}")
+def get_task(task_id: int):
+    tasks = import_tasks_from_csv(DEFAULT_CSV_PATH)
+    task = next((t for t in tasks if t.id == task_id), None)
+    if task is None:
+        return {"error": "Task not found"}, 404
+    return _task_to_dict(task)
