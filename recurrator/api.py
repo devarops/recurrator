@@ -29,8 +29,9 @@ def get_tasks(csv: str = Query(None)):
 
 
 @app.get("/tasks/{task_id}")
-def get_task(task_id: int):
-    tasks = import_tasks_from_csv(DEFAULT_CSV_PATH)
+def get_task(task_id: int, csv: str = Query(None)):
+    csv_path = csv or DEFAULT_CSV_PATH
+    tasks = import_tasks_from_csv(csv_path)
     task = next((t for t in tasks if t.id == task_id), None)
     if task is None:
         return {"error": "Task not found"}, 404
