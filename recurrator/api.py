@@ -15,7 +15,7 @@ app.add_middleware(
 DEFAULT_TASKS_CSV_PATH = "/root/.config/recurrator/tasks.csv"
 
 
-def _resolve_csv_path(csv: str = None) -> str:
+def _resolve_csv_path(csv: str | None = None) -> str:
     """Resolve CSV path from query parameter or default."""
     return csv or DEFAULT_TASKS_CSV_PATH
 

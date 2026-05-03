@@ -36,7 +36,7 @@ def compute_due_date(latest_date: date, recurrence_days: int) -> date:
     return latest_date + timedelta(days=recurrence_days)
 
 
-def keep_four_dates(dates: list[date | None], new_date: date) -> list[date | None]:
+def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | None]:
     valid_dates = [d for d in dates if d is not None]
     all_dates = valid_dates + [new_date]
     all_dates.sort()

@@ -1,5 +1,5 @@
 import typer
-import requests
+import requests  # type: ignore[import-untyped]
 
 app = typer.Typer(no_args_is_help=True)
 

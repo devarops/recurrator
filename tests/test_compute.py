@@ -71,8 +71,8 @@ def test_compute_due_date():
     assert obtained_due_date == expected_due_date
 
 
-def test_keep_four_dates():
-    """Verify compute_intervals correctly handles exactly four dates."""
+def test_filter_four_dates():
+    """Verify filter_four_dates returns the four most recent dates."""
     old_dates = _date_list(
         None,
         None,
@@ -86,7 +86,7 @@ def test_keep_four_dates():
         date(2024, 1, 4),
         new_date,
     )
-    obtained_dates = rc.keep_four_dates(old_dates, new_date)
+    obtained_dates = rc.filter_four_dates(old_dates, new_date)
     assert obtained_dates == expected_dates
 
     old_dates = _date_list(
@@ -102,5 +102,5 @@ def test_keep_four_dates():
         date(2024, 1, 2),
         date(2024, 1, 4),
     )
-    obtained_dates = rc.keep_four_dates(old_dates, new_date)
+    obtained_dates = rc.filter_four_dates(old_dates, new_date)
     assert obtained_dates == expected_dates

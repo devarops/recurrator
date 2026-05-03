@@ -1,4 +1,3 @@
-import pytest
 from datetime import date
 
 import recurrator.io as io
