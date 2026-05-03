@@ -33,7 +33,7 @@ Separation of concerns across markdown files:
 
 | File | Audience | Purpose | Change Frequency |
 |------|-----------|---------|------------------|
-| **README.md** | End user (finale user) | What the app does, how to use it | Rare |
+| **README.md** | End user | What the app does, how to use it | Rare |
 | **AGENTS.md** | Developer | Constants, conventions, slow-changing rules and patterns | Very slow |
 | **TODO.md** | Developer | Active work items, current Gold, implementation status | Frequent |
 
