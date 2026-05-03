@@ -2,6 +2,7 @@
 
 ## Gold
 - [ ] **POST /tasks/{id}/done API endpoint**: Mark task as done.
+  - [ ] **update_task_as_done()**: Function to rotate dates and reset skip_count in CSV.
 
 ## API Endpoints
 
