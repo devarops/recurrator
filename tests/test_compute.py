@@ -87,4 +87,21 @@ def test_keep_four_dates():
         new_date,
     )
     obtained_dates = rc.keep_four_dates(old_dates, new_date)
-    assert True
+    assert obtained_dates == expected_dates
+
+
+    old_dates = _date_list(
+        date(2024, 1, 4),
+        None,
+        date(2024, 1, 2),
+        None,
+    )
+    new_date = date(2024, 1, 1)
+    expected_dates = _date_list(
+        None,
+        new_date,
+        date(2024, 1, 2),
+        date(2024, 1, 4),
+    )
+    obtained_dates = rc.keep_four_dates(old_dates, new_date)
+    assert obtained_dates == expected_dates
