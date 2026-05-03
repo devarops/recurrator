@@ -88,8 +88,15 @@ def test_import_dates_from_csv():
 
 def test_export_dates_to_csv():
     """Verify export_dates_to_csv correctly writes dates to CSV file."""
+    import hashlib
+
     task_id = 2
     csv_path = "tests/data/test_two_contexts.csv"
+
+    # Capture checksum before test
+    with open(csv_path, "rb") as f:
+        original_checksum = hashlib.md5(f.read()).hexdigest()
+
     expected_dates = [
         None,
         None,
@@ -99,6 +106,7 @@ def test_export_dates_to_csv():
     io.export_dates_to_csv(task_id, expected_dates, csv_path)
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == expected_dates
+
     # Undo changes to CSV file for other tests
     original_dates = [
         None,
@@ -109,3 +117,8 @@ def test_export_dates_to_csv():
     io.export_dates_to_csv(task_id, original_dates, csv_path)
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == original_dates
+
+    # Verify CSV file is unchanged after undo (no invisible modifications)
+    with open(csv_path, "rb") as f:
+        final_checksum = hashlib.md5(f.read()).hexdigest()
+    assert final_checksum == original_checksum, "CSV was modified after undo"
