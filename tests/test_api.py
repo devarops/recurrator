@@ -1,7 +1,5 @@
 from fastapi.testclient import TestClient
-import pytest
 
-# This will fail because recurrator.api doesn't exist yet
 from recurrator.api import app
 
 client = TestClient(app)
