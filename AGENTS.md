@@ -6,6 +6,17 @@ If more than six tasks share the maximum skip count, selection is refined by cho
 Completing a task resets its skip count, while skipping a task increments it by one.
 Storage should be abstracted, with an initial implementation using flat files such as CSV or JSON and the option to migrate to a relational database.
 
+
+```shell
+$ docker compose run --rm -it --name recurrator_ci cli bash
+# make init
+```
+
+```shell
+docker exec recurrator_ci make tests
+```
+
+
 ### Architecture: API-First with Optional CLI Wrapper
 
 The system uses a **layered, API-first design**:

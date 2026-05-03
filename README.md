@@ -10,7 +10,7 @@ You do not see future tasks or manage scheduling rules.
 
 ### Start the API Server
 ```bash
-docker-compose up
+docker compose up
 ```
 
 The API will be available at `http://localhost:8000`

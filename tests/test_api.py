@@ -7,7 +7,7 @@ client = TestClient(app)
 
 def test_get_single_task_id():
     """Verify GET /tasks/ returns a list of task ID objects."""
-    response = client.get("/tasks/")
+    response = client.get("/tasks/?csv=tests/data/test_single_task.csv")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -29,7 +29,7 @@ def test_get_multiple_task_ids():
 
 def test_get_task_by_id_default_csv():
     """Verify GET /tasks/{id} returns the correct task details."""
-    response = client.get("/tasks/8")
+    response = client.get("/tasks/8?csv=tests/data/test_single_task.csv")
 
     expected_status_code = 200
     obtained_status_code = response.status_code

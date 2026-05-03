@@ -1,7 +1,7 @@
 import typer
 import requests
 
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
 API_BASE_URL = "http://api:8000"
 
@@ -14,10 +14,16 @@ def _print_task_ids(tasks):
 
 
 @app.command()
-def list_all(name: str = typer.Argument(None)):
+def version():
+    """Show the version of recurrator."""
+    typer.echo("recurrator v0.1.0")
+
+
+@app.command(name="list-all")
+def list_all(csv: str = typer.Option(..., "--csv", help="Path to CSV file")):
     """List all tasks."""
     try:
-        response = requests.get(f"{API_BASE_URL}/tasks/")
+        response = requests.get(f"{API_BASE_URL}/tasks/", params={"csv": csv})
         response.raise_for_status()
         tasks = response.json()
         _print_task_ids(tasks)

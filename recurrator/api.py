@@ -12,7 +12,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DEFAULT_TASKS_CSV_PATH = "tests/data/test_single_task.csv"
+DEFAULT_TASKS_CSV_PATH = "/root/.config/recurrator/tasks.csv"
 
 
 def _resolve_csv_path(csv: str = None) -> str:
