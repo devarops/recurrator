@@ -99,3 +99,13 @@ def test_export_dates_to_csv():
     io.export_dates_to_csv(task_id, expected_dates, csv_path)
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == expected_dates
+    # Undo changes to CSV file for other tests
+    original_dates = [
+        None,
+        None,
+        date(2024, 1, 8),
+        date(2024, 12, 7),
+    ]
+    io.export_dates_to_csv(task_id, original_dates, csv_path)
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert obtained_dates == original_dates

@@ -113,7 +113,7 @@ def import_tasks_from_csv(path: str) -> list[Task]:
         return [_row_to_task(row) for row in reader]
 
 
-def import_dates_from_csv(task_id: int, path: str):
+def import_dates_from_csv(task_id: int, path: str) -> list[date | None] | None:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -127,7 +127,7 @@ def import_dates_from_csv(task_id: int, path: str):
     return None
 
 
-def export_dates_to_csv(task_id, dates, path):
+def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> None:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
@@ -140,6 +140,7 @@ def export_dates_to_csv(task_id, dates, path):
             row["date_3"] = _format_date(dates[2])
             row["date_4"] = _format_date(dates[3])
 
+    assert fieldnames is not None
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
