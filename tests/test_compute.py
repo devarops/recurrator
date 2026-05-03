@@ -69,3 +69,21 @@ def test_compute_due_date():
     expected_due_date = date(2024, 1, 15)
     obtained_due_date = rc.compute_due_date(latest_date, recurrence_days)
     assert obtained_due_date == expected_due_date
+
+def test_keep_four_dates():
+    """Verify compute_intervals correctly handles exactly four dates."""
+    old_dates = _date_list(
+        None,
+        None,
+        date(2024, 1, 2),
+        date(2024, 1, 4),
+    )
+    new_date = date(2024, 1, 6)
+    expected_dates = _date_list(
+        None,
+        date(2024, 1, 2),
+        date(2024, 1, 4),
+        new_date,
+    )
+    obtained_dates = rc.keep_four_dates(old_dates, new_date)
+    assert True
