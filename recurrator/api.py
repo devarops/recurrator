@@ -1,8 +1,16 @@
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 
 from .io import Task, import_tasks_from_csv
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 DEFAULT_TASKS_CSV_PATH = "tests/data/test_single_task.csv"
 
