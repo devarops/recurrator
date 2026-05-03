@@ -142,32 +142,30 @@ def _format_csv_line(fieldnames: Sequence[str] | None, row: dict) -> str:
     return ",".join(line_parts)
 
 
-def _update_task_dates(row: dict, task_id: int, dates: list[date | None]) -> bool:
-    """Update date fields for matching task. Returns True if updated."""
-    if int(row["id"]) == task_id:
-        row["date_1"] = _format_date(dates[0])
-        row["date_2"] = _format_date(dates[1])
-        row["date_3"] = _format_date(dates[2])
-        row["date_4"] = _format_date(dates[3])
-        return True
-    return False
-
-
-def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) -> None:
-    with open(path, newline="") as f:
+def _update_task_in_csv(task_id: int, modify_row: callable, csv_path: str) -> None:
+    """Generic CSV update: read, apply modification callback, write back."""
+    with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
         fieldnames = reader.fieldnames
-
     for row in rows:
-        _update_task_dates(row, task_id, dates)
-
+        modify_row(row, task_id)
     assert fieldnames is not None
-    with open(path, "w", newline="") as f:
+    with open(csv_path, "w", newline="") as f:
         f.write(",".join(fieldnames) + "\n")
         for row in rows:
             line = _format_csv_line(fieldnames, row)
             f.write(line + "\n")
+
+
+def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) -> None:
+    def modify_row(row: dict, task_id: int) -> None:
+        if int(row["id"]) == task_id:
+            row["date_1"] = _format_date(dates[0])
+            row["date_2"] = _format_date(dates[1])
+            row["date_3"] = _format_date(dates[2])
+            row["date_4"] = _format_date(dates[3])
+    _update_task_in_csv(task_id, modify_row, path)
 
 
 def update_task_as_done(task_id: int, csv_path: str) -> None:
@@ -175,16 +173,7 @@ def update_task_as_done(task_id: int, csv_path: str) -> None:
 
 
 def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
-    with open(csv_path, newline="") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-        fieldnames = reader.fieldnames
-    for row in rows:
+    def modify_row(row: dict, task_id: int) -> None:
         if int(row["id"]) == task_id:
             row["skip_count"] = str(skip_count)
-    with open(csv_path, "w", newline="") as f:
-        assert fieldnames is not None
-        f.write(",".join(fieldnames) + "\n")
-        for row in rows:
-            line = _format_csv_line(fieldnames, row)
-            f.write(line + "\n")
+    _update_task_in_csv(task_id, modify_row, csv_path)
