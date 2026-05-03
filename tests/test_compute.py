@@ -70,6 +70,7 @@ def test_compute_due_date():
     obtained_due_date = rc.compute_due_date(latest_date, recurrence_days)
     assert obtained_due_date == expected_due_date
 
+
 def test_keep_four_dates():
     """Verify compute_intervals correctly handles exactly four dates."""
     old_dates = _date_list(
