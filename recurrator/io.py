@@ -1,4 +1,5 @@
 import csv
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
@@ -127,6 +128,20 @@ def import_dates_from_csv(task_id: int, path: str) -> list[date | None] | None:
     return None
 
 
+def _format_csv_line(fieldnames: Sequence[str] | None, row: dict) -> str:
+    """Format a CSV row, quoting only the description field."""
+    if fieldnames is None:
+        return ""
+    line_parts = []
+    for field in fieldnames:
+        value = row[field]
+        if field == "description":
+            line_parts.append(f'"{value}"')
+        else:
+            line_parts.append(value)
+    return ",".join(line_parts)
+
+
 def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> None:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
@@ -144,11 +159,5 @@ def export_dates_to_csv(task_id: int, dates: list[date | None], path: str) -> No
     with open(path, "w", newline="") as f:
         f.write(",".join(fieldnames) + "\n")
         for row in rows:
-            line_parts = []
-            for field in fieldnames:
-                value = row[field]
-                if field == "description":
-                    line_parts.append(f'"{value}"')
-                else:
-                    line_parts.append(value)
-            f.write(",".join(line_parts) + "\n")
+            line = _format_csv_line(fieldnames, row)
+            f.write(line + "\n")
