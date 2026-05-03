@@ -34,3 +34,7 @@ def compute_recurrence_days(intervals: Union[list[int], list[int | None]]) -> in
 def compute_due_date(latest_date: date, recurrence_days: int) -> date:
     """Return the next due date by adding recurrence_days to latest_date."""
     return latest_date + timedelta(days=recurrence_days)
+
+
+def keep_four_dates(dates: list[date | None], new_date: date) -> list[date | None]:
+    return dates[1:] + [new_date]
