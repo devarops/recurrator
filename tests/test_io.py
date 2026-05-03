@@ -90,11 +90,12 @@ def test_export_dates_to_csv():
     """Verify export_dates_to_csv correctly writes dates to CSV file."""
     task_id = 2
     csv_path = "tests/data/test_two_contexts.csv"
-    dates_to_export = [
+    expected_dates = [
         None,
         None,
         date(2025, 2, 1),
         date(2025, 11, 2),
     ]
-    io.export_dates_to_csv(task_id, dates_to_export, csv_path)
-    pass
+    io.export_dates_to_csv(task_id, expected_dates, csv_path)
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert obtained_dates == expected_dates
