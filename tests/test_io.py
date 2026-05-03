@@ -75,6 +75,13 @@ def test_import_dates_from_csv():
     """Verify import_dates_from_csv correctly parses dates from CSV file."""
     task_id = 2
     csv_path = "tests/data/test_two_contexts.csv"
-    dates = io.import_dates_from_csv(task_id, csv_path)
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert isinstance(obtained_dates, list)
 
-    assert isinstance(dates, list)
+    expected_dates = [
+        None,
+        None,
+        date(2024, 1, 8),
+        date(2024, 12, 7),
+    ]
+    assert obtained_dates == expected_dates
