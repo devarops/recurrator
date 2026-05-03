@@ -1,14 +1,22 @@
 # Project Roadmap
 
-## Gold (TDD Target)
+## Gold (Final Target System)
 
-### CLI command `list-all`
-**Description**: A Typer command that loads tasks from the default CSV file and displays them in a readable format showing: `id`, `description`, `context`, `skip_count`, `starred`, `latest_date`, `recurrence_days`, and `due_date` for each task.
+### API + CLI Architecture
+**Primary Interface**: FastAPI REST API (single source of truth)
+**Secondary Interface**: CLI thin wrapper (optional, calls API)
+**Storage**: CSV at `~/.config/recurrator/tasks.csv` (mounted via Docker volume)
+**Deployment**: Docker Compose
 
-**Current Status**: 🚧 In Progress
-- ✅ Loads tasks from CSV
-- ✅ Prints task IDs
-- ⏳ Remaining: Display all required fields in readable format
+**Features**:
+- ✅ API: `GET /tasks/` — List task IDs only
+- ⏳ API: `GET /tasks/:id` — Get single task with all fields
+- ⏳ API: `POST /tasks/:id/done` — Mark task as done (resets skip_count, rotates dates)
+- ⏳ CLI: `list-all`, `show-task`, `mark-done` (thin wrappers calling API)
+
+**Current Vertical Slice**: API Layer - List Tasks
+- Status: 🚧 In Progress
+- Next: Implement `GET /tasks/` endpoint returning list of task IDs
 
 ---
 
@@ -29,8 +37,18 @@
 ### Data Classes (io.py)
 - ✅ `ComputedDates` — Dataclass grouping computed date attributes
 
-### CLI Commands (cli.py)
-- 🚧 `list-all` — List all tasks with computed fields
+### API Functions (api.py) — Planned
+- ⏳ `GET /tasks/` endpoint
+- ⏳ `GET /tasks/:id` endpoint
+- ⏳ `POST /tasks/:id/done` endpoint
+
+### Write Operations (services.py) — Planned
+- ⏳ `mark_task_done(task_id)` — Update task on completion
+
+### CLI Commands (cli.py) — Refactoring Pending
+- 🚧 `list-all` — Currently prints task IDs; needs refactoring to call API
+- ⏳ `show-task` — Thin wrapper around `GET /tasks/:id`
+- ⏳ `mark-done` — Thin wrapper around `POST /tasks/:id/done`
 
 ---
 
@@ -46,6 +64,27 @@
 - Move import to module level (PEP 8 standard)
 - Extract magic string constant: `DEFAULT_TASKS_CSV_PATH`
 - Extract function: `_print_task_ids()` for output logic
+
+---
+
+## Mark-Done Specification
+
+When `POST /tasks/:id/done` is called:
+
+1. **Skip Count**: Reset to 0
+2. **Completion Dates Rotation** (CSV columns):
+   - Drop previous `date_1` (oldest completion)
+   - Shift: `date_2` → `date_1`
+   - Shift: `date_3` → `date_2`
+   - Shift: `date_4` → `date_3`
+   - Set: `date_4` ← today's date (ISO 8601)
+3. **Skipped Date**: Leave unchanged (handled by `compute_latest_date()`)
+4. **Recurrence & Due Date**: 
+   - **NOT recalculated on completion** (will be handled by separate batch process at midnight)
+   - Remain as-is until next scheduled recalculation
+5. **Response**: `{"status": "success", "id": <id>}`
+
+**Implementation**: New function `mark_task_done(task_id: int) -> bool` in `io.py` or `services.py`
 
 ---
 

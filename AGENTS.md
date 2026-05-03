@@ -1,11 +1,31 @@
 The system is a cloud-based, single-user API with a minimal HTML interface limited to listing today's tasks, retrieving a single task, and marking completion or skip actions.
-Task creation, updates, and deletion are handled through CLI or direct API access.
+Task creation, updates, and deletion are handled through API or CLI access.
 Each task stores the timestamps of its last four completions, and the next due date is computed as the median interval derived from those completions.
 Scheduling is deterministic and executed via a lightweight background process that runs at midnight.
 Task selection is capped at six per day and is driven by a prioritization algorithm that first ranks tasks by consecutive skip count.
 If more than six tasks share the maximum skip count, selection is refined by choosing three tasks with longer recurrence intervals and three with the oldest due dates.
 Completing a task resets its skip count, while skipping a task increments it by one.
 Storage should be abstracted, with an initial implementation using flat files such as CSV or JSON and the option to migrate to a relational database.
+
+### Architecture: API-First with Optional CLI Wrapper
+
+The system uses a **layered, API-first design**:
+
+- **FastAPI (Primary Interface)**: RESTful API serving reads and writes over HTTP
+- **CLI (Optional Wrapper)**: Thin Typer-based command-line client that calls the API
+- **Business Logic (Shared)**: Pure functions used by both API and CLI
+- **Storage (CSV)**: Persistent task data in CSV format at `~/.config/recurrator/tasks.csv`
+
+**Design Rationale**:
+- Single source of truth: API owns all business logic
+- No duplication: CLI and API both call the same functions
+- Scalability: Easy to add web UI or mobile app (all call the same API)
+- Flexibility: CLI remains useful for developers and scripting
+
+**Deployment**:
+- API runs in Docker container via `docker-compose up`
+- CLI runs locally and makes HTTP requests to the API
+- CSV data mounted as a Docker volume at `~/.config/recurrator/`
 
 ### Documentation Structure
 
@@ -19,15 +39,50 @@ Separation of concerns across markdown files:
 
 **Key principle**: If information changes frequently (e.g., "Functions Implemented", "Refactorings Applied"), it belongs in TODO.md, not AGENTS.md.
 
-### Minimal CLI (week one)
+### REST API Endpoints
 
-Using **Typer**
+#### Reads (GET)
+- `GET /tasks/` → Returns list of task IDs only
+  - Response: `[{"id": 8}]` (JSON array of IDs)
+  - Use case: Quick listing without full task data
+- `GET /tasks/:id` → Returns full task object
+  - Response: `{"id": 8, "description": "TypeLit.io", "context": "laptop", "skip_count": 1, "starred": false, "latest_date": "2025-08-19", "recurrence_days": 14, "due_date": "2025-09-02"}`
+  - Use case: Display complete task information
+
+#### Writes (POST)
+- `POST /tasks/:id/done` → Mark task as done
+  - Response: `{"status": "success", "id": 8}`
+  - Behavior:
+    1. Reset `skip_count` to 0
+    2. Rotate completion dates: shift `date_1` ← `date_2`, `date_2` ← `date_3`, `date_3` ← `date_4`, `date_4` ← today
+    3. Leave `skipped_date` unchanged (handled by `compute_latest_date()`)
+    4. Recalculation of `recurrence_days` and `due_date` handled by separate batch process (not immediate)
+
+#### Task Response Schema
+```json
+{
+  "id": 8,
+  "description": "TypeLit.io",
+  "context": "laptop",
+  "skip_count": 1,
+  "starred": false,
+  "latest_date": "2025-08-19",
+  "recurrence_days": 14,
+  "due_date": "2025-09-02"
+}
+```
+
+### CLI Commands (Optional Thin Wrapper)
+
+Using **Typer** — calls the API at `http://localhost:8000`
 
 Commands:
 
-* `list-all`
-* `list-today`
-* `mark-done --id <id>`
+* `recurrator list-all` → calls `GET /tasks/`
+* `recurrator show-task --id <id>` → calls `GET /tasks/:id`
+* `recurrator mark-done --id <id>` → calls `POST /tasks/:id/done`
+
+**Note**: CLI may not expose all API features. API is the primary interface.
 
 ### Naming Conventions
 
