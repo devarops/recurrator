@@ -120,3 +120,7 @@ def import_dates_from_csv(task_id: int, path: str):
                     _parse_date(row["date_4"]),
                 ]
     return None
+
+
+def export_dates_to_csv(task_id, dates, path):
+    pass
