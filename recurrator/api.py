@@ -7,6 +7,16 @@ app = FastAPI()
 DEFAULT_CSV_PATH = "tests/data/test_single_task.csv"
 
 
+def _resolve_csv_path(csv: str = None) -> str:
+    """Resolve CSV path from query parameter or default."""
+    return csv or DEFAULT_CSV_PATH
+
+
+def _find_task_by_id(tasks, task_id: int):
+    """Find a task by its ID in a list of tasks."""
+    return next((t for t in tasks if t.id == task_id), None)
+
+
 def _task_to_dict(task) -> dict:
     """Convert Task object to API response dictionary."""
     return {
@@ -23,14 +33,14 @@ def _task_to_dict(task) -> dict:
 
 @app.get("/tasks/")
 def get_tasks(csv: str = Query(None)):
-    csv_path = csv or DEFAULT_CSV_PATH
+    csv_path = _resolve_csv_path(csv)
     tasks = import_tasks_from_csv(csv_path)
     return [{"id": task.id} for task in tasks]
 
 
 @app.get("/tasks/{task_id}")
 def get_task(task_id: int, csv: str = Query(None)):
-    csv_path = csv or DEFAULT_CSV_PATH
+    csv_path = _resolve_csv_path(csv)
     tasks = import_tasks_from_csv(csv_path)
     task = next((t for t in tasks if t.id == task_id), None)
     if task is None:
