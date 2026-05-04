@@ -87,7 +87,7 @@ def test_import_dates_from_csv():
 
 
 def test_update_task_dates_in_csv():
-    """Verify update_task_dates_in_csv correctly writes dates to CSV file."""
+    """Verify update_task_dates correctly writes dates to CSV file."""
     import hashlib
 
     task_id = 2
@@ -103,7 +103,7 @@ def test_update_task_dates_in_csv():
         date(2025, 2, 1),
         date(2025, 11, 2),
     ]
-    io.update_task_dates_in_csv(task_id, expected_dates, csv_path)
+    io.update_task_dates(task_id, expected_dates, csv_path)
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == expected_dates
 
@@ -114,7 +114,7 @@ def test_update_task_dates_in_csv():
         date(2024, 1, 8),
         date(2024, 12, 7),
     ]
-    io.update_task_dates_in_csv(task_id, original_dates, csv_path)
+    io.update_task_dates(task_id, original_dates, csv_path)
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == original_dates
 
@@ -189,7 +189,7 @@ def test_update_task_as_done_in_csv():
         date(2024, 1, 8),
         date(2024, 12, 7),
     ]
-    io.update_task_dates_in_csv(task_id, original_dates, csv_path)
+    io.update_task_dates(task_id, original_dates, csv_path)
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == original_dates
 

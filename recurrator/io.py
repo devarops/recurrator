@@ -169,7 +169,7 @@ def _update_task_in_csv(
             f.write(line + "\n")
 
 
-def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) -> None:
+def update_task_dates(task_id: int, dates: list[date | None], path: str) -> None:
     def modify_row(row: dict, task_id: int) -> None:
         if int(row["id"]) == task_id:
             row["date_1"] = _format_date(dates[0])
@@ -183,7 +183,7 @@ def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) 
 def update_task_as_done(task_id: int, completion_date: date, csv_path: str) -> None:
     current_dates = import_dates_from_csv(task_id, csv_path)
     rotated_dates = filter_four_dates(current_dates, completion_date)
-    update_task_dates_in_csv(task_id, rotated_dates, csv_path)
+    update_task_dates(task_id, rotated_dates, csv_path)
     update_task_skip_count(task_id, SKIP_COUNT_RESET, csv_path)
 
 
