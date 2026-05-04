@@ -19,11 +19,11 @@ The API will be available at `http://localhost:8000`
 
 List all task IDs:
 ```bash
-curl http://localhost:8000/tasks/
+curl http://localhost:8000/task/
 ```
 
 Get a single task with all fields:
 ```bash
-curl http://localhost:8000/tasks/8
+curl http://localhost:8000/task/8
 ```
 
