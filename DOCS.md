@@ -1,6 +1,6 @@
 # Project State Analysis Based on Test Suite
 
-This document describes the observable state of the project as revealed by the test suite (18 passing tests).
+This document describes the observable state of the project as revealed by the test suite.
 
 ## API Endpoints
 

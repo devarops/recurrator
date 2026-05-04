@@ -8,7 +8,6 @@ If more than six tasks share the maximum skip count, selection is refined by cho
 Completing a task resets its skip count, while skipping a task increments it by one.
 Storage should be abstracted, with an initial implementation using flat files such as CSV or JSON and the option to migrate to a relational database.
 
-
 ```shell
 $ docker compose run --rm -it --name recurrator_ci cli bash
 # make init
@@ -17,7 +16,6 @@ $ docker compose run --rm -it --name recurrator_ci cli bash
 ```shell
 docker exec recurrator_ci make tests
 ```
-
 
 ### Architecture Principles
 
@@ -40,11 +38,9 @@ Separation of concerns across markdown files:
 | File | Audience | Purpose | Change Frequency |
 |------|-----------|---------|------------------|
 | **README.md** | End user | What the app does, how to use it | Rare |
-| **AGENTS.md** | Developer | Design principles, conventions, patterns | Very slow |
-| **IMPLEMENTATION.md** | Developer | Observable behavior from test suite | Only with code changes |
-| **TODO.md** | Developer | Active work items, current Gold, implementation status | Frequent |
-
-**Key principle**: If information changes frequently (e.g., "Functions Implemented", "Refactorings Applied"), it belongs in TODO.md, not AGENTS.md.
+| **DOCS.md** | Developer | Design principles, conventions, guidelines, patterns | Very slow |
+| **IMPLEMENTATION.md** | Developer | Observable behavior from test suite | Frequent |
+| **TODO.md** | Developer | Active work items, backlog, current Gold | Frequent |
 
 ### Naming Conventions
 
