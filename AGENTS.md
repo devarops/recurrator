@@ -15,7 +15,17 @@ This document outlines the lifecycle of development for the `recurrator` project
 - **Storage Strategy**: Storage is abstracted (currently flat-file CSV/JSON) to allow for future migration to a relational database.
 
 ### Architecture Principles
-The system follows an **API-first, layered architecture**:
+The system follows an **API-first, layered architecture** with strict one-way dependencies:
+
+**Layered Module Structure:**
+- **`models.py`**: Domain data structures (enums, dataclasses, constants). Zero external dependencies.
+- **`compute.py`**: Pure business logic functions. Depends only on `models`.
+- **`io.py`**: Persistence and I/O operations. Depends on `compute` and `models`.
+- **`api.py`** & **`cli.py`**: Interface layers. Depend on `io` and `models`.
+
+**Dependency Rule:** Lower layers NEVER import from higher layers. This prevents circular dependencies and maintains clean separation of concerns.
+
+**API Design:**
 - **API as Single Source of Truth**: All business logic resides in the API; the CLI contains zero business logic.
 - **Stateless CLI**: The CLI is a thin HTTP client. It does not import `io.py` or `compute.py` and communicates exclusively with the API.
 - **Mandatory Configuration**: The CLI enforces the `--csv` parameter to ensure data consistency on the API side.
@@ -41,15 +51,15 @@ The system follows an **API-first, layered architecture**:
 ### Naming Conventions (Verbs → Nouns)
 Use `snake_case` and avoid abbreviations (e.g., `context` instead of `ctx`).
 
-**In-memory (Pure functions)**
-- **Verbs**: `compute`, `filter`, `get`, `is`, `set`
+**In-memory (Pure functions in `compute.py`)**
+- **Verbs**: `compute`, `filter`, `is`
 - **Nouns**: `description`, `due_date`, `intervals`, `recurrence_days`, `task`
 - *Example*: `compute_recurrence_days(intervals)`
 
-**Disk I/O (Persistence)**
-- **Verbs**: `import`, `export`, `create`, `update`, `remove`
+**Disk I/O (Persistence in `io.py`)**
+- **Verbs**: `import`, `export`, `get`, `set`, `create`, `update`, `remove`
 - **Nouns**: `tasks`, `csv`
-- *Example*: `update_task_as_done(task_id, completion_date, csv_path)`
+- *Example*: `get_task_by_id(task_id, csv_path)`, `update_task_as_done(task_id, completion_date, csv_path)`
 
 ### Data Modeling & CSV Mapping
 - **Task Object Design**: Raw CSV dates (`date_1` to `date_4`) are NOT exposed as attributes. Instead, use computed properties like `latest_date` and `recurrence_days`.
@@ -74,9 +84,11 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 ```
 
 ### Module Hygiene
-- **Imports**: Use explicit imports in `__init__.py`. Group imports by "Internal Pure Functions" vs "I/O Utilities."
+- **Imports**: Use explicit imports in `__init__.py`. Group imports by layer: "Data models", "Internal Pure Functions", "I/O Utilities".
+- **Data Models**: Domain constants and data classes belong in `models.py` (e.g., `SKIP_COUNT_RESET`, `DEFAULT_RECURRENCE_DAYS`, `Context`, `Task`).
 - **Parameter Ordering**: `task_id` (specific) → specific parameters → `csv_path` (general).
 - **Private Helpers**: Prefix internal-only functions with `_` and do not expose them in `__init__.py`.
+- **Dependency Direction**: Enforce strict one-way dependencies. Never import from higher layers into lower layers.
 
 ---
 
@@ -86,10 +98,14 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 ### Development Environment
 ```shell
 # Initialize environment
-$ docker compose run --rm -it --name recurrator_ci cli bash
-# make init
+docker compose run --rm -it --name recurrator_ci cli bash
 
-# Run test suite
+# Inside container:
+make install
+make tests
+
+# Alternatively, outside container:
+docker exec recurrator_ci make init
 docker exec recurrator_ci make tests
 ```
 
