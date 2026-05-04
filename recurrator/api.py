@@ -54,3 +54,8 @@ def get_task(task_id: int, csv: str = Query(None)):
     if task is None:
         return {"error": "Task not found"}, 404
     return _task_to_dict(task)
+
+
+@app.post("/task/{task_id}/done")
+def mark_task_done(task_id: int, csv: str = Query(None)):
+    return {}
