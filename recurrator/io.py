@@ -123,7 +123,7 @@ def import_tasks_from_csv(path: str) -> list[Task]:
         return [_row_to_task(row) for row in reader]
 
 
-def import_dates_from_csv(task_id: int, path: str) -> list[date | None] | None:
+def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -134,7 +134,7 @@ def import_dates_from_csv(task_id: int, path: str) -> list[date | None] | None:
                     _parse_date(row["date_3"]),
                     _parse_date(row["date_4"]),
                 ]
-    return None
+    raise ValueError(f"Task {task_id} not found in {path}")
 
 
 def _format_csv_line(fieldnames: Sequence[str] | None, row: dict) -> str:
