@@ -20,7 +20,7 @@ def test_get_single_task_id():
 
 def test_get_multiple_task_ids():
     """Verify GET /tasks/ returns a list of task ID objects when multiple tasks are present."""
-    response = client.get("/tasks/?csv=tests/data/test_two_contexts.csv")
+    response = client.get("/tasks/?csv=tests/data/test_three_tasks.csv")
 
     expected_data = [{"id": 2}, {"id": 3}, {"id": 5}]
     obtained_data = response.json()
@@ -51,7 +51,7 @@ def test_get_task_by_id_default_csv():
 
 def test_get_task_by_id_alternative_csv():
 
-    response = client.get("/tasks/3?csv=tests/data/test_two_contexts.csv")
+    response = client.get("/tasks/3?csv=tests/data/test_three_tasks.csv")
 
     expected_data = {
         "id": 3,

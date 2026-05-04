@@ -52,7 +52,7 @@ def test_import_tasks_from_csv_single_task():
 
 def test_import_tasks_from_csv_two_contexts():
     """Verify import_tasks_from_csv correctly handles multiple contexts in CSV file."""
-    csv_path = "tests/data/test_two_contexts.csv"
+    csv_path = "tests/data/test_three_tasks.csv"
     task_list = io.import_tasks_from_csv(csv_path)
 
     # Returns a list with three Tasks
@@ -73,7 +73,7 @@ def test_import_tasks_from_csv_two_contexts():
 def test_import_dates_from_csv():
     """Verify import_dates_from_csv correctly parses dates from CSV file."""
     task_id = 2
-    csv_path = "tests/data/test_two_contexts.csv"
+    csv_path = "tests/data/test_three_tasks.csv"
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert isinstance(obtained_dates, list)
 
@@ -91,7 +91,7 @@ def test_update_task_dates_in_csv():
     import hashlib
 
     task_id = 2
-    csv_path = "tests/data/test_two_contexts.csv"
+    csv_path = "tests/data/test_three_tasks.csv"
 
     # Capture checksum before test
     with open(csv_path, "rb") as f:
@@ -129,7 +129,7 @@ def test_update_task_skip_count_in_csv():
     import hashlib
 
     task_id = 2
-    csv_path = "tests/data/test_two_contexts.csv"
+    csv_path = "tests/data/test_three_tasks.csv"
 
     # Capture checksum before test
     with open(csv_path, "rb") as f:
@@ -157,7 +157,7 @@ def test_update_task_as_done_in_csv():
     import hashlib
 
     task_id = 2
-    csv_path = "tests/data/test_two_contexts.csv"
+    csv_path = "tests/data/test_three_tasks.csv"
     completion_date = date(2025, 2, 28)
 
     # Capture checksum before test
