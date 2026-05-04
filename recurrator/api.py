@@ -39,14 +39,14 @@ def _task_to_dict(task: Task) -> dict:
     }
 
 
-@app.get("/tasks/")
+@app.get("/task/")
 def get_tasks(csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     tasks = import_tasks_from_csv(csv_path)
     return [{"id": task.id} for task in tasks]
 
 
-@app.get("/tasks/{task_id}")
+@app.get("/task/{task_id}")
 def get_task(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     tasks = import_tasks_from_csv(csv_path)

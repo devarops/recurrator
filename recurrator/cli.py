@@ -23,7 +23,7 @@ def version():
 def list_all(csv: str = typer.Option(..., "--csv", help="Path to CSV file")):
     """List all tasks."""
     try:
-        response = requests.get(f"{API_BASE_URL}/tasks/", params={"csv": csv})
+        response = requests.get(f"{API_BASE_URL}/task/", params={"csv": csv})
         response.raise_for_status()
         tasks = response.json()
         _print_task_ids(tasks)

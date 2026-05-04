@@ -6,8 +6,8 @@ client = TestClient(app)
 
 
 def test_get_single_task_id():
-    """Verify GET /tasks/ returns a list of task ID objects."""
-    response = client.get("/tasks/?csv=tests/data/test_single_task.csv")
+    """Verify GET /task/ returns a list of task ID objects."""
+    response = client.get("/task/?csv=tests/data/test_single_task.csv")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -19,8 +19,8 @@ def test_get_single_task_id():
 
 
 def test_get_multiple_task_ids():
-    """Verify GET /tasks/ returns a list of task ID objects when multiple tasks are present."""
-    response = client.get("/tasks/?csv=tests/data/test_three_tasks.csv")
+    """Verify GET /task/ returns a list of task ID objects when multiple tasks are present."""
+    response = client.get("/task/?csv=tests/data/test_three_tasks.csv")
 
     expected_data = [{"id": 2}, {"id": 3}, {"id": 5}]
     obtained_data = response.json()
@@ -28,8 +28,8 @@ def test_get_multiple_task_ids():
 
 
 def test_get_task_by_id_default_csv():
-    """Verify GET /tasks/{id} returns the correct task details."""
-    response = client.get("/tasks/8?csv=tests/data/test_single_task.csv")
+    """Verify GET /task/{id} returns the correct task details."""
+    response = client.get("/task/8?csv=tests/data/test_single_task.csv")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -51,7 +51,7 @@ def test_get_task_by_id_default_csv():
 
 def test_get_task_by_id_alternative_csv():
 
-    response = client.get("/tasks/3?csv=tests/data/test_three_tasks.csv")
+    response = client.get("/task/3?csv=tests/data/test_three_tasks.csv")
 
     expected_data = {
         "id": 3,
