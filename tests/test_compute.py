@@ -104,3 +104,9 @@ def test_filter_four_dates():
     )
     obtained_dates = rc.filter_four_dates(old_dates, new_date)
     assert obtained_dates == expected_dates
+
+
+def test_get_task_by_id():
+
+    obtained_task = rc.get_task_by_id(3, "tests/data/test_two_contexts.csv")
+    assert isinstance(obtained_task, Task)
