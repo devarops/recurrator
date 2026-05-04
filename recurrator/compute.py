@@ -2,10 +2,7 @@ from datetime import date, timedelta
 from statistics import median
 from typing import Union
 
-from .models import Task  # noqa: F401
-
-# Default recurrence of two weeks when no interval data exists
-DEFAULT_RECURRENCE_DAYS = 14
+from .models import Task, DEFAULT_RECURRENCE_DAYS  # noqa: F401
 
 
 def compute_intervals(dates: list[date | None]) -> list[int]:

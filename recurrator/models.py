@@ -3,6 +3,7 @@ from datetime import date
 from enum import Enum
 
 SKIP_COUNT_RESET = 0
+DEFAULT_RECURRENCE_DAYS = 14
 
 
 class Context(Enum):
