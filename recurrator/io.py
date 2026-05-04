@@ -1,5 +1,5 @@
 import csv
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
@@ -151,7 +151,9 @@ def _format_csv_line(fieldnames: Sequence[str] | None, row: dict) -> str:
     return ",".join(line_parts)
 
 
-def _update_task_in_csv(task_id: int, modify_row: callable, csv_path: str) -> None:
+def _update_task_in_csv(
+    task_id: int, modify_row: Callable[[dict, int], None], csv_path: str
+) -> None:
     """Generic CSV update: read, apply modification callback, write back."""
     with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)
