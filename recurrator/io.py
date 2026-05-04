@@ -9,6 +9,7 @@ from .compute import (
     compute_intervals,
     compute_latest_date,
     compute_recurrence_days,
+    filter_four_dates,
 )
 
 
@@ -174,7 +175,7 @@ def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) 
 
 def update_task_as_done(task_id: int, completion_date: date, csv_path: str) -> None:
     current_dates = import_dates_from_csv(task_id, csv_path)
-    rotated_dates = [current_dates[1], current_dates[2], current_dates[3], completion_date]
+    rotated_dates = filter_four_dates(current_dates, completion_date)
     update_task_dates_in_csv(task_id, rotated_dates, csv_path)
     update_task_skip_count(task_id, SKIP_COUNT_RESET, csv_path)
 
