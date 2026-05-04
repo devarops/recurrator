@@ -20,6 +20,9 @@ class Context(Enum):
     LIMPIAR = "limpiar"
 
 
+SKIP_COUNT_RESET = 0
+
+
 @dataclass
 class ComputedDates:
     """Computed date attributes for a task."""
@@ -173,7 +176,7 @@ def update_task_as_done(task_id: int, completion_date: date, csv_path: str) -> N
     current_dates = import_dates_from_csv(task_id, csv_path)
     rotated_dates = [current_dates[1], current_dates[2], current_dates[3], completion_date]
     update_task_dates_in_csv(task_id, rotated_dates, csv_path)
-    update_task_skip_count(task_id, 0, csv_path)
+    update_task_skip_count(task_id, SKIP_COUNT_RESET, csv_path)
 
 
 def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
