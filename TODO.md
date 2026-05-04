@@ -8,6 +8,7 @@
 
 ## Refactoring
 - [ ] **Centralize Configuration**: Refactor to use config.json.
+- [ ] Change endpoints form `/tasks/` to `/task/` for consistency with singular resource naming.
 
 ---
 
@@ -34,7 +35,3 @@
 - [x] **Docker Compose**: Two-service setup.
 - [x] **All tests passing**: 18 tests.
 - [x] **CORS middleware**: file:// protocol support.
-
-## Refactoring
-- [x] **I/O Module**: Extract Function, Introduce Parameter Object, Standardize None Handling, Replace Magic Number, Fix Type Annotations, Simplify Function Names, Use filter_four_dates for Date Rotation.
-- [x] **API Module**: Extract Function, Add Type Hints, Rename Constant.
