@@ -1,4 +1,5 @@
 import recurrator.compute as rc
+import recurrator.io as io
 from datetime import date
 
 
@@ -109,4 +110,4 @@ def test_filter_four_dates():
 def test_get_task_by_id():
 
     obtained_task = rc.get_task_by_id(3, "tests/data/test_two_contexts.csv")
-    assert isinstance(obtained_task, Task)
+    assert isinstance(obtained_task, io.Task)

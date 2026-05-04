@@ -2,6 +2,8 @@ from datetime import date, timedelta
 from statistics import median
 from typing import Union
 
+from .models import Task
+
 # Default recurrence of two weeks when no interval data exists
 DEFAULT_RECURRENCE_DAYS = 14
 
@@ -52,6 +54,3 @@ def get_task_by_id(task_id: int, csv_path: str):
         if task.id == task_id:
             return task
     raise ValueError(f"Task {task_id} not found in {csv_path}")
-
-
-from .io import Task as Task  # noqa: E402, F401
