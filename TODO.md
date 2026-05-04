@@ -1,22 +1,22 @@
 # To Do
 
 ## Gold
-- [ ] **POST /tasks/{id}/done API endpoint**: Mark task as done.
+- [ ] **POST /task/{id}/done API endpoint**: Mark task as done.
 
 ## Features
 - [ ] **Gamification System**: Add point accumulation for completed tasks.
 
 ## Refactoring
 - [ ] **Centralize Configuration**: Refactor to use config.json.
-- [ ] Change endpoints form `/tasks/` to `/task/` for consistency with singular resource naming.
 
 ---
 
 # Done
 
 ## API Endpoints
-- [x] **GET /tasks/**: List task IDs.
-- [x] **GET /tasks/:id**: Get single task.
+- [x] **GET /task/**: List task IDs.
+- [x] **GET /task/{id}**: Get single task.
+- [x] **Change endpoints from `/tasks/` to `/task/`**: Singular resource naming consistency.
 
 ## Functions
 - [x] `compute_intervals(dates: list[date | None]) -> list[int]` (in `compute.py`): Compute intervals in days between consecutive non-None dates
@@ -33,5 +33,5 @@
 ## Infrastructure
 - [x] **FastAPI app**: Create FastAPI app.
 - [x] **Docker Compose**: Two-service setup.
-- [x] **All tests passing**: 18 tests.
+- [x] **All tests passing**: 19 tests.
 - [x] **CORS middleware**: file:// protocol support.
