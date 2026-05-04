@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from datetime import date
 from enum import Enum
 
+SKIP_COUNT_RESET = 0
+
 
 class Context(Enum):
     """Valid task contexts."""
@@ -9,9 +11,6 @@ class Context(Enum):
     CASA = "casa"
     LAPTOP = "laptop"
     LIMPIAR = "limpiar"
-
-
-SKIP_COUNT_RESET = 0
 
 
 @dataclass

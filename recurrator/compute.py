@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from statistics import median
 from typing import Union
 
-from .models import Task
+from .models import Task  # noqa: F401
 
 # Default recurrence of two weeks when no interval data exists
 DEFAULT_RECURRENCE_DAYS = 14
