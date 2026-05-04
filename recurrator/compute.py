@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from statistics import median
 from typing import Union
 
-from .models import Task, DEFAULT_RECURRENCE_DAYS  # noqa: F401
+from .models import DEFAULT_RECURRENCE_DAYS
 
 
 def compute_intervals(dates: list[date | None]) -> list[int]:
@@ -41,13 +41,3 @@ def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | N
     all_dates.sort()
     result = [None] * (4 - len(all_dates)) + all_dates
     return result[:4]
-
-
-def get_task_by_id(task_id: int, csv_path: str):
-    from .io import import_tasks_from_csv
-
-    tasks = import_tasks_from_csv(csv_path)
-    for task in tasks:
-        if task.id == task_id:
-            return task
-    raise ValueError(f"Task {task_id} not found in {csv_path}")

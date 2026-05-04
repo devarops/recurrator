@@ -150,3 +150,23 @@ def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None
             row["skip_count"] = str(skip_count)
 
     _update_task_in_csv(task_id, modify_row, csv_path)
+
+
+def get_task_by_id(task_id: int, csv_path: str) -> Task:
+    """Get a task by ID from a CSV file.
+
+    Args:
+        task_id: The task ID to find
+        csv_path: Path to the CSV file
+
+    Returns:
+        Task object matching the ID
+
+    Raises:
+        ValueError: If task not found
+    """
+    tasks = import_tasks_from_csv(csv_path)
+    for task in tasks:
+        if task.id == task_id:
+            return task
+    raise ValueError(f"Task {task_id} not found in {csv_path}")
