@@ -4,14 +4,14 @@ This document describes the observable state of the project as revealed by the t
 
 ## API Endpoints
 
-### GET /tasks/
+### GET /task/
 - Returns a JSON array of task ID objects
 - Each object contains an `id` field (integer)
 - Query parameter: `csv` (path to CSV file)
 - Returns list ordered by task ID when multiple tasks present
 - Status code: 200
 
-### GET /tasks/{id}
+### GET /task/{id}
 - Returns full task object as JSON
 - Query parameter: `csv` (path to CSV file)
 - Status code: 200
