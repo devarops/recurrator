@@ -158,21 +158,40 @@ def test_update_task_as_done_in_csv():
 
     task_id = 2
     csv_path = "tests/data/test_two_contexts.csv"
+    completion_date = date(2025, 2, 28)
 
     # Capture checksum before test
     with open(csv_path, "rb") as f:
         original_checksum = hashlib.md5(f.read()).hexdigest()
 
     expected_skip_count = 0
-    io.update_task_as_done(task_id, csv_path)
+    io.update_task_as_done(task_id, completion_date, csv_path)
     obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
     assert obtained_skip_count == expected_skip_count
+
+    expected_dates = [
+        None,
+        date(2024, 1, 8),
+        date(2024, 12, 7),
+        date(2025, 2, 28),
+    ]
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert obtained_dates == expected_dates
 
     # Undo changes to CSV file for other tests
     original_skip_count = 10
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
     obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
     assert obtained_skip_count == original_skip_count
+    original_dates = [
+        None,
+        None,
+        date(2024, 1, 8),
+        date(2024, 12, 7),
+    ]
+    io.update_task_dates_in_csv(task_id, original_dates, csv_path)
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert obtained_dates == original_dates
 
     # Verify CSV file is unchanged after undo (no invisible modifications)
     with open(csv_path, "rb") as f:

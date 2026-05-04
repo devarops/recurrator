@@ -165,6 +165,7 @@ def update_task_dates_in_csv(task_id: int, dates: list[date | None], path: str) 
             row["date_2"] = _format_date(dates[1])
             row["date_3"] = _format_date(dates[2])
             row["date_4"] = _format_date(dates[3])
+
     _update_task_in_csv(task_id, modify_row, path)
 
 
@@ -176,4 +177,5 @@ def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None
     def modify_row(row: dict, task_id: int) -> None:
         if int(row["id"]) == task_id:
             row["skip_count"] = str(skip_count)
+
     _update_task_in_csv(task_id, modify_row, csv_path)
