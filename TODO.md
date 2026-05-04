@@ -24,7 +24,7 @@
 - [x] `_parse_date(date_str) -> date | None` (in `io.py`): Helper to parse ISO 8601 strings, returns None for "NA"
 - [x] `_row_to_task(row: dict) -> Task` (in `io.py`): Helper to convert CSV row to Task object
 - [x] `import_tasks_from_csv(path) -> list[Task]` (in `io.py`): Import tasks from CSV file
-- [x] `update_task_as_done(task_id, csv_path) -> None` (in `io.py`): Reset skip_count to 0 in CSV
+- [x] `update_task_as_done(task_id, completion_date, csv_path) -> None` (in `io.py`): Mark task as done by rotating completion dates and resetting skip_count to 0
 
 ## Features
 - [x] **Static Frontend**: HTML task viewer with Pico.css.
@@ -36,5 +36,5 @@
 - [x] **CORS middleware**: file:// protocol support.
 
 ## Refactoring
-- [x] **I/O Module**: Extract Function, Introduce Parameter Object, Standardize None Handling, Replace Magic Number.
+- [x] **I/O Module**: Extract Function, Introduce Parameter Object, Standardize None Handling, Replace Magic Number, Fix Type Annotations, Simplify Function Names, Use filter_four_dates for Date Rotation.
 - [x] **API Module**: Extract Function, Add Type Hints, Rename Constant.
