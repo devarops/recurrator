@@ -66,3 +66,19 @@ def test_get_task_by_id_alternative_csv():
 
     obtained_data = response.json()
     assert obtained_data == expected_data
+
+
+def test_set_task_as_done():
+    """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
+    task_id = 5
+    response = client.post(
+        "/task/{task_id}/done?csv=tests/data/test_three_tasks.csv".format(task_id=task_id)
+    )
+
+    expected_status_code = 200
+    obtained_status_code = response.status_code
+    assert obtained_status_code == expected_status_code
+
+    expected_data = {"id": task_id, "skip_count": 0}
+    obtained_data = response.json()
+    assert obtained_data == expected_data
