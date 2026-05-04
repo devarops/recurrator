@@ -77,7 +77,12 @@ def _compute_dates(row: dict) -> ComputedDates:
     skipped_date = _parse_date(row["skipped_date"])
     latest_date = compute_latest_date(date_4, skipped_date)
 
-    dates = [_parse_date(row[f"date_{i}"]) for i in range(1, 5)]
+    dates = [
+        _parse_date(row["date_1"]),
+        _parse_date(row["date_2"]),
+        _parse_date(row["date_3"]),
+        _parse_date(row["date_4"]),
+    ]
     intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
 
