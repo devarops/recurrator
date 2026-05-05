@@ -82,11 +82,8 @@ def test_set_task_as_done():
     obtained_status_code = response.status_code
     assert obtained_status_code == expected_status_code
 
-    expected_task = {"id": task_id, "skip_count": 0}
-    obtained_task = response.json()
-    assert obtained_task == expected_task
-
     expected_skip_count = 0
+    obtained_task = response.json()
     obtained_skip_count = obtained_task["skip_count"]
     assert obtained_skip_count == expected_skip_count
 

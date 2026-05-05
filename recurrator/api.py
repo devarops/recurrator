@@ -65,4 +65,8 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     update_task_as_done(task_id, date.today(), csv_path)
 
     updated_task = get_task_by_id(task_id, csv_path)
-    return {"id": updated_task.id, "skip_count": updated_task.skip_count}
+    return {
+        "id": updated_task.id,
+        "skip_count": updated_task.skip_count,
+        "due_date": updated_task.due_date.isoformat(),
+    }
