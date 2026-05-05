@@ -29,11 +29,17 @@ function fetchTask(apiUrl) {
     return fetch(apiUrl).then(r => r.json());
 }
 
+function getQueryParams() {
+    return {
+        taskId: new URL(window.location).searchParams.get('id'),
+        csvParam: new URL(window.location).searchParams.get('csv')
+    };
+}
+
 function init(apiBaseUrl) {
     const taskElement = document.getElementById('task');
     const errorElement = document.getElementById('error');
-    const taskId = new URL(window.location).searchParams.get('id');
-    const csvParam = new URL(window.location).searchParams.get('csv');
+    const { taskId, csvParam } = getQueryParams();
     const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
 
     fetchTask(apiUrl)
