@@ -9,6 +9,7 @@
     <div id="task">Loading...</div>
     <div id="error" style="color: red;"></div>
 
+    <script src="main.js"></script>
     <script>
         const apiBaseUrl = 'http://localhost:8000';
         const taskElement = document.getElementById('task');
@@ -22,20 +23,7 @@
         fetch(apiUrl)
             .then(r => r.json())
             .then(task => {
-                taskElement.innerHTML = `
-                    <table>
-                        <tbody>
-                            <tr><td>ID</td><td>${task.id}</td></tr>
-                            <tr><td>Description</td><td>${task.description}</td></tr>
-                            <tr><td>Context</td><td>${task.context}</td></tr>
-                            <tr><td>Skip Count</td><td>${task.skip_count}</td></tr>
-                            <tr><td>Starred</td><td>${task.starred ? 'Yes' : 'No'}</td></tr>
-                            <tr><td>Latest Date</td><td>${task.latest_date}</td></tr>
-                            <tr><td>Recurrence</td><td>${task.recurrence_days} days</td></tr>
-                            <tr><td>Due Date</td><td>${task.due_date}</td></tr>
-                        </tbody>
-                    </table>
-                `;
+                taskElement.innerHTML = renderTask(task);
             })
             .catch(err => {
                 errorElement.innerHTML = `Error: ${err.message}`;
