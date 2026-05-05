@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import date
 
-from .io import Task, import_tasks_from_csv
+from .io import Task, import_tasks_from_csv, update_task_as_done, get_task_by_id
 
 app = FastAPI()
 
@@ -58,9 +59,6 @@ def get_task(task_id: int, csv: str = Query(None)):
 
 @app.post("/task/{task_id}/done")
 def post_task_done(task_id: int, csv: str = Query(None)):
-    from .io import update_task_as_done, get_task_by_id
-    from datetime import date
-
     csv_path = _resolve_csv_path(csv)
     update_task_as_done(task_id, date.today(), csv_path)
 
