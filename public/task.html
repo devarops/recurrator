@@ -11,7 +11,7 @@
 
     <script>
         const apiBaseUrl = 'http://localhost:8000';
-        const taskId = new URL(window.location).searchParams.get('id') || '8';
+        const taskId = new URL(window.location).searchParams.get('id');
         const csvParam = new URL(window.location).searchParams.get('csv');
         const apiUrl = csvParam 
             ? `${apiBaseUrl}/task/${taskId}?csv=${encodeURIComponent(csvParam)}`
