@@ -80,12 +80,8 @@ def test_set_task_as_done():
     original_checksum = _get_file_checksum(csv_path)
 
     task_id = 5
-    original_task = client.get(
-        f"/task/{task_id}?csv={csv_path}"
-    ).json()
-    response = client.post(
-        f"/task/{task_id}/done?csv={csv_path}"
-    )
+    original_task = client.get(f"/task/{task_id}?csv={csv_path}").json()
+    response = client.post(f"/task/{task_id}/done?csv={csv_path}")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
