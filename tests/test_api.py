@@ -81,10 +81,10 @@ def test_set_task_as_done():
 
     task_id = 5
     original_task = client.get(
-        "/task/{task_id}?csv={csv_path}".format(task_id=task_id, csv_path=csv_path)
+        f"/task/{task_id}?csv={csv_path}"
     ).json()
     response = client.post(
-        "/task/{task_id}/done?csv={csv_path}".format(task_id=task_id, csv_path=csv_path)
+        f"/task/{task_id}/done?csv={csv_path}"
     )
 
     expected_status_code = 200
