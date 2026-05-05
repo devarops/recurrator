@@ -11,6 +11,8 @@
 
     <script>
         const apiBaseUrl = 'http://localhost:8000';
+        const taskElement = document.getElementById('task');
+        const errorElement = document.getElementById('error');
         const taskId = new URL(window.location).searchParams.get('id');
         const csvParam = new URL(window.location).searchParams.get('csv');
         const apiUrl = csvParam 
@@ -20,7 +22,7 @@
         fetch(apiUrl)
             .then(r => r.json())
             .then(task => {
-                document.getElementById('task').innerHTML = `
+                taskElement.innerHTML = `
                     <table>
                         <tbody>
                             <tr><td>ID</td><td>${task.id}</td></tr>
@@ -36,7 +38,7 @@
                 `;
             })
             .catch(err => {
-                document.getElementById('error').innerHTML = `Error: ${err.message}`;
+                errorElement.innerHTML = `Error: ${err.message}`;
             });
     </script>
 </body>
