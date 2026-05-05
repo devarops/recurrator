@@ -51,9 +51,11 @@ function init(apiBaseUrl) {
     fetchTask(apiUrl)
         .then(task => {
             taskElement.innerHTML = renderTask(task);
+            errorElement.hidden = true;
         })
         .catch(err => {
             errorElement.innerHTML = renderError(err);
+            errorElement.hidden = false;
         });
 }
 
