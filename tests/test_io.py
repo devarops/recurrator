@@ -155,43 +155,78 @@ def test_update_task_skip_count_in_csv():
 def test_update_task_as_done_in_csv():
     """Verify update_task_as_done_in_csv correctly updates dates and skip count."""
     import hashlib
-
-    task_id = 2
     csv_path = "tests/data/test_three_tasks.csv"
-    completion_date = date(2025, 2, 28)
-
-    # Capture checksum before test
+    # Capture state of CSV file before test to verify it is unchanged after undo
     with open(csv_path, "rb") as f:
         original_checksum = hashlib.md5(f.read()).hexdigest()
 
-    expected_skip_count = 0
-    io.update_task_as_done(task_id, completion_date, csv_path)
-    obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
-    assert obtained_skip_count == expected_skip_count
+    task_id = 2
+    original_task = io.get_task_by_id(task_id, csv_path)
+    original_skip_count = original_task.skip_count
 
-    expected_dates = [
-        None,
-        date(2024, 1, 8),
-        date(2024, 12, 7),
-        date(2025, 2, 28),
-    ]
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == expected_dates
-
-    # Undo changes to CSV file for other tests
-    original_skip_count = 10
-    io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
-    assert obtained_skip_count == original_skip_count
     original_dates = [
         None,
         None,
         date(2024, 1, 8),
         date(2024, 12, 7),
     ]
+    completion_date = date(2025, 2, 28)
+    expected_dates = [
+        None,
+        date(2024, 1, 8),
+        date(2024, 12, 7),
+        date(2025, 2, 28),
+    ]
+
+    expected_skip_count = 0
+    io.update_task_as_done(task_id, completion_date, csv_path)
+    updated_task = io.get_task_by_id(task_id, csv_path)
+    obtained_skip_count = updated_task.skip_count
+    assert obtained_skip_count == expected_skip_count
+
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert obtained_dates == expected_dates
+
+    # Undo changes to CSV file for other tests
+    io.update_task_skip_count(task_id, original_skip_count, csv_path)
+    restored_task = io.get_task_by_id(task_id, csv_path)
+    obtained_skip_count = restored_task.skip_count
+    assert obtained_skip_count == original_skip_count
+
     io.update_task_dates(task_id, original_dates, csv_path)
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == original_dates
+
+    # Task with all dates filled
+    task_id = 5
+    original_task = io.get_task_by_id(task_id, csv_path)
+    original_skip_count = original_task.skip_count
+    original_dates = [
+        date(2024, 8, 26),
+        date(2024, 10, 12),
+        date(2025, 1, 31),
+        date(2025, 3, 14),
+    ]
+    completion_date = date(2026, 5, 4)
+    expected_dates = [
+        date(2024, 10, 12),
+        date(2025, 1, 31),
+        date(2025, 3, 14),
+        completion_date,
+    ]
+
+    # Verify original dates before update
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert obtained_dates == original_dates
+
+    # Update task as done and verify changes
+    io.update_task_as_done(task_id, completion_date, csv_path)
+    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
+    assert obtained_dates == expected_dates
+
+    # Undo changes to CSV file for other tests
+    io.update_task_skip_count(task_id, original_skip_count, csv_path)
+    io.update_task_dates(task_id, original_dates, csv_path)
 
     # Verify CSV file is unchanged after undo (no invisible modifications)
     with open(csv_path, "rb") as f:
