@@ -1,7 +1,6 @@
 # To Do
 
 ## Gold
-- [ ] **POST /task/{id}/done API endpoint**: Mark task as done.
 
 ## Features
 - [ ] **Gamification System**: Add point accumulation for completed tasks.
@@ -12,6 +11,9 @@
 ---
 
 # Done
+
+## Gold
+- [x] **POST /task/{id}/done API endpoint**: Mark task as done.
 
 ## API Endpoints
 - [x] **GET /task/**: List task IDs.
