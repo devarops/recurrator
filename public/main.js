@@ -4,6 +4,12 @@ function buildApiUrl(baseUrl, taskId, csvParam) {
         : `${baseUrl}/task/${taskId}`;
 }
 
+function buildDoneUrl(baseUrl, taskId, csvParam) {
+    return csvParam
+        ? `${baseUrl}/task/${taskId}/done?csv=${encodeURIComponent(csvParam)}`
+        : `${baseUrl}/task/${taskId}/done`;
+}
+
 function renderTask(task) {
     return `
         <table>
@@ -18,6 +24,7 @@ function renderTask(task) {
                 <tr><td>Due Date</td><td>${task.due_date}</td></tr>
             </tbody>
         </table>
+        <button id="doneBtn">Mark as Done</button>
     `;
 }
 
@@ -27,6 +34,10 @@ function renderError(error) {
 
 function fetchTask(apiUrl) {
     return fetch(apiUrl).then(r => r.json());
+}
+
+function markTaskDone(apiUrl) {
+    return fetch(apiUrl, { method: 'POST' }).then(r => r.json());
 }
 
 function getQueryParams() {
@@ -52,6 +63,26 @@ function init(apiBaseUrl) {
         .then(task => {
             taskElement.innerHTML = renderTask(task);
             errorElement.hidden = true;
+
+            // Attach click handler to Done button
+            const doneBtn = document.getElementById('doneBtn');
+            doneBtn.addEventListener('click', () => {
+                const doneUrl = buildDoneUrl(apiBaseUrl, taskId, csvParam);
+                markTaskDone(doneUrl)
+                    .then(() => {
+                        // Reload the task to show updated data
+                        fetchTask(apiUrl)
+                            .then(updatedTask => {
+                                taskElement.innerHTML = renderTask(updatedTask);
+                                const newDoneBtn = document.getElementById('doneBtn');
+                                newDoneBtn.addEventListener('click', arguments.callee);
+                            });
+                    })
+                    .catch(err => {
+                        errorElement.innerHTML = renderError(err);
+                        errorElement.hidden = false;
+                    });
+            });
         })
         .catch(err => {
             errorElement.innerHTML = renderError(err);
