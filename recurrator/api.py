@@ -51,7 +51,7 @@ def get_tasks(csv: str = Query(None)):
 def get_task(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     tasks = import_tasks_from_csv(csv_path)
-    task = next((t for t in tasks if t.id == task_id), None)
+    task = _find_task_by_id(tasks, task_id)
     if task is None:
         return {"error": "Task not found"}, 404
     return _task_to_dict(task)
