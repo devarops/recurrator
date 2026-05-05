@@ -25,6 +25,10 @@ function renderError(error) {
     return `Error: ${error.message}`;
 }
 
+function fetchTask(apiUrl) {
+    return fetch(apiUrl).then(r => r.json());
+}
+
 function init(apiBaseUrl) {
     const taskElement = document.getElementById('task');
     const errorElement = document.getElementById('error');
@@ -32,8 +36,7 @@ function init(apiBaseUrl) {
     const csvParam = new URL(window.location).searchParams.get('csv');
     const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
 
-    fetch(apiUrl)
-        .then(r => r.json())
+    fetchTask(apiUrl)
         .then(task => {
             taskElement.innerHTML = renderTask(task);
         })
