@@ -24,7 +24,7 @@
                 taskElement.innerHTML = renderTask(task);
             })
             .catch(err => {
-                errorElement.innerHTML = `Error: ${err.message}`;
+                errorElement.innerHTML = renderError(err);
             });
     </script>
 </body>

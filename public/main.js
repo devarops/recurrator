@@ -20,3 +20,7 @@ function renderTask(task) {
         </table>
     `;
 }
+
+function renderError(error) {
+    return `Error: ${error.message}`;
+}
