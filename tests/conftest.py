@@ -1,4 +1,25 @@
 import hashlib
+from datetime import date
+
+# Test data constants
+TASK_2_ORIGINAL_DATES = [None, None, date(2024, 1, 8), date(2024, 12, 7)]
+TASK_2_UPDATED_DATES = [None, None, date(2025, 2, 1), date(2025, 11, 2)]
+TASK_2_COMPLETION_DATE = date(2025, 2, 28)
+TASK_2_EXPECTED_AFTER_COMPLETION = [None, date(2024, 1, 8), date(2024, 12, 7), date(2025, 2, 28)]
+
+TASK_5_ORIGINAL_DATES = [
+    date(2024, 8, 26),
+    date(2024, 10, 12),
+    date(2025, 1, 31),
+    date(2025, 3, 14),
+]
+TASK_5_COMPLETION_DATE = date(2026, 5, 4)
+TASK_5_EXPECTED_AFTER_COMPLETION = [
+    date(2024, 10, 12),
+    date(2025, 1, 31),
+    date(2025, 3, 14),
+    date(2026, 5, 4),
+]
 
 
 def _get_file_checksum(path: str) -> str:

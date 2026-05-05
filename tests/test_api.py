@@ -1,8 +1,11 @@
 from fastapi.testclient import TestClient
 from recurrator.api import app
 import recurrator.io as io
-from datetime import date
-from conftest import _get_file_checksum, _assert_file_unchanged
+from conftest import (
+    _get_file_checksum,
+    _assert_file_unchanged,
+    TASK_5_ORIGINAL_DATES,
+)
 
 client = TestClient(app)
 
@@ -102,12 +105,6 @@ def test_set_task_as_done():
 
     # Undo changes to CSV file for other tests
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    original_dates = [
-        date(2024, 8, 26),
-        date(2024, 10, 12),
-        date(2025, 1, 31),
-        date(2025, 3, 14),
-    ]
-    io.update_task_dates(task_id, original_dates, csv_path)
+    io.update_task_dates(task_id, TASK_5_ORIGINAL_DATES, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
