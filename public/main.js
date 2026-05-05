@@ -12,18 +12,22 @@ function buildDoneUrl(baseUrl, taskId, csvParam) {
     return buildUrlWithParams(baseUrl, `/task/${taskId}/done`, csvParam);
 }
 
+function renderTaskRow(label, value) {
+    return `<tr><td>${label}</td><td>${value}</td></tr>`;
+}
+
 function renderTask(task) {
     return `
         <table>
             <tbody>
-                <tr><td>ID</td><td>${task.id}</td></tr>
-                <tr><td>Description</td><td>${task.description}</td></tr>
-                <tr><td>Context</td><td>${task.context}</td></tr>
-                <tr><td>Skip Count</td><td>${task.skip_count}</td></tr>
-                <tr><td>Starred</td><td>${task.starred ? 'Yes' : 'No'}</td></tr>
-                <tr><td>Latest Date</td><td>${task.latest_date}</td></tr>
-                <tr><td>Recurrence</td><td>${task.recurrence_days} days</td></tr>
-                <tr><td>Due Date</td><td>${task.due_date}</td></tr>
+                ${renderTaskRow('ID', task.id)}
+                ${renderTaskRow('Description', task.description)}
+                ${renderTaskRow('Context', task.context)}
+                ${renderTaskRow('Skip Count', task.skip_count)}
+                ${renderTaskRow('Starred', task.starred ? 'Yes' : 'No')}
+                ${renderTaskRow('Latest Date', task.latest_date)}
+                ${renderTaskRow('Recurrence', `${task.recurrence_days} days`)}
+                ${renderTaskRow('Due Date', task.due_date)}
             </tbody>
         </table>
         <button id="doneBtn">Mark as Done</button>
