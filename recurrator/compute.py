@@ -36,9 +36,5 @@ def compute_due_date(latest_date: date, recurrence_days: int) -> date:
 
 
 def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | None]:
-    valid_dates = [d for d in dates if d is not None]
-    all_dates = valid_dates + [new_date]
-    all_dates.sort()
-    result = all_dates[-4:] if len(all_dates) > 4 else all_dates
-    result = [None] * (4 - len(result)) + result
-    return result
+    all_dates = sorted([d for d in dates if d is not None] + [new_date])[-4:]
+    return [None] * (4 - len(all_dates)) + all_dates
