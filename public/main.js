@@ -1,3 +1,9 @@
+function buildApiUrl(baseUrl, taskId, csvParam) {
+    return csvParam
+        ? `${baseUrl}/task/${taskId}?csv=${encodeURIComponent(csvParam)}`
+        : `${baseUrl}/task/${taskId}`;
+}
+
 function renderTask(task) {
     return `
         <table>
