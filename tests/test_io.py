@@ -5,6 +5,7 @@ from recurrator.io import Context
 from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
+    _verify_task_as_done,
     TASK_2_ORIGINAL_DATES,
     TASK_2_UPDATED_DATES,
     TASK_2_COMPLETION_DATE,
@@ -136,45 +137,22 @@ def test_update_task_as_done_in_csv():
     csv_path = "tests/data/test_three_tasks.csv"
     original_checksum = _get_file_checksum(csv_path)
 
-    task_id = 2
-    original_task = io.get_task_by_id(task_id, csv_path)
-    original_skip_count = original_task.skip_count
+    # Scenario 1: Task with partial dates (some None values)
+    _verify_task_as_done(
+        task_id=2,
+        csv_path=csv_path,
+        completion_date=TASK_2_COMPLETION_DATE,
+        expected_dates=TASK_2_EXPECTED_AFTER_COMPLETION,
+        original_dates=TASK_2_ORIGINAL_DATES,
+    )
 
-    expected_skip_count = 0
-    io.update_task_as_done(task_id, TASK_2_COMPLETION_DATE, csv_path)
-    updated_task = io.get_task_by_id(task_id, csv_path)
-    obtained_skip_count = updated_task.skip_count
-    assert obtained_skip_count == expected_skip_count
-
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == TASK_2_EXPECTED_AFTER_COMPLETION
-
-    # Undo changes to CSV file for other tests
-    io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    restored_task = io.get_task_by_id(task_id, csv_path)
-    obtained_skip_count = restored_task.skip_count
-    assert obtained_skip_count == original_skip_count
-
-    io.update_task_dates(task_id, TASK_2_ORIGINAL_DATES, csv_path)
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == TASK_2_ORIGINAL_DATES
-
-    # Task with all dates filled
-    task_id = 5
-    original_task = io.get_task_by_id(task_id, csv_path)
-    original_skip_count = original_task.skip_count
-
-    # Verify original dates before update
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == TASK_5_ORIGINAL_DATES
-
-    # Update task as done and verify changes
-    io.update_task_as_done(task_id, TASK_5_COMPLETION_DATE, csv_path)
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == TASK_5_EXPECTED_AFTER_COMPLETION
-
-    # Undo changes to CSV file for other tests
-    io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    io.update_task_dates(task_id, TASK_5_ORIGINAL_DATES, csv_path)
+    # Scenario 2: Task with all dates filled
+    _verify_task_as_done(
+        task_id=5,
+        csv_path=csv_path,
+        completion_date=TASK_5_COMPLETION_DATE,
+        expected_dates=TASK_5_EXPECTED_AFTER_COMPLETION,
+        original_dates=TASK_5_ORIGINAL_DATES,
+    )
 
     _assert_file_unchanged(csv_path, original_checksum)
