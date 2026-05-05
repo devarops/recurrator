@@ -22,6 +22,16 @@ def _format_date(d: date | None) -> str:
     return d.isoformat() if d is not None else "NA"
 
 
+def _parse_row_dates(row: dict) -> list[date | None]:
+    """Extract and parse the four date fields from a CSV row."""
+    return [
+        _parse_date(row["date_1"]),
+        _parse_date(row["date_2"]),
+        _parse_date(row["date_3"]),
+        _parse_date(row["date_4"]),
+    ]
+
+
 def _compute_dates(row: dict) -> ComputedDates:
     """Compute latest_date, recurrence_days, and due_date from CSV row.
 
@@ -34,12 +44,7 @@ def _compute_dates(row: dict) -> ComputedDates:
     skipped_date = _parse_date(row["skipped_date"])
     latest_date = compute_latest_date(date_4, skipped_date)
 
-    dates = [
-        _parse_date(row["date_1"]),
-        _parse_date(row["date_2"]),
-        _parse_date(row["date_3"]),
-        _parse_date(row["date_4"]),
-    ]
+    dates = _parse_row_dates(row)
     intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
 
@@ -85,12 +90,7 @@ def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
         reader = csv.DictReader(f)
         for row in reader:
             if int(row["id"]) == task_id:
-                return [
-                    _parse_date(row["date_1"]),
-                    _parse_date(row["date_2"]),
-                    _parse_date(row["date_3"]),
-                    _parse_date(row["date_4"]),
-                ]
+                return _parse_row_dates(row)
     raise ValueError(f"Task {task_id} not found in {path}")
 
 
