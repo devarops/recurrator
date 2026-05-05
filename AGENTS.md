@@ -34,8 +34,8 @@ The system follows an **API-first, layered architecture** with strict one-way de
 | File | Audience | Purpose | Change Frequency |
 |------|-----------|---------|------------------|
 | **README.md** | End user | What the app does, how to use it | Rare |
-| **DOCS.md** | Developer | Design principles, conventions, guidelines, patterns | Very slow |
-| **IMPLEMENTATION.md** | Developer | Observable behavior from test suite | Frequent |
+| **AGENTS.md** | Developer | Design principles, conventions, guidelines, patterns | Very slow |
+| **DOCS.md** | Developer | Observable behavior from test suite | Frequent |
 | **TODO.md** | Developer | Active work items, backlog, current Gold | Frequent |
 
 ---
