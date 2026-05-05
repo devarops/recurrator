@@ -36,9 +36,15 @@ function getQueryParams() {
     };
 }
 
+function getDomElements() {
+    return {
+        taskElement: document.getElementById('task'),
+        errorElement: document.getElementById('error')
+    };
+}
+
 function init(apiBaseUrl) {
-    const taskElement = document.getElementById('task');
-    const errorElement = document.getElementById('error');
+    const { taskElement, errorElement } = getDomElements();
     const { taskId, csvParam } = getQueryParams();
     const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
 
