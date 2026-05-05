@@ -33,13 +33,13 @@ class Task:
         context: Context,
         skip_count: int,
         starred: bool,
-        computed_dates: ComputedDates,
+        dates: ComputedDates,
     ):
         self.id = id
         self.description = description
         self.context = context
         self.skip_count = skip_count
         self.starred = starred
-        self.latest_date = computed_dates.latest_date
-        self.recurrence_days = computed_dates.recurrence_days
-        self.due_date = computed_dates.due_date
+        self.latest_date = dates.latest_date
+        self.recurrence_days = dates.recurrence_days
+        self.due_date = dates.due_date

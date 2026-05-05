@@ -59,7 +59,7 @@ def _compute_dates(row: dict) -> ComputedDates:
 
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
-    computed_dates = _compute_dates(row)
+    dates = _compute_dates(row)
 
     return Task(
         id=int(row["id"]),
@@ -67,7 +67,7 @@ def _row_to_task(row: dict) -> Task:
         context=Context(row["context"]),
         skip_count=int(row["skip_count"]),
         starred=bool(int(row["starred"])),
-        computed_dates=computed_dates,
+        dates=dates,
     )
 
 
