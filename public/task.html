@@ -10,11 +10,12 @@
     <div id="error" style="color: red;"></div>
 
     <script>
+        const apiBaseUrl = 'http://localhost:8000';
         const taskId = new URL(window.location).searchParams.get('id') || '8';
         const csvParam = new URL(window.location).searchParams.get('csv');
         const apiUrl = csvParam 
-            ? `http://localhost:8000/tasks/${taskId}?csv=${encodeURIComponent(csvParam)}`
-            : `http://localhost:8000/tasks/${taskId}`;
+            ? `${apiBaseUrl}/task/${taskId}?csv=${encodeURIComponent(csvParam)}`
+            : `${apiBaseUrl}/task/${taskId}`;
 
         fetch(apiUrl)
             .then(r => r.json())
