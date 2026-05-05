@@ -25,6 +25,16 @@ This document describes the observable state of the project as revealed by the t
   - `recurrence_days` (integer)
   - `due_date` (ISO 8601 date string)
 
+### POST /task/{id}/done
+- Marks a task as completed on the current date
+- Query parameter: `csv` (path to CSV file)
+- Status code: 200
+- Response format: Returns the updated task object with same fields as GET /task/{id}
+- Updates task state:
+  - Rotates completion dates (date_1 ← date_2 ← date_3 ← date_4 ← completion_date)
+  - Resets `skip_count` to 0
+  - Recomputes `due_date` based on updated dates
+
 ## CLI Commands
 
 ### help
