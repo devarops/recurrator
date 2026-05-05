@@ -62,20 +62,28 @@ function displayError(errorElement, error) {
     errorElement.hidden = false;
 }
 
-function attachDoneButtonHandler(doneBtn, context) {
+function markDoneAndRefresh(context) {
     const { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl } = context;
+    const doneUrl = buildDoneUrl(apiBaseUrl, taskId, csvParam);
 
+    return fetchJson(doneUrl, { method: 'POST' })
+        .then(() => fetchJson(apiUrl))
+        .then(updatedTask => {
+            displayTask(taskElement, errorElement, updatedTask);
+            return updatedTask;
+        })
+        .catch(err => {
+            displayError(errorElement, err);
+            throw err;
+        });
+}
+
+function attachDoneButtonHandler(doneBtn, context) {
     doneBtn.addEventListener('click', () => {
-        const doneUrl = buildDoneUrl(apiBaseUrl, taskId, csvParam);
-        fetchJson(doneUrl, { method: 'POST' })
-            .then(() => fetchJson(apiUrl))
-            .then(updatedTask => {
-                displayTask(taskElement, errorElement, updatedTask);
+        markDoneAndRefresh(context)
+            .then(() => {
                 const newDoneBtn = document.getElementById('doneBtn');
                 attachDoneButtonHandler(newDoneBtn, context);
-            })
-            .catch(err => {
-                displayError(errorElement, err);
             });
     });
 }
