@@ -2,6 +2,7 @@ from datetime import date
 
 import recurrator.io as io
 from recurrator.io import Context
+from conftest import _get_file_checksum, _assert_file_unchanged
 
 
 def test_import_tasks_from_csv_single_task():
@@ -88,14 +89,10 @@ def test_import_dates_from_csv():
 
 def test_update_task_dates_in_csv():
     """Verify update_task_dates correctly writes dates to CSV file."""
-    import hashlib
-
     task_id = 2
     csv_path = "tests/data/test_three_tasks.csv"
 
-    # Capture checksum before test
-    with open(csv_path, "rb") as f:
-        original_checksum = hashlib.md5(f.read()).hexdigest()
+    original_checksum = _get_file_checksum(csv_path)
 
     expected_dates = [
         None,
@@ -118,22 +115,15 @@ def test_update_task_dates_in_csv():
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert obtained_dates == original_dates
 
-    # Verify CSV file is unchanged after undo (no invisible modifications)
-    with open(csv_path, "rb") as f:
-        final_checksum = hashlib.md5(f.read()).hexdigest()
-    assert final_checksum == original_checksum, "CSV was modified after undo"
+    _assert_file_unchanged(csv_path, original_checksum)
 
 
 def test_update_task_skip_count_in_csv():
     """Verify update_task_skip_count_in_csv correctly updates skip count."""
-    import hashlib
-
     task_id = 2
     csv_path = "tests/data/test_three_tasks.csv"
 
-    # Capture checksum before test
-    with open(csv_path, "rb") as f:
-        original_checksum = hashlib.md5(f.read()).hexdigest()
+    original_checksum = _get_file_checksum(csv_path)
 
     expected_skip_count = 5
     io.update_task_skip_count(task_id, expected_skip_count, csv_path)
@@ -146,19 +136,13 @@ def test_update_task_skip_count_in_csv():
     obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
     assert obtained_skip_count == original_skip_count
 
-    # Verify CSV file is unchanged after undo (no invisible modifications)
-    with open(csv_path, "rb") as f:
-        final_checksum = hashlib.md5(f.read()).hexdigest()
-    assert final_checksum == original_checksum, "CSV was modified after undo"
+    _assert_file_unchanged(csv_path, original_checksum)
 
 
 def test_update_task_as_done_in_csv():
     """Verify update_task_as_done_in_csv correctly updates dates and skip count."""
-    import hashlib
     csv_path = "tests/data/test_three_tasks.csv"
-    # Capture state of CSV file before test to verify it is unchanged after undo
-    with open(csv_path, "rb") as f:
-        original_checksum = hashlib.md5(f.read()).hexdigest()
+    original_checksum = _get_file_checksum(csv_path)
 
     task_id = 2
     original_task = io.get_task_by_id(task_id, csv_path)
@@ -228,7 +212,4 @@ def test_update_task_as_done_in_csv():
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
     io.update_task_dates(task_id, original_dates, csv_path)
 
-    # Verify CSV file is unchanged after undo (no invisible modifications)
-    with open(csv_path, "rb") as f:
-        final_checksum = hashlib.md5(f.read()).hexdigest()
-    assert final_checksum == original_checksum, "CSV was modified after undo"
+    _assert_file_unchanged(csv_path, original_checksum)

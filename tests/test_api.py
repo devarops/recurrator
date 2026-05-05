@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from recurrator.api import app
 import recurrator.io as io
 from datetime import date
-import hashlib
+from conftest import _get_file_checksum, _assert_file_unchanged
 
 client = TestClient(app)
 
@@ -72,12 +72,9 @@ def test_get_task_by_id_alternative_csv():
 
 def test_set_task_as_done():
     """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
-    import hashlib
 
-    # Capture state of CSV file before test to verify it is unchanged after undo
     csv_path = "tests/data/test_three_tasks.csv"
-    with open(csv_path, "rb") as f:
-        original_checksum = hashlib.md5(f.read()).hexdigest()
+    original_checksum = _get_file_checksum(csv_path)
 
     task_id = 5
     original_task = client.get(
@@ -113,7 +110,4 @@ def test_set_task_as_done():
     ]
     io.update_task_dates(task_id, original_dates, csv_path)
 
-    # Verify CSV file is unchanged after undo (no invisible modifications)
-    with open(csv_path, "rb") as f:
-        final_checksum = hashlib.md5(f.read()).hexdigest()
-    assert final_checksum == original_checksum, "CSV was modified after undo"
+    _assert_file_unchanged(csv_path, original_checksum)
