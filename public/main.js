@@ -24,3 +24,20 @@ function renderTask(task) {
 function renderError(error) {
     return `Error: ${error.message}`;
 }
+
+function init(apiBaseUrl) {
+    const taskElement = document.getElementById('task');
+    const errorElement = document.getElementById('error');
+    const taskId = new URL(window.location).searchParams.get('id');
+    const csvParam = new URL(window.location).searchParams.get('csv');
+    const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
+
+    fetch(apiUrl)
+        .then(r => r.json())
+        .then(task => {
+            taskElement.innerHTML = renderTask(task);
+        })
+        .catch(err => {
+            errorElement.innerHTML = renderError(err);
+        });
+}

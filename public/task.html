@@ -11,21 +11,7 @@
 
     <script src="main.js"></script>
     <script>
-        const apiBaseUrl = 'http://localhost:8000';
-        const taskElement = document.getElementById('task');
-        const errorElement = document.getElementById('error');
-        const taskId = new URL(window.location).searchParams.get('id');
-        const csvParam = new URL(window.location).searchParams.get('csv');
-        const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
-
-        fetch(apiUrl)
-            .then(r => r.json())
-            .then(task => {
-                taskElement.innerHTML = renderTask(task);
-            })
-            .catch(err => {
-                errorElement.innerHTML = renderError(err);
-            });
+        init('http://localhost:8000');
     </script>
 </body>
 </html>
