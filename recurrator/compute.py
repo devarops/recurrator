@@ -39,5 +39,6 @@ def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | N
     valid_dates = [d for d in dates if d is not None]
     all_dates = valid_dates + [new_date]
     all_dates.sort()
-    result = [None] * (4 - len(all_dates)) + all_dates
-    return result[:4]
+    result = all_dates[-4:] if len(all_dates) > 4 else all_dates
+    result = [None] * (4 - len(result)) + result
+    return result
