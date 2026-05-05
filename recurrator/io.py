@@ -9,7 +9,7 @@ from .compute import (
     compute_recurrence_days,
     filter_four_dates,
 )
-from .models import Context, ComputedDates, Task, SKIP_COUNT_RESET
+from .models import Context, Dates, Task, SKIP_COUNT_RESET
 
 
 def _parse_date(date_str: str) -> date | None:
@@ -32,11 +32,11 @@ def _parse_row_dates(row: dict) -> list[date | None]:
     ]
 
 
-def _compute_dates(row: dict) -> ComputedDates:
+def _compute_dates(row: dict) -> Dates:
     """Compute latest_date, recurrence_days, and due_date from CSV row.
 
     Returns:
-        ComputedDates object with computed values
+        Dates object with computed values
     """
     date_4 = _parse_date(row["date_4"])
     assert date_4 is not None
@@ -50,7 +50,7 @@ def _compute_dates(row: dict) -> ComputedDates:
 
     due_date = compute_due_date(latest_date, recurrence_days)
 
-    return ComputedDates(
+    return Dates(
         latest_date=latest_date,
         recurrence_days=recurrence_days,
         due_date=due_date,

@@ -15,7 +15,7 @@ class Context(Enum):
 
 
 @dataclass
-class ComputedDates:
+class Dates:
     """Computed date attributes for a task."""
 
     latest_date: date
@@ -33,7 +33,7 @@ class Task:
         context: Context,
         skip_count: int,
         starred: bool,
-        dates: ComputedDates,
+        dates: Dates,
     ):
         self.id = id
         self.description = description
