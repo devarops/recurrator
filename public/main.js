@@ -38,14 +38,6 @@ function fetchJson(url, options = {}) {
     return fetch(url, options).then(r => r.json());
 }
 
-function fetchTask(apiUrl) {
-    return fetchJson(apiUrl);
-}
-
-function markTaskDone(apiUrl) {
-    return fetchJson(apiUrl, { method: 'POST' });
-}
-
 function getQueryParams() {
     return {
         taskId: new URL(window.location).searchParams.get('id'),
@@ -60,22 +52,30 @@ function getDomElements() {
     };
 }
 
-function attachDoneButtonHandler(doneBtn, apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl) {
+function displayTask(taskElement, errorElement, task) {
+    taskElement.innerHTML = renderTask(task);
+    errorElement.hidden = true;
+}
+
+function displayError(errorElement, error) {
+    errorElement.innerHTML = renderError(error);
+    errorElement.hidden = false;
+}
+
+function attachDoneButtonHandler(doneBtn, context) {
+    const { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl } = context;
+
     doneBtn.addEventListener('click', () => {
         const doneUrl = buildDoneUrl(apiBaseUrl, taskId, csvParam);
-        markTaskDone(doneUrl)
-            .then(() => {
-                return fetchTask(apiUrl);
-            })
+        fetchJson(doneUrl, { method: 'POST' })
+            .then(() => fetchJson(apiUrl))
             .then(updatedTask => {
-                taskElement.innerHTML = renderTask(updatedTask);
-                errorElement.hidden = true;
+                displayTask(taskElement, errorElement, updatedTask);
                 const newDoneBtn = document.getElementById('doneBtn');
-                attachDoneButtonHandler(newDoneBtn, apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl);
+                attachDoneButtonHandler(newDoneBtn, context);
             })
             .catch(err => {
-                errorElement.innerHTML = renderError(err);
-                errorElement.hidden = false;
+                displayError(errorElement, err);
             });
     });
 }
@@ -85,16 +85,15 @@ function init(apiBaseUrl) {
     const { taskId, csvParam } = getQueryParams();
     const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
 
-    fetchTask(apiUrl)
+    fetchJson(apiUrl)
         .then(task => {
-            taskElement.innerHTML = renderTask(task);
-            errorElement.hidden = true;
+            displayTask(taskElement, errorElement, task);
             const doneBtn = document.getElementById('doneBtn');
-            attachDoneButtonHandler(doneBtn, apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl);
+            const context = { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl };
+            attachDoneButtonHandler(doneBtn, context);
         })
         .catch(err => {
-            errorElement.innerHTML = renderError(err);
-            errorElement.hidden = false;
+            displayError(errorElement, err);
         });
 }
 
