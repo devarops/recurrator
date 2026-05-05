@@ -56,3 +56,8 @@ function init(apiBaseUrl) {
             errorElement.innerHTML = renderError(err);
         });
 }
+
+// Auto-initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    init('http://localhost:8000');
+});
