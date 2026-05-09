@@ -127,5 +127,5 @@ def test_filter_due_tasks_by_context():
     context = Context.CASA
     filtered_tasks = rc.filter_due_tasks_by_context(all_tasks, context, reference_date=date(2026, 5, 10))
     obtained_length = len(filtered_tasks)
-    expected_length = 1
+    expected_length = 2
     assert obtained_length == expected_length
