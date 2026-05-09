@@ -114,10 +114,18 @@ def test_get_task_by_id():
     assert isinstance(obtained_task, Task)
 
 
-def test_filter_tasks_by_context():
+def test_filter_all_tasks_by_context():
     all_tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
     context = Context.LIMPIAR
     filtered_tasks = rc.filter_all_tasks_by_context(all_tasks, context)
     obtained_length = len(filtered_tasks)
     expected_length = 2
+    assert obtained_length == expected_length
+
+def test_filter_due_tasks_by_context():
+    all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    context = Context.CASA
+    filtered_tasks = rc.filter_due_tasks_by_context(all_tasks, context, reference_date=date(2026, 5, 10))
+    obtained_length = len(filtered_tasks)
+    expected_length = 1
     assert obtained_length == expected_length
