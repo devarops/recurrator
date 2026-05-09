@@ -1,7 +1,7 @@
 # To Do
 
 ## Gold
-- [ ] **Index page showing overdue and due-today tasks**: Create a new `public/index.html` page that displays all tasks whose `due_date` is today or earlier. Fetch task IDs from `GET /task/`, get full details from `GET /task/{id}`, filter by `due_date <= today`, and render them in a clean layout.
+- [ ] **Index page showing overdue and due-today tasks**: Create a new `public/index.html` page that displays all tasks whose `due_date` is today or earlier.
 
 ## Bug Fixes
 - [ ] **Fix GitHub Actions workflow**: CLI test_list_all fails in CI because workflow doesn't start docker compose before running tests. All tests pass locally.
