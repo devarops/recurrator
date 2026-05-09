@@ -43,3 +43,18 @@ def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | N
 def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Task]:
     """Filter a list of tasks by the given context."""
     return [task for task in tasks if task.context == context]
+
+
+def filter_due_tasks_by_context(
+    tasks: list[Task], context: Context, reference_date: date
+) -> list[Task]:
+    """Filter tasks by context and due/overdue status.
+
+    Returns only tasks whose context matches and whose due date
+    is on or before the reference date.
+    """
+    return [
+        task
+        for task in tasks
+        if task.context == context and task.due_date <= reference_date
+    ]
