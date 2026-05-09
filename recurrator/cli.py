@@ -19,7 +19,7 @@ def version():
     typer.echo("recurrator v0.1.0")
 
 
-@app.command(name="list-all")
+@app.command(name="list-all-tasks")
 def list_all_tasks(csv: str = typer.Option(..., "--csv", help="Path to CSV file")):
     """List all tasks."""
     try:
