@@ -21,11 +21,6 @@ def _resolve_csv_path(csv: str | None = None) -> str:
     return csv or DEFAULT_TASKS_CSV_PATH
 
 
-def _find_task_by_id(tasks, task_id: int):
-    """Find a task by its ID in a list of tasks."""
-    return next((t for t in tasks if t.id == task_id), None)
-
-
 def _task_to_dict(task: io.Task) -> dict:
     """Convert Task object to API response dictionary."""
     return {
@@ -50,9 +45,9 @@ def get_all_tasks(csv: str = Query(None)):
 @app.get("/task/{task_id}")
 def get_task_by_id(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
-    tasks = io.import_tasks_from_csv(csv_path)
-    task = _find_task_by_id(tasks, task_id)
-    if task is None:
+    try:
+        task = io.get_task_by_id(task_id, csv_path)
+    except ValueError:
         return {"error": "Task not found"}, 404
     return _task_to_dict(task)
 
