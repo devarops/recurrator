@@ -116,7 +116,7 @@ def test_get_task_by_id():
 def test_filter_tasks_by_context():
     all_tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
     context = Context.LIMPIAR
-    filtered_tasks = rc.filter_tasks_by_context(all_tasks, context)
+    filtered_tasks = rc.filter_all_tasks_by_context(all_tasks, context)
     obtained_length = len(filtered_tasks)
     expected_length = 2
     assert obtained_length == expected_length
