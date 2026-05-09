@@ -97,6 +97,9 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 
 ### Development Environment
 ```shell
+# Build the image (use --no-cache to force a fresh pip install)
+docker build --no-cache --tag devarops/recurrator:latest .
+
 # Initialize environment
 docker compose run --rm -it --name recurrator_ci cli bash
 
