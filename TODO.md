@@ -1,6 +1,6 @@
 # To Do
 
-## The Gold: filter_all_tasks_by_context() [compute.py]: Filter all tasks matching a given Context (Done)
+## The Gold: `compute.py` | `filter_due_tasks_by_context` | Filter due tasks matching a given Context |
 
 ## List Contexts From Due/Overdue Tasks
 - [ ] **`compute.py`: Add `filter_due_contexts`** — Given a list of tasks, return sorted unique `Context` values from due/overdue tasks.
@@ -9,12 +9,10 @@
 - [ ] **`tests/`: Add tests for `GET /context/`** — Test response shape and content.
 
 ## List Due/Overdue Tasks by Context
-- [x] **`compute.py`: Add `filter_all_tasks_by_context`** — Given a list of tasks and a `Context` enum, return only tasks matching that context.
-
 - [ ] **`api.py`: Add `GET /context/{context_id}`** — Endpoint returning due/overdue tasks as JSON array filtered by context.
-
-- [x] **`tests/`: Add tests for `filter_all_tasks_by_context`** — Test with matching context, non-matching context, empty result.
 - [ ] **`tests/`: Add tests for `GET /context/{context_id}`** — Test API response shape, with and without context filter.
+- [x] **`compute.py`: Add `filter_all_tasks_by_context`** — Given a list of tasks and a `Context` enum, return only tasks matching that context.
+- [x] **`tests/`: Add tests for `filter_all_tasks_by_context`** — Test with matching context, non-matching context, empty result.
 
 ## Bug Fixes
 - [ ] **Fix GitHub Actions workflow**: CLI test_list_all fails in CI because workflow doesn't start docker compose before running tests. All tests pass locally.
