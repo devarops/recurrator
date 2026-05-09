@@ -1,18 +1,18 @@
 # To Do
 
-## The Gold: List Contexts From Due/Overdue Tasks
-- [ ] **`compute.py`: Add `get_contexts_from_tasks`** — Given a list of tasks, return sorted unique `Context` values.
-- [ ] **`api.py`: Add `GET /context/due`** — Endpoint returning `{"contexts": [...]}` based on tasks due/overdue today.
-- [ ] **`tests/`: Add tests for `get_contexts_from_tasks`** — Test with mixed contexts, empty list, single context.
-- [ ] **`tests/`: Add tests for `GET /context/due`** — Test response shape and content.
+## The Gold: filter_tasks_by_context() [compute.py]: Filter tasks matching a given Context
+
+## List Contexts From Due/Overdue Tasks
+- [ ] **`compute.py`: Add `filter_due_contexts`** — Given a list of tasks, return sorted unique `Context` values from due/overdue tasks.
+- [ ] **`api.py`: Add `GET /context/`** — Endpoint returning `{"contexts": [...]}` based on tasks due/overdue today.
+- [ ] **`tests/`: Add tests for `filter_due_contexts`** — Test with mixed contexts, empty list, single context.
+- [ ] **`tests/`: Add tests for `GET /context/`** — Test response shape and content.
 
 ## List Due/Overdue Tasks by Context
 - [ ] **`compute.py`: Add `filter_tasks_by_context`** — Given a list of tasks and a `Context` enum, return only tasks matching that context.
-- [ ] **`compute.py`: Add `filter_due_or_overdue`** — Given a list of tasks and a reference date, return only tasks where `due_date <= reference_date`.
-- [ ] **`api.py`: Add `GET /task/due?context=`** — Endpoint returning due/overdue tasks as JSON array. Optional `context` query param to filter.
+- [ ] **`api.py`: Add `GET /context/{context_id}`** — Endpoint returning due/overdue tasks as JSON array filtered by context.
 - [ ] **`tests/`: Add tests for `filter_tasks_by_context`** — Test with matching context, non-matching context, empty result.
-- [ ] **`tests/`: Add tests for `filter_due_or_overdue`** — Test with due today, overdue, future date, mixed cases.
-- [ ] **`tests/`: Add tests for `GET /task/due`** — Test API response shape, with and without context filter.
+- [ ] **`tests/`: Add tests for `GET /context/{context_id}`** — Test API response shape, with and without context filter.
 
 ## Bug Fixes
 - [ ] **Fix GitHub Actions workflow**: CLI test_list_all fails in CI because workflow doesn't start docker compose before running tests. All tests pass locally.
@@ -35,6 +35,7 @@
 | `compute.py` | `compute_due_date` | `compute` | Done | Add recurrence_days to latest_date |
 | `compute.py` | `filter_four_dates` | `filter` | Done | Keep 4 most recent dates from list + new date |
 | `compute.py` | `filter_tasks_by_context` | `filter` | To Do | Filter tasks matching a given Context |
+| `compute.py` | `filter_due_tasks_by_context` | `filter` | To Do | Filter due tasks matching a given Context |
 | `compute.py` | `filter_due_contexts` | `filter` | To Do | Return sorted unique Context values from due/overdue tasks |
 | `io.py` | `import_tasks_from_csv` | `import` | Done | Import tasks from CSV file |
 | `io.py` | `import_dates_from_csv` | `import` | Done | Return list of 4 dates for a given task |
@@ -49,5 +50,3 @@
 | `api.py` | `get_tasks_by_context` | `get` | To Do | GET /context/{context_id} — list due/overdue tasks by context |
 | `cli.py` | `version` | — | Done | Print version |
 | `cli.py` | `list_all_tasks` | `list` | Rename | List all task IDs (was `list_all`) |
-
-
