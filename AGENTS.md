@@ -48,6 +48,18 @@ The system follows an **API-first, layered architecture** with strict one-way de
 - **Test-Driven Development (TDD)**: Only implement what tests require.
 - **Single Responsibility**: Each function or helper should do one thing well.
 
+### TDD Cycle Details
+The standard Red-Green-Refactor cycle includes a distinct **Fail sub-phase** between Red and Green:
+
+1. **Red** — Identify the next smallest failing test in plain English (no code).
+2. **Fail** — Write the test code, run the suite, confirm exactly one test fails for the right reason, commit the failing test.
+3. **Green** — Implement the minimal production code to make the failing test pass, verify all tests pass, commit.
+4. **Refactor** — Improve internal structure without changing observable behavior.
+
+**Failing test convention:** The initial test body uses `pass` — it fails at import/resolution time because the target function doesn't exist. After Green, the `pass` is replaced with real assertions.
+
+**After-Gold test pattern:** Once Green reaches The Gold, subsequent commits add strengthening assertions (specific IDs, counts, alternative scenarios) to the same test. These use the `🥇🧪` emoji prefix.
+
 ### Naming Conventions (Verbs → Nouns)
 Use `snake_case` and avoid abbreviations (e.g., `context` instead of `ctx`).
 
@@ -112,6 +124,23 @@ docker exec recurrator_ci make init
 docker exec recurrator_ci make tests
 ```
 
+### Data Validation
+Test CSV fixtures live in `tests/data/` and are validated against a
+[Frictionless Data](https://frictionlessdata.io/) Tabular Data Package
+descriptor (`tests/data/datapackage.json`).
+
+- Schema constraints include field types, formats, required flags, and
+  uniqueness. The `missingValues: ["NA"]` declaration recognizes `"NA"`
+  as a null marker for optional date fields.
+- Run `make check_data` to validate all CSV fixtures against the schema.
+  The `check` target depends on `check_data`, so data integrity is
+  verified alongside linting.
+- Use the `/data-mutation-test` OpenCode command (defined in
+  `~/.config/opencode/commands/`) to verify the schema catches specific
+  mutations: the workflow mutates a CSV, runs validation expecting failure,
+  restores the file, and tightens the schema if the mutation goes
+  undetected.
+
 ### Feature Specifications
 **POST task/{id}/done**
 - **Behavior**: Marks task as done by rotating completion dates (date_1 ← date_2 ← date_3 ← date_4 ← completion_date), resets `skip_count` to 0, and clears `skipped_date`.
@@ -129,6 +158,7 @@ docker exec recurrator_ci make tests
     - ✅ For green phase of TDD: functional changes.
     - ♻️ For refactoring phase of TDD: non-functional code changes.
     - 📝 For documentation updates.
+    - 🥇🧪 For after-gold test pattern: strengthening assertions added after The Gold is reached.
 2. **Structure**:
     - First line: Emoji prefix + imperative verb + concise description. Max 72 characters including emoji.
     - Second line: Blank.
