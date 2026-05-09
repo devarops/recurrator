@@ -49,4 +49,4 @@
 | `api.py` | `get_due_contexts` | `get` | To Do | GET /context/ — list unique contexts from due/overdue tasks |
 | `api.py` | `get_tasks_by_context` | `get` | To Do | GET /context/{context_id} — list due/overdue tasks by context |
 | `cli.py` | `version` | — | Done | Print version |
-| `cli.py` | `list_all_tasks` | `list` | Rename | List all task IDs (was `list_all`) |
+| `cli.py` | `list_all_tasks` | `list` | Done | List all task IDs (was `list_all`) |
