@@ -2,7 +2,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
 
-from .io import Task, import_tasks_from_csv, update_task_as_done, get_task_by_id
+from . import io
 
 app = FastAPI()
 
@@ -26,7 +26,7 @@ def _find_task_by_id(tasks, task_id: int):
     return next((t for t in tasks if t.id == task_id), None)
 
 
-def _task_to_dict(task: Task) -> dict:
+def _task_to_dict(task: io.Task) -> dict:
     """Convert Task object to API response dictionary."""
     return {
         "id": task.id,
@@ -43,14 +43,14 @@ def _task_to_dict(task: Task) -> dict:
 @app.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
-    tasks = import_tasks_from_csv(csv_path)
+    tasks = io.import_tasks_from_csv(csv_path)
     return [{"id": task.id} for task in tasks]
 
 
 @app.get("/task/{task_id}")
-def get_task(task_id: int, csv: str = Query(None)):
+def get_task_by_id(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
-    tasks = import_tasks_from_csv(csv_path)
+    tasks = io.import_tasks_from_csv(csv_path)
     task = _find_task_by_id(tasks, task_id)
     if task is None:
         return {"error": "Task not found"}, 404
@@ -60,9 +60,9 @@ def get_task(task_id: int, csv: str = Query(None)):
 @app.post("/task/{task_id}/done")
 def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
-    update_task_as_done(task_id, date.today(), csv_path)
+    io.update_task_as_done(task_id, date.today(), csv_path)
 
-    updated_task = get_task_by_id(task_id, csv_path)
+    updated_task = io.get_task_by_id(task_id, csv_path)
     return {
         "id": updated_task.id,
         "skip_count": updated_task.skip_count,

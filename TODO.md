@@ -44,7 +44,7 @@
 | `io.py` | `update_task_as_done` | `update` | Done | Mark task as done, rotate dates, reset skip_count |
 | `io.py` | `get_task_by_id` | `get` | Done | Get a single Task object by ID from CSV |
 | `api.py` | `get_all_tasks` | `get` | Done | GET /task/ — list task IDs (was `get_tasks`) |
-| `api.py` | `get_task_by_id` | `get` | Rename | GET /task/{id} — get single task (was `get_task`) |
+| `api.py` | `get_task_by_id` | `get` | Done | GET /task/{id} — get single task (was `get_task`) |
 | `api.py` | `post_task_done` | `post` | Done | POST /task/{id}/done — mark task as done |
 | `api.py` | `get_due_contexts` | `get` | To Do | GET /context/ — list unique contexts from due/overdue tasks |
 | `api.py` | `get_tasks_by_context` | `get` | To Do | GET /context/{context_id} — list due/overdue tasks by context |
