@@ -129,3 +129,7 @@ def test_filter_due_tasks_by_context():
     obtained_length = len(filtered_tasks)
     expected_length = 2
     assert obtained_length == expected_length
+
+    obtained_ids = [task.id for task in filtered_tasks]
+    expected_ids = [1, 6]
+    assert obtained_ids == expected_ids
