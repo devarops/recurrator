@@ -5,6 +5,7 @@ RUN pip install --upgrade pip && pip install \
     black \
     fastapi \
     flake8 \
+    frictionless \
     httpx \
     mutmut \
     mypy \
