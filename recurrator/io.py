@@ -94,10 +94,8 @@ def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
     raise ValueError(f"Task {task_id} not found in {path}")
 
 
-def _format_csv_line(fieldnames: Sequence[str] | None, row: dict) -> str:
+def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
     """Format a CSV row, quoting only the description field."""
-    if fieldnames is None:
-        return ""
     line_parts = []
     for field in fieldnames:
         value = row[field]
