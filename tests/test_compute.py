@@ -147,4 +147,10 @@ def test_filter_due_tasks_by_context():
 def test_filter_due_tasks():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     filtered_tasks = rc.filter_due_tasks(all_tasks, reference_date=date(2026, 5, 1))
-    pass
+    obtained_length = len(filtered_tasks)
+    expected_length = 5
+    assert obtained_length == expected_length
+
+    obtained_ids = [task.id for task in filtered_tasks]
+    expected_ids = [1, 2, 4, 7, 8]
+    assert obtained_ids == expected_ids
