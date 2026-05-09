@@ -143,3 +143,8 @@ def test_filter_due_tasks_by_context():
     obtained_ids = [task.id for task in filtered_tasks]
     expected_ids = [2, 4, 7]
     assert obtained_ids == expected_ids
+
+def test_filter_due_tasks():
+    all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    filtered_tasks = rc.filter_due_tasks(all_tasks, reference_date=date(2026, 5, 1))
+    pass
