@@ -113,6 +113,7 @@ def test_get_task_by_id():
     obtained_task = io.get_task_by_id(3, "tests/data/test_three_tasks.csv")
     assert isinstance(obtained_task, Task)
 
+
 def test_filter_tasks_by_context():
     all_tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
     context = Context.LIMPIAR
