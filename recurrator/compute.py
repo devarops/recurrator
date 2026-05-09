@@ -40,6 +40,6 @@ def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | N
     return [None] * (4 - len(all_dates)) + all_dates
 
 
-def filter_tasks_by_context(tasks: list[Task], context: Context) -> list[Task]:
+def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Task]:
     """Filter a list of tasks by the given context."""
     return [task for task in tasks if task.context == context]

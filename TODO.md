@@ -34,7 +34,7 @@
 | `compute.py` | `compute_recurrence_days` | `compute` | Done | Compute recurrence days as median of intervals, default 14 |
 | `compute.py` | `compute_due_date` | `compute` | Done | Add recurrence_days to latest_date |
 | `compute.py` | `filter_four_dates` | `filter` | Done | Keep 4 most recent dates from list + new date |
-| `compute.py` | `filter_tasks_by_context` | `filter` | To Do | Filter tasks matching a given Context |
+| `compute.py` | `filter_all_tasks_by_context` | `filter` | To Do | Filter tasks matching a given Context |
 | `compute.py` | `filter_due_tasks_by_context` | `filter` | To Do | Filter due tasks matching a given Context |
 | `compute.py` | `filter_due_contexts` | `filter` | To Do | Return sorted unique Context values from due/overdue tasks |
 | `io.py` | `import_tasks_from_csv` | `import` | Done | Import tasks from CSV file |
