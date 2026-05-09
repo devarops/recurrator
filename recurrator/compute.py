@@ -1,6 +1,6 @@
+from collections.abc import Sequence
 from datetime import date, timedelta
 from statistics import median
-from typing import Union
 
 from .models import DEFAULT_RECURRENCE_DAYS, Task, Context
 
@@ -22,7 +22,7 @@ def compute_latest_date(date_4: date, skipped_date: date | None) -> date:
     return max(date_4, skipped_date)
 
 
-def compute_recurrence_days(intervals: Union[list[int], list[int | None]]) -> int:
+def compute_recurrence_days(intervals: Sequence[int | None]) -> int:
     """Compute recurrence days as the median of non-None intervals."""
     valid_intervals = [i for i in intervals if i is not None]
     if not valid_intervals:
