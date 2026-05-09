@@ -6,7 +6,7 @@ app = typer.Typer(no_args_is_help=True)
 API_BASE_URL = "http://api:8000"
 
 
-def _print_task_ids(tasks):
+def _print_task_ids(tasks: list[dict]) -> None:
     """Print task IDs in a readable format."""
     print("id")
     for task in tasks:
