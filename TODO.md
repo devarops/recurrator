@@ -1,6 +1,6 @@
 # To Do
 
-## The Gold: `compute.py` | `filter_due_tasks` | Filter due tasks |
+## The Gold: `compute.py` | `filter_due_contexts` | Return sorted unique Context values from due/overdue tasks
 
 ## List Contexts From Due/Overdue Tasks
 - [ ] **`compute.py`: Add `filter_due_contexts`** — Given a list of tasks, return sorted unique `Context` values from due/overdue tasks.
@@ -36,7 +36,7 @@
 | `compute.py` | `filter_four_dates` | `filter` | Done | Keep 4 most recent dates from list + new date |
 | `compute.py` | `filter_all_tasks_by_context` | `filter` | Done | Filter all tasks matching a given Context |
 | `compute.py` | `filter_due_tasks_by_context` | `filter` | Done | Filter due tasks matching a given Context |
-| `compute.py` | `filter_due_tasks` | `filter` | To Do | Filter due tasks |
+| `compute.py` | `filter_due_tasks` | `filter` | Done | Filter due tasks |
 | `compute.py` | `filter_due_contexts` | `filter` | To Do | Return sorted unique Context values from due/overdue tasks |
 | `io.py` | `import_tasks_from_csv` | `import` | Done | Import tasks from CSV file |
 | `io.py` | `import_dates_from_csv` | `import` | Done | Return list of 4 dates for a given task |
