@@ -20,7 +20,7 @@ def version():
 
 
 @app.command(name="list-all")
-def list_all(csv: str = typer.Option(..., "--csv", help="Path to CSV file")):
+def list_all_tasks(csv: str = typer.Option(..., "--csv", help="Path to CSV file")):
     """List all tasks."""
     try:
         response = requests.get(f"{API_BASE_URL}/task/", params={"csv": csv})
