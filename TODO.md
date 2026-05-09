@@ -52,3 +52,32 @@
 - [x] **Docker Compose**: Two-service setup.
 - [x] **All tests passing**: 19 tests.
 - [x] **CORS middleware**: file:// protocol support.
+
+---
+
+## Summary table
+
+| File | Function Name | Verb | Status | Description |
+|------|--------------|------|--------|-------------|
+| `compute.py` | `compute_intervals` | `compute` | Done | Compute intervals in days between consecutive non-None dates |
+| `compute.py` | `compute_latest_date` | `compute` | Done | Returns max of date_4 and skipped_date |
+| `compute.py` | `compute_recurrence_days` | `compute` | Done | Compute recurrence days as median of intervals, default 14 |
+| `compute.py` | `compute_due_date` | `compute` | Done | Add recurrence_days to latest_date |
+| `compute.py` | `filter_four_dates` | `filter` | Done | Keep 4 most recent dates from list + new date |
+| `compute.py` | `filter_tasks_by_context` | `filter` | To Do | Filter tasks matching a given Context |
+| `compute.py` | `filter_due_contexts` | `filter` | To Do | Return sorted unique Context values from due/overdue tasks |
+| `io.py` | `import_tasks_from_csv` | `import` | Done | Import tasks from CSV file |
+| `io.py` | `import_dates_from_csv` | `import` | Done | Return list of 4 dates for a given task |
+| `io.py` | `update_task_dates` | `update` | Done | Update date_1..date_4 for a task in CSV |
+| `io.py` | `update_task_skip_count` | `update` | Done | Update skip_count for a task in CSV |
+| `io.py` | `update_task_as_done` | `update` | Done | Mark task as done, rotate dates, reset skip_count |
+| `io.py` | `get_task_by_id` | `get` | Done | Get a single Task object by ID from CSV |
+| `api.py` | `get_all_tasks` | `get` | Rename | GET /task/ — list task IDs (was `get_tasks`) |
+| `api.py` | `get_task_by_id` | `get` | Rename | GET /task/{id} — get single task (was `get_task`) |
+| `api.py` | `post_task_done` | `post` | Done | POST /task/{id}/done — mark task as done |
+| `api.py` | `get_due_contexts` | `get` | To Do | GET /context/ — list unique contexts from due/overdue tasks |
+| `api.py` | `get_tasks_by_context` | `get` | To Do | GET /context/{context_id} — list due/overdue tasks by context |
+| `cli.py` | `version` | — | Done | Print version |
+| `cli.py` | `list_all_tasks` | `list` | Rename | List all task IDs (was `list_all`) |
+
+
