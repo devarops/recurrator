@@ -1,5 +1,5 @@
 import recurrator.compute as rc
-import recurrator.io as rio
+import recurrator.io as io
 from recurrator import Context, Task
 from datetime import date
 
@@ -110,11 +110,11 @@ def test_filter_four_dates():
 
 def test_get_task_by_id():
 
-    obtained_task = rio.get_task_by_id(3, "tests/data/test_three_tasks.csv")
+    obtained_task = io.get_task_by_id(3, "tests/data/test_three_tasks.csv")
     assert isinstance(obtained_task, Task)
 
 def test_filter_tasks_by_context():
-    all_tasks = rio.import_tasks_from_csv("tests/data/test_three_tasks.csv")
+    all_tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
     context = Context.LIMPIAR
     filtered_tasks = rc.filter_tasks_by_context(all_tasks, context)
     obtained_length = len(filtered_tasks)
