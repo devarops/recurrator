@@ -3,6 +3,7 @@ all: check coverage mutants
 .PHONY: \
 		all \
 		check \
+		check_data \
 		clean \
 		coverage \
 		format \
@@ -25,13 +26,16 @@ define lint
         ${1}
 endef
 
-check:
+check: check_data
 	black --check --line-length 100 ${module}
 	black --check --line-length 100 tests
 	flake8 --max-line-length 100 ${module}
 	flake8 --max-line-length 100 tests
 	mypy ${module}
 	mypy tests
+
+check_data:
+	frictionless validate tests/data/datapackage.json
 
 clean:
 	rm --force --recursive .*_cache

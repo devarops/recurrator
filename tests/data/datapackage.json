@@ -1,0 +1,69 @@
+{
+  "profile": "tabular-data-package",
+  "name": "recurrator-test-data",
+  "resources": [
+    {
+      "name": "test-single-task",
+      "path": "test_single_task.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skipped_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-three-tasks",
+      "path": "test_three_tasks.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skipped_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-contexts",
+      "path": "test_contexts.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skipped_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    }
+  ]
+}
