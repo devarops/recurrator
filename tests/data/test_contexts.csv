@@ -1,0 +1,11 @@
+id,context,description,date_1,date_2,date_3,date_4,skip_count,skipped_date,starred
+1,casa,"Reparar fuga escusado",NA,2026-02-21,2026-03-20,2026-04-04,0,NA,1
+2,limpiar,"Limpiar cuartito de lavado 15 min",2025-09-28,2025-11-02,2026-01-24,2026-02-28,0,NA,0
+3,limpiar,"Guardar cada cosa en su lugar\n- [ ] Encimera\n- [ ] Lavadora\n- [ ] Refri\n- [ ] Mesa",2025-09-13,2025-10-12,2026-01-24,2026-03-14,0,NA,0
+4,limpiar,"Recoger basura de los tambos de afuera",2025-08-31,2025-10-12,2026-01-18,2026-03-07,0,NA,0
+5,limpiar,"Limpiar refri",2025-09-13,2025-11-17,2026-01-24,2026-02-28,0,NA,0
+6,casa,"Reparar casa i.60",NA,NA,2026-02-21,2026-03-28,0,NA,1
+7,limpiar,"Lavar uniformes taekwondo",2026-03-21,2026-03-28,2026-04-04,2026-04-11,0,NA,1
+8,laptop,"Watch later",NA,NA,2025-10-05,2025-10-19,2,2026-03-31,0
+9,limpiar,"Limpiar estufa",2026-03-28,2026-04-04,2026-04-11,2026-05-03,0,NA,1
+10,casa,"Cepillar Momo",NA,NA,2026-03-22,2026-04-25,0,NA,0
