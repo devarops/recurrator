@@ -39,11 +39,11 @@ def _compute_dates(row: dict) -> Dates:
         Dates object with computed values
     """
     dates = _parse_row_dates(row)
-    date_4 = dates[3]
-    assert date_4 is not None
+    last_completion_date = dates[3]
+    assert last_completion_date is not None
 
     skipped_date = _parse_date(row["skipped_date"])
-    latest_date = compute_latest_date(date_4, skipped_date)
+    latest_date = compute_latest_date(last_completion_date, skipped_date)
 
     intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
