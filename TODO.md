@@ -1,6 +1,6 @@
 # To Do
 
-## The Gold: filter_tasks_by_context() [compute.py]: Filter tasks matching a given Context
+## The Gold: filter_all_tasks_by_context() [compute.py]: Filter all tasks matching a given Context (Done)
 
 ## List Contexts From Due/Overdue Tasks
 - [ ] **`compute.py`: Add `filter_due_contexts`** — Given a list of tasks, return sorted unique `Context` values from due/overdue tasks.
@@ -9,9 +9,11 @@
 - [ ] **`tests/`: Add tests for `GET /context/`** — Test response shape and content.
 
 ## List Due/Overdue Tasks by Context
-- [ ] **`compute.py`: Add `filter_tasks_by_context`** — Given a list of tasks and a `Context` enum, return only tasks matching that context.
+- [x] **`compute.py`: Add `filter_all_tasks_by_context`** — Given a list of tasks and a `Context` enum, return only tasks matching that context.
+
 - [ ] **`api.py`: Add `GET /context/{context_id}`** — Endpoint returning due/overdue tasks as JSON array filtered by context.
-- [ ] **`tests/`: Add tests for `filter_tasks_by_context`** — Test with matching context, non-matching context, empty result.
+
+- [x] **`tests/`: Add tests for `filter_all_tasks_by_context`** — Test with matching context, non-matching context, empty result.
 - [ ] **`tests/`: Add tests for `GET /context/{context_id}`** — Test API response shape, with and without context filter.
 
 ## Bug Fixes
@@ -34,7 +36,7 @@
 | `compute.py` | `compute_recurrence_days` | `compute` | Done | Compute recurrence days as median of intervals, default 14 |
 | `compute.py` | `compute_due_date` | `compute` | Done | Add recurrence_days to latest_date |
 | `compute.py` | `filter_four_dates` | `filter` | Done | Keep 4 most recent dates from list + new date |
-| `compute.py` | `filter_all_tasks_by_context` | `filter` | To Do | Filter tasks matching a given Context |
+| `compute.py` | `filter_all_tasks_by_context` | `filter` | Done | Filter all tasks matching a given Context |
 | `compute.py` | `filter_due_tasks_by_context` | `filter` | To Do | Filter due tasks matching a given Context |
 | `compute.py` | `filter_due_contexts` | `filter` | To Do | Return sorted unique Context values from due/overdue tasks |
 | `io.py` | `import_tasks_from_csv` | `import` | Done | Import tasks from CSV file |
