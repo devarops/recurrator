@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from statistics import median
 from typing import Union
 
-from .models import DEFAULT_RECURRENCE_DAYS
+from .models import DEFAULT_RECURRENCE_DAYS, Task, Context
 
 
 def compute_intervals(dates: list[date | None]) -> list[int]:
@@ -38,3 +38,8 @@ def compute_due_date(latest_date: date, recurrence_days: int) -> date:
 def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | None]:
     all_dates = sorted([d for d in dates if d is not None] + [new_date])[-4:]
     return [None] * (4 - len(all_dates)) + all_dates
+
+
+def filter_tasks_by_context(tasks: list[Task], context: Context) -> list[Task]:
+    """Filter a list of tasks by the given context."""
+    return [task for task in tasks if task.context == context]
