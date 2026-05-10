@@ -159,4 +159,5 @@ def test_filter_due_contexts():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     filtered_contexts = rc.filter_due_contexts(all_tasks, reference_date=date(2026, 5, 1))
     obtained_length = len(filtered_contexts)
-    pass
+    expected_length = 3
+    assert obtained_length == expected_length
