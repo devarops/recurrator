@@ -110,20 +110,23 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 
 ### Development Environment
 ```shell
-# Build the image (use --no-cache to force a fresh pip install)
-docker build --no-cache --tag evaristor/recurrator:latest .
+# Build the Docker image (needed on first setup or after changes to Dockerfile):
+docker build --tag evaristor/recurrator:latest .
 
-# Initialize environment (interactive session)
-docker compose run --rm -it --name recurrator_ci cli bash
+# Initialize a container with an interactive shell:
+docker compose run --interactive --rm --tty cli bash
 
 # Inside container:
-make install
+make init
 make tests
 
-# Run CI commands without entering the container:
-docker compose run --rm cli make check
-docker compose run --rm cli make coverage
-docker compose run --rm cli make mutants
+# Alternatively, run tests directly without entering the container:
+docker compose run --interactive --rm --tty --detach cli bash
+docker compose exec cli make check
+docker compose exec cli make init
+docker compose exec cli make tests
+docker compose exec cli make coverage
+docker compose exec cli make mutants
 ```
 
 ### Data Validation
@@ -168,7 +171,8 @@ descriptor (`tests/data/datapackage.json`).
     - ♻️ For refactoring phase of TDD: non-functional code changes.
     - 📝 For documentation updates.
     - 🥇🧪 For after-gold test pattern: strengthening assertions added after The Gold is reached.
-    - 👾 For mutation testing: killing survivors, configuring mutmut.
+    - 👾 For mutation testing: configuring mutmut.
+    - 🏹👾 For mutation testing: hunting surviving mutants.
     - 👷 For CI and infrastructure: pipeline changes, container setup.
 2. **Structure**:
     - First line: Emoji prefix + imperative verb + concise description. Max 72 characters including emoji.
