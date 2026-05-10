@@ -67,3 +67,17 @@ def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
     regardless of context.
     """
     return [task for task in tasks if task.due_date <= reference_date]
+
+
+def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]:
+    """Return a list of contexts that have at least one due task.
+
+    Contexts appear in order of first encounter among due tasks.
+    """
+    seen: set[Context] = set()
+    result: list[Context] = []
+    for task in tasks:
+        if task.due_date <= reference_date and task.context not in seen:
+            seen.add(task.context)
+            result.append(task.context)
+    return result
