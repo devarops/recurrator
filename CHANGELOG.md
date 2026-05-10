@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-09
+
+### Added
+
+- `filter_due_contexts` to list unique contexts from due/overdue tasks, sorted alphabetically
+
 ## [0.1.0] - 2026-05-09
 
 ### Added
@@ -34,5 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     skip_count and due_date
 - CLI with `list-all-tasks` command
 
-[unreleased]: https://github.com/devarops/recurrator/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/devarops/recurrator/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/devarops/recurrator/releases/tag/v0.2.0
 [0.1.0]: https://github.com/devarops/recurrator/releases/tag/v0.1.0

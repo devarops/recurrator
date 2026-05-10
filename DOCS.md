@@ -167,6 +167,15 @@ Filters a list of tasks by due/overdue status alone.
   - `reference_date` — The cutoff date for determining due status
 - **Returns**: List of tasks whose due_date is on or before reference_date, regardless of context
 
+### `filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]`
+
+Returns the unique contexts of tasks that are due or overdue on or before the reference date, sorted alphabetically by context value.
+
+- **Parameters**:
+  - `tasks` — A list of Task objects
+  - `reference_date` — The cutoff date for determining due status
+- **Returns**: List of Context enum values, one per context that has at least one task with `due_date <= reference_date`. Sorted alphabetically by context value
+
 ### `import_tasks_from_csv(path: str) -> list[Task]`
 
 Reads a CSV file and returns a list of Task objects with computed attributes.
