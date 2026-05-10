@@ -122,10 +122,13 @@ def test_filter_all_tasks_by_context():
     expected_length = 2
     assert obtained_length == expected_length
 
+
 def test_filter_due_tasks_by_context():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     context = Context.CASA
-    filtered_tasks = rc.filter_due_tasks_by_context(all_tasks, context, reference_date=date(2026, 5, 10))
+    filtered_tasks = rc.filter_due_tasks_by_context(
+        all_tasks, context, reference_date=date(2026, 5, 10)
+    )
     obtained_length = len(filtered_tasks)
     expected_length = 2
     assert obtained_length == expected_length
@@ -135,7 +138,9 @@ def test_filter_due_tasks_by_context():
     assert obtained_ids == expected_ids
 
     context = Context.LIMPIAR
-    filtered_tasks = rc.filter_due_tasks_by_context(all_tasks, context, reference_date=date(2026, 5, 1))
+    filtered_tasks = rc.filter_due_tasks_by_context(
+        all_tasks, context, reference_date=date(2026, 5, 1)
+    )
     obtained_length = len(filtered_tasks)
     expected_length = 3
     assert obtained_length == expected_length
@@ -143,6 +148,7 @@ def test_filter_due_tasks_by_context():
     obtained_ids = [task.id for task in filtered_tasks]
     expected_ids = [2, 4, 7]
     assert obtained_ids == expected_ids
+
 
 def test_filter_due_tasks():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
@@ -155,9 +161,14 @@ def test_filter_due_tasks():
     expected_ids = [1, 2, 4, 7, 8]
     assert obtained_ids == expected_ids
 
+
 def test_filter_due_contexts():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     filtered_contexts = rc.filter_due_contexts(all_tasks, reference_date=date(2026, 5, 1))
-    obtained_length = len(filtered_contexts)
     expected_length = 3
+    obtained_length = len(filtered_contexts)
     assert obtained_length == expected_length
+
+    expected_contexts = [Context.CASA, Context.LAPTOP, Context.LIMPIAR]
+    obtained_contexts = filtered_contexts
+    assert obtained_contexts == expected_contexts
