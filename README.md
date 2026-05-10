@@ -78,6 +78,6 @@ You never set a schedule — the schedule sets itself based on your behavior.
 - **Index page** — browse your contexts at a glance
 - **Context page** — see all due/overdue tasks in one area
 - **Skip button** — postpone a task for the day
-- **Starred tasks** — pin important tasks so they appear more often
+- **Starred tasks** — pin important tasks so they can't be skipped
 - **Create and edit tasks** from the browser
 - **Dashboard** — see your progress over time
