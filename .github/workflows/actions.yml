@@ -1,4 +1,4 @@
-name: Push to PyPi
+name: Test & Push
 on:
   push:
     branches:
@@ -12,61 +12,52 @@ jobs:
       uses: actions/checkout@main
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-    - name: Build and export
+    - name: Build and tag Docker image
       uses: docker/build-push-action@v5
       with:
         context: .
-        tags: devarops/recurrator:latest
-        outputs: type=docker,dest=/tmp/image.tar
-    - name: Upload artifact
-      uses: actions/upload-artifact@main
-      with:
-        name: image
-        path: /tmp/image.tar
+        tags: evaristor/recurrator:latest
 
   test-module:
-    name: Test Python module 🐍
+    name: Run tests 🐍
     needs: build-image
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-    - name: Copia repositorio
+    - name: Checkout repository
       uses: actions/checkout@main
-    - name: Download artifact
-      uses: actions/download-artifact@main
-      with:
-        name: image
-        path: /tmp
-    - name: Load image
-      run: |
-        docker load --input /tmp/image.tar
-        docker image ls -a
-    - name: Verifica el formato
-      run: docker run devarops/recurrator:latest make check
-    - name: Corre pruebas y evalúa cobertura
-      run: docker run --volume $PWD:/workdir devarops/recurrator:latest make coverage
-    - name: Corre mutantes
-      run: docker run --volume $PWD:/workdir devarops/recurrator:latest make mutants
-    - name: Upload coverage reports to Codecov with GitHub Action
+    - name: Check code formatting
+      run: docker compose run --rm cli make check
+    - name: Run tests with coverage
+      run: docker compose run --rm cli make coverage
+    - name: Run mutation tests
+      run: docker compose run --rm cli make mutants
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@main
       with:
         files: ./coverage.xml
         verbose: true
-    - name: Create/Update tag
+
+  tag-release:
+    name: Tag and push Docker image with latest and four-digit tags 🏷️
+    needs: test-module
+    runs-on: ubuntu-latest
+    steps:
+    - name: Update latest git tag
       uses: rickstaa/action-create-tag@main
       with:
         tag: "latest"
         message: "Latest release"
         force_push_tag: true
-
-  cleanup-artifacts:
-    name: Delete temporary artifacts 🧹
-    if: always()
-    needs: test-module
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete Docker image artifact
-        uses: geekyeggo/delete-artifact@main
-        with:
-          name: image
+    - name: Docker log-in
+      env:
+        docker_username: ${{ secrets.docker_username }}
+        docker_password: ${{ secrets.docker_password }}
+      run: echo "${docker_password}" | docker login -u "${docker_username}" --password-stdin
+    - name: Push Docker image
+      run: docker push evaristor/recurrator:latest
+    - name: Tag and push with four-digit tag
+      run: |
+        four_digit_tag=$(date +%y%V)
+        docker tag evaristor/recurrator:latest evaristor/recurrator:${four_digit_tag}
+        docker push evaristor/recurrator:latest
+        docker push evaristor/recurrator:${four_digit_tag}
