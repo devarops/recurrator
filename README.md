@@ -1,29 +1,83 @@
 # recurrator
 
-This application presents a minimal interface focused on completing recurring administrative tasks.
-Each day, you are shown up to six tasks selected by the system as the most relevant for that day.
-Completing a task requires a single click, and you may also skip any task shown.
-The system adapts automatically to your behavior and schedules future occurrences without requiring configuration.
-You do not see future tasks or manage scheduling rules.
+Recurrator — recurring tasks that know when to come back.
 
-## Getting Started
+Recurrator helps you manage recurring household and personal tasks.
+The more often you complete a task, the more frequently it comes back.
+If you take longer between completions, it shows up less often.
+Recurrator learns your personal rhythm — no calendars, no complicated rules.
 
-### Start the API Server
+---
+
+## How it works
+
+Open your browser to see a list of contexts (areas of your life).
+Click a context to see the tasks that are due or overdue in that area.
+Click a task to see its details and mark it as done.
+
+| Page | Status |
+|------|--------|
+| **Index** — lists your contexts | 🚧 Coming soon |
+| **Context** — lists tasks in one context | 🚧 Coming soon |
+| **Task** — view and complete a task | ✅ Ready |
+
+Navigation is point-and-click. You never type task IDs or file paths.
+
+---
+
+## Before you start: your task file
+
+Recurrator stores your tasks in a CSV file.
+The default location is:
+
+```
+~/.config/recurrator/tasks.csv
+```
+
+You need to create this file before using Recurrator.
+You can point to a different file later — but the default path is what the
+application looks for unless you tell it otherwise.
+
+---
+
+## Run Recurrator
+
+### With Docker (recommended)
+
 ```bash
 docker compose up
 ```
 
-The API will be available at `http://localhost:8000`
+This starts the API server at `http://localhost:8000`.
 
-### Access Tasks via Browser or cURL
+### Without Docker
 
-List all task IDs:
 ```bash
-curl http://localhost:8000/task/
+pip install -e .
+uvicorn recurrator.api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Get a single task with all fields:
-```bash
-curl http://localhost:8000/task/8
-```
+Open `http://localhost:8000/task.html?id=1` in your browser to see a task.
 
+---
+
+## Adaptive recurrence explained
+
+Every task has a natural rhythm that comes from how you do it.
+
+- **Do a task often** → it comes back sooner
+- **Take longer between completions** → it waits longer before reappearing
+
+Recurrator watches your last few completions and adjusts automatically.
+You never set a schedule — the schedule sets itself based on your behavior.
+
+---
+
+## Coming soon
+
+- **Index page** — browse your contexts at a glance
+- **Context page** — see all due/overdue tasks in one area
+- **Skip button** — postpone a task for the day
+- **Starred tasks** — pin important tasks so they appear more often
+- **Create and edit tasks** from the browser
+- **Dashboard** — see your progress over time
