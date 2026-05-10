@@ -71,4 +71,5 @@ def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context
     Contexts appear sorted alphabetically by their value.
     """
     due_tasks = filter_due_tasks(tasks, reference_date)
-    return sorted({task.context for task in due_tasks}, key=lambda c: c.value)
+    unique_due_contexts = {task.context for task in due_tasks}
+    return sorted(unique_due_contexts, key=lambda c: c.value)
