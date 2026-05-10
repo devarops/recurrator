@@ -36,6 +36,7 @@ The system follows an **API-first, layered architecture** with strict one-way de
 | **README.md** | End user | What the app does, how to use it | Rare |
 | **AGENTS.md** | Developer | Design principles, conventions, guidelines, patterns | Very slow |
 | **DOCS.md** | Developer | Observable behavior from test suite | Frequent |
+| **CHANGELOG.md** | Developer | Record of interface changes following SemVer and Keep a Changelog | Every release |
 | **TODO.md** | Developer | Active work items, backlog, current Gold | Frequent |
 
 ---
@@ -110,18 +111,19 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 ### Development Environment
 ```shell
 # Build the image (use --no-cache to force a fresh pip install)
-docker build --no-cache --tag devarops/recurrator:latest .
+docker build --no-cache --tag evaristor/recurrator:latest .
 
-# Initialize environment
+# Initialize environment (interactive session)
 docker compose run --rm -it --name recurrator_ci cli bash
 
 # Inside container:
 make install
 make tests
 
-# Alternatively, outside container:
-docker exec recurrator_ci make init
-docker exec recurrator_ci make tests
+# Run CI commands without entering the container:
+docker compose run --rm cli make check
+docker compose run --rm cli make coverage
+docker compose run --rm cli make mutants
 ```
 
 ### Data Validation
@@ -141,6 +143,13 @@ descriptor (`tests/data/datapackage.json`).
   restores the file, and tightens the schema if the mutation goes
   undetected.
 
+### Mutation Testing
+- Configuration lives in `setup.cfg` under the `[mutmut]` section.
+- The `paths_to_mutate` option tells mutmut which package directory to mutate.
+- Run `make mutants` to execute mutation testing inside the container.
+- To verify no surviving mutants remain, run `mutmut results` — survivors are
+  listed as output; an empty result means zero survivors.
+
 ### Feature Specifications
 **POST task/{id}/done**
 - **Behavior**: Marks task as done by rotating completion dates (date_1 ← date_2 ← date_3 ← date_4 ← completion_date), resets `skip_count` to 0, and clears `skipped_date`.
@@ -159,6 +168,8 @@ descriptor (`tests/data/datapackage.json`).
     - ♻️ For refactoring phase of TDD: non-functional code changes.
     - 📝 For documentation updates.
     - 🥇🧪 For after-gold test pattern: strengthening assertions added after The Gold is reached.
+    - 👾 For mutation testing: killing survivors, configuring mutmut.
+    - 👷 For CI and infrastructure: pipeline changes, container setup.
 2. **Structure**:
     - First line: Emoji prefix + imperative verb + concise description. Max 72 characters including emoji.
     - Second line: Blank.

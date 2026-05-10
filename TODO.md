@@ -10,9 +10,6 @@
 - [ ] **`api.py`: Add `GET /context/{context_id}`** — Endpoint returning due/overdue tasks as JSON array filtered by context.
 - [ ] **public/context.html** — Create page to display tasks within context, with links to each task.
 
-## Bug Fixes
-- [ ] **Fix GitHub Actions workflow**: CLI test_list_all fails in CI because workflow doesn't start docker compose before running tests. All tests pass locally.
-
 ## Features
 - [ ] **Gamification System**: Add point accumulation for completed tasks.
 
