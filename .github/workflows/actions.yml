@@ -1,26 +1,11 @@
-name: Test & Push
+name: CI/CD Pipeline
 on:
   push:
     branches:
       - develop
 jobs:
   build-image:
-    name: Build Docker image 🐋
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@main
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    - name: Build and tag Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        tags: evaristor/recurrator:latest
-
-  test-module:
-    name: Run tests 🐍
-    needs: build-image
+    name: Build, Test and Push Docker Image
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -36,12 +21,6 @@ jobs:
       with:
         files: ./coverage.xml
         verbose: true
-
-  tag-release:
-    name: Tag and push Docker image with latest and four-digit tags 🏷️
-    needs: test-module
-    runs-on: ubuntu-latest
-    steps:
     - name: Docker log-in
       env:
         docker_username: ${{ secrets.docker_username }}
