@@ -68,7 +68,7 @@ def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
 def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]:
     """Return a list of contexts that have at least one due task.
 
-    Contexts appear in order of first encounter among due tasks.
+    Contexts appear sorted alphabetically by their value.
     """
     seen: set[Context] = set()
     result: list[Context] = []
@@ -76,4 +76,4 @@ def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context
         if task.due_date <= reference_date and task.context not in seen:
             seen.add(task.context)
             result.append(task.context)
-    return result
+    return sorted(result, key=lambda c: c.value)
