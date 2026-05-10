@@ -127,7 +127,7 @@ def test_filter_due_tasks_by_context():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     context = Context.CASA
     filtered_tasks = rc.filter_due_tasks_by_context(
-        all_tasks, context, reference_date=date(2026, 5, 10)
+        all_tasks, context, reference_date=date(2026, 5, 2)
     )
     obtained_length = len(filtered_tasks)
     expected_length = 2
@@ -139,7 +139,7 @@ def test_filter_due_tasks_by_context():
 
     context = Context.LIMPIAR
     filtered_tasks = rc.filter_due_tasks_by_context(
-        all_tasks, context, reference_date=date(2026, 5, 1)
+        all_tasks, context, reference_date=date(2026, 4, 24)
     )
     obtained_length = len(filtered_tasks)
     expected_length = 3
@@ -152,7 +152,7 @@ def test_filter_due_tasks_by_context():
 
 def test_filter_due_tasks():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
-    filtered_tasks = rc.filter_due_tasks(all_tasks, reference_date=date(2026, 5, 1))
+    filtered_tasks = rc.filter_due_tasks(all_tasks, reference_date=date(2026, 4, 25))
     obtained_length = len(filtered_tasks)
     expected_length = 5
     assert obtained_length == expected_length
