@@ -42,12 +42,6 @@ jobs:
     needs: test-module
     runs-on: ubuntu-latest
     steps:
-    - name: Update latest git tag
-      uses: rickstaa/action-create-tag@main
-      with:
-        tag: "latest"
-        message: "Latest release"
-        force_push_tag: true
     - name: Docker log-in
       env:
         docker_username: ${{ secrets.docker_username }}
