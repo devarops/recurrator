@@ -36,6 +36,14 @@ def _task_to_dict(task: io.Task) -> dict:
     }
 
 
+def _load_tasks_and_date(csv: str | None, reference_date: str) -> tuple:
+    """Import tasks from CSV and parse the reference date."""
+    csv_path = _resolve_csv_path(csv)
+    tasks = io.import_tasks_from_csv(csv_path)
+    parsed_reference_date = date.fromisoformat(reference_date)
+    return tasks, parsed_reference_date
+
+
 @app.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
@@ -60,9 +68,7 @@ def get_tasks_by_context(
     reference_date: str = Query(None, alias="date"),
 ):
     """Return task IDs due in the given context on or before the reference date."""
-    csv_path = _resolve_csv_path(csv)
-    tasks = io.import_tasks_from_csv(csv_path)
-    parsed_reference_date = date.fromisoformat(reference_date)
+    tasks, parsed_reference_date = _load_tasks_and_date(csv, reference_date)
     context = Context(context_id)
     due_tasks = compute.filter_due_tasks_by_context(tasks, context, parsed_reference_date)
     return [task.id for task in due_tasks]
@@ -71,9 +77,7 @@ def get_tasks_by_context(
 @app.get("/context/")
 def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, alias="date")):
     """Return unique contexts from tasks due on or before the given date."""
-    csv_path = _resolve_csv_path(csv)
-    tasks = io.import_tasks_from_csv(csv_path)
-    parsed_reference_date = date.fromisoformat(reference_date)
+    tasks, parsed_reference_date = _load_tasks_and_date(csv, reference_date)
     due_contexts = compute.filter_due_contexts(tasks, parsed_reference_date)
     return [context.value for context in due_contexts]
 
