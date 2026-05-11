@@ -52,6 +52,11 @@ def get_task_by_id(task_id: int, csv: str = Query(None)):
     return _task_to_dict(task)
 
 
+@app.get("/context/")
+def get_due_contexts(csv: str = Query(None), date: str = Query(None)):
+    return {"contexts": []}
+
+
 @app.post("/task/{task_id}/done")
 def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
