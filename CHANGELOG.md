@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `GET /context/` — new endpoint returning unique context names from due tasks
+
+### Changed
+
+- **BREAKING**: `GET /task/` now returns raw task ID integers (`[1, 2, 3]`) instead
+  of wrapped objects (`[{"id": 1}, ...]`)
+
 ## [0.2.0] - 2026-05-09
 
 ### Added
