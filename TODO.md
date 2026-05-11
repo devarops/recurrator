@@ -18,6 +18,7 @@
 
 ## Frontend
 - [ ] Add description of each task on the list of tasks in context.html. Currently only the ID is shown.
+- [ ] Test with FastAPI TestClient or with Playwright? (problably not)
 
 
 ---
