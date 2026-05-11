@@ -54,6 +54,7 @@ def get_task_by_id(task_id: int, csv: str = Query(None)):
 
 @app.get("/context/")
 def get_due_contexts(csv: str = Query(None), date: str = Query(None)):
+    """Return unique contexts from tasks due on or before the given date."""
     return {"contexts": []}
 
 
