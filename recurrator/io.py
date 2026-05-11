@@ -86,6 +86,18 @@ def import_tasks_from_csv(path: str) -> list[Task]:
 
 
 def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
+    """Import the raw date fields for a given task from a CSV file.
+
+    Args:
+        task_id: The task ID to look up.
+        path: Path to the CSV file.
+
+    Returns:
+        A list of exactly 4 date values (None for "NA" entries).
+
+    Raises:
+        ValueError: If task_id is not found in the CSV.
+    """
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
