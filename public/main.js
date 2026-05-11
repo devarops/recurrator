@@ -123,12 +123,11 @@ function buildContextUrl(baseUrl, csvParam) {
         : url;
 }
 
-function renderContextList(contexts) {
+function renderContextList(contexts, csvParam) {
     if (contexts.length === 0) {
         return '<p>No tasks due.</p>';
     }
 
-    const { csvParam } = getQueryParams();
     const items = contexts.map(ctx => {
         const href = csvParam
             ? `context.html?context=${encodeURIComponent(ctx)}&csv=${encodeURIComponent(csvParam)}`
@@ -151,7 +150,7 @@ function initIndexPage(apiBaseUrl) {
             return response.json();
         })
         .then(contexts => {
-            contextsElement.innerHTML = renderContextList(contexts);
+            contextsElement.innerHTML = renderContextList(contexts, csvParam);
         })
         .catch(err => {
             errorElement.innerHTML = renderError(err);
