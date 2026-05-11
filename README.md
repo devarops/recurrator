@@ -17,8 +17,8 @@ Click a task to see its details and mark it as done.
 
 | Page | Status |
 |------|--------|
-| **Index** — lists your contexts | 🚧 Coming soon |
-| **Context** — lists tasks in one context | 🚧 Coming soon |
+| **Index** — lists your contexts | ✅ Ready |
+| **Context** — lists tasks in one context | ✅ Ready |
 | **Task** — view and complete a task | ✅ Ready |
 
 Navigation is point-and-click. You never type task IDs or file paths.
@@ -75,8 +75,6 @@ You never set a schedule — the schedule sets itself based on your behavior.
 
 ## Coming soon
 
-- **Index page** — browse your contexts at a glance
-- **Context page** — see all due/overdue tasks in one area
 - **Skip button** — postpone a task for the day
 - **Starred tasks** — pin important tasks so they can't be skipped
 - **Create and edit tasks** from the browser

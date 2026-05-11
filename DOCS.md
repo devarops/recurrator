@@ -10,7 +10,7 @@ Returns a JSON array of task ID objects.
 
 - **Query parameters**: `csv` (string, path to CSV file)
 - **Status code**: 200
-- **Response**: `[{"id": <integer>}, ...]`
+- **Response**: `[<integer>, ...]`
 - **Ordering**: Ascending by task ID
 
 ### GET /task/{id}
@@ -29,6 +29,27 @@ Returns a single task's full details as JSON.
   - `latest_date` (ISO 8601 date string)
   - `recurrence_days` (integer)
   - `due_date` (ISO 8601 date string)
+
+### GET /context/
+
+Returns unique context names from due/overdue tasks.
+
+- **Query parameters**:
+  - `csv` (string, path to CSV file)
+  - `date` (ISO 8601 date string, reference date for determining due status)
+- **Status code**: 200
+- **Response**: `["casa", "laptop", "limpiar"]` — array of context name strings, sorted alphabetically
+
+### GET /context/{context_id}
+
+Returns task IDs that are due or overdue in the given context.
+
+- **Path parameters**: `context_id` (string, one of "casa", "laptop", "limpiar")
+- **Query parameters**:
+  - `csv` (string, path to CSV file)
+  - `date` (ISO 8601 date string, reference date for determining due status)
+- **Status code**: 200
+- **Response**: `[<integer>, ...]` — array of task IDs with due dates on or before the reference date
 
 ### POST /task/{id}/done
 
