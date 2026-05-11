@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
 
 from . import io
+from .compute import filter_due_contexts
 
 app = FastAPI()
 
@@ -55,7 +56,11 @@ def get_task_by_id(task_id: int, csv: str = Query(None)):
 @app.get("/context/")
 def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, alias="date")):
     """Return unique contexts from tasks due on or before the given date."""
-    return {"contexts": []}
+    csv_path = _resolve_csv_path(csv)
+    tasks = io.import_tasks_from_csv(csv_path)
+    reference_date_obj = date.fromisoformat(reference_date)
+    due_contexts = filter_due_contexts(tasks, reference_date_obj)
+    return [context.value for context in due_contexts]
 
 
 @app.post("/task/{task_id}/done")
