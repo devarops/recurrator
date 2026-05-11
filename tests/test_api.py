@@ -11,23 +11,23 @@ client = TestClient(app)
 
 
 def test_get_single_task_id():
-    """Verify GET /task/ returns a list of task ID objects."""
+    """Verify GET /task/ returns a list of raw task IDs."""
     response = client.get("/task/?csv=tests/data/test_single_task.csv")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
     assert obtained_status_code == expected_status_code
 
-    expected_data = [{"id": 8}]
+    expected_data = [8]
     obtained_data = response.json()
     assert obtained_data == expected_data
 
 
 def test_get_multiple_task_ids():
-    """Verify GET /task/ returns a list of task ID objects when multiple tasks are present."""
+    """Verify GET /task/ returns a list of raw task IDs when multiple tasks are present."""
     response = client.get("/task/?csv=tests/data/test_three_tasks.csv")
 
-    expected_data = [{"id": 2}, {"id": 3}, {"id": 5}]
+    expected_data = [2, 3, 5]
     obtained_data = response.json()
     assert obtained_data == expected_data
 
