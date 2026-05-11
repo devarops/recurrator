@@ -1,10 +1,10 @@
 # To Do
 
-## The Gold: `public/index.html` | Context listing page | Display contexts from due/overdue tasks
+## The Gold: `public/context.html` | Context tasks page | Display due tasks within a context
 
 ## List Contexts From Due/Overdue Tasks
 - [x] **`api.py`: Add `GET /context/`** — Endpoint returning contexts from due/overdue tasks.
-- [ ] **public/index.html** — Add section to display contexts with links to context pages.
+- [x] **public/index.html** — Section displaying contexts with links to context pages.
 
 ## List Due/Overdue Tasks by Context
 - [ ] **`api.py`: Add `GET /context/{context_id}`** — Endpoint returning due/overdue tasks as JSON array filtered by context.

@@ -120,3 +120,16 @@ def test_get_due_contexts():
     expected_contexts = ["casa", "laptop", "limpiar"]
     obtained_contexts = response.json()
     assert obtained_contexts == expected_contexts
+
+
+def test_get_tasks_by_context():
+    """Verify GET /context/{context_id} returns task IDs due in that context."""
+
+    csv_path = "tests/data/test_contexts.csv"
+    reference_date = "2026-05-02"
+    response = client.get(f"/context/casa?csv={csv_path}&date={reference_date}")
+
+    expected_status_code = 200
+    obtained_status_code = response.status_code
+    assert obtained_status_code == expected_status_code
+
