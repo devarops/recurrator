@@ -25,8 +25,8 @@ def list_all_tasks(csv: str = typer.Option(..., "--csv", help="Path to CSV file"
     try:
         response = requests.get(f"{API_BASE_URL}/task/", params={"csv": csv})
         response.raise_for_status()
-        tasks = response.json()
-        _print_task_ids(tasks)
+        task_ids = response.json()
+        _print_task_ids(task_ids)
     except requests.exceptions.RequestException as e:
         typer.echo(f"Error: Cannot connect to API at {API_BASE_URL} - {e}", err=True)
         raise typer.Exit(1)
