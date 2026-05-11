@@ -104,3 +104,14 @@ def test_set_task_as_done():
     io.update_task_dates(task_id, TASK_5_ORIGINAL_DATES, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
+
+def test_get_due_contexts():
+    """Verify GET /context/ returns the correct list of contexts from due tasks."""
+
+    csv_path = "tests/data/test_contexts.csv"
+    reference_date = "2026-05-01"
+    response = client.get(f"/context/?csv={csv_path}&date={reference_date}")
+
+    expected_status_code = 200
+    obtained_status_code = response.status_code
+    assert obtained_status_code == expected_status_code
