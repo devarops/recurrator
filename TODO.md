@@ -1,9 +1,9 @@
 # To Do
 
-## The Gold: `api.py` | `GET /context/` | Endpoint returning unique contexts from due/overdue tasks
+## The Gold: `public/index.html` | Context listing page | Display contexts from due/overdue tasks
 
 ## List Contexts From Due/Overdue Tasks
-- [ ] **`api.py`: Add `GET /context/`** — Endpoint returning `{"contexts": [...]}` based on tasks due/overdue today.
+- [x] **`api.py`: Add `GET /context/`** — Endpoint returning contexts from due/overdue tasks.
 - [ ] **public/index.html** — Add section to display contexts with links to context pages.
 
 ## List Due/Overdue Tasks by Context
@@ -22,5 +22,5 @@
 
 | File | Function Name | Verb | Status | Description |
 |------|--------------|------|--------|-------------|
-| `api.py` | `get_due_contexts` | `get` | To Do | GET /context/ — list unique contexts from due/overdue tasks |
+| `api.py` | `get_due_contexts` | `get` | Done | GET /context/ — list unique contexts from due/overdue tasks |
 | `api.py` | `get_tasks_by_context` | `get` | To Do | GET /context/{context_id} — list due/overdue tasks by context |
