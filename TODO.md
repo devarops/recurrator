@@ -1,31 +1,12 @@
 # To Do
 
-## The Gold: `public/context.html` | Context tasks page | Display due tasks within a context
+## The Gold: Add task description to context page | Show each task's description alongside its ID in context.html
 
-## List Contexts From Due/Overdue Tasks
-- [x] **`api.py`: Add `GET /context/`** — Endpoint returning contexts from due/overdue tasks.
-- [x] **public/index.html** — Section displaying contexts with links to context pages.
-
-## List Due/Overdue Tasks by Context
-- [x] **`api.py`: Add `GET /context/{context_id}`** — Endpoint returning due/overdue tasks as JSON array filtered by context.
-- [ ] **public/context.html** — Create page to display tasks within context, with links to each task.
+## Frontend
+- [ ] Show each task's description next to its ID on the context page
 
 ## Features
 - [ ] **Gamification System**: Add point accumulation for completed tasks.
 
 ## Refactoring
 - [ ] **Centralize Configuration**: Refactor to use config.json.
-
-## Frontend
-- [ ] Add description of each task on the list of tasks in context.html. Currently only the ID is shown.
-- [ ] Test with FastAPI TestClient or with Playwright? (problably not)
-
-
----
-
-## Inventory of future functions
-
-| File | Function Name | Verb | Status | Description |
-|------|--------------|------|--------|-------------|
-| `api.py` | `get_due_contexts` | `get` | Done | GET /context/ — list unique contexts from due/overdue tasks |
-| `api.py` | `get_tasks_by_context` | `get` | Done | GET /context/{context_id} — list due/overdue tasks by context |
