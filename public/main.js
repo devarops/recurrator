@@ -138,6 +138,57 @@ function renderContextList(contexts, csvParam) {
     return `<ul>${items}</ul>`;
 }
 
+function buildTasksByContextUrl(baseUrl, contextName, csvParam) {
+    const today = getTodayISO();
+    const url = `${baseUrl}/context/${encodeURIComponent(contextName)}?date=${today}`;
+    return csvParam
+        ? `${url}&csv=${encodeURIComponent(csvParam)}`
+        : url;
+}
+
+function renderTaskLinks(taskIds, csvParam) {
+    if (taskIds.length === 0) {
+        return '<p>No tasks due.</p>';
+    }
+
+    const items = taskIds.map(id => {
+        const href = csvParam
+            ? `task.html?id=${id}&csv=${encodeURIComponent(csvParam)}`
+            : `task.html?id=${id}`;
+        return `<li><a href="${href}">Task ${id}</a></li>`;
+    }).join('');
+
+    return `<ul>${items}</ul>`;
+}
+
+function initContextPage(apiBaseUrl) {
+    const tasksElement = document.getElementById('tasks');
+    const errorElement = document.getElementById('error');
+    const contextNameElement = document.getElementById('contextName');
+    const params = new URL(window.location).searchParams;
+    const contextName = params.get('context');
+    const csvParam = params.get('csv');
+
+    if (contextName) {
+        contextNameElement.textContent = `Context: ${contextName}`;
+    }
+
+    const url = buildTasksByContextUrl(apiBaseUrl, contextName, csvParam);
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        })
+        .then(taskIds => {
+            tasksElement.innerHTML = renderTaskLinks(taskIds, csvParam);
+        })
+        .catch(err => {
+            displayError(errorElement, err);
+            tasksElement.innerHTML = '';
+        });
+}
+
 function initIndexPage(apiBaseUrl) {
     const contextsElement = document.getElementById('contexts');
     const errorElement = document.getElementById('error');
@@ -161,8 +212,13 @@ function initIndexPage(apiBaseUrl) {
 
 function initPage() {
     const contextsElement = document.getElementById('contexts');
+    const tasksElement = document.getElementById('tasks');
     if (contextsElement) {
         initIndexPage(API_BASE_URL);
+        return;
+    }
+    if (tasksElement) {
+        initContextPage(API_BASE_URL);
         return;
     }
     initTaskPage(API_BASE_URL);
