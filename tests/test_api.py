@@ -115,3 +115,7 @@ def test_get_due_contexts():
     expected_status_code = 200
     obtained_status_code = response.status_code
     assert obtained_status_code == expected_status_code
+
+    expected_contexts = ["casa", "laptop", "limpiar"]
+    obtained_contexts = response.json()
+    assert obtained_contexts == expected_contexts
