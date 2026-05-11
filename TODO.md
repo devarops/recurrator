@@ -16,6 +16,10 @@
 ## Refactoring
 - [ ] **Centralize Configuration**: Refactor to use config.json.
 
+## Frontend
+- [ ] Add description of each task on the list of tasks in context.html. Currently only the ID is shown.
+
+
 ---
 
 ## Inventory of future functions
