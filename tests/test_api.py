@@ -132,4 +132,3 @@ def test_get_tasks_by_context():
     expected_status_code = 200
     obtained_status_code = response.status_code
     assert obtained_status_code == expected_status_code
-
