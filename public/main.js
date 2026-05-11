@@ -204,8 +204,7 @@ function initIndexPage(apiBaseUrl) {
             contextsElement.innerHTML = renderContextList(contexts, csvParam);
         })
         .catch(err => {
-            errorElement.innerHTML = renderError(err);
-            errorElement.hidden = false;
+            displayError(errorElement, err);
             contextsElement.innerHTML = '';
         });
 }
