@@ -68,6 +68,21 @@ function displayError(errorElement, error) {
     errorElement.hidden = false;
 }
 
+function _fetchAndRender(url, renderFn, contentElement, errorElement, csvParam) {
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            contentElement.innerHTML = renderFn(data, csvParam);
+        })
+        .catch(err => {
+            displayError(errorElement, err);
+            contentElement.innerHTML = '';
+        });
+}
+
 function markDoneAndRefresh(context) {
     const { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl } = context;
     const doneUrl = buildDoneUrl(apiBaseUrl, taskId, csvParam);
@@ -175,18 +190,7 @@ function initContextPage(apiBaseUrl) {
 
     const url = buildTasksByContextUrl(apiBaseUrl, contextName, csvParam);
 
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return response.json();
-        })
-        .then(taskIds => {
-            tasksElement.innerHTML = renderTaskLinks(taskIds, csvParam);
-        })
-        .catch(err => {
-            displayError(errorElement, err);
-            tasksElement.innerHTML = '';
-        });
+    _fetchAndRender(url, renderTaskLinks, tasksElement, errorElement, csvParam);
 }
 
 function initIndexPage(apiBaseUrl) {
@@ -195,18 +199,7 @@ function initIndexPage(apiBaseUrl) {
     const { csvParam } = getQueryParams();
     const url = buildContextUrl(apiBaseUrl, csvParam);
 
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return response.json();
-        })
-        .then(contexts => {
-            contextsElement.innerHTML = renderContextList(contexts, csvParam);
-        })
-        .catch(err => {
-            displayError(errorElement, err);
-            contextsElement.innerHTML = '';
-        });
+    _fetchAndRender(url, renderContextList, contextsElement, errorElement, csvParam);
 }
 
 function initPage() {
