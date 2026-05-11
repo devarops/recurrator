@@ -58,8 +58,8 @@ def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, a
     """Return unique contexts from tasks due on or before the given date."""
     csv_path = _resolve_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
-    reference_date_obj = date.fromisoformat(reference_date)
-    due_contexts = filter_due_contexts(tasks, reference_date_obj)
+    parsed_reference_date = date.fromisoformat(reference_date)
+    due_contexts = filter_due_contexts(tasks, parsed_reference_date)
     return [context.value for context in due_contexts]
 
 
