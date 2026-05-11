@@ -2,8 +2,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
 
-from . import io
-from .compute import filter_due_contexts
+from . import compute, io
 
 app = FastAPI()
 
@@ -59,7 +58,7 @@ def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, a
     csv_path = _resolve_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
     parsed_reference_date = date.fromisoformat(reference_date)
-    due_contexts = filter_due_contexts(tasks, parsed_reference_date)
+    due_contexts = compute.filter_due_contexts(tasks, parsed_reference_date)
     return [context.value for context in due_contexts]
 
 
