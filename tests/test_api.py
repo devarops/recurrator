@@ -105,6 +105,7 @@ def test_set_task_as_done():
 
     _assert_file_unchanged(csv_path, original_checksum)
 
+
 def test_get_due_contexts():
     """Verify GET /context/ returns the correct list of contexts from due tasks."""
 
