@@ -1,3 +1,5 @@
+const API_BASE_URL = 'http://localhost:8000';
+
 function buildUrlWithParams(baseUrl, path, csvParam) {
     return csvParam
         ? `${baseUrl}${path}?csv=${encodeURIComponent(csvParam)}`
@@ -161,10 +163,10 @@ function initIndexPage(apiBaseUrl) {
 function initPage() {
     const contextsElement = document.getElementById('contexts');
     if (contextsElement) {
-        initIndexPage('http://localhost:8000');
+        initIndexPage(API_BASE_URL);
         return;
     }
-    initTaskPage('http://localhost:8000');
+    initTaskPage(API_BASE_URL);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
