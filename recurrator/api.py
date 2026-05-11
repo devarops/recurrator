@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
 
 from . import compute, io
+from .models import Context
 
 app = FastAPI()
 
@@ -50,6 +51,21 @@ def get_task_by_id(task_id: int, csv: str = Query(None)):
     except ValueError:
         return {"error": "Task not found"}, 404
     return _task_to_dict(task)
+
+
+@app.get("/context/{context_id}")
+def get_tasks_by_context(
+    context_id: str,
+    csv: str = Query(None),
+    reference_date: str = Query(None, alias="date"),
+):
+    """Return task IDs due in the given context on or before the reference date."""
+    csv_path = _resolve_csv_path(csv)
+    tasks = io.import_tasks_from_csv(csv_path)
+    parsed_reference_date = date.fromisoformat(reference_date)
+    context = Context(context_id)
+    due_tasks = compute.filter_due_tasks_by_context(tasks, context, parsed_reference_date)
+    return [task.id for task in due_tasks]
 
 
 @app.get("/context/")
