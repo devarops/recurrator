@@ -126,9 +126,14 @@ def test_get_tasks_by_context():
     """Verify GET /context/{context_id} returns task IDs due in that context."""
 
     csv_path = "tests/data/test_contexts.csv"
-    reference_date = "2026-05-02"
-    response = client.get(f"/context/casa?csv={csv_path}&date={reference_date}")
+    reference_date = "2026-04-24"
+    context = "limpiar"
+    response = client.get(f"/context/{context}?csv={csv_path}&date={reference_date}")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
     assert obtained_status_code == expected_status_code
+
+    expected_task_ids = [2, 4, 7]
+    obtained_task_ids = response.json()
+    assert obtained_task_ids == expected_task_ids
