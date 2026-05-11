@@ -6,7 +6,7 @@ __version__ = "0.1.0"
 from .models import Context, Task  # noqa: F401
 
 # Internal pure functions
-from .compute import compute_intervals, compute_latest_date, compute_recurrence_days  # noqa: F401
+from .compute import compute_intervals, compute_latest_date, compute_recurrence_days, filter_due_contexts  # noqa: F401
 
 # I/O utilities
 from .io import import_tasks_from_csv  # noqa: F401
