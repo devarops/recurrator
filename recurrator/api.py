@@ -39,7 +39,7 @@ def _task_to_dict(task: io.Task) -> dict:
 def get_all_tasks(csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
-    return [{"id": task.id} for task in tasks]
+    return [task.id for task in tasks]
 
 
 @app.get("/task/{task_id}")
