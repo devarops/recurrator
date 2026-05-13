@@ -36,6 +36,7 @@ check: check_data
 
 check_data:
 	frictionless validate tests/data/datapackage.json
+	cd /root/.config/recurrator && frictionless validate ./datapackege.json
 
 clean:
 	rm --force --recursive .*_cache
