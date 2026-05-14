@@ -98,7 +98,7 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 
 ### Module Hygiene
 - **Imports**: Use explicit imports in `__init__.py`. Group imports by layer: "Data models", "Internal Pure Functions", "I/O Utilities".
-- **Data Models**: Domain constants and data classes belong in `models.py` (e.g., `SKIP_COUNT_RESET`, `DEFAULT_RECURRENCE_DAYS`, `Context`, `Task`).
+- **Data Models**: Domain constants and data classes belong in `models.py` (e.g., `SKIP_COUNT_RESET`, `DEFAULT_RECURRENCE_DAYS`, `Task`). The `Context` enum is generated at build time from `datapackage.json` — see `src/create_contexts.sh`.
 - **Parameter Ordering**: `task_id` (specific) → specific parameters → `csv_path` (general).
 - **Private Helpers**: Prefix internal-only functions with `_` and do not expose them in `__init__.py`.
 - **Dependency Direction**: Enforce strict one-way dependencies. Never import from higher layers into lower layers.
@@ -129,6 +129,11 @@ docker compose exec cli make coverage
 docker compose exec cli make mutants
 ```
 
+**Important**: The container runs in `America/Los_Angeles` timezone. The
+`POST /task/{id}/done` endpoint uses `date.today()` which reflects this
+timezone. Do not change the `TZ` env var in the Dockerfile without updating
+all date-dependent assertions.
+
 ### Data Validation
 Test CSV fixtures live in `tests/data/` and are validated against a
 [Frictionless Data](https://frictionlessdata.io/) Tabular Data Package
@@ -137,9 +142,13 @@ descriptor (`tests/data/datapackage.json`).
 - Schema constraints include field types, formats, required flags, and
   uniqueness. The `missingValues: ["NA"]` declaration recognizes `"NA"`
   as a null marker for optional date fields.
+- The schema's `enum` constraint on the `context` field is the single source of
+  truth for valid task contexts. The Python `Context` enum is generated from it
+  at build time by `src/create_contexts.sh` (requires `jq`).
 - Run `make check_data` to validate all CSV fixtures against the schema.
-  The `check` target depends on `check_data`, so data integrity is
-  verified alongside linting.
+  `check_test_data` validates test fixtures only; `check_production_data`
+  validates the production file. The `check` target runs `check_test_data`
+  before linting and type checking.
 - Use the `/data-mutation-test` OpenCode command (defined in
   `~/.config/opencode/commands/`) to verify the schema catches specific
   mutations: the workflow mutates a CSV, runs validation expecting failure,
@@ -156,8 +165,8 @@ descriptor (`tests/data/datapackage.json`).
 ### Feature Specifications
 **POST task/{id}/done**
 - **Behavior**: Marks task as done by rotating completion dates (date_1 ← date_2 ← date_3 ← date_4 ← completion_date), resets `skip_count` to 0, and clears `skipped_date`.
-- **Request**: Accepts optional JSON. If empty, uses today's date.
-- **Response**: 200 OK (no body).
+- **Request**: Accepts optional JSON. If empty, uses today's date (America/Los_Angeles timezone).
+- **Response**: 200 OK with JSON body containing `id`, `skip_count`, and `due_date`.
 
 ---
 

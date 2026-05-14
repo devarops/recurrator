@@ -23,7 +23,7 @@ Returns a single task's full details as JSON.
 - **Response fields**:
   - `id` (integer)
   - `description` (string)
-  - `context` (string, one of "casa", "laptop", "limpiar")
+  - `context` (string, values defined by the Frictionless Data schema `datapackage.json`)
   - `skip_count` (integer)
   - `starred` (boolean)
   - `latest_date` (ISO 8601 date string)
@@ -38,13 +38,13 @@ Returns unique context names from due/overdue tasks.
   - `csv` (string, path to CSV file)
   - `date` (ISO 8601 date string, reference date for determining due status)
 - **Status code**: 200
-- **Response**: `["casa", "laptop", "limpiar"]` — array of context name strings, sorted alphabetically
+- **Response**: Array of context name strings (values defined by the Frictionless Data schema `datapackage.json`), sorted alphabetically
 
 ### GET /context/{context_id}
 
 Returns task IDs that are due or overdue in the given context.
 
-- **Path parameters**: `context_id` (string, one of "casa", "laptop", "limpiar")
+- **Path parameters**: `context_id` (string, must match a context defined in the Frictionless Data schema `datapackage.json`)
 - **Query parameters**:
   - `csv` (string, path to CSV file)
   - `date` (ISO 8601 date string, reference date for determining due status)
@@ -109,11 +109,12 @@ A Task has the following attributes:
 - `recurrence_days`: computed integer (median of intervals between dates, defaults to 14)
 - `due_date`: computed date (latest_date + recurrence_days)
 
-## Context Enum Values
+## Context Enum
 
-- `Context.CASA` = "casa"
-- `Context.LAPTOP` = "laptop"
-- `Context.LIMPIAR` = "limpiar"
+The `Context` enum is generated at build time from the Frictionless Data schema
+(`datapackage.json`). The available values are the ones listed in the `enum`
+constraint of the `context` field. Values are uppercased for the Python member
+name (e.g. `"casa"` becomes `Context.CASA`).
 
 ## Core Functions
 
