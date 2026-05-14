@@ -122,8 +122,8 @@ make tests
 
 # Alternatively, run tests directly without entering the container:
 docker compose run --interactive --name recurrator_ci --rm --tty --detach cli bash
-docker compose exec cli make check
 docker compose exec cli make init
+docker compose exec cli make check
 docker compose exec cli make tests
 docker compose exec cli make coverage
 docker compose exec cli make mutants
