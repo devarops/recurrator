@@ -26,7 +26,7 @@ define lint
         ${1}
 endef
 
-check: check_data
+check: check_test_data
 	black --check --line-length 100 ${module}
 	black --check --line-length 100 tests
 	flake8 --max-line-length 100 ${module}
@@ -34,7 +34,9 @@ check: check_data
 	mypy ${module}
 	mypy tests
 
-check_data:
+check_data: check_test_data check_production_data
+
+check_test_data:
 	frictionless validate tests/data/datapackage.json
 
 check_production_data:
