@@ -10,12 +10,16 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@main
-    - name: Check code formatting
-      run: docker compose run --rm cli make check
-    - name: Run tests with coverage
-      run: docker compose run --rm cli make coverage
-    - name: Run mutation tests
-      run: docker compose run --rm cli make mutants
+    - name: Build Docker image
+      run: docker compose build
+    - name:
+      run: |
+        docker compose run --interactive --name recurrator_ci --rm --tty --detach cli bash
+        docker compose exec cli make init
+        docker compose exec cli make check
+        docker compose exec cli make tests
+        docker compose exec cli make coverage
+        docker compose exec cli make mutants
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@main
       with:
