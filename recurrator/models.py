@@ -1,17 +1,10 @@
 from dataclasses import dataclass
 from datetime import date
-from enum import Enum
+
+from ._contexts import Context
 
 SKIP_COUNT_RESET = 0
 DEFAULT_RECURRENCE_DAYS = 14
-
-
-class Context(Enum):
-    """Valid task contexts."""
-
-    CASA = "casa"
-    LAPTOP = "laptop"
-    LIMPIAR = "limpiar"
 
 
 @dataclass
