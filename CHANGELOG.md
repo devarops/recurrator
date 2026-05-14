@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Context enum is now generated at build time from the Frictionless Data schema
+  (`datapackage.json`). Adding a new context only requires updating the schema
+  file and re-running `make install`.
+- Data validation targets reorganized: `check_test_data` for test fixtures,
+  `check_production_data` for the production task file, and `check_data` as
+  an umbrella target that runs both.
+
+### Fixed
+
+- `POST /task/{id}/done` completion dates now use the `America/Los_Angeles`
+  timezone instead of UTC, preventing off-by-one-day errors for Western
+  Hemisphere users.
+
 ## [0.3.0] - 2026-05-10
 
 ### Added

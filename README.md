@@ -53,7 +53,7 @@ This starts the API server at `http://localhost:8000`.
 ### Without Docker
 
 ```bash
-pip install -e .
+make install
 uvicorn recurrator.api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
