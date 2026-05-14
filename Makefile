@@ -36,6 +36,8 @@ check: check_data
 
 check_data:
 	frictionless validate tests/data/datapackage.json
+
+check_production_data:
 	cd /root/.config/recurrator && frictionless validate ./datapackage.json
 
 clean:
