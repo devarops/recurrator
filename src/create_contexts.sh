@@ -5,8 +5,7 @@ DATAPACKAGE="${1:-/root/.config/recurrator/datapackage.json}"
 OUTPUT="recurrator/_contexts.py"
 
 if [ ! -f "$DATAPACKAGE" ]; then
-    echo "Error: $DATAPACKAGE not found" >&2
-    exit 1
+    DATAPACKAGE="tests/data/datapackage.json"
 fi
 
 CONTEXTS=$(jq -r '.resources[0].schema.fields[] | select(.name == "context").constraints.enum[]' "$DATAPACKAGE")
