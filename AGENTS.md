@@ -114,14 +114,14 @@ return [(b - a).days for a, b in zip([d for d in dates if d is not None], [d for
 docker build --tag evaristor/recurrator:latest .
 
 # Initialize a container with an interactive shell:
-docker compose run --interactive --rm --tty cli bash
+docker compose run --interactive --name recurrator_ci --rm --tty cli bash
 
 # Inside container:
 make init
 make tests
 
 # Alternatively, run tests directly without entering the container:
-docker compose run --interactive --rm --tty --detach cli bash
+docker compose run --interactive --name recurrator_ci --rm --tty --detach cli bash
 docker compose exec cli make check
 docker compose exec cli make init
 docker compose exec cli make tests
