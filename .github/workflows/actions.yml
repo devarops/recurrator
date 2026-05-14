@@ -12,9 +12,9 @@ jobs:
       uses: actions/checkout@main
     - name: Build Docker image
       run: docker compose build
-    - name:
+    - name: Run checks and tests
       run: |
-        docker compose run --interactive --name recurrator_ci --rm --tty --detach cli bash
+        docker compose run --name recurrator_ci --rm --detach cli sleep infinity
         docker compose exec cli make init
         docker compose exec cli make check
         docker compose exec cli make tests
