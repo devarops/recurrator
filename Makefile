@@ -26,7 +26,7 @@ define lint
         ${1}
 endef
 
-check: check_test_data
+check: check_test_data recurrator/_contexts.py
 	black --check --line-length 100 ${module}
 	black --check --line-length 100 tests
 	flake8 --max-line-length 100 ${module}
