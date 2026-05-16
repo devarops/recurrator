@@ -114,9 +114,20 @@ function initTaskPage(apiBaseUrl) {
     const { taskId, csvParam } = getQueryParams();
     const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
 
+    function makeContextHref(contextName, csvParam) {
+        return csvParam
+            ? `context.html?context=${encodeURIComponent(contextName)}&csv=${encodeURIComponent(csvParam)}`
+            : `context.html?context=${encodeURIComponent(contextName)}`;
+    }
+
     fetchJson(apiUrl)
         .then(task => {
             displayTask(taskElement, errorElement, task);
+            const contextLink = document.getElementById('contextLink');
+            if (contextLink) {
+                contextLink.href = makeContextHref(task.context, csvParam);
+                contextLink.textContent = task.context;
+            }
             const doneBtn = document.getElementById('doneBtn');
             const context = { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl };
             attachDoneButtonHandler(doneBtn, context);
