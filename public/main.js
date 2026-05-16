@@ -181,11 +181,12 @@ function renderTaskLinks(tasks, csvParam) {
         const href = csvParam
             ? `task.html?id=${task.id}&csv=${encodeURIComponent(csvParam)}`
             : `task.html?id=${task.id}`;
-        return `<tr><td>${task.id}</td><td><a href="${href}">${task.description}</a></td><td>${task.recurrence_days}</td><td>${task.starred ? '⭐' : ''}</td></tr>`;
+        const coins = task.starred ? task.recurrence_days * 2 : task.recurrence_days;
+        return `<tr><td>${task.id}</td><td><a href="${href}">${task.description}</a></td><td>${coins}</td></tr>`;
     }).join('');
 
     return `\
-<table><thead><tr><th>ID</th><th>Description</th><th>Recurrence</th><th>Starred</th></tr></thead>\
+<table><thead><tr><th>ID</th><th>Description</th><th>Coins</th></tr></thead>\
 <tbody>${rows}</tbody></table>`;
 }
 
