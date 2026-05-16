@@ -29,6 +29,8 @@ The system follows an **API-first, layered architecture** with strict one-way de
 - **API as Single Source of Truth**: All business logic resides in the API; the CLI contains zero business logic.
 - **Stateless CLI**: The CLI is a thin HTTP client. It does not import `io.py` or `compute.py` and communicates exclusively with the API.
 - **Mandatory Configuration**: The CLI enforces the `--csv` parameter to ensure data consistency on the API side.
+- **Single-Responsibility Endpoints**: Each API endpoint returns only the data scoped to its resource. List endpoints return identities; detail endpoints return attributes. If a client needs richer data, it composes from multiple endpoints rather than inflating a list endpoint's contract.
+    - **Example**: `GET /context/{context_id}` returns only task IDs. When the context page needs to show task descriptions, the frontend fetches each task individually from `GET /task/{task_id}` instead of making the context endpoint also return descriptions.
 
 ### Documentation Meta-Structure
 | File | Audience | Purpose | Change Frequency |

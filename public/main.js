@@ -172,19 +172,21 @@ function buildTasksByContextUrl(baseUrl, contextName, csvParam) {
         : url;
 }
 
-function renderTaskLinks(taskIds, csvParam) {
-    if (taskIds.length === 0) {
+function renderTaskLinks(tasks, csvParam) {
+    if (tasks.length === 0) {
         return '<p>No tasks due.</p>';
     }
 
-    const items = taskIds.map(id => {
+    const rows = tasks.map(task => {
         const href = csvParam
-            ? `task.html?id=${id}&csv=${encodeURIComponent(csvParam)}`
-            : `task.html?id=${id}`;
-        return `<li><a href="${href}">Task ${id}</a></li>`;
+            ? `task.html?id=${task.id}&csv=${encodeURIComponent(csvParam)}`
+            : `task.html?id=${task.id}`;
+        return `<tr><td>${task.id}</td><td><a href="${href}">${task.description}</a></td><td>${task.recurrence_days}</td><td>${task.starred ? '⭐' : ''}</td></tr>`;
     }).join('');
 
-    return `<ul>${items}</ul>`;
+    return `\
+<table><thead><tr><th>ID</th><th>Description</th><th>Recurrence</th><th>Starred</th></tr></thead>\
+<tbody>${rows}</tbody></table>`;
 }
 
 function initContextPage(apiBaseUrl) {
@@ -199,9 +201,25 @@ function initContextPage(apiBaseUrl) {
         contextNameElement.textContent = contextName;
     }
 
-    const url = buildTasksByContextUrl(apiBaseUrl, contextName, csvParam);
+    const listUrl = buildTasksByContextUrl(apiBaseUrl, contextName, csvParam);
 
-    _fetchAndRender(url, renderTaskLinks, tasksElement, errorElement, csvParam);
+    fetch(listUrl)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        })
+        .then(taskIds => {
+            const detailUrls = taskIds.map(id => buildApiUrl(apiBaseUrl, id, csvParam));
+            return Promise.all(detailUrls.map(url => fetchJson(url)));
+        })
+        .then(tasks => {
+            tasksElement.innerHTML = renderTaskLinks(tasks, csvParam);
+            errorElement.hidden = true;
+        })
+        .catch(err => {
+            displayError(errorElement, err);
+            tasksElement.innerHTML = '';
+        });
 }
 
 function initIndexPage(apiBaseUrl) {
