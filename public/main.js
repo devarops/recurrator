@@ -196,7 +196,7 @@ function initContextPage(apiBaseUrl) {
     const csvParam = params.get('csv');
 
     if (contextName) {
-        contextNameElement.textContent = `Context: ${contextName}`;
+        contextNameElement.textContent = contextName;
     }
 
     const url = buildTasksByContextUrl(apiBaseUrl, contextName, csvParam);
