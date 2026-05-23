@@ -37,6 +37,8 @@ The system follows an **API-first, layered architecture** with strict one-way de
     - **Example**: `{"error": "Task not found"}` with status `404`. This is consistent regardless of which layer detects the error.
 - **CLI Output is CSV or JSON**: CLI commands producing tabular data MUST output valid CSV (header row + data rows), making `command --csv path/to/file.csv > table.csv` a valid pipeline producing a correct CSV file. When the output is inherently non-tabular (single value, unstructured text, nested data), JSON is the acceptable alternative.
     - **Example**: `list-all-tasks` prints an `id` header then one ID per line — valid CSV with one column. A future `show-config` command might output JSON since config is nested key-value data.
+- **Presentation is a Client Responsibility**: Sorting, filtering, computing display-only values, and other presentation arrangements belong in the frontend or CLI, not in API endpoints. The API returns domain data; the client transforms it for human consumption. Adding `?sort`, computed display fields, or presentation-only filters to API contracts couples presentation to the backend and is avoided.
+    - **Example**: The context page sorts tasks by Coins descending. The frontend fetches each task from `GET /task/{id}`, computes and sorts the array in JavaScript. No API change is needed.
 
 ### Documentation Meta-Structure
 | File | Audience | Purpose | Change Frequency |
