@@ -1,10 +1,13 @@
 # To Do
 
-## The Gold: Add task description to context page | Show each task's description alongside its ID in context.html
+## The Gold: Return coins in the Task object in the API response.
 
-- [ ] Sort by Coins
+- [x] Show each task's description next to its ID on the context page
+- [ ] **Centralize Configuration**: Refactor to use config.json.
+- [x] Sort by Coins
 - [ ] Idempotency for Done command.
 - [ ] Set min and max recurrence days.
+- [ ] Test frontend with Playwright or FastAPI TestClient.
 - [ ] Prioritization algorithm.
   **Specification (per `AGENTS.md` per-context and 6-per-day cap):**
 
@@ -33,14 +36,3 @@
   **Side effect (API layer):** The API calls `io.update_task_skip_count(task_id, skipped_date=today(), csv_path)` for each task in the second list.
 
 
-## Frontend
-- [ ] Show each task's description next to its ID on the context page
-
-## Features
-- [ ] Return coins in the Task object in the API response.
-
-## Refactoring
-- [ ] **Centralize Configuration**: Refactor to use config.json.
-
-## Some day/Maybe
-- [ ] Test frontend with Playwright or FastAPI TestClient.
