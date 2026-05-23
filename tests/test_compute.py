@@ -172,3 +172,11 @@ def test_filter_due_contexts():
     expected_contexts = [Context.CASA, Context.LAPTOP, Context.LIMPIAR]
     obtained_contexts = filtered_contexts
     assert obtained_contexts == expected_contexts
+
+
+def test_compute_coins():
+    recurrence_days = 14
+    is_starred = False
+    expected_coins = 14
+    obtained_coins = rc.compute_coins(recurrence_days, is_starred)
+    assert obtained_coins == expected_coins
