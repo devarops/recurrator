@@ -37,8 +37,26 @@ The system follows an **API-first, layered architecture** with strict one-way de
     - **Example**: `{"error": "Task not found"}` with status `404`. This is consistent regardless of which layer detects the error.
 - **CLI Output is CSV or JSON**: CLI commands producing tabular data MUST output valid CSV (header row + data rows), making `command --csv path/to/file.csv > table.csv` a valid pipeline producing a correct CSV file. When the output is inherently non-tabular (single value, unstructured text, nested data), JSON is the acceptable alternative.
     - **Example**: `list-all-tasks` prints an `id` header then one ID per line — valid CSV with one column. A future `show-config` command might output JSON since config is nested key-value data.
-- **Presentation is a Client Responsibility**: Sorting, filtering, computing display-only values, and other presentation arrangements belong in the frontend or CLI, not in API endpoints. The API returns domain data; the client transforms it for human consumption. Adding `?sort`, computed display fields, or presentation-only filters to API contracts couples presentation to the backend and is avoided.
-    - **Example**: The context page sorts tasks by Coins descending. The frontend fetches each task from `GET /task/{id}`, computes and sorts the array in JavaScript. No API change is needed.
+- **Presentation is a Client Responsibility**: The client transforms API data for display but does not derive new values through computation. Every value in the rendered output must directly correspond to a value that existed as an independent atomic entity in the API response. Adding `?sort`, computed display fields, or presentation-only filters to API contracts couples presentation to the backend and is avoided.
+    - **Example**: The context page sorts tasks by Coins descending. The frontend receives `coins` from `GET /task/{id}` and sorts the array in JavaScript. No new value is computed on the client.
+- **No Derived Values in the Presentation Layer**: The frontend may transform data for display, but it must never introduce new atomic values through computation. A value that does not exist as an independent entity in the source (the API response) must be added to the backend, not derived on the client.
+
+    **Permitted frontend adaptations** (transformations that preserve atomic identity):
+    - Conversion of file types to native language types (string → number, etc.)
+    - Type coercion (e.g., as.numeric, as.Date, as.character)
+    - Normalization of missing values (NaN, NA, None, Null → language-native null)
+    - Character transformations that do not alter meaning (tolower, toupper, trimws, substr)
+    - Renaming and reordering columns
+    - Selecting columns
+    - Filtering rows
+    - Mechanical restructuring (individual scalars → vector or table)
+
+    **Prohibited in the presentation layer** (these belong in `compute_*`):
+    - Any arithmetic operations (+, -, *, /, ^)
+    - Statistical operations (mean, sum, sd, quantile)
+    - Joins between tables
+    - Aggregations (group_by + summarize)
+    - Any operation that derives a value that did not exist as an independent atomic entity in the source
 - **Frontend Growth Threshold**: When `public/main.js` exceeds 400 lines, evaluate whether its complexity warrants dedicated frontend tests (e.g., Playwright, component tests, or end-to-end browser automation). The current smoke test (HTML structure check) and inline console.asserts serve as a lightweight safety net below that threshold.
 
     The current frontend safety net consists of two layers:
