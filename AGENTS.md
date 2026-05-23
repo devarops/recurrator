@@ -39,6 +39,13 @@ The system follows an **API-first, layered architecture** with strict one-way de
     - **Example**: `list-all-tasks` prints an `id` header then one ID per line — valid CSV with one column. A future `show-config` command might output JSON since config is nested key-value data.
 - **Presentation is a Client Responsibility**: Sorting, filtering, computing display-only values, and other presentation arrangements belong in the frontend or CLI, not in API endpoints. The API returns domain data; the client transforms it for human consumption. Adding `?sort`, computed display fields, or presentation-only filters to API contracts couples presentation to the backend and is avoided.
     - **Example**: The context page sorts tasks by Coins descending. The frontend fetches each task from `GET /task/{id}`, computes and sorts the array in JavaScript. No API change is needed.
+- **Frontend Growth Threshold**: When `public/main.js` exceeds 400 lines, evaluate whether its complexity warrants dedicated frontend tests (e.g., Playwright, component tests, or end-to-end browser automation). The current smoke test (HTML structure check) and inline console.asserts serve as a lightweight safety net below that threshold.
+
+    The current frontend safety net consists of two layers:
+
+    - **pytest structural check** (`test_frontend.py`): Reads each HTML file from disk and asserts the presence of key DOM landmarks — `<div id="contexts">` on the index page, `<div id="tasks">` and `<h2 id="contextName">` on the context page, `<div id="task">` and `<a id="contextLink">` on the task page, plus `<script src="main.js">` and the `<title>` on every page. This catches broken merges, accidental deletions, or structural edits that strip required elements.
+
+    - **Inline JS assertions**: Each page init function (`initTaskPage`, `initContextPage`, `initIndexPage`) runs `console.assert` on the DOM elements it depends on before proceeding, reporting missing elements to the browser console. A `_selfCheck()` function runs once at page load and verifies all expected function names exist in the global scope, catching accidental function renames or deletions before they cause silent failures downstream.
 
 ### Documentation Meta-Structure
 | File | Audience | Purpose | Change Frequency |
