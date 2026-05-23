@@ -5,19 +5,19 @@ PUBLIC_DIR = "public"
 HTML_FILES = {
     "index.html": [
         '<div id="contexts">',
-        '<div id="error"',
+        '<article id="error"',
         '<script src="main.js">',
         "<title>Recurrator</title>",
     ],
     "context.html": [
         '<div id="tasks">',
-        '<div id="error"',
+        '<article id="error"',
         '<script src="main.js">',
         '<h2 id="contextName">',
     ],
     "task.html": [
         '<div id="task">',
-        '<div id="error"',
+        '<article id="error"',
         '<script src="main.js">',
         '<a id="contextLink"',
     ],
