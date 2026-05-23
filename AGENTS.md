@@ -31,6 +31,12 @@ The system follows an **API-first, layered architecture** with strict one-way de
 - **Mandatory Configuration**: The CLI enforces the `--csv` parameter to ensure data consistency on the API side.
 - **Single-Responsibility Endpoints**: Each API endpoint returns only the data scoped to its resource. List endpoints return identities; detail endpoints return attributes. If a client needs richer data, it composes from multiple endpoints rather than inflating a list endpoint's contract.
     - **Example**: `GET /context/{context_id}` returns only task IDs. When the context page needs to show task descriptions, the frontend fetches each task individually from `GET /task/{task_id}` instead of making the context endpoint also return descriptions.
+- **Action Responses are Confirmation Subsets**: State-changing endpoints (POST, PUT, DELETE) return only the subset of fields needed to confirm what changed, rather than the full resource. The response typically includes the resource `id` and the fields that were modified. Returning the full resource is permitted as a special case of a "subset that includes everything" — it is not the default.
+    - **Example**: `POST /task/{id}/done` returns `{id, skip_count, due_date}`, not the full task dict. The client learns the new `skip_count` (always 0) and the new `due_date` — exactly what it needs to update its UI.
+- **Error Envelope**: Every error response uses a JSON body with a single `"error"` key containing a human-readable message string, paired with an appropriate HTTP status code.
+    - **Example**: `{"error": "Task not found"}` with status `404`. This is consistent regardless of which layer detects the error.
+- **CLI Output is CSV or JSON**: CLI commands producing tabular data MUST output valid CSV (header row + data rows), making `command --csv path/to/file.csv > table.csv` a valid pipeline producing a correct CSV file. When the output is inherently non-tabular (single value, unstructured text, nested data), JSON is the acceptable alternative.
+    - **Example**: `list-all-tasks` prints an `id` header then one ID per line — valid CSV with one column. A future `show-config` command might output JSON since config is nested key-value data.
 
 ### Documentation Meta-Structure
 | File | Audience | Purpose | Change Frequency |
