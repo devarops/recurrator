@@ -111,6 +111,8 @@ function attachDoneButtonHandler(doneBtn, context) {
 
 function initTaskPage(apiBaseUrl) {
     const { taskElement, errorElement } = getDomElements();
+    console.assert(taskElement, 'Missing #task element in task.html');
+    console.assert(errorElement, 'Missing #error element in task.html');
     const { taskId, csvParam } = getQueryParams();
     const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
 
@@ -200,6 +202,9 @@ function initContextPage(apiBaseUrl) {
     const tasksElement = document.getElementById('tasks');
     const errorElement = document.getElementById('error');
     const contextNameElement = document.getElementById('contextName');
+    console.assert(tasksElement, 'Missing #tasks element in context.html');
+    console.assert(errorElement, 'Missing #error element in context.html');
+    console.assert(contextNameElement, 'Missing #contextName element in context.html');
     const params = new URL(window.location).searchParams;
     const contextName = params.get('context');
     const csvParam = params.get('csv');
@@ -232,6 +237,8 @@ function initContextPage(apiBaseUrl) {
 function initIndexPage(apiBaseUrl) {
     const contextsElement = document.getElementById('contexts');
     const errorElement = document.getElementById('error');
+    console.assert(contextsElement, 'Missing #contexts element in index.html');
+    console.assert(errorElement, 'Missing #error element in index.html');
     const { csvParam } = getQueryParams();
     const url = buildContextUrl(apiBaseUrl, csvParam);
 
@@ -252,6 +259,22 @@ function initPage() {
     initTaskPage(API_BASE_URL);
 }
 
+function _selfCheck() {
+    var required = [
+        'buildApiUrl', 'buildDoneUrl', 'renderTask', 'renderError',
+        'fetchJson', 'markDoneAndRefresh', 'initTaskPage',
+        'initContextPage', 'initIndexPage', 'renderTaskLinks',
+        'renderContextList',
+    ];
+    required.forEach(function (name) {
+        console.assert(
+            typeof window[name] !== 'undefined',
+            'Missing function: ' + name
+        );
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    _selfCheck();
     initPage();
 });
