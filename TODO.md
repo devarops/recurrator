@@ -2,7 +2,7 @@
 
 ## The Gold: Add task description to context page | Show each task's description alongside its ID in context.html
 
-## Algorithm
+- [ ] Sort by Coins
 - [ ] Idempotency for Done command.
 - [ ] Set min and max recurrence days.
 - [ ] Prioritization algorithm.
