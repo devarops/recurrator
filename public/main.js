@@ -177,7 +177,13 @@ function renderTaskLinks(tasks, csvParam) {
         return '<p>No tasks due.</p>';
     }
 
-    const rows = tasks.map(task => {
+    const sorted = tasks.sort((a, b) => {
+        const coinsA = a.starred ? a.recurrence_days * 2 : a.recurrence_days;
+        const coinsB = b.starred ? b.recurrence_days * 2 : b.recurrence_days;
+        return coinsB - coinsA;
+    });
+
+    const rows = sorted.map(task => {
         const href = csvParam
             ? `task.html?id=${task.id}&csv=${encodeURIComponent(csvParam)}`
             : `task.html?id=${task.id}`;
