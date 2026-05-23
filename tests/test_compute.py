@@ -175,8 +175,15 @@ def test_filter_due_contexts():
 
 
 def test_compute_coins():
+    """Verify compute_coins returns recurrence days for an unstarred task."""
     recurrence_days = 14
     is_starred = False
     expected_coins = 14
+    obtained_coins = rc.compute_coins(recurrence_days, is_starred)
+    assert obtained_coins == expected_coins
+
+    recurrence_days = 21
+    is_starred = True
+    expected_coins = 42
     obtained_coins = rc.compute_coins(recurrence_days, is_starred)
     assert obtained_coins == expected_coins
