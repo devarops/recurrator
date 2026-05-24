@@ -179,18 +179,13 @@ function renderTaskLinks(tasks, csvParam) {
         return '<p>No tasks due.</p>';
     }
 
-    const sorted = tasks.sort((a, b) => {
-        const coinsA = a.starred ? a.recurrence_days * 2 : a.recurrence_days;
-        const coinsB = b.starred ? b.recurrence_days * 2 : b.recurrence_days;
-        return coinsB - coinsA;
-    });
+    const sorted = tasks.sort((a, b) => b.coins - a.coins);
 
     const rows = sorted.map(task => {
         const href = csvParam
             ? `task.html?id=${task.id}&csv=${encodeURIComponent(csvParam)}`
             : `task.html?id=${task.id}`;
-        const coins = task.starred ? task.recurrence_days * 2 : task.recurrence_days;
-        return `<tr><td>${task.id}</td><td><a href="${href}">${task.description}</a></td><td>${coins}</td></tr>`;
+        return `<tr><td>${task.id}</td><td><a href="${href}">${task.description}</a></td><td>${task.coins}</td></tr>`;
     }).join('');
 
     return `\
