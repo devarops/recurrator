@@ -154,6 +154,15 @@ Adds recurrence days to the latest date to determine the next due date.
   - `recurrence_days` — Number of days to add
 - **Returns**: `latest_date + recurrence_days`
 
+### `compute_coins(recurrence_days: int, is_starred: bool) -> int`
+
+Computes the coin value for a task based on its recurrence days and starred status.
+
+- **Parameters**:
+  - `recurrence_days` — The task's recurrence interval in days
+  - `is_starred` — Whether the task is starred
+- **Returns**: `recurrence_days` for unstarred tasks, `recurrence_days * 2` for starred tasks
+
 ### `filter_four_dates(dates: list[date | None], new_date: date) -> list[date | None]`
 
 Keeps the 4 most recent dates from a combined list of existing dates and a new date.
@@ -190,15 +199,6 @@ Filters a list of tasks by due/overdue status alone.
   - `tasks` — A list of Task objects
   - `reference_date` — The cutoff date for determining due status
 - **Returns**: List of tasks whose due_date is on or before reference_date, regardless of context
-
-### `compute_coins(recurrence_days: int, is_starred: bool) -> int`
-
-Computes the coin value for a task based on its recurrence days and starred status.
-
-- **Parameters**:
-  - `recurrence_days` — The task's recurrence interval in days
-  - `is_starred` — Whether the task is starred
-- **Returns**: `recurrence_days` for unstarred tasks, `recurrence_days * 2` for starred tasks
 
 ### `filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]`
 
