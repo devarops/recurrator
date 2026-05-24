@@ -73,6 +73,29 @@ def test_get_task_by_id_alternative_csv():
     assert obtained_data == expected_data
 
 
+def test_get_task_by_id_starred():
+    """Verify GET /task/{id} returns coins doubled for a starred task."""
+    response = client.get("/task/1?csv=tests/data/test_contexts.csv")
+
+    expected_status_code = 200
+    obtained_status_code = response.status_code
+    assert obtained_status_code == expected_status_code
+
+    expected_data = {
+        "id": 1,
+        "description": "Reparar fuga escusado",
+        "context": "casa",
+        "skip_count": 0,
+        "starred": True,
+        "latest_date": "2026-04-04",
+        "recurrence_days": 21,
+        "due_date": "2026-04-25",
+        "coins": 42,
+    }
+    obtained_data = response.json()
+    assert obtained_data == expected_data
+
+
 def test_set_task_as_done():
     """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
 

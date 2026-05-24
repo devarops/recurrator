@@ -22,9 +22,12 @@ Return coins in the Task object in the API response, and consume it from the fro
 
    **Red:**
    - File: `tests/test_api.py`
-   - Scenario: Update `test_get_task_by_id_default_csv` expected data to include `"coins": 14` (task 8: unstarred). Update `test_get_task_by_id_alternative_csv` expected data to include `"coins": 33` (task 3: unstarred). Add a new test fetching a starred task from `test_contexts.csv` (e.g. task 1) and asserting `"coins": 42`.
-   - Expected: API response for `GET /task/{id}` includes a `"coins"` field with correct values for both starred and unstarred tasks.
+   - Scenario: Add a new test fetching a starred task from `test_contexts.csv` (task 1) and asserting `"coins": 42`.
+   - Expected: API response for `GET /task/{id}` includes a `"coins"` field.
    - Fails because: `_task_to_dict` in `api.py` does not include `coins` in the response dict.
+   - Note: Two additional test updates were deferred to keep exactly one failing test:
+     - `test_get_task_by_id_default_csv`: add `"coins": 14` (task 8, unstarred)
+     - `test_get_task_by_id_alternative_csv`: add `"coins": 33` (task 3, unstarred)
 
    **Green:**
    - Add `"coins": task.coins` to the dict returned by `_task_to_dict` in `api.py`.
