@@ -49,6 +49,7 @@ def test_get_task_by_id_default_csv():
         "latest_date": "2025-11-17",
         "recurrence_days": 14,
         "due_date": "2025-12-01",
+        "coins": 14,
     }
     obtained_data = response.json()
     assert obtained_data == expected_data
@@ -67,6 +68,7 @@ def test_get_task_by_id_alternative_csv():
         "latest_date": "2026-03-07",
         "recurrence_days": 33,
         "due_date": "2026-04-09",
+        "coins": 33,
     }
 
     obtained_data = response.json()

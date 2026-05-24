@@ -33,6 +33,7 @@ def _task_to_dict(task: io.Task) -> dict:
         "latest_date": task.latest_date.isoformat(),
         "recurrence_days": task.recurrence_days,
         "due_date": task.due_date.isoformat(),
+        "coins": task.coins,
     }
 
 
