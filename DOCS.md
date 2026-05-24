@@ -29,6 +29,7 @@ Returns a single task's full details as JSON.
   - `latest_date` (ISO 8601 date string)
   - `recurrence_days` (integer)
   - `due_date` (ISO 8601 date string)
+  - `coins` (integer, equals recurrence_days for unstarred tasks, doubled for starred tasks)
 
 ### GET /context/
 
@@ -108,6 +109,7 @@ A Task has the following attributes:
 - `latest_date`: computed date (the later of date_4 or skipped_date)
 - `recurrence_days`: computed integer (median of intervals between dates, defaults to 14)
 - `due_date`: computed date (latest_date + recurrence_days)
+- `coins`: computed integer (recurrence_days for unstarred tasks, doubled for starred tasks)
 
 ## Context Enum
 
@@ -188,6 +190,15 @@ Filters a list of tasks by due/overdue status alone.
   - `tasks` — A list of Task objects
   - `reference_date` — The cutoff date for determining due status
 - **Returns**: List of tasks whose due_date is on or before reference_date, regardless of context
+
+### `compute_coins(recurrence_days: int, is_starred: bool) -> int`
+
+Computes the coin value for a task based on its recurrence days and starred status.
+
+- **Parameters**:
+  - `recurrence_days` — The task's recurrence interval in days
+  - `is_starred` — Whether the task is starred
+- **Returns**: `recurrence_days` for unstarred tasks, `recurrence_days * 2` for starred tasks
 
 ### `filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]`
 
