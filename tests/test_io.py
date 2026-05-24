@@ -61,6 +61,32 @@ def test_import_tasks_from_csv_single_task():
     obtained_due_date = first_task.due_date
     assert obtained_due_date == expected_due_date
 
+    # Computed coins
+    expected_coins = 14
+    obtained_coins = first_task.coins
+    assert obtained_coins == expected_coins
+
+
+def test_import_tasks_from_csv_starred_task():
+    """Verify import_tasks_from_csv computes coins correctly for a starred task."""
+    csv_path = "tests/data/test_contexts.csv"
+    task_list = io.import_tasks_from_csv(csv_path)
+
+    # Find the starred task with ID 1
+    task_1 = [t for t in task_list if t.id == 1][0]
+
+    expected_starred = True
+    obtained_starred = task_1.starred
+    assert obtained_starred == expected_starred
+
+    expected_recurrence_days = 21
+    obtained_recurrence_days = task_1.recurrence_days
+    assert obtained_recurrence_days == expected_recurrence_days
+
+    expected_coins = 42
+    obtained_coins = task_1.coins
+    assert obtained_coins == expected_coins
+
 
 def test_import_tasks_from_csv_two_contexts():
     """Verify import_tasks_from_csv correctly handles multiple contexts in CSV file."""
