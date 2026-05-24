@@ -27,6 +27,7 @@ class Task:
         skip_count: int,
         starred: bool,
         dates: Dates,
+        coins: int,
     ):
         self.id = id
         self.description = description
@@ -36,3 +37,4 @@ class Task:
         self.latest_date = dates.latest_date
         self.recurrence_days = dates.recurrence_days
         self.due_date = dates.due_date
+        self.coins = coins

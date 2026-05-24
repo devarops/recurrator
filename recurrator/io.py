@@ -3,6 +3,7 @@ from collections.abc import Callable, Sequence
 from datetime import date
 
 from .compute import (
+    compute_coins,
     compute_due_date,
     compute_intervals,
     compute_latest_date,
@@ -60,14 +61,16 @@ def _compute_dates(row: dict) -> Dates:
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
     dates = _compute_dates(row)
+    starred = bool(int(row["starred"]))
 
     return Task(
         id=int(row["id"]),
         description=row["description"],
         context=Context(row["context"]),
         skip_count=int(row["skip_count"]),
-        starred=bool(int(row["starred"])),
+        starred=starred,
         dates=dates,
+        coins=compute_coins(dates.recurrence_days, starred),
     )
 
 
