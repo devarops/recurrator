@@ -76,6 +76,5 @@ You never set a schedule — the schedule sets itself based on your behavior.
 ## Coming soon
 
 - **Skip button** — postpone a task for the day
-- **Starred tasks** — pin important tasks so they can't be skipped
 - **Create and edit tasks** from the browser
 - **Dashboard** — see your progress over time
