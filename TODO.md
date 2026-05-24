@@ -1,38 +1,45 @@
 # To Do
 
-## The Gold: Return coins in the Task object in the API response.
+## The Gold
 
-- [x] Show each task's description next to its ID on the context page
-- [ ] **Centralize Configuration**: Refactor to use config.json.
-- [x] Sort by Coins
-- [ ] Idempotency for Done command.
-- [ ] Set min and max recurrence days.
-- [ ] Test frontend with Playwright or FastAPI TestClient.
-- [ ] Prioritization algorithm.
-  **Specification (per `AGENTS.md` per-context and 6-per-day cap):**
+Return coins in the Task object in the API response, and consume it from the frontend instead of computing it client-side.
 
-  New function in `compute.py`:
-  ```python
-  def filter_six_tasks_by_context(
-      tasks: list[Task], context: Context, reference_date: date
-  ) -> tuple[list[Task], list[Task]]:
-  ```
+## Plan
 
-  **Contract:**
-  1. Start with `due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)`.
-  2. If `len(due_tasks) <= 6`, return `(due_tasks, [])` — no selection or skip needed.
-  3. Precondition for prioritization: `len(due_tasks) >= 7`.
-  4. Build `selected = []`, `remaining = copy(due_tasks)`, `i = 0`.
-  5. While `len(selected) < 6` and `remaining` not empty:
-     - `i += 1`
-     - **Sort order for this cycle**:
-       - Odd `i`: sort key = (`skip_count` DESC, `due_date` ASC, `recurrence_days` DESC)
-       - Even `i`: sort key = (`skip_count` DESC, `recurrence_days` DESC, `due_date` ASC)
-     - **Starred pick**: filter starred from remaining, sort by cycle key, take first → `selected`, remove from `remaining`. Break if 6 reached.
-     - **Non-starred pick**: filter non-starred from remaining, sort by same cycle key, take first → `selected`, remove from `remaining`.
-  6. After loop: `non_starred_remaining = [t in remaining if not t.starred]`.
-  7. Return `(selected, non_starred_remaining)`.
+1. **Add `coins` attribute to Task model, computed during CSV import**
 
-  **Side effect (API layer):** The API calls `io.update_task_skip_count(task_id, skipped_date=today(), csv_path)` for each task in the second list.
+   **Red:**
+   - File: `tests/test_io.py`
+   - Scenario: In `test_import_tasks_from_csv_single_task`, assert `first_task.coins == 14` (task 8: unstarred, recurrence_days=14 → coins=14). Add a new test importing `test_contexts.csv` that asserts `task.coins` for a starred task, e.g. task 1 (starred, recurrence_days=21 → coins=42).
+   - Expected: Imported tasks have a `coins` attribute matching the expected value, with starred tasks producing double the recurrence days.
+   - Fails because: `Task` has no `coins` attribute and `_row_to_task` does not compute it.
 
+   **Green:**
+   - Add `coins: int` parameter to `Task.__init__` in `models.py`.
+   - Import `compute_coins` in `io.py` and call it in `_row_to_task` to produce the `coins` value from `dates.recurrence_days` and the task's `starred` flag.
 
+2. **Return `coins` from the task detail API endpoint**
+
+   **Red:**
+   - File: `tests/test_api.py`
+   - Scenario: Update `test_get_task_by_id_default_csv` expected data to include `"coins": 14` (task 8: unstarred). Update `test_get_task_by_id_alternative_csv` expected data to include `"coins": 33` (task 3: unstarred). Add a new test fetching a starred task from `test_contexts.csv` (e.g. task 1) and asserting `"coins": 42`.
+   - Expected: API response for `GET /task/{id}` includes a `"coins"` field with correct values for both starred and unstarred tasks.
+   - Fails because: `_task_to_dict` in `api.py` does not include `coins` in the response dict.
+
+   **Green:**
+   - Add `"coins": task.coins` to the dict returned by `_task_to_dict` in `api.py`.
+
+## Outside the Plan
+
+- **Frontend migration:** Update `public/main.js` — replace client-side coin computation (`a.starred ? a.recurrence_days * 2 : a.recurrence_days` and analogous lines) with `a.coins` from the API response.
+- **Documentation update:** Add `coins` field to the `GET /task/{id}` response in `DOCS.md` and to the Task object model section.
+
+## Backlog
+
+The following items were removed from the original TODO.md to keep the plan focused on The Gold. They remain valid work items for future cycles.
+
+- Centralize Configuration: Refactor to use config.json.
+- Idempotency for Done command.
+- Set min and max recurrence days.
+- Test frontend with Playwright or FastAPI TestClient.
+- Prioritization algorithm.
