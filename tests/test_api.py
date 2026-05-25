@@ -4,6 +4,7 @@ import recurrator.io as io
 from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
+    TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
 )
 
@@ -127,6 +128,30 @@ def test_set_task_as_done():
     # Undo changes to CSV file for other tests
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
     io.update_task_dates(task_id, TASK_5_ORIGINAL_DATES, csv_path)
+
+    _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_task_done_idempotency():
+    """Verify POST /task/{id}/done returns 409 on consecutive duplicate completion."""
+
+    csv_path = "tests/data/test_three_tasks.csv"
+    original_checksum = _get_file_checksum(csv_path)
+
+    task_id = 2
+    original_skip_count = io.get_task_by_id(task_id, csv_path).skip_count
+
+    try:
+        first_response = client.post(f"/task/{task_id}/done?csv={csv_path}")
+        assert first_response.status_code == 200
+
+        second_response = client.post(f"/task/{task_id}/done?csv={csv_path}")
+        assert second_response.status_code == 409
+        assert "error" in second_response.json()
+    finally:
+        # Undo changes to CSV file for other tests
+        io.update_task_skip_count(task_id, original_skip_count, csv_path)
+        io.update_task_dates(task_id, TASK_2_ORIGINAL_DATES, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
 
