@@ -14,6 +14,7 @@ They remain valid work items for future cycles.
 - Set min and max recurrence days.
 - Test frontend with Playwright or FastAPI TestClient.
 - Prioritization algorithm.
+- Add one extra task when we have lest than 6 tasks
 
 ## Prioritization algorithm
 
@@ -41,3 +42,27 @@ def filter_six_tasks_by_context(
 7. Return `(selected, non_starred_remaining)`.
 
 **Side effect (API layer):** The API calls `io.update_task_skip_count(task_id, skipped_date=today(), csv_path)` for each task in the second list.
+
+
+## One extra task algorithm
+
+**Purpose:** When a context has fewer than 6 due tasks, pick one upcoming (not yet due) task to pad the list. Complementary to `filter_six_tasks_by_context`.
+
+**Scope:** Within a single context (matching `filter_six_tasks_by_context`).
+
+**Side effects:** None. Skip tracking is handled elsewhere (API layer of prioritization algorithm).
+
+new function in `compute.py`:
+
+```python
+def filter_one_extra_task(
+    tasks: list[Task], context: Context, reference_date: date
+) -> list[Task]:
+```
+
+**Contract:**
+1. Start with `all_tasks_in_context = filter_all_tasks_by_context(tasks, context)`.
+2. Exclude tasks where `due_date <= reference_date` (already due/overdue — handled by other algorithms).
+3. Filter for `recurrence_days > 30` (strict; same as `>= 31`).
+4. Sort by `due_date` ASC, then `recurrence_days` DESC (closest due date first; larger recurrence breaks ties).
+5. Take the first element (nearest upcoming), return it as `[task]`, or `[]` if none qualify.
