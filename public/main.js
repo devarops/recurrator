@@ -87,7 +87,14 @@ function markDoneAndRefresh(context) {
     const { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl } = context;
     const doneUrl = buildDoneUrl(apiBaseUrl, taskId, csvParam);
 
-    return fetchJson(doneUrl, { method: 'POST' })
+    return fetch(doneUrl, { method: 'POST' })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(body => {
+                    throw new Error(body.error || `HTTP ${response.status}`);
+                });
+            }
+        })
         .then(() => fetchJson(apiUrl))
         .then(updatedTask => {
             displayTask(taskElement, errorElement, updatedTask);
