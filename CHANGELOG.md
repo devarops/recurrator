@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-24
+
 ### Added
 
 - `POST /task/{id}/done` now returns **409 Conflict** when the task was already
@@ -58,7 +60,8 @@ No user-facing changes.
     skip_count and due_date, and recomputes the next due date
 - CLI with `list-all-tasks` command
 
-[unreleased]: https://github.com/devarops/recurrator/compare/v0.4.0...HEAD
+[unreleased]: https://github.com/devarops/recurrator/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/devarops/recurrator/releases/tag/v0.5.0
 [0.4.0]: https://github.com/devarops/recurrator/releases/tag/v0.4.0
 [0.3.0]: https://github.com/devarops/recurrator/releases/tag/v0.3.0
 [0.2.0]: https://github.com/devarops/recurrator/releases/tag/v0.2.0
