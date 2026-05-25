@@ -78,3 +78,10 @@ def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context
 def compute_coins(recurrence_days: int, is_starred: bool) -> int:
     """Compute coins as twice the recurrence days for starred tasks."""
     return recurrence_days * 2 if is_starred else recurrence_days
+
+
+def is_done_allowed(last_completion_date: date | None, today: date) -> bool:
+    """Return whether a task can be marked as done, rejecting same-day and consecutive-day completions."""
+    if last_completion_date is None:
+        return True
+    return (today - last_completion_date).days >= 2
