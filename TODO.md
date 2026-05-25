@@ -1,6 +1,10 @@
 # The Gold
 
-- (None)
+- Idempotency for Done command
+
+## Plan
+
+A task should no be able to be mark as done twice in the same day nor in two consecutive days.
 
 ---
 
@@ -10,7 +14,6 @@ The following items were removed from the original TODO.md to keep the plan focu
 They remain valid work items for future cycles.
 
 - Centralize Configuration: Refactor to use config.json.
-- Idempotency for Done command.
 - Set min and max recurrence days.
 - Test frontend with Playwright or FastAPI TestClient.
 - Prioritization algorithm.
@@ -42,7 +45,6 @@ def filter_six_tasks_by_context(
 7. Return `(selected, non_starred_remaining)`.
 
 **Side effect (API layer):** The API calls `io.update_task_skip_count(task_id, skipped_date=today(), csv_path)` for each task in the second list.
-
 
 ## One extra task algorithm
 
