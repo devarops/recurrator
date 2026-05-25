@@ -48,6 +48,7 @@ docker compose run --interactive --name recurrator_ci --rm --tty cli bash
 # Inside container:
 make init && make tests
 # Or directly:
+docker compose exec cli make init
 docker compose exec cli make tests
 ```
 

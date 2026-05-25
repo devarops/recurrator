@@ -187,3 +187,13 @@ def test_compute_coins():
     expected_coins = 42
     obtained_coins = rc.compute_coins(recurrence_days, is_starred)
     assert obtained_coins == expected_coins
+
+
+def test_is_done_allowed():
+    """Verify is_done_allowed rejects same-day and consecutive-day completions."""
+    today = date(2026, 5, 24)
+
+    assert rc.is_done_allowed(today, today) is False
+    assert rc.is_done_allowed(date(2026, 5, 23), today) is False
+    assert rc.is_done_allowed(date(2026, 5, 22), today) is True
+    assert rc.is_done_allowed(None, today) is True
