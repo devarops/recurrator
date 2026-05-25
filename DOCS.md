@@ -58,15 +58,13 @@ Marks a task as completed on today's date.
 
 - **Path parameters**: `id` (integer)
 - **Query parameters**: `csv` (string, path to CSV file)
-- **Status code**: 200
-- **Response fields**:
-  - `id` (integer)
-  - `skip_count` (integer, always 0 after completion)
-  - `due_date` (ISO 8601 date string, differs from the previous due date)
-- **Behavior**:
-  - Rotates completion dates (date_1 ← date_2 ← date_3 ← date_4 ← completion_date)
-  - Resets `skip_count` to 0
-  - Recomputes `due_date` based on updated dates
+- **Status codes**:
+  - **200** — Success
+    - **Response fields**: `id` (integer), `skip_count` (integer, always 0), `due_date` (ISO 8601 date string)
+    - Rotates completion dates (date_1 ← date_2 ← date_3 ← date_4 ← completion_date), resets `skip_count` to 0, and recomputes `due_date`
+  - **409** — Conflict
+    - **Response fields**: `error` (string)
+    - Returned when the task was already completed today or yesterday. No changes are made to the task.
 
 ## CLI Commands
 
