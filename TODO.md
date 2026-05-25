@@ -1,10 +1,40 @@
 # The Gold
 
-- Idempotency for Done command
+Idempotency for Done command — a task cannot be marked as done twice on the same day nor on two consecutive days.
 
 ## Plan
 
-A task should no be able to be mark as done twice in the same day nor in two consecutive days.
+### 1. Validation function in compute.py
+
+**Red:**
+
+- File: `tests/test_compute.py`
+- Scenario: Test `is_done_allowed(last_completion_date, today)` returns:
+  - `False` when `last_completion_date == today` (same day)
+  - `False` when `last_completion_date == today - 1` (consecutive day)
+  - `True` when `last_completion_date == today - 2` (allowed)
+  - `True` when `last_completion_date` is `None` (no prior completion)
+- Fails because: `is_done_allowed` does not exist in `compute.py`.
+
+**Green:**
+
+- Implement `is_done_allowed(last_completion_date: date | None, today: date) -> bool` in `compute.py`.
+
+### 2. API enforcement
+
+**Red:**
+
+- File: `tests/test_api.py`
+- Scenario: Call `POST /task/{id}/done` twice in a row on the same task. First call returns 200. Second call returns 409 with `{"error": "<message>"}`. Restore CSV state after the test.
+- Fails because: `post_task_done` handler does not check idempotency before updating.
+
+**Green:**
+
+- Update `post_task_done` in `api.py` to read the last completion date from the task, call `is_done_allowed`, and return 409 with an error envelope if the request is rejected.
+
+## Outside the Plan
+
+- **Document 409 response in DOCS.md:** Add the 409 Conflict status and error envelope to the `POST /task/{id}/done` endpoint documentation. Does not follow the Red/Green TDD format because it is a documentation-only change with no test or production behavior evolution.
 
 ---
 
