@@ -161,6 +161,15 @@ Computes the coin value for a task based on its recurrence days and starred stat
   - `is_starred` — Whether the task is starred
 - **Returns**: `recurrence_days` for unstarred tasks, `recurrence_days * 2` for starred tasks
 
+### `is_done_allowed(last_completion_date: date | None, reference_date: date) -> bool`
+
+Determines whether a task can be marked as done, rejecting same-day and consecutive-day completions.
+
+- **Parameters**:
+  - `last_completion_date` — The most recent completion date (may be None for tasks never completed)
+  - `reference_date` — The current date to compare against
+- **Returns**: `True` if at least two days have passed since the last completion, or if `last_completion_date` is None. `False` if the last completion was on the same day or the day before `reference_date`.
+
 ### `filter_four_dates(dates: list[date | None], new_date: date) -> list[date | None]`
 
 Keeps the 4 most recent dates from a combined list of existing dates and a new date.

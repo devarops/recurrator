@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `POST /task/{id}/done` now returns **409 Conflict** when the task was already
+  completed today or yesterday. The completion is rejected and the task remains
+  unchanged.
+
+### Fixed
+
+- Frontend now displays API error messages (e.g. the 409 reject reason) instead
+  of silently refreshing the task as if the request succeeded.
+
 ## [0.4.0] - 2026-05-24
 
 ### Added
