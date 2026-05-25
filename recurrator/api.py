@@ -87,15 +87,16 @@ def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, a
 @app.post("/task/{task_id}/done")
 def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
+    today = date.today()
 
     last_completion_date = io.import_dates_from_csv(task_id, csv_path)[3]
-    if not compute.is_done_allowed(last_completion_date, date.today()):
+    if not compute.is_done_allowed(last_completion_date, today):
         return JSONResponse(
             content={"error": "Task was already completed too recently"},
             status_code=409,
         )
 
-    io.update_task_as_done(task_id, date.today(), csv_path)
+    io.update_task_as_done(task_id, today, csv_path)
 
     updated_task = io.get_task_by_id(task_id, csv_path)
     return {
