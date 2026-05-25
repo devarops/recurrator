@@ -14,10 +14,12 @@
 - API is single source of truth; CLI is a thin HTTP client with zero business logic.
 - Single-responsibility endpoints: list endpoints return identities, detail endpoints return attributes.
 - Action responses return confirmation subsets (`id` + changed fields), not full resources.
-- Error envelope: `{"error": "<message>"}` with appropriate HTTP status code.
+- Error envelope: `{"error": "<message>"}` with appropriate HTTP status code. Non-200 responses must use `JSONResponse(content={...}, status_code=N)` from `fastapi.responses`; the `return dict, int` tuple pattern serializes as a JSON array `[{...}, 409]` instead of unpacking.
 - CLI tabular output MUST be valid CSV (header + data rows). Non-tabular output uses JSON.
 
 **No Derived Values in Presentation Layer:** The frontend may transform data for display (type coercion, renaming, filtering, column selection) but must never introduce new atomic values through computation (no arithmetic, statistics, joins, or aggregations). Derived values belong in `compute_*` on the backend.
+
+**Naming conventions in `compute.py`:** Pure functions use `reference_date` (not `today`) for the cut-off/current date parameter, and `is_*` prefix for boolean-returning functions.
 
 ## TDD Cycle
 
@@ -29,8 +31,9 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 - If multiple tests fail for the same behavioral gap, defer extra tests to keep exactly one failing test per Red phase. Add them back after Green.
 - Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import). Otherwise write real assertions.
 - After-Gold test pattern: subsequent strengthening assertions use 🥇🧪 prefix.
+- Tests that modify shared mutable state (e.g., CSV files shared across the suite) must use `try/finally` to ensure rollback occurs even on assertion failure, preventing pollution of subsequent tests.
 
-**Commit emoji prefixes:** 🛑🧪 (Red), ✅ (Green), ♻️ (refactor), 📝 (docs), 🥇🧪 (after-gold), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
+**Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 🥇🧪 (after-gold), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
 ## Data Modeling & CSV Mapping
 
@@ -54,7 +57,7 @@ docker compose exec cli make tests
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation).
+**Useful make targets:** `tests` (pytest), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter).
 
 ## Mutation Testing
 
