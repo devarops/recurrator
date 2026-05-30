@@ -59,7 +59,7 @@ format:
 	black --line-length 100 ${module}
 	black --line-length 100 tests
 
-init: setup tests
+init: check_production_data setup tests
 
 install: recurrator/_contexts.py
 	pip install --editable .
