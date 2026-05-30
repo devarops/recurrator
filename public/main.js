@@ -18,7 +18,18 @@ function renderTaskRow(label, value) {
     return `<tr><td>${label}</td><td>${value}</td></tr>`;
 }
 
+function isRecentlyCompleted(latestDate) {
+    const today = new Date();
+    const todayISO = today.toISOString().split('T')[0];
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayISO = yesterday.toISOString().split('T')[0];
+    return latestDate === todayISO || latestDate === yesterdayISO;
+}
+
 function renderTask(task) {
+    const recentlyDone = isRecentlyCompleted(task.latest_date);
+    const buttonClass = recentlyDone ? ' class="done-recently"' : '';
     return `
         <table>
             <tbody>
@@ -32,7 +43,7 @@ function renderTask(task) {
                 ${renderTaskRow('Due Date', task.due_date)}
             </tbody>
         </table>
-        <button id="doneBtn">Mark as Done</button>
+        <button id="doneBtn"${buttonClass}>Mark as Done</button>
     `;
 }
 
@@ -266,7 +277,7 @@ function _selfCheck() {
         'buildApiUrl', 'buildDoneUrl', 'renderTask', 'renderError',
         'fetchJson', 'markDoneAndRefresh', 'initTaskPage',
         'initContextPage', 'initIndexPage', 'renderTaskLinks',
-        'renderContextList',
+        'renderContextList', 'isRecentlyCompleted',
     ];
     required.forEach(function (name) {
         console.assert(
