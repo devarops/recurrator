@@ -28,11 +28,7 @@ function isRecentlyCompleted(latestDate) {
 }
 
 function renderTask(task) {
-    const recentlyDone = isRecentlyCompleted(task.latest_date);
-    const buttonClass = recentlyDone ? ' class="done-recently"' : '';
     return `
-        <button id="doneBtn"${buttonClass}>Mark as Done</button>
-        <article id="error" hidden></article>
         <table>
             <tbody>
                 ${renderTaskRow('ID', task.id)}
@@ -72,8 +68,12 @@ function getDomElements() {
 
 function displayTask(taskElement, errorElement, task) {
     taskElement.innerHTML = renderTask(task);
-    var newError = document.getElementById('error');
-    if (newError) newError.hidden = true;
+    var errorEl = document.getElementById('error');
+    if (errorEl) errorEl.hidden = true;
+    var doneBtn = document.getElementById('doneBtn');
+    if (doneBtn) {
+        doneBtn.classList.toggle('done-recently', isRecentlyCompleted(task.latest_date));
+    }
 }
 
 function displayError(errorElement, error) {
@@ -122,11 +122,7 @@ function markDoneAndRefresh(context) {
 
 function attachDoneButtonHandler(doneBtn, context) {
     doneBtn.addEventListener('click', () => {
-        markDoneAndRefresh(context)
-            .then(() => {
-                const newDoneBtn = document.getElementById('doneBtn');
-                attachDoneButtonHandler(newDoneBtn, context);
-            });
+        markDoneAndRefresh(context);
     });
 }
 
@@ -150,13 +146,13 @@ function initTaskPage(apiBaseUrl) {
                 contextLink.href = makeContextHref(task.context, csvParam);
                 contextLink.textContent = task.context;
             }
-            var heading = document.getElementById('taskHeading');
-            if (heading) {
+            var monster = document.getElementById('monster');
+            if (monster) {
                 sha256Hex(String(task.id)).then(function (hash) {
                     var img = document.createElement('img');
                     img.src = 'https://gravatar.com/avatar/' + hash + '?d=monsterid&s=256&f=y';
                     img.alt = '';
-                    heading.prepend(img);
+                    monster.prepend(img);
                 });
             }
             const doneBtn = document.getElementById('doneBtn');

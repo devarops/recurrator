@@ -5,8 +5,9 @@
     <title>Recurrator</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     <style>
-        #taskHeading {
+        #monster {
             text-align: center;
+            margin: 0 0 2.625rem 0;
         }
         button.done-recently {
             --background-color: #2ecc71;
@@ -17,7 +18,9 @@
 <body>
     <main class="container">
         <h1><a id="contextLink" href="index.html">Recurrator</a></h1>
-        <h2 id="taskHeading"></h2>
+        <figure id="monster"></figure>
+        <button id="doneBtn">Mark as Done</button>
+        <article id="error" hidden></article>
         <div id="task">Loading...</div>
     </main>
     <script src="main.js"></script>
