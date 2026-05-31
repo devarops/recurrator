@@ -223,11 +223,11 @@ function renderTaskLinks(tasks, csvParam) {
         const href = csvParam
             ? `task.html?id=${task.id}&csv=${encodeURIComponent(csvParam)}`
             : `task.html?id=${task.id}`;
-        return `<tr><td>${task.id}</td><td><a href="${href}">${task.description}</a></td><td>${task.coins}</td></tr>`;
+        return `<tr><td><a href="${href}"><img class="monster-img" data-task-id="${task.id}" alt=""></a></td><td>${task.description}</td><td>${task.coins}</td></tr>`;
     }).join('');
 
     return `\
-<table><thead><tr><th>ID</th><th>Description</th><th>Coins</th></tr></thead>\
+<table><thead><tr><th>Monster</th><th>Description</th><th>Coins</th></tr></thead>\
 <tbody>${rows}</tbody></table>`;
 }
 
@@ -260,6 +260,13 @@ function initContextPage(apiBaseUrl) {
         .then(tasks => {
             tasksElement.innerHTML = renderTaskLinks(tasks, csvParam);
             errorElement.hidden = true;
+            var monsterImgs = document.querySelectorAll('.monster-img');
+            monsterImgs.forEach(function (img) {
+                var taskId = img.getAttribute('data-task-id');
+                sha256Hex(String(taskId)).then(function (hash) {
+                    img.src = 'https://gravatar.com/avatar/' + hash + '?d=monsterid&s=64&f=y';
+                });
+            });
         })
         .catch(err => {
             displayError(errorElement, err);
