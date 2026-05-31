@@ -31,6 +31,7 @@ function renderTask(task) {
     const recentlyDone = isRecentlyCompleted(task.latest_date);
     const buttonClass = recentlyDone ? ' class="done-recently"' : '';
     return `
+        <button id="doneBtn"${buttonClass}>Mark as Done</button>
         <table>
             <tbody>
                 ${renderTaskRow('ID', task.id)}
@@ -43,7 +44,6 @@ function renderTask(task) {
                 ${renderTaskRow('Due Date', task.due_date)}
             </tbody>
         </table>
-        <button id="doneBtn"${buttonClass}>Mark as Done</button>
     `;
 }
 
@@ -148,6 +148,15 @@ function initTaskPage(apiBaseUrl) {
                 contextLink.href = makeContextHref(task.context, csvParam);
                 contextLink.textContent = task.context;
             }
+            var heading = document.getElementById('taskHeading');
+            if (heading) {
+                sha256Hex(String(task.id)).then(function (hash) {
+                    var img = document.createElement('img');
+                    img.src = 'https://gravatar.com/avatar/' + hash + '?d=monsterid&s=256&f=y';
+                    img.alt = '';
+                    heading.prepend(img);
+                });
+            }
             const doneBtn = document.getElementById('doneBtn');
             const context = { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl };
             attachDoneButtonHandler(doneBtn, context);
@@ -155,6 +164,17 @@ function initTaskPage(apiBaseUrl) {
         .catch(err => {
             displayError(errorElement, err);
         });
+}
+
+function sha256Hex(str) {
+    var encoder = new TextEncoder();
+    var data = encoder.encode(str);
+    return crypto.subtle.digest('SHA-256', data).then(function (buffer) {
+        var bytes = new Uint8Array(buffer);
+        return Array.from(bytes).map(function (b) {
+            return b.toString(16).padStart(2, '0');
+        }).join('');
+    });
 }
 
 function getTodayISO() {
@@ -275,7 +295,7 @@ function initPage() {
 function _selfCheck() {
     var required = [
         'buildApiUrl', 'buildDoneUrl', 'renderTask', 'renderError',
-        'fetchJson', 'markDoneAndRefresh', 'initTaskPage',
+        'fetchJson', 'sha256Hex', 'markDoneAndRefresh', 'initTaskPage',
         'initContextPage', 'initIndexPage', 'renderTaskLinks',
         'renderContextList', 'isRecentlyCompleted',
     ];
