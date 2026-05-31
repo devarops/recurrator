@@ -151,3 +151,67 @@ def compute_glicko_update(rating, rd, opponents) -> tuple[float, float]:
 ### Frontend
 
 Deferred to a later cycle.
+
+## Coins from Glicko rating
+
+Coins are computed from the Glicko rating instead of recurrence_days/starred.
+Prerequisite: Glicko rating system is fully implemented (rating exists on every Task).
+
+### Constants in `models.py`
+
+| Constant | Value | Notes |
+|---|---|---|
+| `RATING_MIN` | 1000 | Rating at which coins bottom out |
+| `RATING_MAX` | 2000 | Rating at which coins cap out |
+| `COINS_MIN` | 10 | Minimum coin value |
+| `COINS_MAX` | 200 | Maximum coin value |
+| `COINS_SLOPE` | `(COINS_MAX - COINS_MIN) / (RATING_MAX - RATING_MIN)` | Computed at module level |
+| `COINS_INTERCEPT` | `COINS_MIN - COINS_SLOPE * RATING_MIN` | Computed at module level |
+
+### Signature change in `compute.py`
+
+Old:
+```python
+def compute_coins(recurrence_days: int, is_starred: bool) -> int:
+```
+
+New:
+```python
+def compute_coins(rating: int) -> int:
+    """Compute coins from Glicko rating, clamped to [COINS_MIN, COINS_MAX]."""
+    return min(
+        max(COINS_MIN, round(COINS_SLOPE * rating + COINS_INTERCEPT)),
+        COINS_MAX,
+    )
+```
+
+### Call-site change in `io.py`
+
+`_row_to_task` changes from:
+```python
+coins=compute_coins(dates.recurrence_days, starred),
+```
+to:
+```python
+coins=compute_coins(row["rating"]),
+```
+
+### Documentation
+
+- DOCS.md: replace coins description with `coins: integer, computed from Glicko rating via a linear model clamped to [10, 200]`.
+
+### Red phase
+
+Rewrite `test_compute_coins` to test the new signature and formula. Boundary-value assertions:
+- `compute_coins(1000) == 10` (rating at minimum → COINS_MIN)
+- `compute_coins(2000) == 200` (rating at maximum → COINS_MAX)
+- `compute_coins(1500) == 105` (midpoint, verify linear model)
+- `compute_coins(500) == 10` (below minimum clamped)
+- `compute_coins(2500) == 200` (above maximum clamped)
+
+### No changes
+
+- CSV schema — coins is not stored.
+- Task model — `starred` stays; `coins` stays as a runtime attribute.
+- API response shape — field name and position unchanged.
+- Frontend — no code changes; the value displayed changes naturally.
