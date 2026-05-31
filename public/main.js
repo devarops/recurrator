@@ -32,6 +32,7 @@ function renderTask(task) {
     const buttonClass = recentlyDone ? ' class="done-recently"' : '';
     return `
         <button id="doneBtn"${buttonClass}>Mark as Done</button>
+        <article id="error" hidden></article>
         <table>
             <tbody>
                 ${renderTaskRow('ID', task.id)}
@@ -71,12 +72,14 @@ function getDomElements() {
 
 function displayTask(taskElement, errorElement, task) {
     taskElement.innerHTML = renderTask(task);
-    errorElement.hidden = true;
+    var newError = document.getElementById('error');
+    if (newError) newError.hidden = true;
 }
 
 function displayError(errorElement, error) {
-    errorElement.innerHTML = renderError(error);
-    errorElement.hidden = false;
+    var errorEl = document.getElementById('error') || errorElement;
+    errorEl.innerHTML = renderError(error);
+    errorEl.hidden = false;
 }
 
 function _fetchAndRender(url, renderFn, contentElement, errorElement, csvParam) {
@@ -130,7 +133,6 @@ function attachDoneButtonHandler(doneBtn, context) {
 function initTaskPage(apiBaseUrl) {
     const { taskElement, errorElement } = getDomElements();
     console.assert(taskElement, 'Missing #task element in task.html');
-    console.assert(errorElement, 'Missing #error element in task.html');
     const { taskId, csvParam } = getQueryParams();
     const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
 
