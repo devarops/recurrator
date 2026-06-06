@@ -161,12 +161,16 @@ Prerequisite: Glicko rating system is fully implemented (rating exists on every 
 
 | Constant | Value | Notes |
 |---|---|---|
-| `RATING_MIN` | 1000 | Rating at which coins bottom out |
-| `RATING_MAX` | 2000 | Rating at which coins cap out |
-| `COINS_MIN` | 10 | Minimum coin value |
+| `RATING_MIN` | 1000 | Minimum rating anchor |
+| `RATING_MAX` | 2000 | Maximum rating anchor |
+| `RATING_MID` | 1500 | Midpoint rating anchor |
+| `COINS_MIN` | 20 | Minimum coin value |
 | `COINS_MAX` | 200 | Maximum coin value |
-| `COINS_SLOPE` | `(COINS_MAX - COINS_MIN) / (RATING_MAX - RATING_MIN)` | Computed at module level |
-| `COINS_INTERCEPT` | `COINS_MIN - COINS_SLOPE * RATING_MIN` | Computed at module level |
+| `COINS_MID` | 50 | Midpoint coin value |
+| `STEP` | `RATING_MID - RATING_MIN` | Computed at module level (500) |
+| `GROWTH` | `(COINS_MAX - COINS_MIN) / (COINS_MID - COINS_MIN) - 1` | Computed at module level (5) |
+| `COEFFICIENT` | `(COINS_MID - COINS_MIN) / (GROWTH - 1)` | Computed at module level (7.5) |
+| `OFFSET` | `COINS_MIN - COEFFICIENT` | Computed at module level (12.5) |
 
 ### Signature change in `compute.py`
 
@@ -178,9 +182,9 @@ def compute_coins(recurrence_days: int, is_starred: bool) -> int:
 New:
 ```python
 def compute_coins(rating: int) -> int:
-    """Compute coins from Glicko rating, clamped to [COINS_MIN, COINS_MAX]."""
+    """Compute coins from Glicko rating via exponential model, clamped to [COINS_MIN, COINS_MAX]."""
     return min(
-        max(COINS_MIN, round(COINS_SLOPE * rating + COINS_INTERCEPT)),
+        max(COINS_MIN, round(COEFFICIENT * pow(GROWTH, (rating - RATING_MIN) / STEP) + OFFSET)),
         COINS_MAX,
     )
 ```
@@ -198,15 +202,15 @@ coins=compute_coins(row["rating"]),
 
 ### Documentation
 
-- DOCS.md: replace coins description with `coins: integer, computed from Glicko rating via a linear model clamped to [10, 200]`.
+- DOCS.md: replace coins description with `coins: integer, computed from Glicko rating via an exponential model clamped to [20, 200]`.
 
 ### Red phase
 
 Rewrite `test_compute_coins` to test the new signature and formula. Boundary-value assertions:
-- `compute_coins(1000) == 10` (rating at minimum → COINS_MIN)
+- `compute_coins(1000) == 20` (rating at minimum → COINS_MIN)
 - `compute_coins(2000) == 200` (rating at maximum → COINS_MAX)
-- `compute_coins(1500) == 105` (midpoint, verify linear model)
-- `compute_coins(500) == 10` (below minimum clamped)
+- `compute_coins(1500) == 50` (midpoint, verify exponential model)
+- `compute_coins(500) == 20` (below minimum clamped)
 - `compute_coins(2500) == 200` (above maximum clamped)
 
 ### No changes
