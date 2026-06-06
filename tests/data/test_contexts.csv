@@ -1,4 +1,4 @@
-id,context,description,date_1,date_2,date_3,date_4,skip_count,skipped_date,starred
+id,context,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred
 1,casa,"Reparar fuga escusado",NA,2026-02-21,2026-03-20,2026-04-04,0,NA,1
 2,limpiar,"Limpiar cuartito de lavado 15 min",2025-09-28,2025-11-02,2026-01-24,2026-02-28,0,NA,0
 3,limpiar,"Guardar cada cosa en su lugar\n- [ ] Encimera\n- [ ] Lavadora\n- [ ] Refri\n- [ ] Mesa",2025-09-13,2025-10-12,2026-01-24,2026-03-14,0,NA,0

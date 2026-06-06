@@ -93,7 +93,7 @@ Tasks are stored with at least these columns:
 - `description` (string)
 - `date_1`, `date_2`, `date_3`, `date_4` (ISO 8601 dates or "NA")
 - `skip_count` (integer)
-- `skipped_date` (ISO 8601 date or "NA")
+- `skip_date` (ISO 8601 date or "NA")
 - `starred` (integer, 0 or 1)
 
 ## Task Object Model
@@ -104,7 +104,7 @@ A Task has the following attributes:
 - `context`: Context enum (CASA, LAPTOP, LIMPIAR)
 - `skip_count`: integer
 - `starred`: boolean
-- `latest_date`: computed date (the later of date_4 or skipped_date)
+- `latest_date`: computed date (the later of date_4 or skip_date)
 - `recurrence_days`: computed integer (median of intervals between dates, defaults to 14)
 - `due_date`: computed date (latest_date + recurrence_days)
 - `coins`: computed integer (recurrence_days for unstarred tasks, doubled for starred tasks)
@@ -126,14 +126,14 @@ Computes day intervals between consecutive non-None dates.
 - **Returns**: List of integer day differences between consecutive non-None dates
 - **Notes**: None values are filtered out before computing intervals
 
-### `compute_latest_date(last_completion_date: date, skipped_date: date | None) -> date`
+### `compute_latest_date(last_completion_date: date, skip_date: date | None) -> date`
 
 Returns the later of the last completion date and the skipped date.
 
 - **Parameters**:
   - `last_completion_date` — The most recent completion date (never None)
-  - `skipped_date` — The date the task was last skipped (may be None)
-- **Returns**: The later of the two dates. Returns `last_completion_date` if `skipped_date` is None
+  - `skip_date` — The date the task was last skipped (may be None)
+- **Returns**: The later of the two dates. Returns `last_completion_date` if `skip_date` is None
 
 ### `compute_recurrence_days(intervals: Sequence[int | None]) -> int`
 

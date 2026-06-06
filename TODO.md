@@ -42,7 +42,7 @@ def filter_six_tasks_by_context(
 6. After loop: `non_starred_remaining = [t in remaining if not t.starred]`.
 7. Return `(selected, non_starred_remaining)`.
 
-**Side effect (API layer):** The API calls `io.update_task_skip_count(task_id, skipped_date=today(), csv_path)` for each task in the second list.
+**Side effect (API layer):** The API calls `io.update_task_skip_count(task_id, skip_date=today(), csv_path)` for each task in the second list.
 
 ## One extra task algorithm
 
