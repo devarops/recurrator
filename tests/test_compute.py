@@ -32,15 +32,15 @@ def test_compute_latest_date():
     """Verify compute_latest_date returns the latest date."""
 
     date_4 = date(2024, 1, 3)
-    skipped_date = date(2024, 1, 2)
+    skip_date = date(2024, 1, 2)
     expected_latest_date = date_4
-    obtained_latest_date = rc.compute_latest_date(date_4, skipped_date)
+    obtained_latest_date = rc.compute_latest_date(date_4, skip_date)
     assert obtained_latest_date == expected_latest_date
 
     date_4 = date(2024, 1, 2)
-    skipped_date = None
+    skip_date = None
     expected_latest_date = date_4
-    obtained_latest_date = rc.compute_latest_date(date_4, skipped_date)
+    obtained_latest_date = rc.compute_latest_date(date_4, skip_date)
     assert obtained_latest_date == expected_latest_date
 
 

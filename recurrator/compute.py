@@ -11,15 +11,15 @@ def compute_intervals(dates: list[date | None]) -> list[int]:
     return [(b - a).days for a, b in zip(valid_dates, valid_dates[1:])]
 
 
-def compute_latest_date(last_completion_date: date, skipped_date: date | None) -> date:
+def compute_latest_date(last_completion_date: date, skip_date: date | None) -> date:
     """Return the latest (max) of the two dates.
 
     last_completion_date is required (never None from CSV parsing).
-    skipped_date may be None if the task was never skipped.
+    skip_date may be None if the task was never skipped.
     """
-    if skipped_date is None:
+    if skip_date is None:
         return last_completion_date
-    return max(last_completion_date, skipped_date)
+    return max(last_completion_date, skip_date)
 
 
 def compute_recurrence_days(intervals: Sequence[int | None]) -> int:
