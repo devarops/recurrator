@@ -231,8 +231,8 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
     reference_date = date(2026, 5, 2)
     n_tasks = 1
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    obtainded_length = len(selected)
-    assert obtainded_length == n_tasks
+    obtained_length = len(selected)
+    assert obtained_length == n_tasks
 
 
 def test_filter_n_tasks_by_context_selects_starred_first():
@@ -242,9 +242,9 @@ def test_filter_n_tasks_by_context_selects_starred_first():
     reference_date = date(2026, 4, 24)
     n_tasks = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    obtainded_ids = [t.id for t in selected]
+    obtained_ids = [t.id for t in selected]
     expected_starred_task_id = 7
-    assert expected_starred_task_id in obtainded_ids
+    assert expected_starred_task_id in obtained_ids
 
 
 def test_filter_n_tasks_by_context_deferred_excludes_starred():
