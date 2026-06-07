@@ -140,7 +140,7 @@ def _update_task_in_csv(
             f.write(line + "\n")
 
 
-def update_task_dates(task_id: int, dates: list[date | None], path: str) -> None:
+def update_task_dates(task_id: int, dates: list[date | None], csv_path: str) -> None:
     def modify_row(row: dict, task_id: int) -> None:
         if int(row["id"]) == task_id:
             row["date_1"] = _format_date(dates[0])
@@ -148,7 +148,7 @@ def update_task_dates(task_id: int, dates: list[date | None], path: str) -> None
             row["date_3"] = _format_date(dates[2])
             row["date_4"] = _format_date(dates[3])
 
-    _update_task_in_csv(task_id, modify_row, path)
+    _update_task_in_csv(task_id, modify_row, csv_path)
 
 
 def _set_csv_field(task_id: int, field_name: str, value: str, csv_path: str) -> None:
