@@ -52,10 +52,10 @@ def _compute_dates(row: dict) -> Dates:
     due_date = compute_due_date(latest_date, recurrence_days)
 
     return Dates(
+        latest_done_date=dates[3],
         latest_date=latest_date,
         recurrence_days=recurrence_days,
         due_date=due_date,
-        latest_done_date=dates[3],
     )
 
 
