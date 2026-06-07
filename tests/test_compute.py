@@ -244,3 +244,13 @@ def test_filter_n_tasks_by_context_selects_starred_first():
     obtainded_ids = [t.id for t in selected]
     expected_starred_task_id = 7
     assert expected_starred_task_id in obtainded_ids
+
+
+def test_filter_n_tasks_by_context_deferred_excludes_starred():
+    """Verify deferred only contains non-starred tasks when all due tasks are starred."""
+    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    context = Context.CASA
+    reference_date = date(2026, 5, 2)
+    n_tasks = 1
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    assert all(not t.starred for t in deferred)
