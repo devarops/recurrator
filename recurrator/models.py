@@ -13,6 +13,7 @@ class Dates:
     latest_date: date
     recurrence_days: int
     due_date: date
+    latest_done_date: date | None = None
 
 
 class Task:
@@ -36,4 +37,5 @@ class Task:
         self.latest_date = dates.latest_date
         self.recurrence_days = dates.recurrence_days
         self.due_date = dates.due_date
+        self.latest_done_date = dates.latest_done_date
         self.coins = coins
