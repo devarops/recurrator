@@ -88,7 +88,9 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
     return (reference_date - last_completion_date).days >= MIN_DAYS_GAP
 
 
-def filter_n_tasks_by_context(tasks, context, reference_date, n_tasks):
+def filter_n_tasks_by_context(
+    tasks: list[Task], context: Context, reference_date: date, n_tasks: int
+) -> tuple[list[Task], list[Task]]:
     """Prioritize tasks within a context by alternating-sort selection."""
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
     return due_tasks, []
