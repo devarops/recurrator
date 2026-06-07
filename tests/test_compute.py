@@ -410,3 +410,10 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
     obtained_selected_id = selected[0].id
     assert obtained_selected_id == expected_selected_id
+
+
+def test_compute_available_wip_slots():
+    """Verify compute_available_wip_slots returns remaining capacity, clamped to zero."""
+    expected_value = 2
+    obtained_value = rc.compute_available_wip_slots(6, 4)
+    assert obtained_value == expected_value
