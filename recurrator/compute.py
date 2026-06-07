@@ -90,4 +90,4 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
 
 def filter_n_tasks_by_context(tasks, context, reference_date, n_tasks):
     """Prioritize tasks within a context by alternating-sort selection."""
-    pass
+    return [], []
