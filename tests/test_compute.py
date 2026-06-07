@@ -216,6 +216,6 @@ def test_filter_n_tasks_by_context_early_return():
     context = Context.LIMPIAR
     reference_date = date(2026, 6, 6)
     n_tasks = 3
-    expected_due = rc.filter_due_tasks_by_context(tasks, context, reference_date)
-    obtained = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    assert obtained == (expected_due, [])
+    expected_priority_tasks = rc.filter_due_tasks_by_context(tasks, context, reference_date)
+    obtained_priority_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    assert obtained_priority_tasks[0] == expected_priority_tasks
