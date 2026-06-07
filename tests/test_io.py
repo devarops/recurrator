@@ -213,3 +213,32 @@ def test_update_task_skip_date_in_csv():
     io.update_task_skip_date(task_id, original_skip_date, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_update_task_as_skipped_in_csv():
+    """Verify update_task_as_skipped increments skip_count and updates skip_date."""
+    task_id = 2
+    csv_path = "tests/data/test_three_tasks.csv"
+
+    original_checksum = _get_file_checksum(csv_path)
+
+    original_skip_count = io.get_task_by_id(task_id, csv_path).skip_count
+
+    new_skip_date = date(2026, 6, 7)
+    io.update_task_as_skipped(task_id, new_skip_date, csv_path)
+
+    updated_task = io.get_task_by_id(task_id, csv_path)
+    expected_skip_count = original_skip_count + 1
+    obtained_skip_count = updated_task.skip_count
+    assert obtained_skip_count == expected_skip_count
+
+    expected_skip_date = new_skip_date
+    obtained_skip_date = updated_task.latest_date
+    assert obtained_skip_date == expected_skip_date
+
+    # Undo changes to CSV file for other tests
+    io.update_task_skip_count(task_id, original_skip_count, csv_path)
+    original_skip_date = date(2025, 5, 2)
+    io.update_task_skip_date(task_id, original_skip_date, csv_path)
+
+    _assert_file_unchanged(csv_path, original_checksum)
