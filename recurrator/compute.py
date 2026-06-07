@@ -95,7 +95,19 @@ def filter_n_tasks_by_context(
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
     if len(due_tasks) <= n_tasks:
         return due_tasks, []
-    starred_due = sorted(due_tasks, key=lambda t: not t.starred)
-    selected = starred_due[:n_tasks]
-    deferred = [t for t in starred_due[n_tasks:] if not t.starred]
+    starred = [t for t in due_tasks if t.starred]
+    non_starred = [t for t in due_tasks if not t.starred]
+    selected = []
+    s_idx = 0
+    ns_idx = 0
+    while len(selected) < n_tasks:
+        if s_idx < len(starred):
+            selected.append(starred[s_idx])
+            s_idx += 1
+        if len(selected) >= n_tasks:
+            break
+        if ns_idx < len(non_starred):
+            selected.append(non_starred[ns_idx])
+            ns_idx += 1
+    deferred = non_starred[ns_idx:]
     return selected, deferred
