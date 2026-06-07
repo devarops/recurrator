@@ -417,3 +417,10 @@ def test_compute_available_wip_slots():
     expected_value = 2
     obtained_value = rc.compute_available_wip_slots(6, 4)
     assert obtained_value == expected_value
+
+
+def test_count_completed_today():
+    """Verify count_completed_today counts tasks whose latest_done_date matches reference_date."""
+    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    obtained = rc.count_completed_today(tasks, date(2026, 2, 28))
+    assert obtained == 2
