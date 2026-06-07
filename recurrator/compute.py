@@ -36,7 +36,8 @@ def compute_due_date(latest_date: date, recurrence_days: int) -> date:
     return latest_date + timedelta(days=recurrence_days)
 
 
-def filter_four_dates(dates: list[date | None], new_date: date) -> list[date | None]:
+def compute_rolling_dates(dates: list[date | None], new_date: date) -> list[date | None]:
+    """Merge new_date into a rolling window of the four most recent dates."""
     all_dates = sorted([d for d in dates if d is not None] + [new_date])[-4:]
     return [None] * (4 - len(all_dates)) + all_dates
 
