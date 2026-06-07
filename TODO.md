@@ -51,6 +51,7 @@ Prioritization algorithm — filter_n_tasks_by_context endpoint.
 The following items were removed from the original TODO.md to keep the plan focused on The Gold.
 They remain valid work items for future cycles.
 
+- Add json schema validation for config file.
 - Set min and max recurrence days.
 - Test frontend with Playwright or FastAPI TestClient.
 - Add one extra task when we have fewer than 6 tasks.
