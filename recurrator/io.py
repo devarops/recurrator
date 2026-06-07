@@ -151,20 +151,21 @@ def update_task_dates(task_id: int, dates: list[date | None], path: str) -> None
     _update_task_in_csv(task_id, modify_row, path)
 
 
-def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
+def _set_csv_field(task_id: int, field_name: str, value: str, csv_path: str) -> None:
+    """Set a single CSV field value for the matching task ID."""
     def modify_row(row: dict, task_id: int) -> None:
         if int(row["id"]) == task_id:
-            row["skip_count"] = str(skip_count)
+            row[field_name] = value
 
     _update_task_in_csv(task_id, modify_row, csv_path)
+
+
+def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
+    _set_csv_field(task_id, "skip_count", str(skip_count), csv_path)
 
 
 def update_task_skip_date(task_id: int, skip_date: date, csv_path: str) -> None:
-    def modify_row(row: dict, task_id: int) -> None:
-        if int(row["id"]) == task_id:
-            row["skip_date"] = _format_date(skip_date)
-
-    _update_task_in_csv(task_id, modify_row, csv_path)
+    _set_csv_field(task_id, "skip_date", _format_date(skip_date), csv_path)
 
 
 def update_task_as_skipped(task_id: int, skip_date: date, csv_path: str) -> None:
