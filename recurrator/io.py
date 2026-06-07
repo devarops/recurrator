@@ -167,6 +167,12 @@ def update_task_skip_date(task_id: int, skip_date: date, csv_path: str) -> None:
     _update_task_in_csv(task_id, modify_row, csv_path)
 
 
+def update_task_as_skipped(task_id: int, skip_date: date, csv_path: str) -> None:
+    current_task = get_task_by_id(task_id, csv_path)
+    update_task_skip_count(task_id, current_task.skip_count + 1, csv_path)
+    update_task_skip_date(task_id, skip_date, csv_path)
+
+
 def update_task_as_done(task_id: int, completion_date: date, csv_path: str) -> None:
     current_dates = import_dates_from_csv(task_id, csv_path)
     rotated_dates = compute_rolling_dates(current_dates, completion_date)
