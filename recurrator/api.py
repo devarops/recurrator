@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from datetime import date
 
 from . import compute, io
-from ._config import DEFAULT_TASKS_CSV_PATH
+from ._config import DEFAULT_TASKS_CSV_PATH, WIP_LIMIT
 from .models import Context
 
 app = FastAPI()
@@ -68,11 +68,16 @@ def get_tasks_by_context(
     csv: str = Query(None),
     reference_date: str = Query(None, alias="date"),
 ):
-    """Return task IDs due in the given context on or before the reference date."""
+    """Return prioritized task IDs for the given context."""
     tasks, parsed_reference_date = _load_tasks_and_date(csv, reference_date)
     context = Context(context_id)
-    due_tasks = compute.filter_due_tasks_by_context(tasks, context, parsed_reference_date)
-    return [task.id for task in due_tasks]
+    tasks_in_context = compute.filter_all_tasks_by_context(tasks, context)
+    completed_today = compute.count_completed_today(tasks_in_context, parsed_reference_date)
+    n_tasks = compute.compute_available_wip_slots(WIP_LIMIT, completed_today)
+    selected, deferred = compute.filter_n_tasks_by_context(
+        tasks, context, parsed_reference_date, n_tasks
+    )
+    return [task.id for task in selected]
 
 
 @app.get("/context/")
