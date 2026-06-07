@@ -107,17 +107,13 @@ def filter_n_tasks_by_context(
         return due_tasks, []
     starred_tasks = _sorted_starred_tasks([t for t in due_tasks if t.starred])
     non_starred_tasks = _sorted_non_starred_tasks([t for t in due_tasks if not t.starred])
-    selected_tasks = []
-    ind_starred = 0
-    ind_non_starred = 0
-    while len(selected_tasks) < n_tasks:
-        if ind_starred < len(starred_tasks):
-            selected_tasks.append(starred_tasks[ind_starred])
-            ind_starred += 1
-        if len(selected_tasks) >= n_tasks:
-            break
-        if ind_non_starred < len(non_starred_tasks):
-            selected_tasks.append(non_starred_tasks[ind_non_starred])
-            ind_non_starred += 1
-    deferred_tasks = non_starred_tasks[ind_non_starred:]
+    interleaved_tasks = []
+    max_len = max(len(starred_tasks), len(non_starred_tasks))
+    for i in range(max_len):
+        if i < len(starred_tasks):
+            interleaved_tasks.append(starred_tasks[i])
+        if i < len(non_starred_tasks):
+            interleaved_tasks.append(non_starred_tasks[i])
+    selected_tasks = interleaved_tasks[:n_tasks]
+    deferred_tasks = non_starred_tasks[sum(1 for t in selected_tasks if not t.starred) :]
     return selected_tasks, deferred_tasks
