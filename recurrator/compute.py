@@ -96,4 +96,6 @@ def filter_n_tasks_by_context(
     if len(due_tasks) <= n_tasks:
         return due_tasks, []
     starred_due = sorted(due_tasks, key=lambda t: not t.starred)
-    return starred_due[:n_tasks], starred_due[n_tasks:]
+    selected = starred_due[:n_tasks]
+    remaining = [t for t in starred_due[n_tasks:] if not t.starred]
+    return selected, remaining
