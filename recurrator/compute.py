@@ -88,14 +88,11 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
     return (reference_date - last_completion_date).days >= MIN_DAYS_GAP
 
 
-def _sorted_starred_tasks(tasks: list[Task]) -> list[Task]:
-    """Sort starred tasks by skip_count DESC, then due_date ASC, then recurrence_days DESC."""
-    return sorted(tasks, key=lambda t: (-t.skip_count, t.due_date, -t.recurrence_days))
-
-
-def _sorted_non_starred_tasks(tasks: list[Task]) -> list[Task]:
-    """Sort non-starred tasks by skip_count DESC, then recurrence_days DESC."""
-    return sorted(tasks, key=lambda t: (t.skip_count, t.recurrence_days), reverse=True)
+def _sorted_tasks(tasks: list[Task], odd_cycle: bool) -> list[Task]:
+    """Sort tasks by the alternating selection-order key for the given cycle."""
+    if odd_cycle:
+        return sorted(tasks, key=lambda t: (-t.skip_count, t.due_date, -t.recurrence_days))
+    return sorted(tasks, key=lambda t: (-t.skip_count, -t.recurrence_days, t.due_date))
 
 
 def filter_n_tasks_by_context(
@@ -105,15 +102,22 @@ def filter_n_tasks_by_context(
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
     if len(due_tasks) <= n_tasks:
         return due_tasks, []
-    starred_tasks = _sorted_starred_tasks([t for t in due_tasks if t.starred])
-    non_starred_tasks = _sorted_non_starred_tasks([t for t in due_tasks if not t.starred])
-    interleaved_tasks = []
-    max_len = max(len(starred_tasks), len(non_starred_tasks))
-    for i in range(max_len):
-        if i < len(starred_tasks):
-            interleaved_tasks.append(starred_tasks[i])
-        if i < len(non_starred_tasks):
-            interleaved_tasks.append(non_starred_tasks[i])
-    selected_tasks = interleaved_tasks[:n_tasks]
-    deferred_tasks = non_starred_tasks[sum(1 for t in selected_tasks if not t.starred) :]
+    starred_pool = [t for t in due_tasks if t.starred]
+    non_starred_pool = [t for t in due_tasks if not t.starred]
+    selected_tasks = []
+    pair = 1
+    while len(selected_tasks) < n_tasks:
+        odd_cycle = pair % 2 == 1
+        starred_sorted = _sorted_tasks(starred_pool, odd_cycle)
+        if starred_sorted:
+            selected_tasks.append(starred_sorted[0])
+            starred_pool.remove(starred_sorted[0])
+        if len(selected_tasks) >= n_tasks:
+            break
+        non_starred_sorted = _sorted_tasks(non_starred_pool, odd_cycle)
+        if non_starred_sorted:
+            selected_tasks.append(non_starred_sorted[0])
+            non_starred_pool.remove(non_starred_sorted[0])
+        pair += 1
+    deferred_tasks = non_starred_pool
     return selected_tasks, deferred_tasks
