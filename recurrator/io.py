@@ -34,10 +34,10 @@ def _parse_row_dates(row: dict) -> list[date | None]:
 
 
 def _compute_dates(row: dict) -> Dates:
-    """Compute latest_date, recurrence_days, and due_date from CSV row.
+    """Compute latest_done_date, latest_date, recurrence_days, and due_date from CSV row.
 
     Returns:
-        Dates object with computed values
+        Dates object with all four computed date attributes.
     """
     dates = _parse_row_dates(row)
     last_completion_date = dates[3]
