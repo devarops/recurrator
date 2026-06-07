@@ -232,3 +232,14 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     obtainded_length = len(selected)
     assert obtainded_length == n_tasks
+
+
+def test_filter_n_tasks_by_context_selects_starred_first():
+    """Verify starred tasks are selected before non-starred when due tasks exceed n_tasks."""
+    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    context = Context.LIMPIAR
+    reference_date = date(2026, 4, 24)
+    n_tasks = 2
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    obtainded_ids = [t.id for t in selected]
+    assert 7 in obtainded_ids
