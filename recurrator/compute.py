@@ -2,7 +2,8 @@ from collections.abc import Sequence
 from datetime import date, timedelta
 from statistics import median
 
-from .models import DEFAULT_RECURRENCE_DAYS, Task, Context
+from ._config import DEFAULT_RECURRENCE_DAYS, MIN_DAYS_GAP
+from .models import Task, Context
 
 
 def compute_intervals(dates: list[date | None]) -> list[int]:
@@ -84,4 +85,4 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
     """Return whether a task can be marked as done, rejecting same-day and consecutive-day completions."""
     if last_completion_date is None:
         return True
-    return (reference_date - last_completion_date).days >= 2
+    return (reference_date - last_completion_date).days >= MIN_DAYS_GAP

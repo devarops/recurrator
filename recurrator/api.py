@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from datetime import date
 
 from . import compute, io
+from ._config import DEFAULT_TASKS_CSV_PATH
 from .models import Context
 
 app = FastAPI()
@@ -14,8 +15,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-DEFAULT_TASKS_CSV_PATH = "/root/.config/recurrator/tasks.csv"
 
 
 def _resolve_csv_path(csv: str | None = None) -> str:
