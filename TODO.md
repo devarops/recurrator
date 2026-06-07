@@ -4,26 +4,7 @@ Prioritization algorithm — filter_n_tasks_by_context endpoint.
 
 ## Plan
 
-1. Add filter_n_tasks_by_context to compute.py
-
-   **Red:**
-   - File: `tests/test_compute.py`
-   - Scenario: Write `test_filter_n_tasks_by_context` with a controlled set of due tasks where
-     `len(due_tasks) > n_tasks`. Verify the alternating-sort selection: starred and non-starred
-     tasks are picked in alternating cycles, sorted by alternating sort keys (even cycle:
-     skip_count DESC, due_date ASC, recurrence_days DESC; odd cycle: skip_count DESC,
-     recurrence_days DESC, due_date ASC). The function returns `(selected, remaining)` where
-     `len(selected) == n_tasks` and `remaining` contains only non-starred leftovers.
-   - Expected: `filter_n_tasks_by_context` returns a tuple of two lists matching the contract.
-   - Fails because: The function does not exist yet (import error).
-
-   **Green:**
-   - Implement `filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)` in `compute.py`
-     following the alternating-sort selection algorithm:
-     1. Get due tasks via `filter_due_tasks_by_context`.
-     2. If `len(due) <= n_tasks`, return `(due, [])`.
-     3. Otherwise, loop alternating starred/non-starred picks with alternating sort keys,
-        selecting up to `n_tasks`, and return `(selected, non_starred_remaining)`.
+1. ✅ Add filter_n_tasks_by_context to compute.py — done.
 
 2. Integrate filter_n_tasks_by_context into GET /context/{context_id}
 
