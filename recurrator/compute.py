@@ -96,7 +96,11 @@ def filter_n_tasks_by_context(
     if len(due_tasks) <= n_tasks:
         return due_tasks, []
     starred = [t for t in due_tasks if t.starred]
-    non_starred = [t for t in due_tasks if not t.starred]
+    non_starred = sorted(
+        [t for t in due_tasks if not t.starred],
+        key=lambda t: t.skip_count,
+        reverse=True,
+    )
     selected = []
     ind_starred = 0
     ind_non_starred = 0
