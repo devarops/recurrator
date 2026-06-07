@@ -166,6 +166,14 @@ def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None
     _update_task_in_csv(task_id, modify_row, csv_path)
 
 
+def update_task_skip_date(task_id: int, skip_date: date, csv_path: str) -> None:
+    def modify_row(row: dict, task_id: int) -> None:
+        if int(row["id"]) == task_id:
+            row["skip_date"] = _format_date(skip_date)
+
+    _update_task_in_csv(task_id, modify_row, csv_path)
+
+
 def get_task_by_id(task_id: int, csv_path: str) -> Task:
     """Get a task by ID from a CSV file.
 
