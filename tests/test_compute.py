@@ -254,3 +254,13 @@ def test_filter_n_tasks_by_context_deferred_excludes_starred():
     n_tasks = 1
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     assert all(not t.starred for t in deferred)
+
+
+def test_filter_n_tasks_by_context_interleaves_starred_and_non_starred():
+    """Verify starred and non-starred tasks are interleaved, not all-starred-first."""
+    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    context = Context.LIMPIAR
+    reference_date = date(2026, 5, 10)
+    n_tasks = 2
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    assert any(not t.starred for t in selected)
