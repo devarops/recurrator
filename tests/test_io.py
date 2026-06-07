@@ -192,3 +192,24 @@ def test_import_tasks_from_csv_latest_done_date():
     expected_latest_done_date = date(2025, 8, 19)
     obtained_latest_done_date = first_task.latest_done_date
     assert obtained_latest_done_date == expected_latest_done_date
+
+
+def test_update_task_skip_date_in_csv():
+    """Verify update_task_skip_date correctly updates skip_date in CSV."""
+    task_id = 2
+    csv_path = "tests/data/test_three_tasks.csv"
+
+    original_checksum = _get_file_checksum(csv_path)
+
+    new_skip_date = date(2026, 6, 7)
+    io.update_task_skip_date(task_id, new_skip_date, csv_path)
+
+    # Verify latest_date changed (it depends on skip_date)
+    updated_task = io.get_task_by_id(task_id, csv_path)
+    assert updated_task.latest_date == new_skip_date
+
+    # Undo changes to CSV file for other tests
+    original_skip_date = date(2025, 5, 2)
+    io.update_task_skip_date(task_id, original_skip_date, csv_path)
+
+    _assert_file_unchanged(csv_path, original_checksum)
