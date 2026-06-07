@@ -94,6 +94,11 @@ def compute_available_wip_slots(wip_limit: int, completed_today: int) -> int:
     return max(wip_limit - completed_today, 0)
 
 
+def count_completed_today(tasks: list[Task], reference_date: date) -> int:
+    """Count tasks whose latest_done_date matches the reference date."""
+    return sum(1 for task in tasks if task.latest_done_date == reference_date)
+
+
 def _sorted_tasks(tasks: list[Task], odd_cycle: bool) -> list[Task]:
     """Sort tasks by the alternating selection-order key for the given cycle."""
     if odd_cycle:
