@@ -89,8 +89,8 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
 
 
 def _sorted_starred_tasks(tasks: list[Task]) -> list[Task]:
-    """Sort starred tasks by skip_count DESC, then due_date ASC."""
-    return sorted(tasks, key=lambda t: (-t.skip_count, t.due_date))
+    """Sort starred tasks by skip_count DESC, then due_date ASC, then recurrence_days DESC."""
+    return sorted(tasks, key=lambda t: (-t.skip_count, t.due_date, -t.recurrence_days))
 
 
 def _sorted_non_starred_tasks(tasks: list[Task]) -> list[Task]:
