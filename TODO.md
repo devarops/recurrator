@@ -19,17 +19,30 @@ Prioritization algorithm — filter_n_tasks_by_context endpoint.
      side effects.
 
    **Green:**
-   - Modify `GET /context/{context_id}` to compute `n_tasks = max(WIP_LIMIT - completed_today, 0)`,
-     call `filter_n_tasks_by_context`, apply skip side effects (increment skip_count, set skip_date)
-     on the remaining tasks, and return only the selected task IDs.
+   - **models.py**: Add `latest_done_date: date` to `Dates` dataclass.
+   - **io.py**: Populate `latest_done_date` from `date_4` in `_compute_dates`.
+   - **io.py**: Add `update_task_skip_date(task_id, skip_date, csv_path)` primitive.
+   - **io.py**: Add `update_task_as_skipped(task_id, skip_date, csv_path)` — mirrors
+     `update_task_as_done`: read current task via `get_task_by_id`, increment `skip_count`,
+     call `update_task_skip_count` + `update_task_skip_date`.
+   - **compute.py**: Add `count_completed_today(tasks, reference_date)` — counts tasks
+     where `task.latest_done_date == reference_date`.
+   - **compute.py**: Add `compute_available_wip_slots(wip_limit, completed_today)` —
+     returns `max(wip_limit - completed_today, 0)`.
+   - **api.py**: Modify `GET /context/{context_id}`:
+     1. `tasks_in_context = compute.filter_all_tasks_by_context(tasks, context)`
+     2. `completed_today = compute.count_completed_today(tasks_in_context, parsed_reference_date)`
+     3. `n_tasks = compute.compute_available_wip_slots(WIP_LIMIT, completed_today)`
+     4. `selected, deferred = compute.filter_n_tasks_by_context(tasks, context, parsed_reference_date, n_tasks)`
+     5. `io.update_task_as_skipped(task.id, parsed_reference_date, csv_path)` per deferred task
+     6. Return `[task.id for task in selected]`
 
 ## Outside the Plan
 
 **Add WIP_LIMIT to config:**
-- Does not follow the Red/Green TDD format — no test evolution required.
-- Add `wip_limit: 6` to `config.json`.
-- Add `WIP_LIMIT = 6` fallback in `src/create_config.sh`.
-- Regenerate `recurrator/_config.py` (via `make`).
+- ✅ Add `wip_limit: 6` to `~/.config/recurrator/config.json` — done.
+- ✅ Add `WIP_LIMIT = 6` fallback in `src/create_config.sh` — done.
+- ✅ Regenerate `recurrator/_config.py` — done.
 
 ---
 
