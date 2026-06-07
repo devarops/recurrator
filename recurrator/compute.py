@@ -98,16 +98,16 @@ def filter_n_tasks_by_context(
     starred = [t for t in due_tasks if t.starred]
     non_starred = [t for t in due_tasks if not t.starred]
     selected = []
-    s_idx = 0
-    ns_idx = 0
+    ind_starred = 0
+    ind_non_starred = 0
     while len(selected) < n_tasks:
-        if s_idx < len(starred):
-            selected.append(starred[s_idx])
-            s_idx += 1
+        if ind_starred < len(starred):
+            selected.append(starred[ind_starred])
+            ind_starred += 1
         if len(selected) >= n_tasks:
             break
-        if ns_idx < len(non_starred):
-            selected.append(non_starred[ns_idx])
-            ns_idx += 1
-    deferred = non_starred[ns_idx:]
+        if ind_non_starred < len(non_starred):
+            selected.append(non_starred[ind_non_starred])
+            ind_non_starred += 1
+    deferred = non_starred[ind_non_starred:]
     return selected, deferred
