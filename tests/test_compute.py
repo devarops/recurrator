@@ -220,3 +220,14 @@ def test_filter_n_tasks_by_context_early_return():
     fileterd_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     obtained_priority_tasks = fileterd_tasks[0]
     assert obtained_priority_tasks == expected_priority_tasks
+
+
+def test_filter_n_tasks_by_context_respects_n_tasks():
+    """Verify filter_n_tasks_by_context selects at most n_tasks when due tasks exceed n_tasks."""
+    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    context = Context.CASA
+    reference_date = date(2026, 5, 2)
+    n_tasks = 1
+    filtered_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    obtained_selected = filtered_tasks[0]
+    assert len(obtained_selected) == n_tasks
