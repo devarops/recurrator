@@ -271,8 +271,35 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
     """Verify non-starred tasks are sorted by skip_count DESC before selection."""
     reference_date = date(2026, 6, 6)
     tasks = [
-        Task(1, "Low skip", Context.LIMPIAR, 0, False, Dates(date(2026, 6, 1), 7, date(2026, 6, 1)), 7),
-        Task(2, "High skip", Context.LIMPIAR, 3, False, Dates(date(2026, 6, 1), 7, date(2026, 6, 1)), 7),
+        Task(
+            1,
+            "Low skip",
+            Context.LIMPIAR,
+            0,
+            False,
+            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            7,
+        ),
+        Task(
+            2,
+            "High skip",
+            Context.LIMPIAR,
+            3,
+            False,
+            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            7,
+        ),
+    ]
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    assert selected[0].id == 2
+
+
+def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
+    """Verify starred tasks are sorted by skip_count DESC before selection."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        Task(1, "Low skip", Context.LIMPIAR, 0, True, Dates(date(2026, 6, 1), 7, date(2026, 6, 1)), 14),
+        Task(2, "High skip", Context.LIMPIAR, 3, True, Dates(date(2026, 6, 1), 7, date(2026, 6, 1)), 14),
     ]
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
     assert selected[0].id == 2
