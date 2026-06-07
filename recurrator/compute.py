@@ -88,6 +88,11 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
     return (reference_date - last_completion_date).days >= MIN_DAYS_GAP
 
 
+def _sorted_by_skip_count_desc(tasks: list[Task]) -> list[Task]:
+    """Sort tasks by skip_count in descending order."""
+    return sorted(tasks, key=lambda t: t.skip_count, reverse=True)
+
+
 def filter_n_tasks_by_context(
     tasks: list[Task], context: Context, reference_date: date, n_tasks: int
 ) -> tuple[list[Task], list[Task]]:
@@ -95,16 +100,8 @@ def filter_n_tasks_by_context(
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
     if len(due_tasks) <= n_tasks:
         return due_tasks, []
-    starred = sorted(
-        [t for t in due_tasks if t.starred],
-        key=lambda t: t.skip_count,
-        reverse=True,
-    )
-    non_starred = sorted(
-        [t for t in due_tasks if not t.starred],
-        key=lambda t: t.skip_count,
-        reverse=True,
-    )
+    starred = _sorted_by_skip_count_desc([t for t in due_tasks if t.starred])
+    non_starred = _sorted_by_skip_count_desc([t for t in due_tasks if not t.starred])
     selected = []
     ind_starred = 0
     ind_non_starred = 0
