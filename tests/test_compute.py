@@ -201,5 +201,10 @@ def test_is_done_allowed():
 
 def test_filter_n_tasks_by_context():
     """Test filter_n_tasks_by_context selection algorithm."""
-    obtained = rc.filter_n_tasks_by_context([], Context.CASA, date(2024, 1, 1), 2)
-    assert obtained == ([], [])
+    tasks = []
+    context = Context.CASA
+    reference_date = date(2024, 1, 1)
+    n_tasks = 2
+    obtained_filtered_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    expected_filtered_tasks = ([], [])
+    assert obtained_filtered_tasks == expected_filtered_tasks
