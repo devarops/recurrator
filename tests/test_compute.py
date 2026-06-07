@@ -1,6 +1,7 @@
 import recurrator.compute as rc
 import recurrator.io as io
 from recurrator import Context, Task
+from recurrator.models import Dates
 from datetime import date
 
 
@@ -264,3 +265,14 @@ def test_filter_n_tasks_by_context_interleaves_starred_and_non_starred():
     n_tasks = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     assert any(not t.starred for t in selected)
+
+
+def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
+    """Verify non-starred tasks are sorted by skip_count DESC before selection."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        Task(1, "Low skip", Context.LIMPIAR, 0, False, Dates(date(2026, 6, 1), 7, date(2026, 6, 1)), 7),
+        Task(2, "High skip", Context.LIMPIAR, 3, False, Dates(date(2026, 6, 1), 7, date(2026, 6, 1)), 7),
+    ]
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    assert selected[0].id == 2
