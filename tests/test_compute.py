@@ -242,4 +242,5 @@ def test_filter_n_tasks_by_context_selects_starred_first():
     n_tasks = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     obtainded_ids = [t.id for t in selected]
-    assert 7 in obtainded_ids
+    expected_starred_task_id = 7
+    assert expected_starred_task_id in obtainded_ids
