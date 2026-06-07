@@ -197,3 +197,8 @@ def test_is_done_allowed():
     assert rc.is_done_allowed(date(2026, 5, 23), today) is False
     assert rc.is_done_allowed(date(2026, 5, 22), today) is True
     assert rc.is_done_allowed(None, today) is True
+
+
+def test_filter_n_tasks_by_context():
+    """Test filter_n_tasks_by_context selection algorithm."""
+    rc.filter_n_tasks_by_context([], Context.CASA, date(2024, 1, 1), 2)
