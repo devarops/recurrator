@@ -109,7 +109,7 @@ def filter_n_tasks_by_context(
         return due_tasks, []
     starred_pool = [t for t in due_tasks if t.starred]
     non_starred_pool = [t for t in due_tasks if not t.starred]
-    selected_tasks = []
+    selected_tasks: list[Task] = []
     odd_cycle = True
     while len(selected_tasks) < n_tasks:
         starred_sorted = _sorted_tasks(starred_pool, odd_cycle)
