@@ -1,6 +1,54 @@
 # The Gold
 
-- (None)
+Prioritization algorithm — filter_n_tasks_by_context endpoint.
+
+## Plan
+
+1. Add filter_n_tasks_by_context to compute.py
+
+   **Red:**
+   - File: `tests/test_compute.py`
+   - Scenario: Write `test_filter_n_tasks_by_context` with a controlled set of due tasks where
+     `len(due_tasks) > n_tasks`. Verify the alternating-sort selection: starred and non-starred
+     tasks are picked in alternating cycles, sorted by alternating sort keys (even cycle:
+     skip_count DESC, due_date ASC, recurrence_days DESC; odd cycle: skip_count DESC,
+     recurrence_days DESC, due_date ASC). The function returns `(selected, remaining)` where
+     `len(selected) == n_tasks` and `remaining` contains only non-starred leftovers.
+   - Expected: `filter_n_tasks_by_context` returns a tuple of two lists matching the contract.
+   - Fails because: The function does not exist yet (import error).
+
+   **Green:**
+   - Implement `filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)` in `compute.py`
+     following the alternating-sort selection algorithm:
+     1. Get due tasks via `filter_due_tasks_by_context`.
+     2. If `len(due) <= n_tasks`, return `(due, [])`.
+     3. Otherwise, loop alternating starred/non-starred picks with alternating sort keys,
+        selecting up to `n_tasks`, and return `(selected, non_starred_remaining)`.
+
+2. Integrate filter_n_tasks_by_context into GET /context/{context_id}
+
+   **Red:**
+   - File: `tests/test_api.py`
+   - Scenario: Update `test_get_tasks_by_context`. With controlled test data and reference_date,
+     the endpoint now returns only the prioritized subset of task IDs instead of all due task IDs.
+   - Expected: The response contains exactly `n_tasks` task IDs, selected by the prioritization
+     algorithm. The skip side effects should be verifiable indirectly (e.g., skip_count increased
+     for remaining tasks).
+   - Fails because: The endpoint still returns all due task IDs without prioritization or skip
+     side effects.
+
+   **Green:**
+   - Modify `GET /context/{context_id}` to compute `n_tasks = max(WIP_LIMIT - completed_today, 0)`,
+     call `filter_n_tasks_by_context`, apply skip side effects (increment skip_count, set skip_date)
+     on the remaining tasks, and return only the selected task IDs.
+
+## Outside the Plan
+
+**Add WIP_LIMIT to config:**
+- Does not follow the Red/Green TDD format — no test evolution required.
+- Add `wip_limit: 6` to `config.json`.
+- Add `WIP_LIMIT = 6` fallback in `src/create_config.sh`.
+- Regenerate `recurrator/_config.py` (via `make`).
 
 ---
 
@@ -11,43 +59,15 @@ They remain valid work items for future cycles.
 
 - Set min and max recurrence days.
 - Test frontend with Playwright or FastAPI TestClient.
-- Prioritization algorithm.
-- Add one extra task when we have lest than 6 tasks
-- Glicko rating system
-
-
-## Prioritization algorithm
-
-new function in `compute.py`:
-
-```python
-def filter_six_tasks_by_context(
-    tasks: list[Task], context: Context, reference_date: date
-) -> tuple[list[Task], list[Task]]:
-```
-
-**Contract:**
-1. Start with `due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)`.
-2. If `len(due_tasks) <= 6`, return `(due_tasks, [])` — no selection or skip needed.
-3. Precondition for prioritization: `len(due_tasks) >= 7`.
-4. Build `selected = []`, `remaining = copy(due_tasks)`, `i = 0`.
-5. While `len(selected) < 6` and `remaining` not empty:
-   - `i += 1`
-   - **Sort order for this cycle**:
-     - Odd `i`: sort key = (`skip_count` DESC, `due_date` ASC, `recurrence_days` DESC)
-     - Even `i`: sort key = (`skip_count` DESC, `recurrence_days` DESC, `due_date` ASC)
-   - **Starred pick**: filter starred from remaining, sort by cycle key, take first → `selected`, remove from `remaining`. Break if 6 reached.
-   - **Non-starred pick**: filter non-starred from remaining, sort by same cycle key, take first → `selected`, remove from `remaining`.
-6. After loop: `non_starred_remaining = [t in remaining if not t.starred]`.
-7. Return `(selected, non_starred_remaining)`.
-
-**Side effect (API layer):** The API calls `io.update_task_skip_count(task_id, skip_date=today(), csv_path)` for each task in the second list.
+- Add one extra task when we have fewer than 6 tasks.
+- Glicko rating system.
+- Coins from Glicko rating.
 
 ## One extra task algorithm
 
-**Purpose:** When a context has fewer than 6 due tasks, pick one upcoming (not yet due) task to pad the list. Complementary to `filter_six_tasks_by_context`.
+**Purpose:** When a context has fewer than 6 due tasks, pick one upcoming (not yet due) task to pad the list. Complementary to `filter_n_tasks_by_context`.
 
-**Scope:** Within a single context (matching `filter_six_tasks_by_context`).
+**Scope:** Within a single context (matching `filter_n_tasks_by_context`).
 
 **Side effects:** None. Skip tracking is handled elsewhere (API layer of prioritization algorithm).
 
