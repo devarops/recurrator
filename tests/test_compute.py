@@ -201,4 +201,5 @@ def test_is_done_allowed():
 
 def test_filter_n_tasks_by_context():
     """Test filter_n_tasks_by_context selection algorithm."""
-    rc.filter_n_tasks_by_context([], Context.CASA, date(2024, 1, 1), 2)
+    obtained = rc.filter_n_tasks_by_context([], Context.CASA, date(2024, 1, 1), 2)
+    assert obtained == ([], [])
