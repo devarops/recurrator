@@ -294,6 +294,33 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
     assert selected[0].id == 2
 
 
+def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
+    """Verify non-starred tasks with equal skip_count are sorted by recurrence_days DESC."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        Task(
+            1,
+            "Low rec",
+            Context.LIMPIAR,
+            0,
+            False,
+            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            7,
+        ),
+        Task(
+            2,
+            "High rec",
+            Context.LIMPIAR,
+            0,
+            False,
+            Dates(date(2026, 6, 1), 21, date(2026, 6, 1)),
+            21,
+        ),
+    ]
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    assert selected[0].id == 2
+
+
 def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
     """Verify starred tasks are sorted by skip_count DESC before selection."""
     reference_date = date(2026, 6, 6)
