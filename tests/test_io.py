@@ -182,3 +182,13 @@ def test_update_task_as_done_in_csv():
     )
 
     _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_import_tasks_from_csv_latest_done_date():
+    """Verify imported task has latest_done_date matching date_4 from CSV."""
+    csv_path = "tests/data/test_single_task.csv"
+    tasks = io.import_tasks_from_csv(csv_path)
+    first_task = tasks[0]
+    expected_latest_done_date = date(2025, 8, 19)
+    obtained_latest_done_date = first_task.latest_done_date
+    assert obtained_latest_done_date == expected_latest_done_date
