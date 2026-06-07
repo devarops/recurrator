@@ -199,8 +199,8 @@ def test_is_done_allowed():
     assert rc.is_done_allowed(None, today) is True
 
 
-def test_filter_n_tasks_by_context():
-    """Test filter_n_tasks_by_context selection algorithm."""
+def test_filter_n_tasks_by_context_empty_list():
+    """Verify filter_n_tasks_by_context returns ([], []) for an empty task list."""
     tasks = []
     context = Context.CASA
     reference_date = date(2024, 1, 1)
