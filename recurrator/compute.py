@@ -89,8 +89,8 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
 
 
 def _sorted_by_skip_count_desc(tasks: list[Task]) -> list[Task]:
-    """Sort tasks by skip_count in descending order."""
-    return sorted(tasks, key=lambda t: t.skip_count, reverse=True)
+    """Sort tasks by skip_count DESC, then recurrence_days DESC."""
+    return sorted(tasks, key=lambda t: (t.skip_count, t.recurrence_days), reverse=True)
 
 
 def filter_n_tasks_by_context(
