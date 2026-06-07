@@ -88,6 +88,11 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
     return (reference_date - last_completion_date).days >= MIN_DAYS_GAP
 
 
+def compute_available_wip_slots(wip_limit: int, completed_today: int) -> int:
+    """Compute remaining WIP capacity, clamped to zero."""
+    return max(wip_limit - completed_today, 0)
+
+
 def _sorted_tasks(tasks: list[Task], odd_cycle: bool) -> list[Task]:
     """Sort tasks by the alternating selection-order key for the given cycle."""
     if odd_cycle:
