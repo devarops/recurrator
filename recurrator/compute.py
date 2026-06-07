@@ -93,6 +93,7 @@ def filter_n_tasks_by_context(
 ) -> tuple[list[Task], list[Task]]:
     """Prioritize tasks within a context by alternating-sort selection."""
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
-    selected = due_tasks[:n_tasks]
-    remaining = due_tasks[n_tasks:]
-    return selected, remaining
+    if len(due_tasks) <= n_tasks:
+        return due_tasks, []
+    starred_due = sorted(due_tasks, key=lambda t: not t.starred)
+    return starred_due[:n_tasks], starred_due[n_tasks:]
