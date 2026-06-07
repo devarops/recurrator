@@ -50,6 +50,7 @@ clean:
 	rm --force --recursive mutants
 	rm --force coverage.xml
 	rm --force ${module}/_contexts.py
+	rm --force ${module}/_config.py
 
 coverage: setup
 	pytest --cov=${module} --cov-report=xml --verbose && \
@@ -61,11 +62,14 @@ format:
 
 init: check_production_data setup tests
 
-install: recurrator/_contexts.py
+install: recurrator/_contexts.py recurrator/_config.py
 	pip install --editable .
 
 recurrator/_contexts.py: src/create_contexts.sh
 	src/create_contexts.sh
+
+recurrator/_config.py: src/create_config.sh
+	src/create_config.sh
 
 linter:
 	$(call lint, ${module})

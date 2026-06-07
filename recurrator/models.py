@@ -4,7 +4,6 @@ from datetime import date
 from ._contexts import Context
 
 SKIP_COUNT_RESET = 0
-DEFAULT_RECURRENCE_DAYS = 14
 
 
 @dataclass

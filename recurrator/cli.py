@@ -1,9 +1,9 @@
 import typer
 import requests  # type: ignore[import-untyped]
 
-app = typer.Typer(no_args_is_help=True)
+from ._config import API_BASE_URL
 
-API_BASE_URL = "http://api:8000"
+app = typer.Typer(no_args_is_help=True)
 
 
 def _print_task_ids(task_ids: list[int]) -> None:
