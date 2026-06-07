@@ -277,7 +277,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
             Context.LIMPIAR,
             0,
             False,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
             7,
         ),
         Task(
@@ -286,7 +286,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
             Context.LIMPIAR,
             3,
             False,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
             7,
         ),
     ]
@@ -306,7 +306,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
             Context.LIMPIAR,
             0,
             False,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
             7,
         ),
         Task(
@@ -315,7 +315,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
             Context.LIMPIAR,
             0,
             False,
-            Dates(date(2026, 6, 1), 21, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 21, date(2026, 6, 1)),
             21,
         ),
     ]
@@ -335,7 +335,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
             Context.LIMPIAR,
             0,
             True,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
             14,
         ),
         Task(
@@ -344,7 +344,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
             Context.LIMPIAR,
             0,
             True,
-            Dates(date(2026, 6, 1), 21, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 21, date(2026, 6, 1)),
             42,
         ),
     ]
@@ -364,7 +364,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
             Context.LIMPIAR,
             0,
             True,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
             14,
         ),
         Task(
@@ -373,7 +373,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
             Context.LIMPIAR,
             3,
             True,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
             14,
         ),
     ]
@@ -393,7 +393,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
             Context.LIMPIAR,
             0,
             True,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 6)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 6)),
             14,
         ),
         Task(
@@ -402,7 +402,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
             Context.LIMPIAR,
             0,
             True,
-            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
             14,
         ),
     ]

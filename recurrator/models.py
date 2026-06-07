@@ -10,10 +10,10 @@ SKIP_COUNT_RESET = 0
 class Dates:
     """Computed date attributes for a task."""
 
+    latest_done_date: date
     latest_date: date
     recurrence_days: int
     due_date: date
-    latest_done_date: date | None = None
 
 
 class Task:
