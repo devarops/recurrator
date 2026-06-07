@@ -216,10 +216,11 @@ def test_filter_n_tasks_by_context_early_return():
     context = Context.LIMPIAR
     reference_date = date(2026, 6, 6)
     n_tasks = 3
-    expected_priority_tasks = rc.filter_due_tasks_by_context(tasks, context, reference_date)
-    fileterd_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    obtained_priority_tasks = fileterd_tasks[0]
-    assert obtained_priority_tasks == expected_priority_tasks
+    expected_selected_tasks = rc.filter_due_tasks_by_context(tasks, context, reference_date)
+    obtained_selected_tasks, deferred_tasks = rc.filter_n_tasks_by_context(
+        tasks, context, reference_date, n_tasks
+    )
+    assert obtained_selected_tasks == expected_selected_tasks
 
 
 def test_filter_n_tasks_by_context_respects_n_tasks():
@@ -228,6 +229,6 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
     context = Context.CASA
     reference_date = date(2026, 5, 2)
     n_tasks = 1
-    filtered_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    obtained_selected = filtered_tasks[0]
-    assert len(obtained_selected) == n_tasks
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    obtainded_length = len(selected)
+    assert obtainded_length == n_tasks
