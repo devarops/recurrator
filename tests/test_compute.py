@@ -205,9 +205,9 @@ def test_filter_n_tasks_by_context_empty_list():
     context = Context.CASA
     reference_date = date(2024, 1, 1)
     n_tasks = 2
-    obtained_filtered_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    expected_filtered_tasks = ([], [])
-    assert obtained_filtered_tasks == expected_filtered_tasks
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    assert selected == []
+    assert deferred == []
 
 
 def test_filter_n_tasks_by_context_early_return():
