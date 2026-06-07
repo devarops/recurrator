@@ -34,8 +34,8 @@ class Task:
         self.context = context
         self.skip_count = skip_count
         self.starred = starred
+        self.latest_done_date = dates.latest_done_date
         self.latest_date = dates.latest_date
         self.recurrence_days = dates.recurrence_days
         self.due_date = dates.due_date
-        self.latest_done_date = dates.latest_done_date
         self.coins = coins
