@@ -346,3 +346,30 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
     ]
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
     assert selected[0].id == 2
+
+
+def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
+    """Verify starred tasks with equal skip_count are sorted by due_date ASC."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        Task(
+            1,
+            "Later due",
+            Context.LIMPIAR,
+            0,
+            True,
+            Dates(date(2026, 6, 1), 7, date(2026, 6, 6)),
+            14,
+        ),
+        Task(
+            2,
+            "Earlier due",
+            Context.LIMPIAR,
+            0,
+            True,
+            Dates(date(2026, 6, 1), 7, date(2026, 6, 1)),
+            14,
+        ),
+    ]
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    assert selected[0].id == 2
