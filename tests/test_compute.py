@@ -208,3 +208,14 @@ def test_filter_n_tasks_by_context():
     obtained_filtered_tasks = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     expected_filtered_tasks = ([], [])
     assert obtained_filtered_tasks == expected_filtered_tasks
+
+
+def test_filter_n_tasks_by_context_early_return():
+    """Verify filter_n_tasks_by_context returns all due tasks when n_tasks exceeds due count."""
+    tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
+    context = Context.LIMPIAR
+    reference_date = date(2026, 6, 6)
+    n_tasks = 3
+    expected_due = rc.filter_due_tasks_by_context(tasks, context, reference_date)
+    obtained = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    assert obtained == (expected_due, [])
