@@ -290,8 +290,10 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
             7,
         ),
     ]
+    expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
-    assert selected[0].id == 2
+    obtained_selected_id = selected[0].id
+    assert obtained_selected_id == expected_selected_id
 
 
 def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
@@ -317,8 +319,10 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
             21,
         ),
     ]
+    expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
-    assert selected[0].id == 2
+    obtained_selected_id = selected[0].id
+    assert obtained_selected_id == expected_selected_id
 
 
 def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
@@ -344,8 +348,10 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
             42,
         ),
     ]
+    expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
-    assert selected[0].id == 2
+    obtained_selected_id = selected[0].id
+    assert obtained_selected_id == expected_selected_id
 
 
 def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
@@ -371,8 +377,10 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
             14,
         ),
     ]
+    expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
-    assert selected[0].id == 2
+    obtained_selected_id = selected[0].id
+    assert obtained_selected_id == expected_selected_id
 
 
 def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
@@ -398,5 +406,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
             14,
         ),
     ]
+    expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
-    assert selected[0].id == 2
+    obtained_selected_id = selected[0].id
+    assert obtained_selected_id == expected_selected_id
