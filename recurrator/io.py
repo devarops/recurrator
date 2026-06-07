@@ -153,6 +153,7 @@ def update_task_dates(task_id: int, dates: list[date | None], path: str) -> None
 
 def _set_csv_field(task_id: int, field_name: str, value: str, csv_path: str) -> None:
     """Set a single CSV field value for the matching task ID."""
+
     def modify_row(row: dict, task_id: int) -> None:
         if int(row["id"]) == task_id:
             row[field_name] = value
