@@ -88,8 +88,13 @@ def is_done_allowed(last_completion_date: date | None, reference_date: date) -> 
     return (reference_date - last_completion_date).days >= MIN_DAYS_GAP
 
 
-def _sorted_by_skip_count_desc(tasks: list[Task]) -> list[Task]:
-    """Sort tasks by skip_count DESC, then recurrence_days DESC."""
+def _sorted_starred_tasks(tasks: list[Task]) -> list[Task]:
+    """Sort starred tasks by skip_count DESC, then due_date ASC."""
+    return sorted(tasks, key=lambda t: (-t.skip_count, t.due_date))
+
+
+def _sorted_non_starred_tasks(tasks: list[Task]) -> list[Task]:
+    """Sort non-starred tasks by skip_count DESC, then recurrence_days DESC."""
     return sorted(tasks, key=lambda t: (t.skip_count, t.recurrence_days), reverse=True)
 
 
@@ -100,11 +105,8 @@ def filter_n_tasks_by_context(
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
     if len(due_tasks) <= n_tasks:
         return due_tasks, []
-    starred_tasks = sorted(
-        [t for t in due_tasks if t.starred],
-        key=lambda t: (-t.skip_count, t.due_date),
-    )
-    non_starred_tasks = _sorted_by_skip_count_desc([t for t in due_tasks if not t.starred])
+    starred_tasks = _sorted_starred_tasks([t for t in due_tasks if t.starred])
+    non_starred_tasks = _sorted_non_starred_tasks([t for t in due_tasks if not t.starred])
     selected_tasks = []
     ind_starred = 0
     ind_non_starred = 0
