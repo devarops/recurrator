@@ -77,6 +77,9 @@ def get_tasks_by_context(
     selected, deferred = compute.filter_n_tasks_by_context(
         tasks, context, parsed_reference_date, n_tasks
     )
+    csv_path = _resolve_csv_path(csv)
+    for task in deferred:
+        io.update_task_as_skipped(task.id, parsed_reference_date, csv_path)
     return [task.id for task in selected]
 
 
