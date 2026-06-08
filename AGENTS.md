@@ -44,6 +44,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 - `Task` is a plain class with `Dates` dataclass for computed date fields.
 - Computed attributes (`latest_date`, `recurrence_days`, `due_date`, `coins`) are NOT stored in CSV. They are computed at read time in `io._row_to_task()` and stored as instance attributes.
+- `latest_done_date` is a stored attribute (read from `date_4` in CSV) but lives in the `Dates` dataclass alongside computed fields. It is the first field in `Dates`.
 - Pattern for adding a new computed field: (1) pure function in `compute.py`, (2) orchestrate computation in `_row_to_task` via `io._compute_dates()` or equivalent, (3) add parameter to `Task.__init__` in `models.py`.
 - CSV conversion: `starred`: `0`→`False`, `1`→`True`. Date fields: `"NA"`→`None`, else `date.fromisoformat()`. `id`/`skip_count`: `int()`.
 - `Context` enum is generated at build time from `tests/data/datapackage.json` via `src/create_contexts.sh`.
