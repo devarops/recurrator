@@ -165,7 +165,7 @@ def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None
     _set_csv_field(task_id, "skip_count", str(skip_count), csv_path)
 
 
-def update_task_skip_date(task_id: int, skip_date: date, csv_path: str) -> None:
+def update_task_skip_date(task_id: int, skip_date: date | None, csv_path: str) -> None:
     _set_csv_field(task_id, "skip_date", _format_date(skip_date), csv_path)
 
 
