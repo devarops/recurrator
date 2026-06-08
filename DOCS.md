@@ -43,14 +43,15 @@ Returns unique context names from due/overdue tasks.
 
 ### GET /context/{context_id}
 
-Returns task IDs that are due or overdue in the given context.
+Returns prioritized task IDs for the given context, limited by available WIP slots.
 
 - **Path parameters**: `context_id` (string, must match a context defined in the Frictionless Data schema `datapackage.json`)
 - **Query parameters**:
   - `csv` (string, path to CSV file)
   - `date` (ISO 8601 date string, reference date for determining due status)
 - **Status code**: 200
-- **Response**: `[<integer>, ...]` — array of task IDs with due dates on or before the reference date
+- **Response**: `[<integer>, ...]` — array of prioritized task IDs, limited by WIP capacity
+- **Notes**: Tasks are selected via alternating-sort prioritization (skip_count, due_date, recurrence_days). Tasks completed today reduce available WIP slots. Deferred tasks receive an automatic skip record.
 
 ### POST /task/{id}/done
 
@@ -104,7 +105,8 @@ A Task has the following attributes:
 - `context`: Context enum (CASA, LAPTOP, LIMPIAR)
 - `skip_count`: integer
 - `starred`: boolean
-- `latest_date`: computed date (the later of date_4 or skip_date)
+- `latest_done_date`: date (stored as date_4 in CSV, never None)
+- `latest_date`: computed date (the later of latest_done_date or skip_date)
 - `recurrence_days`: computed integer (median of intervals between dates, defaults to 14)
 - `due_date`: computed date (latest_date + recurrence_days)
 - `coins`: computed integer (recurrence_days for unstarred tasks, doubled for starred tasks)
@@ -170,7 +172,7 @@ Determines whether a task can be marked as done, rejecting same-day and consecut
   - `reference_date` — The current date to compare against
 - **Returns**: `True` if at least two days have passed since the last completion, or if `last_completion_date` is None. `False` if the last completion was on the same day or the day before `reference_date`.
 
-### `filter_four_dates(dates: list[date | None], new_date: date) -> list[date | None]`
+### `compute_rolling_dates(dates: list[date | None], new_date: date) -> list[date | None]`
 
 Keeps the 4 most recent dates from a combined list of existing dates and a new date.
 
@@ -216,6 +218,36 @@ Returns the unique contexts of tasks that are due or overdue on or before the re
   - `reference_date` — The cutoff date for determining due status
 - **Returns**: List of Context enum values, one per context that has at least one task with `due_date <= reference_date`. Sorted alphabetically by context value
 
+### `count_completed_today(tasks: list[Task], reference_date: date) -> int`
+
+Counts tasks whose latest_done_date matches the reference date.
+
+- **Parameters**:
+  - `tasks` — A list of Task objects
+  - `reference_date` — The date to match against latest_done_date
+- **Returns**: Integer count of tasks completed on the reference date
+
+### `compute_available_wip_slots(wip_limit: int, completed_today: int) -> int`
+
+Computes remaining WIP capacity, clamped to zero.
+
+- **Parameters**:
+  - `wip_limit` — Maximum number of tasks allowed in parallel
+  - `completed_today` — Number of tasks already completed today
+- **Returns**: `max(wip_limit - completed_today, 0)`
+
+### `filter_n_tasks_by_context(tasks: list[Task], context: Context, reference_date: date, available_slots: int) -> tuple[list[Task], list[Task]]`
+
+Prioritizes tasks within a context by alternating-sort selection.
+
+- **Parameters**:
+  - `tasks` — A list of all Task objects
+  - `context` — The Context enum value to filter by
+  - `reference_date` — The cutoff date for determining due status
+  - `available_slots` — Maximum number of tasks to select
+- **Returns**: Tuple of `(selected_tasks, deferred_tasks)`. When due tasks exceed available_slots, starred and non-starred tasks are interleaved by alternating sort keys (skip_count DESC, due_date ASC, recurrence_days DESC)
+- **Notes**: Deferred tasks are always non-starred. Returns all due tasks unchanged when count does not exceed available_slots.
+
 ### `import_tasks_from_csv(path: str) -> list[Task]`
 
 Reads a CSV file and returns a list of Task objects with computed attributes.
@@ -256,6 +288,31 @@ Updates the skip_count field for a task in the CSV file.
 - **Returns**: None
 - **Notes**: Only modifies the skip_count column; other fields are left unchanged
 
+### `update_task_skip_date(task_id: int, skip_date: date | None, csv_path: str) -> None`
+
+Updates the skip_date field for a task in the CSV file.
+
+- **Parameters**:
+  - `task_id` — The task ID to update
+  - `skip_date` — The new skip date value (None to clear)
+  - `csv_path` — Path to the CSV file
+- **Returns**: None
+- **Notes**: Only modifies the skip_date column; other fields are left unchanged
+
+### `update_task_as_skipped(task_id: int, skip_date: date, csv_path: str) -> None`
+
+Marks a task as skipped by incrementing skip_count and setting skip_date.
+
+- **Parameters**:
+  - `task_id` — The task ID to mark as skipped
+  - `skip_date` — The date the task was skipped
+  - `csv_path` — Path to the CSV file
+- **Returns**: None
+- **Behavior**:
+  - Increments skip_count by 1
+  - Sets skip_date to the given value
+  - Persists all changes to CSV file
+
 ### `update_task_as_done(task_id: int, completion_date: date, csv_path: str) -> None`
 
 Marks a task as completed by rotating dates and resetting the skip count.
@@ -266,7 +323,7 @@ Marks a task as completed by rotating dates and resetting the skip count.
   - `csv_path` — Path to the CSV file
 - **Returns**: None
 - **Behavior**:
-  - Rotates completion dates using `filter_four_dates`
+  - Rotates completion dates using `compute_rolling_dates`
   - Resets skip_count to 0
   - Persists all changes to CSV file
 

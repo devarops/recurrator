@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `latest_done_date` field in `GET /task/{id}` response.
+- `GET /context/{context_id}` now returns prioritized task IDs, limited by WIP
+  capacity. Starred and non-starred tasks are interleaved in the result.
+  Tasks excluded by the limit are automatically skipped.
+
+### Changed
+
+- `skipped_date` CSV column renamed to `skip_date`.
+
+### Fixed
+
+- Frontend date functions now use `America/Los_Angeles` timezone instead of
+  UTC, preventing off-by-one-day errors in the context page task list.
+
 ## [0.5.0] - 2026-05-24
 
 ### Added
