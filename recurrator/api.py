@@ -37,9 +37,8 @@ def _task_to_dict(task: io.Task) -> dict:
     }
 
 
-def _load_tasks_and_date(csv: str | None, reference_date: str) -> tuple:
+def _load_tasks_and_date(csv_path: str, reference_date: str) -> tuple:
     """Import tasks from CSV and parse the reference date."""
-    csv_path = _resolve_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
     parsed_reference_date = date.fromisoformat(reference_date)
     return tasks, parsed_reference_date
@@ -69,7 +68,8 @@ def get_tasks_by_context(
     reference_date: str = Query(None, alias="date"),
 ):
     """Return prioritized task IDs for the given context."""
-    tasks, parsed_reference_date = _load_tasks_and_date(csv, reference_date)
+    csv_path = _resolve_csv_path(csv)
+    tasks, parsed_reference_date = _load_tasks_and_date(csv_path, reference_date)
     context = Context(context_id)
     tasks_in_context = compute.filter_all_tasks_by_context(tasks, context)
     completed_today = compute.count_completed_today(tasks_in_context, parsed_reference_date)
@@ -77,7 +77,6 @@ def get_tasks_by_context(
     selected, deferred = compute.filter_n_tasks_by_context(
         tasks, context, parsed_reference_date, available_slots
     )
-    csv_path = _resolve_csv_path(csv)
     for task in deferred:
         io.update_task_as_skipped(task.id, parsed_reference_date, csv_path)
     return [task.id for task in selected]
@@ -86,7 +85,8 @@ def get_tasks_by_context(
 @app.get("/context/")
 def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, alias="date")):
     """Return unique contexts from tasks due on or before the given date."""
-    tasks, parsed_reference_date = _load_tasks_and_date(csv, reference_date)
+    csv_path = _resolve_csv_path(csv)
+    tasks, parsed_reference_date = _load_tasks_and_date(csv_path, reference_date)
     due_contexts = compute.filter_due_contexts(tasks, parsed_reference_date)
     return [context.value for context in due_contexts]
 
