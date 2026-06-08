@@ -229,7 +229,7 @@ function renderTaskLinks(tasks, csvParam) {
         const href = csvParam
             ? `task.html?id=${task.id}&csv=${encodeURIComponent(csvParam)}`
             : `task.html?id=${task.id}`;
-        return `<tr><td><a href="${href}"><img class="monster-img" data-task-id="${task.id}" alt=""></a></td><td>${task.description}</td><td>${task.coins}</td></tr>`;
+        return `<tr><td><a href="${href}"><img class="monster-img" data-task-id="${task.id}" alt=""></a></td><td><a href="${href}">${task.description}</a></td><td>${task.coins}</td></tr>`;
     }).join('');
 
     return `\
