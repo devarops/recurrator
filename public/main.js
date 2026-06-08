@@ -19,11 +19,14 @@ function renderTaskRow(label, value) {
 }
 
 function isRecentlyCompleted(latestDate) {
-    const today = new Date();
-    const todayISO = today.toISOString().split('T')[0];
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayISO = yesterday.toISOString().split('T')[0];
+    const todayISO = getTodayISO();
+    const parts = todayISO.split('-').map(Number);
+    const yesterdayMS = Date.UTC(parts[0], parts[1] - 1, parts[2]) - 86400000;
+    const yesterday = new Date(yesterdayMS);
+    const yyyy = yesterday.getUTCFullYear();
+    const mm = String(yesterday.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(yesterday.getUTCDate()).padStart(2, '0');
+    const yesterdayISO = `${yyyy}-${mm}-${dd}`;
     return latestDate === todayISO || latestDate === yesterdayISO;
 }
 
@@ -176,7 +179,12 @@ function sha256Hex(str) {
 }
 
 function getTodayISO() {
-    return new Date().toISOString().split('T')[0];
+    return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Los_Angeles',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format();
 }
 
 function buildContextUrl(baseUrl, csvParam) {
