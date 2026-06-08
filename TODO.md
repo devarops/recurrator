@@ -1,48 +1,6 @@
 # The Gold
 
-Prioritization algorithm — filter_n_tasks_by_context endpoint.
-
-## Plan
-
-1. ✅ Add filter_n_tasks_by_context to compute.py — done.
-
-2. Integrate filter_n_tasks_by_context into GET /context/{context_id}
-
-   **Red:**
-   - File: `tests/test_api.py`
-   - Scenario: Update `test_get_tasks_by_context`. With controlled test data and reference_date,
-     the endpoint now returns only the prioritized subset of task IDs instead of all due task IDs.
-   - Expected: The response contains exactly `n_tasks` task IDs, selected by the prioritization
-     algorithm. The skip side effects should be verifiable indirectly (e.g., skip_count increased
-     for remaining tasks).
-   - Fails because: The endpoint still returns all due task IDs without prioritization or skip
-     side effects.
-
-   **Green:**
-   - **models.py**: Add `latest_done_date: date` to `Dates` dataclass.
-   - **io.py**: Populate `latest_done_date` from `date_4` in `_compute_dates`.
-   - **io.py**: Add `update_task_skip_date(task_id, skip_date, csv_path)` primitive.
-   - **io.py**: Add `update_task_as_skipped(task_id, skip_date, csv_path)` — mirrors
-     `update_task_as_done`: read current task via `get_task_by_id`, increment `skip_count`,
-     call `update_task_skip_count` + `update_task_skip_date`.
-   - **compute.py**: Add `count_completed_today(tasks, reference_date)` — counts tasks
-     where `task.latest_done_date == reference_date`.
-   - **compute.py**: Add `compute_available_wip_slots(wip_limit, completed_today)` —
-     returns `max(wip_limit - completed_today, 0)`.
-   - **api.py**: Modify `GET /context/{context_id}`:
-     1. `tasks_in_context = compute.filter_all_tasks_by_context(tasks, context)`
-     2. `completed_today = compute.count_completed_today(tasks_in_context, parsed_reference_date)`
-     3. `n_tasks = compute.compute_available_wip_slots(WIP_LIMIT, completed_today)`
-     4. `selected, deferred = compute.filter_n_tasks_by_context(tasks, context, parsed_reference_date, n_tasks)`
-     5. `io.update_task_as_skipped(task.id, parsed_reference_date, csv_path)` per deferred task
-     6. Return `[task.id for task in selected]`
-
-## Outside the Plan
-
-**Add WIP_LIMIT to config:**
-- ✅ Add `wip_limit: 6` to `~/.config/recurrator/config.json` — done.
-- ✅ Add `WIP_LIMIT = 6` fallback in `src/create_config.sh` — done.
-- ✅ Regenerate `recurrator/_config.py` — done.
+- (None)
 
 ---
 
