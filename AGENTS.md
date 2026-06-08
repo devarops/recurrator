@@ -31,7 +31,12 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 - If multiple tests fail for the same behavioral gap, defer extra tests to keep exactly one failing test per Red phase. Add them back after Green.
 - Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import). Otherwise write real assertions.
 - After-Gold test pattern: subsequent strengthening assertions use 🥇🧪 prefix.
-- Tests that modify shared mutable state (e.g., CSV files shared across the suite) must use `try/finally` to ensure rollback occurs even on assertion failure, preventing pollution of subsequent tests.
+- Tests that modify shared mutable state (CSV files) follow a checksum-based restore pattern:
+  1. Capture `original_checksum = _get_file_checksum(csv_path)` at the start.
+  2. Make changes, run assertions.
+  3. Undo each mutation to its original value using the corresponding `update_*` function.
+  4. Assert `_assert_file_unchanged(csv_path, original_checksum)` at the end.
+  The undo steps are inline (not wrapped in `try/finally`); the checksum assertion at the end verifies the file was fully restored. See `_verify_task_as_done` in `conftest.py` for a reusable example.
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 🥇🧪 (after-gold), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
