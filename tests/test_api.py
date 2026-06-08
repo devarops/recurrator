@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi.testclient import TestClient
 from recurrator.api import app
 import recurrator.io as io
@@ -187,3 +189,38 @@ def test_get_tasks_by_context():
     expected_task_ids = [1, 2, 3, 4, 5, 6]
     obtained_task_ids = response.json()
     assert obtained_task_ids == expected_task_ids
+
+
+def test_get_tasks_by_context_defers_remaining_tasks():
+    """Verify deferred tasks get skip_count incremented and skip_date set."""
+
+    csv_path = "tests/data/test_eight_tasks.csv"
+    reference_date = "2026-05-02"
+    context = "limpiar"
+
+    original_checksum = _get_file_checksum(csv_path)
+
+    deferred_task_id = 7
+    original_task = io.get_task_by_id(deferred_task_id, csv_path)
+    original_skip_count = original_task.skip_count
+
+    response = client.get(f"/context/{context}?csv={csv_path}&date={reference_date}")
+
+    expected_status_code = 200
+    obtained_status_code = response.status_code
+    assert obtained_status_code == expected_status_code
+
+    updated_task = io.get_task_by_id(deferred_task_id, csv_path)
+    expected_skip_count = original_skip_count + 1
+    obtained_skip_count = updated_task.skip_count
+    assert obtained_skip_count == expected_skip_count
+
+    expected_latest_date = date(2026, 5, 2)
+    obtained_latest_date = updated_task.latest_date
+    assert obtained_latest_date == expected_latest_date
+
+    # Undo changes to CSV file for other tests
+    io.update_task_skip_count(deferred_task_id, original_skip_count, csv_path)
+    io.update_task_skip_date(deferred_task_id, None, csv_path)
+
+    _assert_file_unchanged(csv_path, original_checksum)
