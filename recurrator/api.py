@@ -96,7 +96,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     today = date.today()
 
-    last_completion_date = io.import_dates_from_csv(task_id, csv_path)[3]
+    last_completion_date = io.get_task_by_id(task_id, csv_path).latest_done_date
     if not compute.is_done_allowed(last_completion_date, today):
         return JSONResponse(
             content={"error": "Task was already completed too recently"},
