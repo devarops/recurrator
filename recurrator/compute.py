@@ -108,22 +108,22 @@ def _sorted_tasks(tasks: list[Task], odd_cycle: bool) -> list[Task]:
 
 
 def filter_n_tasks_by_context(
-    tasks: list[Task], context: Context, reference_date: date, n_tasks: int
+    tasks: list[Task], context: Context, reference_date: date, available_slots: int
 ) -> tuple[list[Task], list[Task]]:
     """Prioritize tasks within a context by alternating-sort selection."""
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
-    if len(due_tasks) <= n_tasks:
+    if len(due_tasks) <= available_slots:
         return due_tasks, []
     starred_pool = [t for t in due_tasks if t.starred]
     non_starred_pool = [t for t in due_tasks if not t.starred]
     selected_tasks: list[Task] = []
     odd_cycle = True
-    while len(selected_tasks) < n_tasks:
+    while len(selected_tasks) < available_slots:
         starred_sorted = _sorted_tasks(starred_pool, odd_cycle)
         if starred_sorted:
             selected_tasks.append(starred_sorted[0])
             starred_pool.remove(starred_sorted[0])
-        if len(selected_tasks) >= n_tasks:
+        if len(selected_tasks) >= available_slots:
             break
         non_starred_sorted = _sorted_tasks(non_starred_pool, odd_cycle)
         if non_starred_sorted:

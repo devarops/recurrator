@@ -73,9 +73,9 @@ def get_tasks_by_context(
     context = Context(context_id)
     tasks_in_context = compute.filter_all_tasks_by_context(tasks, context)
     completed_today = compute.count_completed_today(tasks_in_context, parsed_reference_date)
-    n_tasks = compute.compute_available_wip_slots(WIP_LIMIT, completed_today)
+    available_slots = compute.compute_available_wip_slots(WIP_LIMIT, completed_today)
     selected, deferred = compute.filter_n_tasks_by_context(
-        tasks, context, parsed_reference_date, n_tasks
+        tasks, context, parsed_reference_date, available_slots
     )
     csv_path = _resolve_csv_path(csv)
     for task in deferred:
