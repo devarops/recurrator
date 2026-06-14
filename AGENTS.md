@@ -49,6 +49,12 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 - CSV conversion: `starred`: `0`→`False`, `1`→`True`. Date fields: `"NA"`→`None`, else `date.fromisoformat()`. `id`/`skip_count`: `int()`.
 - `Context` enum is generated at build time from `tests/data/datapackage.json` via `src/create_contexts.sh`.
 
+## Mutation Testing
+
+Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container. Check survivors with `mutmut results`.
+
+---
+
 ## Development Environment
 
 ```shell
@@ -64,7 +70,3 @@ docker compose exec cli make tests
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
 **Useful make targets:** `tests` (pytest), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter).
-
-## Mutation Testing
-
-Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container. Check survivors with `mutmut results`.
