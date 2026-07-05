@@ -1,13 +1,4 @@
-# The Gold
-
-- (None)
-
----
-
-# Backlog not part of the current Gold
-
-The following items were removed from the original TODO.md to keep the plan focused on The Gold.
-They remain valid work items for future cycles.
+# Backlog
 
 - Add json schema validation for config file.
 - Set min and max recurrence days.
