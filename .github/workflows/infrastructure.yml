@@ -1,0 +1,13 @@
+name: Weekly Health Check
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  ping:
+    name: Ping Healthcheck
+    runs-on: ubuntu-latest
+    steps:
+    - name: Ping
+      run: curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/a5ef94f4-8de1-4ab5-8477-9929ca007b78/start
