@@ -68,5 +68,5 @@ def test_entrypoint_generates_modules_and_executes_command(tmp_path):
     )
 
     assert result.stdout.strip() == "command-ran"
-    assert 'WIP_LIMIT = 9' in (repo / "recurrator" / "_config.py").read_text()
+    assert "WIP_LIMIT = 9" in (repo / "recurrator" / "_config.py").read_text()
     assert 'MANDADO = "mandado"' in (repo / "recurrator" / "_contexts.py").read_text()

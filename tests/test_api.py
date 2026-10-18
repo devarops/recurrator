@@ -185,8 +185,7 @@ def test_get_tasks_by_context():
 
     deferred_task_ids = [7, 8]
     original_deferred_tasks = {
-        task_id: io.get_task_by_id(task_id, csv_path)
-        for task_id in deferred_task_ids
+        task_id: io.get_task_by_id(task_id, csv_path) for task_id in deferred_task_ids
     }
 
     response = client.get(f"/context/{context}?csv={csv_path}&date={reference_date}")
@@ -218,8 +217,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
 
     deferred_task_ids = [7, 8]
     original_deferred_tasks = {
-        task_id: io.get_task_by_id(task_id, csv_path)
-        for task_id in deferred_task_ids
+        task_id: io.get_task_by_id(task_id, csv_path) for task_id in deferred_task_ids
     }
 
     response = client.get(f"/context/{context}?csv={csv_path}&date={reference_date}")
