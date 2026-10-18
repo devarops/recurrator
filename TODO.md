@@ -1,13 +1,15 @@
 # Backlog
 
-- Add json schema validation for config file.
-- Set min and max recurrence days.
-- Test frontend with Playwright or FastAPI TestClient.
-- Add one extra task when we have fewer than 6 tasks.
-- Glicko rating system.
-- Coins from Glicko rating.
+Items marked _details below_ link to their `##` section; items marked _backlog only_ have none, and every `##` section appears in this list.
 
-## One extra task algorithm
+- Add json schema validation for config file — backlog only
+- Set min and max recurrence days — backlog only
+- Test frontend with Playwright or FastAPI TestClient — backlog only
+- Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
+- Glicko rating system — [details below](#glicko-rating-system)
+- Coins from Glicko rating — [details below](#coins-from-glicko-rating)
+
+## Add one extra task when we have fewer than 6 tasks
 
 **Purpose:** When a context has fewer than 6 due tasks, pick one upcoming (not yet due) task to pad the list. Complementary to `filter_n_tasks_by_context`.
 
