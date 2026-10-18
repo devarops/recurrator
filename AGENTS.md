@@ -1,5 +1,7 @@
 # Developer Guidelines & Project Standards
 
+**User Interface:** In this project, **User Interface** (UI) means the HTTP API defined in `api.py`. It is the single authoritative interface to the task data. The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**; both are optional clients of the API and never access the CSV directly.
+
 ## Architecture
 
 **Layered Module Structure (strict one-way dependencies):**
