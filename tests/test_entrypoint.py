@@ -4,7 +4,11 @@ import shutil
 import subprocess
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = next(
+    parent
+    for parent in Path(__file__).resolve().parents
+    if (parent / "src" / "create_config.sh").is_file()
+)
 SCRIPTS = ["create_config.sh", "create_contexts.sh", "entrypoint.sh"]
 
 
