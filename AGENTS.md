@@ -1,6 +1,7 @@
 # Developer Guidelines & Project Standards
 
-**User Interface:** In this project, **User Interface** (UI) means the HTTP API defined in `api.py`. It is the single authoritative interface to the task data. The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**; both are optional clients of the API and never access the CSV directly.
+**Public Interface:** In this project, the **Public Interface** is the HTTP API defined in `api.py`, the single authoritative interface to task data.
+The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**; both are optional clients of the API and never access the CSV directly.
 
 ## Architecture
 
@@ -18,6 +19,8 @@
 - Action responses return confirmation subsets (`id` + changed fields), not full resources.
 - Error envelope: `{"error": "<message>"}` with appropriate HTTP status code. Non-200 responses must use `JSONResponse(content={...}, status_code=N)` from `fastapi.responses`; the `return dict, int` tuple pattern serializes as a JSON array `[{...}, 409]` instead of unpacking.
 - CLI tabular output MUST be valid CSV (header + data rows). Non-tabular output uses JSON.
+
+**Documentation:** `DOCS.md` lists the HTTP API only. The browser pages in `public/` and the `recurrator` CLI are clients, so describe them in `README.md`, not in the endpoint reference. `CHANGELOG.md` records only changes that touch an endpoint listed in `DOCS.md`; documentation-only edits do not belong.
 
 **No Derived Values in Presentation Layer:** The frontend may transform data for display (type coercion, renaming, filtering, column selection) but must never introduce new atomic values through computation (no arithmetic, statistics, joins, or aggregations). Derived values belong in `compute_*` on the backend.
 
@@ -42,6 +45,8 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 🥇🧪 (after-gold), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI tests use FastAPI `TestClient` and Typer `CliRunner`; `tests/test_frontend.py` only checks static HTML markers.
+
 ## Data Modeling & CSV Mapping
 
 - `Task` is a plain class with `Dates` dataclass for computed date fields.
@@ -49,7 +54,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 - `latest_done_date` is a stored attribute (read from `date_4` in CSV) but lives in the `Dates` dataclass alongside computed fields. It is the first field in `Dates`.
 - Pattern for adding a new computed field: (1) pure function in `compute.py`, (2) orchestrate computation in `_row_to_task` via `io._compute_dates()` or equivalent, (3) add parameter to `Task.__init__` in `models.py`.
 - CSV conversion: `starred`: `0`→`False`, `1`→`True`. Date fields: `"NA"`→`None`, else `date.fromisoformat()`. `id`/`skip_count`: `int()`.
-- `Context` enum is generated at build time from `tests/data/datapackage.json` via `src/create_contexts.sh`.
+- `recurrator/_contexts.py` is generated from the Frictionless `datapackage.json`, and `recurrator/_config.py` from `config.json` (built-in defaults when absent), by `make install`. Both are gitignored.
 
 ## Mutation Testing
 
