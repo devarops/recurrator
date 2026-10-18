@@ -19,6 +19,10 @@ nothing to schedule and no recurrence rule to configure.
 The task stops appearing in the due list until its next due date. Completed work
 also updates the task's rhythm, so the schedule keeps adapting.
 
+If the API runs on another machine, open the frontend once as
+`public/index.html?api=http://<host>:8000`; the page remembers the address for
+later visits.
+
 For terminal users, `recurrator list-all-tasks --csv <file>` prints the task IDs
 from the same task file while the service is running.
 
