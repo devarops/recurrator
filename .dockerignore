@@ -1,0 +1,11 @@
+.git
+.gitignore
+.pytest_cache
+__pycache__
+*.pyc
+mutants
+coverage.xml
+.terraform
+*.tfstate
+*.tfstate.*
+sync.log

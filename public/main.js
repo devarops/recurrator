@@ -1,4 +1,16 @@
-const API_BASE_URL = 'http://localhost:8000';
+function getApiBaseUrl() {
+    const configured = new URL(window.location).searchParams.get('api');
+    try {
+        if (configured) localStorage.setItem('recurratorApiBaseUrl', configured);
+        return configured
+            || localStorage.getItem('recurratorApiBaseUrl')
+            || 'http://localhost:8000';
+    } catch (error) {
+        return configured || 'http://localhost:8000';
+    }
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 function buildUrlWithParams(baseUrl, path, csvParam) {
     return csvParam
