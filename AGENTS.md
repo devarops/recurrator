@@ -54,7 +54,13 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI
 - `latest_done_date` is a stored attribute (read from `date_4` in CSV) but lives in the `Dates` dataclass alongside computed fields. It is the first field in `Dates`.
 - Pattern for adding a new computed field: (1) pure function in `compute.py`, (2) orchestrate computation in `_row_to_task` via `io._compute_dates()` or equivalent, (3) add parameter to `Task.__init__` in `models.py`.
 - CSV conversion: `starred`: `0`→`False`, `1`→`True`. Date fields: `"NA"`→`None`, else `date.fromisoformat()`. `id`/`skip_count`: `int()`.
-- `recurrator/_contexts.py` is generated from the Frictionless `datapackage.json`, and `recurrator/_config.py` from `config.json` (built-in defaults when absent), by `make install`. Both are gitignored.
+- `recurrator/_contexts.py` is generated from the Frictionless `datapackage.json`, and `recurrator/_config.py` from `config.json` (built-in defaults when absent), by `make install` and by `src/entrypoint.sh` at container start. Both are gitignored.
+
+## Container Startup and Deployment
+
+- `src/entrypoint.sh` runs before the container command and regenerates both modules from `/root/.config/recurrator`; the api and cli containers each do this independently.
+- The published image runs without a code checkout in `devarops/recurrator_setup`; keep it self-contained and do not add a bind-mount dependency.
+- The frontend reads an `api` query parameter, stores it in localStorage, and defaults to `http://localhost:8000`. Keep that default for local work.
 
 ## Mutation Testing
 
