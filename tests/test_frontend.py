@@ -1,6 +1,10 @@
-import os
+from pathlib import Path
 
-PUBLIC_DIR = "public"
+PUBLIC_DIR = next(
+    parent / "public"
+    for parent in Path(__file__).resolve().parents
+    if (parent / "public" / "index.html").is_file()
+)
 
 HTML_FILES = {
     "index.html": [
@@ -27,8 +31,8 @@ HTML_FILES = {
 def test_html_files_have_expected_structure():
     """Verify each HTML file exists and contains expected DOM landmarks."""
     for filename, expected_markers in HTML_FILES.items():
-        filepath = os.path.join(PUBLIC_DIR, filename)
-        assert os.path.exists(filepath), f"Missing {filepath}"
+        filepath = PUBLIC_DIR / filename
+        assert filepath.exists(), f"Missing {filepath}"
         with open(filepath) as f:
             content = f.read()
         for marker in expected_markers:
