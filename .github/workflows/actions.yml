@@ -15,7 +15,7 @@ jobs:
     - name: Run checks and tests
       run: |
         docker compose run --name recurrator_ci --rm --detach cli sleep infinity
-        docker compose exec cli make init
+        docker compose exec cli make setup
         docker compose exec cli make check
         docker compose exec cli make tests
         docker compose exec cli make coverage
