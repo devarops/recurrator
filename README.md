@@ -1,46 +1,39 @@
 # recurrator
 
-Recurrator — recurring tasks that know when to come back.
+Recurring tasks that know when to come back.
 
-Recurrator helps you manage recurring household and personal tasks.
-The more often you complete a task, the more frequently it comes back.
-If you take longer between completions, it shows up less often.
-Recurrator learns your personal rhythm — no calendars, no complicated rules.
+## What it does
 
----
+Household and personal chores do not follow a fixed calendar. Recurrator learns
+how often you actually complete each task and adjusts when it appears again.
+Tasks you do often return sooner; tasks you do rarely wait longer. There is
+nothing to schedule and no recurrence rule to configure.
 
-## How it works
+## How to use it
 
-Open your browser to see a list of contexts (areas of your life).
-Click a context to see the tasks that are due or overdue in that area.
-Click a task to see its details and mark it as done.
+1. Open the start page to see the areas of your life that have work waiting.
+2. Choose an area to see the tasks that are due there.
+3. Pick a task to view its details.
+4. Select **Mark as Done** when you finish it.
 
-| Page | Status |
-|------|--------|
-| **Index** — lists your contexts | ✅ Ready |
-| **Context** — lists tasks in one context | ✅ Ready |
-| **Task** — view and complete a task | ✅ Ready |
+The task stops appearing in the due list until its next due date. Completed work
+also updates the task's rhythm, so the schedule keeps adapting.
 
-Navigation is point-and-click. You never type task IDs or file paths.
+For terminal users, `recurrator list-all-tasks --csv <file>` prints the task IDs
+from the same task file while the service is running.
 
----
+## Before you start
 
-## Before you start: your task file
-
-Recurrator stores your tasks in a CSV file.
-The default location is:
+Recurrator keeps your tasks in a file at:
 
 ```
 ~/.config/recurrator/tasks.csv
 ```
 
-You need to create this file before using Recurrator.
-You can point to a different file later — but the default path is what the
-application looks for unless you tell it otherwise.
+The file must exist before you start. It records each task, its area, and the
+dates it was completed. Keep it backed up; it is your task history.
 
----
-
-## Run Recurrator
+## Run the project
 
 ### With Docker (recommended)
 
@@ -48,7 +41,8 @@ application looks for unless you tell it otherwise.
 docker compose up
 ```
 
-This starts the API server at `http://localhost:8000`.
+This starts the service at `http://localhost:8000`. Then open
+`public/index.html` in your browser.
 
 ### Without Docker
 
@@ -57,24 +51,4 @@ make install
 uvicorn recurrator.api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Open `http://localhost:8000/task.html?id=1` in your browser to see a task.
-
----
-
-## Adaptive recurrence explained
-
-Every task has a natural rhythm that comes from how you do it.
-
-- **Do a task often** → it comes back sooner
-- **Take longer between completions** → it waits longer before reappearing
-
-Recurrator watches your last few completions and adjusts automatically.
-You never set a schedule — the schedule sets itself based on your behavior.
-
----
-
-## Coming soon
-
-- **Skip button in the frontend** — postpone a task from the browser (backend ready)
-- **Create and edit tasks** from the browser
-- **Dashboard** — see your progress over time
+Then open `public/index.html` in your browser.
