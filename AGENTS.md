@@ -60,6 +60,10 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI
 
 Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container. Check survivors with `mutmut results`.
 
+## TODO.md
+
+`TODO.md` has one checklist at the top and detail sections below. Every `##` section must appear as a checklist item linking to its heading with the text `details below`. Items without a section end with `backlog only`. Keep the checklist and sections in sync when work is added, renamed, or removed.
+
 ---
 
 ## Development Environment
