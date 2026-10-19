@@ -2,19 +2,12 @@
 
 Items marked _details below_ link to their `##` section; items marked _backlog only_ have none, and every `##` section appears in this list.
 
-- Provisioner handoff — [details below](#provisioner-handoff)
 - Add json schema validation for config file — backlog only
 - Set min and max recurrence days — backlog only
 - Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
 - Glicko rating system — [details below](#glicko-rating-system)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Test frontend with Playwright or FastAPI TestClient — backlog only
-
-## Provisioner handoff
-
-1. Install the Cronfile on the provisioner; the 02:00/02:30 recurrator lines are already committed.
-2. Copy the deploy key to the provisioner: `~/.vault/deploy_keys/recurrator_config` → `/home/geci/.vault/deploy_keys/`. It is registered on GitHub as `recurrator droplet`, id `166819821`, write-enabled.
-3. Disable the laptop cron and install the new data-repo Cronfile there if you keep any local sync.
 
 ## Add one extra task when we have fewer than 6 tasks
 
