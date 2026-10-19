@@ -19,9 +19,9 @@ nothing to schedule and no recurrence rule to configure.
 The task stops appearing in the due list until its next due date. Completed work
 also updates the task's rhythm, so the schedule keeps adapting.
 
-If the API runs on another machine, open the frontend once as
-`public/index.html?api=http://<host>:8000`; the page remembers the address for
-later visits.
+The API serves the frontend at the same address. Open
+`http://localhost:8000/` for local use, or `http://<host>:8000/` from another
+device that can reach the host.
 
 For terminal users, `recurrator list-all-tasks --csv <file>` prints the task IDs
 from the same task file while the service is running.
@@ -46,7 +46,7 @@ docker compose up
 ```
 
 This starts the service at `http://localhost:8000`. Then open
-`public/index.html` in your browser.
+`http://localhost:8000/` in your browser.
 
 ### Without Docker
 
@@ -55,4 +55,4 @@ make install
 uvicorn recurrator.api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Then open `public/index.html` in your browser.
+Then open `http://localhost:8000/` in your browser.

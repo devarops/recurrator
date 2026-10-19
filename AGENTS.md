@@ -60,7 +60,7 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI
 
 - `src/entrypoint.sh` runs before the container command and regenerates both modules from `/root/.config/recurrator`; the api and cli containers each do this independently.
 - The published image runs without a code checkout in `devarops/recurrator_setup`; keep it self-contained and do not add a bind-mount dependency.
-- The frontend reads an `api` query parameter, stores it in localStorage, and defaults to `http://localhost:8000`. Keep that default for local work.
+- FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost:8000/` for local work.
 
 ## Mutation Testing
 
