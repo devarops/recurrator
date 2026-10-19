@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Query
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from datetime import date
+from pathlib import Path
+
+from fastapi import FastAPI, Query
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from . import compute, io
 from ._config import DEFAULT_TASKS_CSV_PATH, WIP_LIMIT
@@ -9,11 +11,10 @@ from .models import Context
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+PUBLIC_DIR = next(
+    parent / "public"
+    for parent in Path(__file__).resolve().parents
+    if (parent / "public" / "index.html").is_file()
 )
 
 
@@ -111,3 +112,6 @@ def post_task_done(task_id: int, csv: str = Query(None)):
         "skip_count": updated_task.skip_count,
         "due_date": updated_task.due_date.isoformat(),
     }
+
+
+app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="public")

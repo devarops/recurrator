@@ -1,29 +1,15 @@
-function getApiBaseUrl() {
-    const configured = new URL(window.location).searchParams.get('api');
-    try {
-        if (configured) localStorage.setItem('recurratorApiBaseUrl', configured);
-        return configured
-            || localStorage.getItem('recurratorApiBaseUrl')
-            || 'http://localhost:8000';
-    } catch (error) {
-        return configured || 'http://localhost:8000';
-    }
-}
-
-const API_BASE_URL = getApiBaseUrl();
-
-function buildUrlWithParams(baseUrl, path, csvParam) {
+function buildUrlWithParams(path, csvParam) {
     return csvParam
-        ? `${baseUrl}${path}?csv=${encodeURIComponent(csvParam)}`
-        : `${baseUrl}${path}`;
+        ? `${path}?csv=${encodeURIComponent(csvParam)}`
+        : path;
 }
 
-function buildApiUrl(baseUrl, taskId, csvParam) {
-    return buildUrlWithParams(baseUrl, `/task/${taskId}`, csvParam);
+function buildApiUrl(taskId, csvParam) {
+    return buildUrlWithParams(`/task/${taskId}`, csvParam);
 }
 
-function buildDoneUrl(baseUrl, taskId, csvParam) {
-    return buildUrlWithParams(baseUrl, `/task/${taskId}/done`, csvParam);
+function buildDoneUrl(taskId, csvParam) {
+    return buildUrlWithParams(`/task/${taskId}/done`, csvParam);
 }
 
 function renderTaskRow(label, value) {
@@ -113,8 +99,8 @@ function _fetchAndRender(url, renderFn, contentElement, errorElement, csvParam) 
 }
 
 function markDoneAndRefresh(context) {
-    const { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl } = context;
-    const doneUrl = buildDoneUrl(apiBaseUrl, taskId, csvParam);
+    const { taskId, csvParam, taskElement, errorElement, apiUrl } = context;
+    const doneUrl = buildDoneUrl(taskId, csvParam);
 
     return fetch(doneUrl, { method: 'POST' })
         .then(response => {
@@ -141,11 +127,11 @@ function attachDoneButtonHandler(doneBtn, context) {
     });
 }
 
-function initTaskPage(apiBaseUrl) {
+function initTaskPage() {
     const { taskElement, errorElement } = getDomElements();
     console.assert(taskElement, 'Missing #task element in task.html');
     const { taskId, csvParam } = getQueryParams();
-    const apiUrl = buildApiUrl(apiBaseUrl, taskId, csvParam);
+    const apiUrl = buildApiUrl(taskId, csvParam);
 
     function makeContextHref(contextName, csvParam) {
         return csvParam
@@ -164,6 +150,7 @@ function initTaskPage(apiBaseUrl) {
             var monster = document.getElementById('monster');
             if (monster) {
                 sha256Hex(String(task.id)).then(function (hash) {
+                    if (!hash) return;
                     var img = document.createElement('img');
                     img.src = 'https://gravatar.com/avatar/' + hash + '?d=monsterid&s=256&f=y';
                     img.alt = '';
@@ -171,7 +158,7 @@ function initTaskPage(apiBaseUrl) {
                 });
             }
             const doneBtn = document.getElementById('doneBtn');
-            const context = { apiBaseUrl, taskId, csvParam, taskElement, errorElement, apiUrl };
+            const context = { taskId, csvParam, taskElement, errorElement, apiUrl };
             attachDoneButtonHandler(doneBtn, context);
         })
         .catch(err => {
@@ -180,9 +167,12 @@ function initTaskPage(apiBaseUrl) {
 }
 
 function sha256Hex(str) {
+    if (!window.crypto || !window.crypto.subtle) {
+        return Promise.resolve(null);
+    }
     var encoder = new TextEncoder();
     var data = encoder.encode(str);
-    return crypto.subtle.digest('SHA-256', data).then(function (buffer) {
+    return window.crypto.subtle.digest('SHA-256', data).then(function (buffer) {
         var bytes = new Uint8Array(buffer);
         return Array.from(bytes).map(function (b) {
             return b.toString(16).padStart(2, '0');
@@ -199,9 +189,9 @@ function getTodayISO() {
     }).format();
 }
 
-function buildContextUrl(baseUrl, csvParam) {
+function buildContextUrl(csvParam) {
     const today = getTodayISO();
-    const url = `${baseUrl}/context/?date=${today}`;
+    const url = `/context/?date=${today}`;
     return csvParam
         ? `${url}&csv=${encodeURIComponent(csvParam)}`
         : url;
@@ -222,9 +212,9 @@ function renderContextList(contexts, csvParam) {
     return `<ul>${items}</ul>`;
 }
 
-function buildTasksByContextUrl(baseUrl, contextName, csvParam) {
+function buildTasksByContextUrl(contextName, csvParam) {
     const today = getTodayISO();
-    const url = `${baseUrl}/context/${encodeURIComponent(contextName)}?date=${today}`;
+    const url = `/context/${encodeURIComponent(contextName)}?date=${today}`;
     return csvParam
         ? `${url}&csv=${encodeURIComponent(csvParam)}`
         : url;
@@ -249,7 +239,7 @@ function renderTaskLinks(tasks, csvParam) {
 <tbody>${rows}</tbody></table>`;
 }
 
-function initContextPage(apiBaseUrl) {
+function initContextPage() {
     const tasksElement = document.getElementById('tasks');
     const errorElement = document.getElementById('error');
     const contextNameElement = document.getElementById('contextName');
@@ -264,7 +254,7 @@ function initContextPage(apiBaseUrl) {
         contextNameElement.textContent = contextName;
     }
 
-    const listUrl = buildTasksByContextUrl(apiBaseUrl, contextName, csvParam);
+    const listUrl = buildTasksByContextUrl(contextName, csvParam);
 
     fetch(listUrl)
         .then(response => {
@@ -272,7 +262,7 @@ function initContextPage(apiBaseUrl) {
             return response.json();
         })
         .then(taskIds => {
-            const detailUrls = taskIds.map(id => buildApiUrl(apiBaseUrl, id, csvParam));
+            const detailUrls = taskIds.map(id => buildApiUrl(id, csvParam));
             return Promise.all(detailUrls.map(url => fetchJson(url)));
         })
         .then(tasks => {
@@ -282,6 +272,10 @@ function initContextPage(apiBaseUrl) {
             monsterImgs.forEach(function (img) {
                 var taskId = img.getAttribute('data-task-id');
                 sha256Hex(String(taskId)).then(function (hash) {
+                    if (!hash) {
+                        img.hidden = true;
+                        return;
+                    }
                     img.src = 'https://gravatar.com/avatar/' + hash + '?d=monsterid&s=64&f=y';
                 });
             });
@@ -292,13 +286,13 @@ function initContextPage(apiBaseUrl) {
         });
 }
 
-function initIndexPage(apiBaseUrl) {
+function initIndexPage() {
     const contextsElement = document.getElementById('contexts');
     const errorElement = document.getElementById('error');
     console.assert(contextsElement, 'Missing #contexts element in index.html');
     console.assert(errorElement, 'Missing #error element in index.html');
     const { csvParam } = getQueryParams();
-    const url = buildContextUrl(apiBaseUrl, csvParam);
+    const url = buildContextUrl(csvParam);
 
     _fetchAndRender(url, renderContextList, contextsElement, errorElement, csvParam);
 }
@@ -307,14 +301,14 @@ function initPage() {
     const contextsElement = document.getElementById('contexts');
     const tasksElement = document.getElementById('tasks');
     if (contextsElement) {
-        initIndexPage(API_BASE_URL);
+        initIndexPage();
         return;
     }
     if (tasksElement) {
-        initContextPage(API_BASE_URL);
+        initContextPage();
         return;
     }
-    initTaskPage(API_BASE_URL);
+    initTaskPage();
 }
 
 function _selfCheck() {
