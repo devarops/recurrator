@@ -1,8 +1,8 @@
 # API Reference
 
-Recurrator exposes one public interface: the HTTP API in `recurrator/api.py`.
+Recurrator exposes one public interface: the task-data HTTP API in `recurrator/api.py`.
 Every item listed below is an entry point of that API, and nothing outside the API is listed.
-The browser pages in `public/` and the `recurrator` CLI are clients of this API.
+The frontend served at `/` and the `recurrator` CLI are clients of this API; the frontend is not an API entry point.
 
 ## Endpoints
 
