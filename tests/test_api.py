@@ -13,6 +13,19 @@ from conftest import (
 client = TestClient(app)
 
 
+def test_frontend_is_served_from_the_api_app():
+    """Verify the API serves the index page and its JavaScript asset."""
+    index_response = client.get("/")
+
+    assert index_response.status_code == 200
+    assert '<div id="contexts">' in index_response.text
+
+    script_response = client.get("/main.js")
+
+    assert script_response.status_code == 200
+    assert "function initPage" in script_response.text
+
+
 def test_get_single_task_id():
     """Verify GET /task/ returns a list of raw task IDs."""
     response = client.get("/task/?csv=tests/data/test_single_task.csv")
