@@ -2,7 +2,7 @@
 
 Items marked _details below_ link to their `##` section; items marked _backlog only_ have none, and every `##` section appears in this list.
 
-- Blocking before first deploy — [details below](#blocking-before-first-deploy)
+- Provisioner handoff — [details below](#provisioner-handoff)
 - Add json schema validation for config file — backlog only
 - Set min and max recurrence days — backlog only
 - Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
@@ -10,16 +10,11 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Test frontend with Playwright or FastAPI TestClient — backlog only
 
-## Blocking before first deploy
+## Provisioner handoff
 
-1. The published app image is stale. `evaristor/recurrator:latest` currently lacks the entrypoint. Push the app changes to `develop` and let CI publish, or push the rebuilt image manually, before running `make`.
-2. Publish the setup image. `evaristor/recurrator_setup:latest` does not exist yet. Push to `develop` (CI builds/pushes) or build/push manually.
-3. Destroy droplet `610158825` (Ubuntu 24.04) first; otherwise Terraform creates a second droplet named `recurrator`. I did not destroy it.
-4. Tailscale OAuth client + ACL tag `tag:recurrator`; add `TAILSCALE_OAUTH_CLIENT_ID`/`_SECRET` to the vault.
-5. Copy the deploy key to the provisioner: `~/.vault/deploy_keys/recurrator_config` → `/home/geci/.vault/deploy_keys/`. It is registered on GitHub as `recurrator droplet`, id `166819821`, write-enabled.
-6. Add `docker_username`/`docker_password` secrets to the new repo.
-7. Add the 02:00/02:30 lines to the provisioner Cronfile (exact commands are in the setup README).
-8. Disable the laptop cron and install the new data-repo Cronfile there if you keep any local sync.
+1. Install the Cronfile on the provisioner; the 02:00/02:30 recurrator lines are already committed.
+2. Copy the deploy key to the provisioner: `~/.vault/deploy_keys/recurrator_config` → `/home/geci/.vault/deploy_keys/`. It is registered on GitHub as `recurrator droplet`, id `166819821`, write-enabled.
+3. Disable the laptop cron and install the new data-repo Cronfile there if you keep any local sync.
 
 ## Add one extra task when we have fewer than 6 tasks
 

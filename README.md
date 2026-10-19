@@ -19,7 +19,7 @@ nothing to schedule and no recurrence rule to configure.
 The task stops appearing in the due list until its next due date. Completed work
 also updates the task's rhythm, so the schedule keeps adapting.
 
-The API serves the frontend at the same address. Open
+The app and its data are served at the same address. Open
 `http://localhost:8000/` for local use, or `http://<host>:8000/` from another
 device that can reach the host.
 
