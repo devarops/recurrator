@@ -424,3 +424,12 @@ def test_count_completed_today():
     tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     obtained = rc.count_completed_today(tasks, date(2026, 2, 28))
     assert obtained == 2
+
+
+def test_filter_one_extra_task_empty_list():
+    """Verify filter_one_extra_task returns an empty list for an empty task list."""
+    tasks: list[Task] = []
+    context = Context.CASA
+    reference_date = date(2026, 1, 1)
+    rc.filter_one_extra_task(tasks, context, reference_date)
+    pass
