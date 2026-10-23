@@ -132,3 +132,8 @@ def filter_n_tasks_by_context(
         odd_cycle = not odd_cycle
     deferred_tasks = non_starred_pool
     return selected_tasks, deferred_tasks
+
+
+def filter_one_extra_task(tasks: list[Task], context: Context, reference_date: date) -> list[Task]:
+    """Return one upcoming task to pad the list when fewer than 6 tasks are due."""
+    return []
