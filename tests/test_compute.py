@@ -431,5 +431,5 @@ def test_filter_one_extra_task_empty_list():
     tasks: list[Task] = []
     context = Context.CASA
     reference_date = date(2026, 1, 1)
-    rc.filter_one_extra_task(tasks, context, reference_date)
-    pass
+    obtained = rc.filter_one_extra_task(tasks, context, reference_date)
+    assert obtained == []
