@@ -34,7 +34,7 @@ Returns one task with its computed schedule.
   - `due_date` (ISO 8601 date string)
   - `coins` (integer)
 - **Errors**: 404 when no task has the given ID
-- **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. The 404 body does not yet use the standard error envelope.
+- **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred.
 
 ### GET /context/
 
