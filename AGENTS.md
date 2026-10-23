@@ -88,4 +88,8 @@ docker compose exec cli make tests
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter).
+**Useful make targets:** `tests` (pytest), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`).
+
+There is no `verify` target; `make tests` is the suite and `make check` is the gate. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
+
+A one-off `docker compose run --rm cli make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived container and use `exec`, as CI does: `docker compose run --name recurrator_ci --rm --detach cli sleep infinity`.
