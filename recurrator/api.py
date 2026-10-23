@@ -58,7 +58,7 @@ def get_task_by_id(task_id: int, csv: str = Query(None)):
     try:
         task = io.get_task_by_id(task_id, csv_path)
     except ValueError:
-        return {"error": "Task not found"}, 404
+        return JSONResponse(content={"error": "Task not found"}, status_code=404)
     return _task_to_dict(task)
 
 
