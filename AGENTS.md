@@ -35,7 +35,6 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 - **Fail sub-phase**: Write the test, run suite, confirm exactly one test fails for the right reason, commit.
 - If multiple tests fail for the same behavioral gap, defer extra tests to keep exactly one failing test per Red phase. Add them back after Green.
 - Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import). Otherwise write real assertions.
-- After-Gold test pattern: subsequent strengthening assertions use 🥇🧪 prefix.
 - Tests that modify shared mutable state (CSV files) follow a checksum-based restore pattern:
   1. Capture `original_checksum = _get_file_checksum(csv_path)` at the start.
   2. Make changes, run assertions.
@@ -43,7 +42,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
   4. Assert `_assert_file_unchanged(csv_path, original_checksum)` at the end.
   The undo steps are inline (not wrapped in `try/finally`); the checksum assertion at the end verifies the file was fully restored. See `_verify_task_as_done` in `conftest.py` for a reusable example.
 
-**Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 🥇🧪 (after-gold), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
+**Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
 Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI tests use FastAPI `TestClient` and Typer `CliRunner`; `tests/test_frontend.py` only checks static HTML markers, while `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript.
 
