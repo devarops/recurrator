@@ -18,7 +18,7 @@ The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**
 - Single-responsibility endpoints: list endpoints return identities, detail endpoints return attributes.
 - Action responses return confirmation subsets (`id` + changed fields), not full resources.
 - Error envelope: `{"error": "<message>"}` with appropriate HTTP status code. Non-200 responses must use `JSONResponse(content={...}, status_code=N)` from `fastapi.responses`; the `return dict, int` tuple pattern serializes as a JSON array `[{...}, 409]` instead of unpacking.
-- CLI tabular output MUST be valid CSV (header + data rows). Non-tabular output uses JSON.
+- CLI tabular output MUST be valid CSV (header + data rows). Non-tabular output uses JSON; informational and version messages may use plain text as an exception.
 
 **Documentation:** `DOCS.md` lists the HTTP API only. The browser pages in `public/` and the `recurrator` CLI are clients, so describe them in `README.md`, not in the endpoint reference. `CHANGELOG.md` records only changes that touch an endpoint listed in `DOCS.md`; documentation-only edits do not belong.
 
