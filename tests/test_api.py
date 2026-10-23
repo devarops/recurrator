@@ -114,6 +114,15 @@ def test_get_task_by_id_starred():
     assert obtained_data == expected_data
 
 
+def test_get_nonexistent_task_returns_404():
+    """Verify GET /task/{id} returns 404 when the task is not found."""
+    response = client.get("/task/999?csv=tests/data/test_single_task.csv")
+
+    expected_status_code = 404
+    obtained_status_code = response.status_code
+    assert obtained_status_code == expected_status_code
+
+
 def test_set_task_as_done():
     """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
 
