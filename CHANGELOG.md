@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `GET /task/{id}` now returns **404 Not Found** with the standard error
+  envelope `{"error": "Task not found"}` when the task ID is not found,
+  instead of serializing an HTTP 200 array response.
+
 ## [0.6.0] - 2026-06-07
 
 ### Added
