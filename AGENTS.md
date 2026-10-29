@@ -44,7 +44,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI tests use FastAPI `TestClient` and Typer `CliRunner`; `tests/test_frontend.py` only checks static HTML markers, while `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. The CLI tests invoke the real CLI, which requests `API_BASE_URL` (`http://api:8000`), so they pass only while the compose `api` service runs.
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. ShellSpec specs live in `spec/`; `make tests` runs them after pytest. API and CLI tests use FastAPI `TestClient` and Typer `CliRunner`; `tests/test_frontend.py` only checks static HTML markers, while `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. The CLI tests invoke the real CLI, which requests `API_BASE_URL` (`http://api:8000`), so they pass only while the compose `api` service runs.
 
 ## Data Modeling & CSV Mapping
 
@@ -87,9 +87,9 @@ docker compose exec cli make tests
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`).
+**Useful make targets:** `tests` (pytest, then ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`).
 
-`pyproject.toml` declares only `typer`; `fastapi`, `uvicorn`, `requests`, and the lint/test tools come from the `Dockerfile`, so a native install needs them added.
+`pyproject.toml` declares only `typer`; `fastapi`, `uvicorn`, `requests`, and the lint/test tools come from the `Dockerfile`, so a native install needs them added. The Dockerfile also installs ShellSpec, which `make tests` needs.
 
 There is no `verify` target; `make tests` is the suite and `make check` is the gate. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
 
