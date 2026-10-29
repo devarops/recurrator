@@ -8,6 +8,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Glicko rating system — [details below](#glicko-rating-system)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Test frontend with Playwright or FastAPI TestClient — backlog only
+- Remove the dead `tests/data/config.json` fallback in `create_config.sh` — backlog only
 
 ## Add one extra task when we have fewer than 6 tasks
 
