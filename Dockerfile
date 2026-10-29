@@ -20,5 +20,7 @@ RUN pip install --upgrade pip && pip install \
     requests \
     typer \
     uvicorn
+RUN curl --fail --location https://git.io/shellspec --show-error --silent | sh -s -- --yes
+ENV PATH="/root/.local/lib/shellspec:$PATH"
 
 ENTRYPOINT ["/workdir/src/entrypoint.sh"]
