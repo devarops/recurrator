@@ -12,8 +12,7 @@ all: check coverage mutants
 		linter \
 		mutants \
 		setup \
-		tests \
-		tests_spec
+		tests
 
 module = recurrator
 codecov_token = 39e783f6-020b-4e84-b333-2f8a40f9df2b
