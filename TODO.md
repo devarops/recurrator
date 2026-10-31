@@ -37,84 +37,90 @@ def filter_one_extra_task(
 
 ## Glicko rating system
 
-Each task gets its own Glicko rating (r) and rating deviation (RD). Contexts are isolated pools —
-only tasks in the same context compete.
+We use `glicko2` 2.1.0 instead of writing the formulas. It is pure Python, MIT licensed, and has no dependencies. `glicko2.Player(rating, rd)` accepts the 1500-scale values and converts internally; `update_player(rating_list, RD_list, outcome_list)` applies one rating period. Pin the version in `pyproject.toml` and add it to the `Dockerfile`; never vendor it.
 
-Not in the plan below: rating and rating_deviation are stored as integers in CSV but treated as floats
-in compute functions — conversion happens in `_row_to_task`. rating_date lives in the `Dates` dataclass
-but is read from CSV directly, not computed; wire it in `_row_to_task`, not `_compute_dates`.
-`record_glicko_match` writes back via `_update_task_in_csv`; you may extract an
-`update_task_ratings` helper. There is no explicit `update_task_ratings` step in the plan — the
-implementer must add one. GLICKO_Q is `ln(10) / 400` computed once in models.py. Test tasks get
-`rating_date = date_4` in every row because date_4 is never NA.
+Each task gets an integer rating and rating deviation; contexts are isolated pools. We do not store volatility: every player loads with the library default 0.06, and we discard the volatility the library computes. Volatility therefore stays fixed, which makes this Glicko-2 with a constant sigma.
 
 ### Match mechanics
 
-On `POST /task/{id}/done`:
+On `POST /task/{id}/done`, with `date` equal to the completion date:
 
-- The **completed task** loses one match against every due/overdue task in the same context
-  (outcome 0.0 each).
-- Each **due/overdue opponent** wins against the completed task (outcome 1.0) and draws
-  against every other opponent (outcome 0.5).
-- All participants play the same number of matches.
+- The pool is what the context page would show at that moment: `filter_n_tasks_by_context` with `available_slots = WIP_LIMIT - completed today`, plus the completed task if the selection omits it.
+- Every participant plays every other participant once, so `n` tasks play `n(n−1)/2` matches.
+- The completed task loses every match (outcome 0.0); every other pair draws (0.5 for both).
+- All new ratings are computed from the ratings before the event; no participant reads another participant's new value.
+- When the completed task is alone, the event is one match against a synthetic opponent whose rating and RD are the medians of all tasks in the context; the synthetic opponent is never written.
 
 ### Constants (add to `models.py`)
 
 | Constant | Value | Notes |
 |---|---|---|
-| `GLICKO_SCALE` | 400 | Standard Glicko scale |
-| `GLICKO_Q` | `ln(10) / 400` (~0.005756) | |
-| `RD_MIN` | 50 | Minimum uncertainty |
-| `RD_MAX` | 350 | Maximum uncertainty |
-| `C_SQUARED` | 328 | RD goes from min to max in ~365 days |
 | `GLICKO_RATING_DEFAULT` | 1500 | Default initial rating |
 | `GLICKO_RD_DEFAULT` | 350 | Default initial RD |
 
+`GLICKO_SCALE`, `GLICKO_Q`, `GLICKO_VOL_DEFAULT`, `RD_MIN`, `RD_MAX`, and `C_SQUARED` are gone. The library owns the scale, the `g` and `E` terms, and RD growth. Its one-year `RD_MIN` to `RD_MAX` condition does not survive the change: growth is per period, and we create one period per completion.
+
 ### CSV columns (after `starred`)
 
-`rating` (int), `rating_deviation` (int), `rating_date` (date, never NA).
+`rating` (integer), `rating_deviation` (integer), `rating_date` (date, never NA).
+
+Ratings and RD round to the nearest integer when written; the library returns floats. `rating_date` records the last update and feeds nothing. There is no volatility column.
 
 ### Data seeding
 
-All existing tasks (production and test CSVs) get defaults:
-`rating=1500`, `rating_deviation=350`, `rating_date=date_4`.
+All existing tasks (production and test CSVs) get `rating=1500`, `rating_deviation=350`, and `rating_date=date_4`.
+
+The production change is a one-time migration of `devarops/recurrator.config`: add the three columns, seed every row, and update that repository's `datapackage.json`. Run it before deploying the image that reads the columns. Update the test CSVs and `tests/data/datapackage.json` here in the same change.
 
 ### Model changes
 
-- `Task.__init__` adds `rating: int` and `rating_deviation: int` as direct constructor params.
-- `Dates` dataclass adds `rating_date: date`.
+- `Task.__init__` adds `rating: int` and `rating_deviation: int`.
+- `Dates` dataclass adds `rating_date: date`; read it in `_row_to_task`, not `_compute_dates`.
 
-### Pure functions (add to `compute.py`)
+### Compute (add to `compute.py`)
+
+Only the match graph is ours; the rating math stays in the library.
 
 ```python
-def compute_rd_grown(rd, days_since_update) -> float:
-    """RD' = min(sqrt(RD² + c² * days), RD_MAX)"""
+def build_glicko_matches(
+    tasks: list[Task], context: Context, reference_date: date, completed_task_id: int
+) -> dict[int, list[tuple[int | None, float]]]:
+    """Map each participant id to (opponent id, outcome) pairs."""
 
-def compute_g(rd) -> float:
-    """g(RD) = 1 / sqrt(1 + 3 * q² * RD² / pi²)"""
-
-def compute_expected_score(rating, opp_rating, opp_g) -> float:
-    """E = 1 / (1 + 10^(-g * (r - r_j) / 400))"""
-
-def compute_glicko_update(rating, rd, opponents) -> tuple[float, float]:
-    """Full multi-opponent Glicko update.
-    opponents: list of (opp_rating, opp_g, outcome)
-    Returns (new_rating, new_rd).
-    """
+def compute_context_medians(tasks: list[Task], context: Context) -> tuple[int, int]:
+    """Return the median rating and median RD of every task in the context."""
 ```
+
+`None` stands for the synthetic opponent. `build_glicko_matches` returns `{completed_task_id: [(None, 0.0)]}` when the pool has one participant, and an empty dict when the completed task does not exist. An even-sized context uses the mean of the two middle values, then rounds.
 
 ### I/O (add to `io.py`)
 
-- `_row_to_task` reads `rating`, `rating_deviation`, `rating_date` from CSV.
-- `record_glicko_match(task_id, completion_date, csv_path)` — self-contained Level 2 function.
-  Loads all tasks, identifies participants, applies RD growth, calls Glicko compute,
-  writes updated `rating`, `rating_deviation`, `rating_date` for each participant.
+- `_row_to_task` reads `rating` and `rating_deviation` with `int()`, and `rating_date` with the date convention.
+- `record_glicko_match(task_id, completion_date, csv_path)` loads the tasks once, calls `build_glicko_matches`, and builds one `glicko2.Player(rating, rd)` per participant from the loaded values.
+- It calls `update_player` once per participant with the pre-event opponent lists, then rounds each result to an integer.
+- It writes every participant in one pass with `update_task_ratings(updates, csv_path)`, which rewrites the CSV once and sets `rating_date` to the completion date.
+- `post_task_done` calls `record_glicko_match` before `update_task_as_done`, so the completion dates do not change the pool.
+
+### Tests
+
+- `build_glicko_matches` covers: no such task; one participant; two; four due plus an early completer; six selected from eight due tasks; and the draw among non-completers.
+- `compute_context_medians` covers odd and even counts and a single task.
+- `record_glicko_match` asserts exact integers recorded from one library run, then restores the CSV and checks the checksum.
+- Do not call the library to compute the test expectation.
+- There are no tests for the formulas; the library owns them, and mutation testing does not mutate site-packages.
 
 ### API (`api.py`)
 
 - `post_task_done` flow: `is_done_allowed` → `record_glicko_match` → `update_task_as_done`.
-- `_task_to_dict` includes `rating` and `rating_deviation`.
+- `_task_to_dict` includes `rating` and `rating_deviation` as integers.
 - Done response returns `id`, `skip_count`, `due_date`, `rating`, `rating_deviation`.
+- Update `DOCS.md` and `CHANGELOG.md` in the same commit as the API change.
+
+### Dependencies
+
+- `pyproject.toml`: add `glicko2==2.1.0` to `requires`.
+- `Dockerfile`: add `glicko2==2.1.0` to the pip install list.
+- `AGENTS.md`: update the line that says `pyproject.toml` declares only `typer`.
 
 ### Frontend
 
@@ -165,8 +171,10 @@ coins=compute_coins(dates.recurrence_days, starred),
 ```
 to:
 ```python
-coins=compute_coins(row["rating"]),
+coins=compute_coins(rating),
 ```
+
+`rating` is the integer already read in `_row_to_task`; do not pass the CSV string.
 
 ### Documentation
 
