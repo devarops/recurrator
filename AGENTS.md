@@ -44,7 +44,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. ShellSpec specs live in `spec/`; `make tests` runs them after pytest. API and CLI tests use FastAPI `TestClient` and Typer `CliRunner`; `tests/test_frontend.py` only checks static HTML markers, while `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. The CLI tests invoke the real CLI, which requests `API_BASE_URL` (`http://api:8000`), so they pass only while the compose `api` service runs.
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs pytest then ShellSpec; qed acceptance criteria live in `specs/`. `tests/test_frontend.py` checks static markers; `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. CLI tests call the real CLI at `API_BASE_URL` (`http://api:8000`), so they need the compose `api` service.
 
 ## Data Modeling & CSV Mapping
 
@@ -57,7 +57,8 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one Shel
 
 ## Container Startup and Deployment
 
-- `src/entrypoint.sh` runs before the container command and regenerates both modules from `/root/.config/recurrator`; the api and cli containers each do this independently.
+- `src/entrypoint.sh` regenerates both modules from `/root/.config/recurrator` before the command; api and cli each do this.
+- `Dockerfile.dev` adds qed and Lean to the app image for the `develop` service, behind the `develop` profile. Nothing is pinned; `lake build` follows qed's `lean-toolchain`. `.pipelines/verify.sh` runs `make verify` and CI calls it; it assumes the app image exists.
 - The published image runs without a code checkout in [`devarops/recurrator_setup`](https://github.com/devarops/recurrator_setup), which provisions the server; keep it self-contained and do not add a bind-mount dependency.
 - FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost/` for local work.
 - Production serves the app at `http://recurrator/` over the tailnet: [`recurrator_setup`](https://github.com/devarops/recurrator_setup) maps host port 80 to the container's 8000, and the nightly probe in [`provisioner`](https://github.com/IslasGECI/provisioner) `src/Cronfile` requests that address. Local compose binds host 80 too. A port change touches all three, so ship them together.
@@ -70,7 +71,7 @@ Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container.
 
 ## TODO.md
 
-`TODO.md` has one checklist at the top and detail sections below. Every `##` section must appear as a checklist item linking to its heading with the text `details below`. Items without a section end with `backlog only`. Keep the checklist and sections in sync when work is added, renamed, or removed.
+`TODO.md` keeps one checklist above detail sections. Every `##` section appears as a checklist item linking to it with `details below`; items without one end with `backlog only`. Keep both in sync.
 
 ---
 
@@ -88,10 +89,10 @@ docker compose exec cli make tests
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest, then ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`).
+**Useful make targets:** `tests` (pytest, then ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed spec, inside the develop image).
 
 `pyproject.toml` declares only `typer`; `fastapi`, `uvicorn`, `requests`, and the lint/test tools come from the `Dockerfile`, so a native install needs them added. The Dockerfile also installs ShellSpec, which `make tests` needs.
 
-There is no `verify` target; `make tests` is the suite and `make check` is the gate. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
+`make tests` is the suite, `make check` the gate, and `make verify` runs the qed spec inside the develop image. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
 
 A one-off `docker compose run --rm cli make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived container and use `exec`, as CI does: `docker compose run --name recurrator_ci --rm --detach cli sleep infinity`.

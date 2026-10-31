@@ -22,3 +22,13 @@ services:
       - ~/.config/recurrator:/root/.config/recurrator
     depends_on:
       - api
+
+  develop:
+    profiles: ["develop"]
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: evaristor/recurrator:develop
+    command: bash
+    volumes:
+      - $PWD:/workdir
