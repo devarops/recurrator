@@ -1,0 +1,76 @@
+#:schema https://qed.skovlund.dev/spec.schema.json
+
+name = "glicko"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_api.py exists.
+
+[[criteria]]
+description = """
+When four tasks are due in one context and one is completed, the completed
+task loses rating, the other three change, and every other task keeps its
+rating.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_api.py::test_glicko_four_tasks"
+
+[[criteria]]
+description = """
+When four tasks are due and a fifth task that is not yet due is completed, all
+five take part in the event and all five ratings change.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_api.py::test_glicko_early_completion"
+
+[[criteria]]
+description = """
+When the context page holds a single due task, completing it changes its
+rating and no synthetic task appears in the task list.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_api.py::test_glicko_solo_completion"
+
+[[criteria]]
+description = """
+When two participants have different ratings, the stored results match a
+simultaneous update rather than a sequential one.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_api.py::test_glicko_simultaneous_update"
+
+[[criteria]]
+description = """
+When eight tasks are due and the work-in-progress limit selects six, the tasks
+outside the selection keep their ratings.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_api.py::test_glicko_wip_boundary"
+
+[[criteria]]
+description = """
+When a task is completed in one context, tasks in another context keep their
+ratings.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_api.py::test_glicko_context_isolation"
+
+[[criteria]]
+description = """
+When a task is read or completed, rating and rating deviation are integers.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_api.py::test_glicko_integer_contract"
