@@ -59,7 +59,7 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one Shel
 
 - `src/entrypoint.sh` runs before the container command and regenerates both modules from `/root/.config/recurrator`; the api and cli containers each do this independently.
 - The published image runs without a code checkout in [`devarops/recurrator_setup`](https://github.com/devarops/recurrator_setup), which provisions the server; keep it self-contained and do not add a bind-mount dependency.
-- FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost:8000/` for local work.
+- FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost/` for local work.
 - `PUBLIC_DIR` walks up from `api.py` to the directory containing `public/index.html`, so app import and tests work from any working directory and under mutmut.
 - The app is reached over plain HTTP on Tailscale, where `crypto.subtle` is unavailable (plain HTTP is not a secure context); the frontend skips monster avatars instead of failing the page.
 
