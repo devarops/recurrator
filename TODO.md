@@ -10,6 +10,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Test frontend with Playwright or FastAPI TestClient — backlog only
 - Restore monster avatars on the deployed app — backlog only
 - Add search page to frontend — backlog only
+- Add page to create new tasks — backlog only
 
 ## Add one extra task when we have fewer than 6 tasks
 
