@@ -20,7 +20,7 @@ The task stops appearing in the due list until its next due date. Completed work
 also updates the task's rhythm, so the schedule keeps adapting.
 
 The app and its data are served at the same address. Open
-`http://localhost:8000/` for local use, or `http://<host>:8000/` from another
+`http://localhost/` for local use, or `http://<host>/` from another
 device that can reach the host.
 
 For terminal users, `recurrator list-all-tasks --csv <file>` prints the task IDs
@@ -39,20 +39,9 @@ dates it was completed. Keep it backed up; it is your task history.
 
 ## Run the project
 
-### With Docker (recommended)
-
 ```bash
 docker compose up
 ```
 
-This starts the service at `http://localhost:8000`. Then open
-`http://localhost:8000/` in your browser.
-
-### Without Docker
-
-```bash
-make install
-uvicorn recurrator.api:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Then open `http://localhost:8000/` in your browser.
+This starts the service at `http://localhost/`. Then open
+`http://localhost/` in your browser.
