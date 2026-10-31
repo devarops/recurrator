@@ -39,7 +39,7 @@ def filter_one_extra_task(
 
 We use `glicko2` 2.1.0 instead of writing the formulas. It is pure Python, MIT licensed, and has no dependencies. `glicko2.Player(rating, rd)` accepts the 1500-scale values and converts internally; `update_player(rating_list, RD_list, outcome_list)` applies one rating period. Pin the version in `pyproject.toml` and add it to the `Dockerfile`; never vendor it.
 
-Each task gets an integer rating and rating deviation; contexts are isolated pools. We do not store volatility: every player loads with the library default 0.06, and we discard the volatility the library computes. Volatility therefore stays fixed, which makes this Glicko-2 with a constant sigma.
+Each task gets an integer rating and rating deviation. Matches happen only inside a context, so ratings stay mostly context-local; the one cross-context signal is the universe median used when a task plays alone. We do not store volatility: every player loads with the library default 0.06, and we discard the volatility the library computes. Volatility therefore stays fixed, which makes this Glicko-2 with a constant sigma.
 
 ### Match mechanics
 
@@ -49,7 +49,7 @@ On `POST /task/{id}/done`, with `date` equal to the completion date:
 - Every participant plays every other participant once, so `n` tasks play `n(n−1)/2` matches.
 - The completed task loses every match (outcome 0.0); every other pair draws (0.5 for both).
 - All new ratings are computed from the ratings before the event; no participant reads another participant's new value.
-- When the completed task is alone, the event is one match against a synthetic opponent whose rating and RD are the medians of all tasks in the context; the synthetic opponent is never written.
+- When the completed task is alone, the event is one match against a synthetic opponent whose rating and RD are the medians of every task in the CSV file, regardless of context; the synthetic opponent is never written.
 
 ### Constants (add to `models.py`)
 
@@ -87,11 +87,11 @@ def build_glicko_matches(
 ) -> dict[int, list[tuple[int | None, float]]]:
     """Map each participant id to (opponent id, outcome) pairs."""
 
-def compute_context_medians(tasks: list[Task], context: Context) -> tuple[int, int]:
-    """Return the median rating and median RD of every task in the context."""
+def compute_universe_medians(tasks: list[Task]) -> tuple[int, int]:
+    """Return the median rating and median RD of every task in the file."""
 ```
 
-`None` stands for the synthetic opponent. `build_glicko_matches` returns `{completed_task_id: [(None, 0.0)]}` when the pool has one participant, and an empty dict when the completed task does not exist. An even-sized context uses the mean of the two middle values, then rounds.
+`None` stands for the synthetic opponent. `build_glicko_matches` returns `{completed_task_id: [(None, 0.0)]}` when the pool has one participant, and an empty dict when the completed task does not exist. An even-sized file uses the mean of the two middle values, then rounds.
 
 ### I/O (add to `io.py`)
 
@@ -104,7 +104,7 @@ def compute_context_medians(tasks: list[Task], context: Context) -> tuple[int, i
 ### Tests
 
 - `build_glicko_matches` covers: no such task; one participant; two; four due plus an early completer; six selected from eight due tasks; and the draw among non-completers.
-- `compute_context_medians` covers odd and even counts and a single task.
+- `compute_universe_medians` covers odd and even counts, a single row, and rows from several contexts.
 - `record_glicko_match` asserts exact integers recorded from one library run, then restores the CSV and checks the checksum.
 - Do not call the library to compute the test expectation.
 - There are no tests for the formulas; the library owns them, and mutation testing does not mutate site-packages.
