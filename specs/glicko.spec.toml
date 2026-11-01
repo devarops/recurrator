@@ -1,9 +1,9 @@
-#:schema https://qed.skovlund.dev/spec.schema.json
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
 
 name = "glicko"
 
 # Every criterion is a scenario a user can observe through the HTTP API.
-# Each one stays skipped until its test in tests/test_api.py exists.
+# Each one stays skipped until its test in tests/test_acceptance_glicko.py exists.
 
 [[criteria]]
 description = """
@@ -14,7 +14,7 @@ rating.
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_api.py::test_glicko_four_tasks"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_four_tasks"
 
 [[criteria]]
 description = """
@@ -24,7 +24,7 @@ five take part in the event and all five ratings change.
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_api.py::test_glicko_early_completion"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_early_completion"
 
 [[criteria]]
 description = """
@@ -34,7 +34,7 @@ rating and no synthetic task appears in the task list.
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_api.py::test_glicko_solo_completion"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_solo_completion"
 
 [[criteria]]
 description = """
@@ -44,7 +44,7 @@ simultaneous update rather than a sequential one.
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_api.py::test_glicko_simultaneous_update"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_simultaneous_update"
 
 [[criteria]]
 description = """
@@ -54,7 +54,7 @@ outside the selection keep their ratings.
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_api.py::test_glicko_wip_boundary"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_wip_boundary"
 
 [[criteria]]
 description = """
@@ -64,7 +64,7 @@ ratings.
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_api.py::test_glicko_context_isolation"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_context_isolation"
 
 [[criteria]]
 description = """
@@ -73,4 +73,4 @@ When a task is read or completed, rating and rating deviation are integers.
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_api.py::test_glicko_integer_contract"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_integer_contract"
