@@ -41,7 +41,7 @@ We use `glicko2` 2.1.0 instead of writing the formulas. It is pure Python, MIT l
 
 Each task gets an integer rating and rating deviation. Matches happen only inside a context, so ratings stay mostly context-local; the one cross-context signal is the universe median used when a task plays alone. We do not store volatility: every player loads with the library default 0.06, and we discard the volatility the library computes. Volatility therefore stays fixed, which makes this Glicko-2 with a constant sigma.
 
-Acceptance criteria live in `specs/glicko.spec.toml`; each one is skipped until its test in `tests/test_api.py` exists.
+Acceptance criteria live in `specs/glicko.spec.toml`; each one is skipped until its test in `tests/test_acceptance_glicko.py` exists.
 
 ### Match mechanics
 
