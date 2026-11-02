@@ -79,7 +79,7 @@ Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container.
 
 ```shell
 docker build --tag evaristor/recurrator:latest .
-docker compose run --interactive --name recurrator_ci --rm --tty cli bash
+docker compose run --interactive --name recurrator_dev --rm --tty cli bash
 # Inside container:
 make init && make tests
 # Or directly:
@@ -95,4 +95,4 @@ docker compose exec cli make tests
 
 `make tests` is the suite, `make check` the gate, and `make verify` runs the qed spec inside the develop image. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
 
-A one-off `docker compose run --rm cli make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived container and use `exec`, as CI does: `docker compose run --name recurrator_ci --rm --detach cli sleep infinity`.
+A one-off `docker compose run --rm cli make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived container and use `exec`, as CI does: `docker compose run --name recurrator_dev --rm --detach cli sleep infinity`.
