@@ -8,8 +8,6 @@ OUTPUT="recurrator/_config.py"
 
 if [ -f "$CONFIG_FILE" ]; then
     CONFIG_SOURCE="$CONFIG_FILE"
-elif [ -f "tests/data/config.json" ]; then
-    CONFIG_SOURCE="tests/data/config.json"
 else
     CONFIG_SOURCE=""
 fi

@@ -40,11 +40,11 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
   2. Make changes, run assertions.
   3. Undo each mutation to its original value using the corresponding `update_*` function.
   4. Assert `_assert_file_unchanged(csv_path, original_checksum)` at the end.
-  The undo steps are inline (not wrapped in `try/finally`); the checksum assertion at the end verifies the file was fully restored. See `_verify_task_as_done` in `conftest.py` for a reusable example.
+  The undo steps may be inline, as in `_verify_task_as_done` in `conftest.py`, or wrapped in `try/finally`, as in `test_task_done_idempotency`; the checksum assertion after them verifies the file was fully restored.
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI tests use FastAPI `TestClient` and Typer `CliRunner`; `tests/test_frontend.py` only checks static HTML markers, while `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript.
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs pytest then ShellSpec; qed acceptance criteria live in `specs/`. `tests/test_frontend.py` checks static markers; `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. CLI tests call the real CLI at `API_BASE_URL` (`http://api:8000`), so they need the compose `api` service.
 
 ## Data Modeling & CSV Mapping
 
@@ -53,15 +53,17 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`. API and CLI
 - `latest_done_date` is a stored attribute (read from `date_4` in CSV) but lives in the `Dates` dataclass alongside computed fields. It is the first field in `Dates`.
 - Pattern for adding a new computed field: (1) pure function in `compute.py`, (2) orchestrate computation in `_row_to_task` via `io._compute_dates()` or equivalent, (3) add parameter to `Task.__init__` in `models.py`.
 - CSV conversion: `starred`: `0`→`False`, `1`→`True`. Date fields: `"NA"`→`None`, else `date.fromisoformat()`. `id`/`skip_count`: `int()`.
-- `recurrator/_contexts.py` is generated from the Frictionless `datapackage.json`, and `recurrator/_config.py` from `config.json` (built-in defaults when absent), by `make install` and by `src/entrypoint.sh` at container start. Both are gitignored.
+- `recurrator/_contexts.py` is generated from the Frictionless `datapackage.json`, and `recurrator/_config.py` from `config.json` (built-in defaults when absent), by `make install` and by `src/entrypoint.sh` at container start. Both are gitignored. Without production files `create_contexts.sh` falls back to `tests/data/datapackage.json`.
 
 ## Container Startup and Deployment
 
-- `src/entrypoint.sh` runs before the container command and regenerates both modules from `/root/.config/recurrator`; the api and cli containers each do this independently.
-- The published image runs without a code checkout in `devarops/recurrator_setup`; keep it self-contained and do not add a bind-mount dependency.
-- FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost:8000/` for local work.
+- `src/entrypoint.sh` regenerates both modules from `/root/.config/recurrator` before the command; api and cli each do this.
+- `Dockerfile.dev` adds qed and Lean to the app image for the `develop` service, behind the `develop` profile. Nothing is pinned; `lake build` follows qed's `lean-toolchain`. `.pipelines/verify.sh` runs `make verify` and CI calls it; it assumes the app image exists.
+- The published image runs without a code checkout in [`devarops/recurrator_setup`](https://github.com/devarops/recurrator_setup), which provisions the server; keep it self-contained and do not add a bind-mount dependency.
+- FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost/` for local work.
+- Production serves the app at `http://recurrator/` over the tailnet: [`recurrator_setup`](https://github.com/devarops/recurrator_setup) maps host port 80 to the container's 8000, and the nightly probe in [`provisioner`](https://github.com/IslasGECI/provisioner) `src/Cronfile` requests that address. Local compose binds host 80 too. A port change touches all three, so ship them together.
 - `PUBLIC_DIR` walks up from `api.py` to the directory containing `public/index.html`, so app import and tests work from any working directory and under mutmut.
-- The app is reached over plain HTTP on Tailscale, where `crypto.subtle` is unavailable; the frontend skips monster avatars instead of failing the page.
+- The app is reached over plain HTTP on Tailscale, where `crypto.subtle` is unavailable (plain HTTP is not a secure context); the frontend skips monster avatars instead of failing the page.
 
 ## Mutation Testing
 
@@ -69,7 +71,7 @@ Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container.
 
 ## TODO.md
 
-`TODO.md` has one checklist at the top and detail sections below. Every `##` section must appear as a checklist item linking to its heading with the text `details below`. Items without a section end with `backlog only`. Keep the checklist and sections in sync when work is added, renamed, or removed.
+`TODO.md` keeps one checklist above detail sections. Every `##` section appears as a checklist item linking to it with `details below`; items without one end with `backlog only`. Keep both in sync.
 
 ---
 
@@ -77,7 +79,7 @@ Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container.
 
 ```shell
 docker build --tag evaristor/recurrator:latest .
-docker compose run --interactive --name recurrator_prod --rm --tty cli bash
+docker compose run --interactive --name recurrator_dev --rm --tty cli bash
 # Inside container:
 make init && make tests
 # Or directly:
@@ -87,8 +89,10 @@ docker compose exec cli make tests
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`).
+**Useful make targets:** `tests` (pytest, then ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed spec, inside the develop image).
 
-There is no `verify` target; `make tests` is the suite and `make check` is the gate. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
+`pyproject.toml` declares only `typer`; `fastapi`, `uvicorn`, `requests`, and the lint/test tools come from the `Dockerfile`, so a native install needs them added. The Dockerfile also installs ShellSpec, which `make tests` needs.
 
-A one-off `docker compose run --rm cli make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived container and use `exec`, as CI does: `docker compose run --name recurrator_prod --rm --detach cli sleep infinity`.
+`make tests` is the suite, `make check` the gate, and `make verify` runs the qed spec inside the develop image. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
+
+A one-off `docker compose run --rm cli make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived container and use `exec`, as CI does: `docker compose run --name recurrator_dev --rm --detach cli sleep infinity`.
