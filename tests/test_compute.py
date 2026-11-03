@@ -117,7 +117,7 @@ def test_get_task_by_id():
 
 def test_filter_all_tasks_by_context():
     all_tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
-    context = Context.LIMPIAR
+    context = Context.CHORES
     filtered_tasks = rc.filter_all_tasks_by_context(all_tasks, context)
     obtained_length = len(filtered_tasks)
     expected_length = 2
@@ -138,7 +138,7 @@ def test_filter_due_tasks_by_context():
     expected_ids = [1, 6]
     assert obtained_ids == expected_ids
 
-    context = Context.LIMPIAR
+    context = Context.CHORES
     filtered_tasks = rc.filter_due_tasks_by_context(
         all_tasks, context, reference_date=date(2026, 4, 24)
     )
@@ -170,7 +170,7 @@ def test_filter_due_contexts():
     obtained_length = len(filtered_contexts)
     assert obtained_length == expected_length
 
-    expected_contexts = [Context.CASA, Context.LAPTOP, Context.LIMPIAR]
+    expected_contexts = [Context.CASA, Context.CHORES, Context.LAPTOP]
     obtained_contexts = filtered_contexts
     assert obtained_contexts == expected_contexts
 
@@ -214,7 +214,7 @@ def test_filter_n_tasks_by_context_empty_list():
 def test_filter_n_tasks_by_context_early_return():
     """Verify filter_n_tasks_by_context returns all due tasks when n_tasks exceeds due count."""
     tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
-    context = Context.LIMPIAR
+    context = Context.CHORES
     reference_date = date(2026, 6, 6)
     n_tasks = 3
     expected_selected_tasks = rc.filter_due_tasks_by_context(tasks, context, reference_date)
@@ -238,7 +238,7 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
 def test_filter_n_tasks_by_context_selects_starred_first():
     """Verify starred tasks are selected before non-starred when due tasks exceed n_tasks."""
     tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
-    context = Context.LIMPIAR
+    context = Context.CHORES
     reference_date = date(2026, 4, 24)
     n_tasks = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
@@ -260,7 +260,7 @@ def test_filter_n_tasks_by_context_deferred_excludes_starred():
 def test_filter_n_tasks_by_context_interleaves_starred_and_non_starred():
     """Verify starred and non-starred tasks are interleaved, not all-starred-first."""
     tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
-    context = Context.LIMPIAR
+    context = Context.CHORES
     reference_date = date(2026, 5, 10)
     n_tasks = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
@@ -274,7 +274,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
         Task(
             1,
             "Low skip",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             False,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
@@ -283,7 +283,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
         Task(
             2,
             "High skip",
-            Context.LIMPIAR,
+            Context.CHORES,
             3,
             False,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
@@ -291,7 +291,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
         ),
     ]
     expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
     obtained_selected_id = selected[0].id
     assert obtained_selected_id == expected_selected_id
 
@@ -303,7 +303,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
         Task(
             1,
             "Low rec",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             False,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
@@ -312,7 +312,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
         Task(
             2,
             "High rec",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             False,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 21, date(2026, 6, 1)),
@@ -320,7 +320,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
         ),
     ]
     expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
     obtained_selected_id = selected[0].id
     assert obtained_selected_id == expected_selected_id
 
@@ -332,7 +332,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
         Task(
             1,
             "Low rec",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             True,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
@@ -341,7 +341,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
         Task(
             2,
             "High rec",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             True,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 21, date(2026, 6, 1)),
@@ -349,7 +349,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
         ),
     ]
     expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
     obtained_selected_id = selected[0].id
     assert obtained_selected_id == expected_selected_id
 
@@ -361,7 +361,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
         Task(
             1,
             "Low skip",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             True,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
@@ -370,7 +370,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
         Task(
             2,
             "High skip",
-            Context.LIMPIAR,
+            Context.CHORES,
             3,
             True,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
@@ -378,7 +378,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
         ),
     ]
     expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
     obtained_selected_id = selected[0].id
     assert obtained_selected_id == expected_selected_id
 
@@ -390,7 +390,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
         Task(
             1,
             "Later due",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             True,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 6)),
@@ -399,7 +399,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
         Task(
             2,
             "Earlier due",
-            Context.LIMPIAR,
+            Context.CHORES,
             0,
             True,
             Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
@@ -407,7 +407,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
         ),
     ]
     expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.LIMPIAR, reference_date, 1)
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
     obtained_selected_id = selected[0].id
     assert obtained_selected_id == expected_selected_id
 
