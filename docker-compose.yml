@@ -6,7 +6,7 @@ services:
     image: evaristor/recurrator:latest
     command: uvicorn recurrator.api:app --host 0.0.0.0 --port 8000 --reload
     ports:
-      - "8000:8000"
+      - "80:8000"
     volumes:
       - $PWD:/workdir
       - ~/.config/recurrator:/root/.config/recurrator
@@ -22,3 +22,13 @@ services:
       - ~/.config/recurrator:/root/.config/recurrator
     depends_on:
       - api
+
+  develop:
+    profiles: ["develop"]
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: evaristor/recurrator:develop
+    command: bash
+    volumes:
+      - $PWD:/workdir

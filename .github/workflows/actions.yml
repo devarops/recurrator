@@ -14,12 +14,14 @@ jobs:
       run: docker compose build
     - name: Run checks and tests
       run: |
-        docker compose run --name recurrator_ci --rm --detach cli sleep infinity
+        docker compose run --name recurrator_dev --rm --detach cli sleep infinity
         docker compose exec cli make setup
         docker compose exec cli make check
         docker compose exec cli make tests
         docker compose exec cli make coverage
         docker compose exec cli make mutants
+    - name: Verify acceptance criteria
+      run: bash .pipelines/verify.sh
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@main
       with:
