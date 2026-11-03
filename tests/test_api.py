@@ -78,7 +78,7 @@ def test_get_task_by_id_alternative_csv():
     expected_data = {
         "id": 3,
         "description": "Lavar trapos",
-        "context": "limpiar",
+        "context": "chores",
         "skip_count": 0,
         "starred": False,
         "latest_date": "2026-03-07",
@@ -191,7 +191,7 @@ def test_get_due_contexts():
     obtained_status_code = response.status_code
     assert obtained_status_code == expected_status_code
 
-    expected_contexts = ["casa", "laptop", "limpiar"]
+    expected_contexts = ["casa", "chores", "laptop"]
     obtained_contexts = response.json()
     assert obtained_contexts == expected_contexts
 
@@ -201,7 +201,7 @@ def test_get_tasks_by_context():
 
     csv_path = "tests/data/test_eight_tasks.csv"
     reference_date = "2026-05-02"
-    context = "limpiar"
+    context = "chores"
 
     original_checksum = _get_file_checksum(csv_path)
 
@@ -233,7 +233,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
 
     csv_path = "tests/data/test_eight_tasks.csv"
     reference_date = "2026-05-02"
-    context = "limpiar"
+    context = "chores"
 
     original_checksum = _get_file_checksum(csv_path)
 
