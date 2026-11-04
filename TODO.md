@@ -11,6 +11,8 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Restore monster avatars on the deployed app — backlog only
 - Add search page to frontend — backlog only
 - Add page to create new tasks — backlog only
+- Add blockers: a task is blocked while its blocker's row exists; removal needs DELETE /task/{id} — backlog only
+- Add sub-tasks: completing any child completes its parent upward, never downward; skip a parent completed in the last two days — backlog only
 
 ## Add one extra task when we have fewer than 6 tasks
 
