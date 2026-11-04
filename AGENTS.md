@@ -78,14 +78,18 @@ Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container.
 ## Development Environment
 
 ```shell
-docker build --tag evaristor/recurrator:latest .
-docker compose run --interactive --name recurrator_dev --rm --tty cli bash
+docker compose --profile develop build develop
+docker compose --profile develop run --interactive --name recurrator_dev --rm --tty develop bash
 # Inside container:
 make init && make tests
+make verify
 # Or directly:
-docker compose exec cli make init
-docker compose exec cli make tests
+docker compose exec recurrator_dev make init
+docker compose exec recurrator_dev make tests
+docker compose exec recurrator_dev make verify
 ```
+
+The `develop` service shares the production-data mount with `api` and `cli`. Use `make setup` instead of `make init` where production data is absent.
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
@@ -95,4 +99,4 @@ docker compose exec cli make tests
 
 `make tests` is the suite, `make check` the gate, and `make verify` runs the qed spec inside the develop image. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
 
-A one-off `docker compose run --rm cli make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived container and use `exec`, as CI does: `docker compose run --name recurrator_dev --rm --detach cli sleep infinity`.
+A one-off `docker compose run --rm develop make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived develop container and use `exec`, as CI does: `docker compose --profile develop run --name recurrator_dev --rm --detach develop sleep infinity`.

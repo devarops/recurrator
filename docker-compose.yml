@@ -32,3 +32,4 @@ services:
     command: bash
     volumes:
       - $PWD:/workdir
+      - ~/.config/recurrator:/root/.config/recurrator
