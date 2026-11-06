@@ -33,3 +33,5 @@ services:
     volumes:
       - $PWD:/workdir
       - ~/.config/recurrator:/root/.config/recurrator
+    depends_on:
+      - api
