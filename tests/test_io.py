@@ -242,3 +242,13 @@ def test_update_task_as_skipped_in_csv():
     io.update_task_skip_date(task_id, original_skip_date, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_import_tasks_from_csv_rating():
+    """Verify import_tasks_from_csv reads the task rating as an integer."""
+    csv_path = "tests/data/acceptance_glicko_integer_contract.csv"
+    task_list = io.import_tasks_from_csv(csv_path)
+
+    expected_rating = 1500
+    obtained_rating = task_list[0].rating
+    assert obtained_rating == expected_rating
