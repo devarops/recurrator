@@ -23,6 +23,14 @@ def _resolve_csv_path(csv: str | None = None) -> str:
     return csv or DEFAULT_TASKS_CSV_PATH
 
 
+def _rating_fields(task: io.Task) -> dict:
+    """Return the Glicko fields shared by task responses."""
+    return {
+        "rating": task.rating,
+        "rating_deviation": task.rating_deviation,
+    }
+
+
 def _task_to_dict(task: io.Task) -> dict:
     """Convert Task object to API response dictionary."""
     return {
@@ -35,8 +43,7 @@ def _task_to_dict(task: io.Task) -> dict:
         "recurrence_days": task.recurrence_days,
         "due_date": task.due_date.isoformat(),
         "coins": task.coins,
-        "rating": task.rating,
-        "rating_deviation": task.rating_deviation,
+        **_rating_fields(task),
     }
 
 
@@ -113,8 +120,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
         "id": updated_task.id,
         "skip_count": updated_task.skip_count,
         "due_date": updated_task.due_date.isoformat(),
-        "rating": updated_task.rating,
-        "rating_deviation": updated_task.rating_deviation,
+        **_rating_fields(updated_task),
     }
 
 
