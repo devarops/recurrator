@@ -7,7 +7,6 @@ all: check coverage mutants
 		clean \
 		coverage \
 		format \
-		init \
 		install \
 		linter \
 		mutants \
@@ -60,8 +59,6 @@ coverage: setup
 format:
 	black --line-length 100 ${module}
 	black --line-length 100 tests
-
-init: check_production_data setup tests
 
 install: recurrator/_contexts.py recurrator/_config.py
 	pip install --editable .
