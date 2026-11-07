@@ -5,6 +5,7 @@ from ._contexts import Context
 
 SKIP_COUNT_RESET = 0
 GLICKO_RATING_DEFAULT = 1500
+GLICKO_RD_DEFAULT = 350
 
 
 @dataclass
@@ -30,7 +31,7 @@ class Task:
         dates: Dates,
         coins: int,
         rating: int = GLICKO_RATING_DEFAULT,
-        rating_deviation: int = 350,
+        rating_deviation: int = GLICKO_RD_DEFAULT,
     ):
         self.id = id
         self.description = description
