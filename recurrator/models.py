@@ -30,6 +30,7 @@ class Task:
         dates: Dates,
         coins: int,
         rating: int = GLICKO_RATING_DEFAULT,
+        rating_deviation: int = 350,
     ):
         self.id = id
         self.description = description
@@ -42,3 +43,4 @@ class Task:
         self.due_date = dates.due_date
         self.coins = coins
         self.rating = rating
+        self.rating_deviation = rating_deviation

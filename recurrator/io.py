@@ -73,6 +73,7 @@ def _row_to_task(row: dict) -> Task:
         dates=dates,
         coins=compute_coins(dates.recurrence_days, starred),
         rating=int(row.get("rating", GLICKO_RATING_DEFAULT)),
+        rating_deviation=int(row.get("rating_deviation", 350)),
     )
 
 
