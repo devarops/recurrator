@@ -264,3 +264,10 @@ def test_get_tasks_by_context_defers_remaining_tasks():
         io.update_task_skip_date(task_id, None, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_get_task_by_id_rating():
+    """Verify GET /task/{id} returns the task rating."""
+    response = client.get("/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
+
+    assert response.json()["rating"] == 1500
