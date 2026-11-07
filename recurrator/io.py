@@ -197,7 +197,7 @@ def get_task_by_id(task_id: int, csv_path: str) -> Task:
         ValueError: If task not found
     """
     tasks = import_tasks_from_csv(csv_path)
-    for task in tasks:
-        if task.id == task_id:
-            return task
-    raise ValueError(f"Task {task_id} not found in {csv_path}")
+    task = next((task for task in tasks if task.id == task_id), None)
+    if task is None:
+        raise ValueError(f"Task {task_id} not found in {csv_path}")
+    return task
