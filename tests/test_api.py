@@ -1,4 +1,5 @@
 from datetime import date
+from shutil import copyfile
 
 from fastapi.testclient import TestClient
 from recurrator.api import app
@@ -284,3 +285,13 @@ def test_get_task_by_id_rating_deviation():
     response = client.get("/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
 
     assert response.json()["rating_deviation"] == 350
+
+
+def test_task_done_rating(tmp_path):
+    """Verify POST /task/{id}/done returns the task rating."""
+    csv_path = tmp_path / "task.csv"
+    copyfile("tests/data/acceptance_glicko_integer_contract.csv", csv_path)
+
+    response = client.post(f"/task/8/done?csv={csv_path}")
+
+    assert response.json()["rating"] == 1500
