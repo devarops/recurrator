@@ -11,6 +11,7 @@ all: check coverage mutants
 		linter \
 		mutants \
 		setup \
+		test-cli \
 		tests \
 		verify
 
@@ -81,9 +82,11 @@ setup: clean install
 tests:
 	pytest --verbose tests --ignore-glob='*_acceptance_*.py'
 
+test-cli:
+	shellspec
+
 verify:
 	qed verify specs
-	shellspec
 
 red: format
 	pytest --verbose --ignore-glob='*_acceptance_*.py' \
