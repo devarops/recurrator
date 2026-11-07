@@ -72,6 +72,7 @@ def _row_to_task(row: dict) -> Task:
         starred=starred,
         dates=dates,
         coins=compute_coins(dates.recurrence_days, starred),
+        rating=int(row.get("rating", 1500)),
     )
 
 

@@ -28,6 +28,7 @@ class Task:
         starred: bool,
         dates: Dates,
         coins: int,
+        rating: int = 1500,
     ):
         self.id = id
         self.description = description
@@ -39,3 +40,4 @@ class Task:
         self.recurrence_days = dates.recurrence_days
         self.due_date = dates.due_date
         self.coins = coins
+        self.rating = rating
