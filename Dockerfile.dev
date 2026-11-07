@@ -1,8 +1,27 @@
 FROM evaristor/recurrator:latest
 
+# Everything below is test and verification tooling. None of it belongs in the
+# published image: a test that only works because a tool is installed here is a
+# defect that the prod smoke test in CI exists to catch.
+
+RUN apt-get update && apt-get install --yes curl git && rm -rf /var/lib/apt/lists/*
+
+RUN pip install \
+    black \
+    flake8 \
+    frictionless \
+    httpx \
+    mutmut \
+    mypy \
+    pylint \
+    pytest \
+    pytest-cov
+
+RUN curl --fail --location https://git.io/shellspec --show-error --silent | sh -s -- --yes
+ENV PATH="/root/.local/lib/shellspec:$PATH"
+
 # qed verification tool. Nothing is pinned: elan installs the Lean toolchain
 # that qed's lean-toolchain file asks for, and qed comes from its main branch.
-RUN apt-get update && apt-get install --yes curl git && rm -rf /var/lib/apt/lists/*
 RUN curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
 RUN . "$HOME/.elan/env" && git clone https://github.com/tskovlund/qed.git /opt/qed && cd /opt/qed && lake build
 RUN ln -sf /opt/qed/.lake/build/bin/qed /usr/local/bin/qed

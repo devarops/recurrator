@@ -5,36 +5,75 @@ on:
       - develop
 jobs:
   build-image:
-    name: Build, Test and Push Docker Image
+    name: Test in develop, publish prod
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@main
-    - name: Build Docker image
-      run: docker compose build
+
+    - name: Build the production image
+      run: docker compose build api
+
+    - name: Build the development image
+      run: docker compose --profile develop build develop
+
+    - name: Start the develop container
+      run: docker compose --profile develop run --name recurrator_dev --rm --detach develop sleep infinity
+
+    - name: Wait for the API
+      run: |
+        for attempt in $(seq 30); do
+          if curl --fail --silent http://127.0.0.1/openapi.json > /dev/null; then
+            exit 0
+          fi
+          sleep 2
+        done
+        curl --fail --show-error http://127.0.0.1/openapi.json
+
     - name: Run checks and tests
       run: |
-        docker compose run --name recurrator_dev --rm --detach cli sleep infinity
-        docker compose exec cli make setup
-        docker compose exec cli make check
-        docker compose exec cli make tests
-        docker compose exec cli make coverage
-        docker compose exec cli make mutants
-    - name: Verify acceptance criteria
-      run: bash .pipelines/verify.sh
+        docker compose --profile develop exec -T develop make setup
+        docker compose --profile develop exec -T develop make check
+        docker compose --profile develop exec -T develop make tests
+        docker compose --profile develop exec -T develop make coverage
+        docker compose --profile develop exec -T develop make mutants
+
+    # Before mutants, because `make mutants` depends on `setup`, whose `clean`
+    # deletes coverage.xml.
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@main
       with:
         files: ./coverage.xml
         verbose: true
+
+    - name: Verify acceptance criteria
+      run: bash .pipelines/verify.sh
+
+    # The prod image carries no test tooling, so boot it alone with no volumes:
+    # a dependency that only exists in the develop image fails here and nowhere
+    # else.
+    - name: Smoke-test the production image
+      run: |
+        docker run --detach --name recurrator_smoke --publish 18000:8000 \
+          evaristor/recurrator:latest \
+          uvicorn recurrator.api:app --host 0.0.0.0 --port 8000
+        for attempt in $(seq 30); do
+          if curl --fail --silent http://127.0.0.1:18000/openapi.json > /dev/null; then
+            break
+          fi
+          sleep 2
+        done
+        curl --fail --show-error http://127.0.0.1:18000/openapi.json | grep --quiet 'FastAPI'
+        curl --fail --show-error http://127.0.0.1:18000/ | grep --quiet '<div id="contexts">'
+        docker rm --force recurrator_smoke
+
     - name: Docker log-in
       env:
         docker_username: ${{ secrets.docker_username }}
         docker_password: ${{ secrets.docker_password }}
       run: echo "${docker_password}" | docker login -u "${docker_username}" --password-stdin
-    - name: Push Docker image
-      run: docker push evaristor/recurrator:latest
-    - name: Tag and push with four-digit tag
+
+    - name: Push the production image
       run: |
         four_digit_tag=$(date +%y%V)
         docker tag evaristor/recurrator:latest evaristor/recurrator:${four_digit_tag}

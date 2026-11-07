@@ -58,8 +58,9 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one Shel
 ## Container Startup and Deployment
 
 - `src/entrypoint.sh` regenerates both modules from `/root/.config/recurrator` before the command; api and cli each do this.
-- `Dockerfile.dev` adds qed and Lean to the app image for the `develop` service, behind the `develop` profile. Nothing is pinned; `lake build` follows qed's `lean-toolchain`. `.pipelines/verify.sh` runs `make verify` and CI calls it; it assumes the app image exists.
-- The published image runs without a code checkout in [`devarops/recurrator_setup`](https://github.com/devarops/recurrator_setup), which provisions the server; keep it self-contained and do not add a bind-mount dependency.
+- `Dockerfile.dev` adds every test and verification tool to the app image, for the `develop` service behind the `develop` profile: `black`, `flake8`, `frictionless`, `httpx`, `mutmut`, `mypy`, `pylint`, `pytest`, `pytest-cov`, ShellSpec, qed and Lean. `Dockerfile` carries only what the app needs to run. Nothing in the dev layer is pinned; `lake build` follows qed's `lean-toolchain`. `.pipelines/verify.sh` runs `make verify` and CI calls it; it assumes the app image exists.
+- The published image runs without a code checkout in [`devarops/recurrator_setup`](https://github.com/devarops/recurrator_setup), which provisions the server; keep it self-contained and do not add a bind-mount dependency. Deployment runs no initialization step: the editable install is baked in at build time and `src/entrypoint.sh` generates the modules at container start.
+- `.github/workflows/actions.yml` builds `evaristor/recurrator:latest` from `Dockerfile`, builds `evaristor/recurrator:develop` on top of it, and runs `check`, `tests`, `coverage`, `mutants` and `verify` in the develop image. Nothing is pushed unless those pass, so a red run leaves the previous `latest` in production. It then boots the prod image alone, with no volumes, and asserts `/openapi.json` and `/` respond — the only check that catches a dependency that exists only in the dev image. Tags are `latest` plus `%y%V`; `:develop` is never published.
 - FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost/` for local work.
 - Production serves the app at `http://recurrator/` over the tailnet: [`recurrator_setup`](https://github.com/devarops/recurrator_setup) maps host port 80 to the container's 8000, and the nightly probe in [`provisioner`](https://github.com/IslasGECI/provisioner) `src/Cronfile` requests that address. Local compose binds host 80 too. A port change touches all three, so ship them together.
 - `PUBLIC_DIR` walks up from `api.py` to the directory containing `public/index.html`, so app import and tests work from any working directory and under mutmut.
@@ -81,22 +82,22 @@ Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container.
 docker compose --profile develop build develop
 docker compose --profile develop run --interactive --name recurrator_dev --rm --tty develop bash
 # Inside container:
-make init && make tests
+make setup && make check && make tests
 make verify
 # Or directly:
-docker compose exec recurrator_dev make init
-docker compose exec recurrator_dev make tests
-docker compose exec recurrator_dev make verify
+docker compose --profile develop exec -T develop make setup
+docker compose --profile develop exec -T develop make tests
+docker compose --profile develop exec -T develop make verify
 ```
 
-The `develop` service shares the production-data mount with `api` and `cli`. Use `make setup` instead of `make init` where production data is absent.
+The `develop` service shares the production-data mount with `api` and `cli`. `make setup` (`clean` + `install`) bootstraps with no production data; only `check_production_data` reads it, and nothing depends on that target, so CI never runs it.
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
 **Useful make targets:** `tests` (pytest, then ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed spec, inside the develop image).
 
-`pyproject.toml` declares only `typer`; `fastapi`, `uvicorn`, `requests`, and the lint/test tools come from the `Dockerfile`, so a native install needs them added. The Dockerfile also installs ShellSpec, which `make tests` needs.
+`pyproject.toml` declares only `typer`. `fastapi`, `uvicorn` and `requests` come from `Dockerfile`; `black`, `flake8`, `mypy`, `pylint`, `pytest`, `pytest-cov`, `mutmut`, `frictionless`, `httpx` and ShellSpec come from `Dockerfile.dev`. A native install needs both lists.
 
-`make tests` is the suite, `make check` the gate, and `make verify` runs the qed spec inside the develop image. `make init` prepends `check_production_data`, which reads `/root/.config/recurrator`, so use `make setup` where production data is absent, as CI does.
+`make tests` is the suite, `make check` the gate, and `make verify` runs the qed spec inside the develop image. CI runs all three in the develop image; `coverage` and `mutants` report and do not gate the publish.
 
-A one-off `docker compose run --rm develop make tests` fails with `ModuleNotFoundError` because a fresh container lacks the editable install. Start a long-lived develop container and use `exec`, as CI does: `docker compose --profile develop run --name recurrator_dev --rm --detach develop sleep infinity`.
+The editable install lives in the image, so `docker compose --profile develop run --rm develop make tests` works without a long-lived container. CI still starts one — `docker compose --profile develop run --name recurrator_dev --rm --detach develop sleep infinity` — and `exec`s into it, because the targets share generated modules and caches.
