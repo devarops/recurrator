@@ -10,7 +10,7 @@ from .compute import (
     compute_recurrence_days,
     compute_rolling_dates,
 )
-from .models import Context, Dates, Task, SKIP_COUNT_RESET
+from .models import Context, Dates, Task, GLICKO_RATING_DEFAULT, SKIP_COUNT_RESET
 
 
 def _parse_date(date_str: str) -> date | None:
@@ -72,7 +72,7 @@ def _row_to_task(row: dict) -> Task:
         starred=starred,
         dates=dates,
         coins=compute_coins(dates.recurrence_days, starred),
-        rating=int(row.get("rating", 1500)),
+        rating=int(row.get("rating", GLICKO_RATING_DEFAULT)),
     )
 
 

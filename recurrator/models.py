@@ -4,6 +4,7 @@ from datetime import date
 from ._contexts import Context
 
 SKIP_COUNT_RESET = 0
+GLICKO_RATING_DEFAULT = 1500
 
 
 @dataclass
@@ -28,7 +29,7 @@ class Task:
         starred: bool,
         dates: Dates,
         coins: int,
-        rating: int = 1500,
+        rating: int = GLICKO_RATING_DEFAULT,
     ):
         self.id = id
         self.description = description
