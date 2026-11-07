@@ -79,26 +79,26 @@ mutants: setup
 setup: clean install
 
 tests:
-	pytest --verbose tests
-	shellspec
+	pytest --verbose tests --ignore-glob='*_acceptance_*.py'
 
 verify:
 	qed verify specs
+	shellspec
 
 red: format
-	pytest --verbose \
+	pytest --verbose --ignore-glob='*_acceptance_*.py' \
 	&& git restore tests/*.py \
 	|| (git add tests/*.py && git commit -m "🛑🧪 Fail tests")
 	chmod g+w -R .
 
 green: format
-	pytest --verbose \
+	pytest --verbose --ignore-glob='*_acceptance_*.py' \
 	&& (git add ${module}/*.py tests/*.py && git commit -m "✅ Pass tests") \
 	|| git restore ${module}/*.py
 	chmod g+w -R .
 
 refactor: format
-	pytest --verbose \
+	pytest --verbose --ignore-glob='*_acceptance_*.py' \
 	&& (git add ${module}/*.py tests/*.py && git commit -m "♻️  Refactor ${message}") \
 	|| git restore ${module}/*.py tests/*.py
 	chmod g+w -R .

@@ -39,7 +39,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs pytest then ShellSpec; qed criteria live in `specs/`. `tests/test_frontend.py` checks static markers, and `tests/test_api.py::test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. CLI tests need the compose `api` service.
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs the pytest unit tests; `make verify` runs the qed criteria and ShellSpec. `tests/test_frontend.py` checks static markers, and `tests/test_api.py::test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. CLI tests need the compose `api` service.
 
 ## Data Modeling & CSV Mapping
 
@@ -89,10 +89,10 @@ The `develop` service shares the production-data mount with `api` and `cli`. `ma
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest, then ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed spec, inside the develop image).
+**Useful make targets:** `tests` (pytest unit tests), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed and ShellSpec acceptance tests, inside the develop image).
 
 `pyproject.toml` declares only `typer`. `fastapi`, `uvicorn` and `requests` come from `Dockerfile`; `black`, `flake8`, `mypy`, `pylint`, `pytest`, `pytest-cov`, `mutmut`, `frictionless`, `httpx` and ShellSpec come from `Dockerfile.dev`. A native install needs both lists.
 
-`make tests` is the suite, `make check` the gate, and `make verify` runs the qed spec inside the develop image. CI runs all three in the develop image; `coverage` and `mutants` report and do not gate the publish.
+`make tests` is the unit suite, `make check` the gate, and `make verify` runs the acceptance tests inside the develop image. CI runs all three in the develop image; `coverage` and `mutants` report and do not gate the publish.
 
 The editable install lives in the image, so `docker compose --profile develop run --rm develop make tests` works without a long-lived container. CI still starts one — `docker compose --profile develop run --name recurrator_dev --rm --detach develop sleep infinity` — and `exec`s into it, because the targets share generated modules and caches.
