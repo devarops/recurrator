@@ -66,6 +66,7 @@ def test_get_task_by_id_default_csv():
         "recurrence_days": 14,
         "due_date": "2025-12-01",
         "coins": 14,
+        "rating": 1500,
     }
     obtained_data = response.json()
     assert obtained_data == expected_data
@@ -85,6 +86,7 @@ def test_get_task_by_id_alternative_csv():
         "recurrence_days": 33,
         "due_date": "2026-04-09",
         "coins": 33,
+        "rating": 1500,
     }
 
     obtained_data = response.json()
@@ -109,6 +111,7 @@ def test_get_task_by_id_starred():
         "recurrence_days": 21,
         "due_date": "2026-04-25",
         "coins": 42,
+        "rating": 1500,
     }
     obtained_data = response.json()
     assert obtained_data == expected_data
