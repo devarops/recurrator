@@ -252,3 +252,13 @@ def test_import_tasks_from_csv_rating():
     expected_rating = 1500
     obtained_rating = task_list[0].rating
     assert obtained_rating == expected_rating
+
+
+def test_import_tasks_from_csv_rating_deviation():
+    """Verify import_tasks_from_csv reads the task rating deviation as an integer."""
+    csv_path = "tests/data/acceptance_glicko_integer_contract.csv"
+    task_list = io.import_tasks_from_csv(csv_path)
+
+    expected_rating_deviation = 350
+    obtained_rating_deviation = task_list[0].rating_deviation
+    assert obtained_rating_deviation == expected_rating_deviation
