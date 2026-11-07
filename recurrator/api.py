@@ -113,6 +113,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
         "id": updated_task.id,
         "skip_count": updated_task.skip_count,
         "due_date": updated_task.due_date.isoformat(),
+        "rating": updated_task.rating,
     }
 
 
