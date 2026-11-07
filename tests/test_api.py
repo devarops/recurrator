@@ -274,3 +274,10 @@ def test_get_task_by_id_rating():
     response = client.get("/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
 
     assert response.json()["rating"] == 1500
+
+
+def test_get_task_by_id_rating_deviation():
+    """Verify GET /task/{id} returns the task rating deviation."""
+    response = client.get("/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
+
+    assert response.json()["rating_deviation"] == 350
