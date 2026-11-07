@@ -17,12 +17,12 @@ The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**
 - API is single source of truth; CLI is a thin HTTP client with zero business logic.
 - Single-responsibility endpoints: list endpoints return identities, detail endpoints return attributes.
 - Action responses return confirmation subsets (`id` + changed fields), not full resources.
-- Error envelope: `{"error": "<message>"}` with appropriate HTTP status code. Non-200 responses must use `JSONResponse(content={...}, status_code=N)` from `fastapi.responses`; the `return dict, int` tuple pattern serializes as a JSON array `[{...}, 409]` instead of unpacking.
+- Error envelope: `{"error": "<message>"}`. Non-200 responses must use `JSONResponse(content={...}, status_code=N)` from `fastapi.responses`; a returned `dict, int` tuple serializes as a JSON array `[{...}, 409]` instead.
 - CLI tabular output MUST be valid CSV (header + data rows). Non-tabular output uses JSON; informational and version messages may use plain text as an exception.
 
-**Documentation:** `DOCS.md` lists the HTTP API only. The browser pages in `public/` and the `recurrator` CLI are clients, so describe them in `README.md`, not in the endpoint reference. `CHANGELOG.md` records only changes that touch an endpoint listed in `DOCS.md`; documentation-only edits do not belong.
+**Documentation:** `DOCS.md` lists the HTTP API only; describe the frontend and CLI in `README.md`. `CHANGELOG.md` records only endpoint changes.
 
-**No Derived Values in Presentation Layer:** The frontend may transform data for display (type coercion, renaming, filtering, column selection) but must never introduce new atomic values through computation (no arithmetic, statistics, joins, or aggregations). Derived values belong in `compute_*` on the backend.
+**No Derived Values in Presentation Layer:** The frontend may transform data for display but must never compute new atomic values (no arithmetic, statistics, joins, or aggregations); derived values belong in `compute_*`.
 
 **Naming conventions in `compute.py`:** Pure functions use `reference_date` (not `today`) for the cut-off/current date parameter, and `is_*` prefix for boolean-returning functions.
 
@@ -35,16 +35,11 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 - **Fail sub-phase**: Write the test, run suite, confirm exactly one test fails for the right reason, commit.
 - If multiple tests fail for the same behavioral gap, defer extra tests to keep exactly one failing test per Red phase. Add them back after Green.
 - Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import). Otherwise write real assertions.
-- Tests that modify shared mutable state (CSV files) follow a checksum-based restore pattern:
-  1. Capture `original_checksum = _get_file_checksum(csv_path)` at the start.
-  2. Make changes, run assertions.
-  3. Undo each mutation to its original value using the corresponding `update_*` function.
-  4. Assert `_assert_file_unchanged(csv_path, original_checksum)` at the end.
-  The undo steps may be inline, as in `_verify_task_as_done` in `conftest.py`, or wrapped in `try/finally`, as in `test_task_done_idempotency`; the checksum assertion after them verifies the file was fully restored.
+- Tests that modify the CSV use a checksum restore: capture `_get_file_checksum`, mutate, undo with the matching `update_*` function, then assert `_assert_file_unchanged`. Do it inline as in `_verify_task_as_done` in `conftest.py`, or in `try/finally` as in `test_task_done_idempotency`.
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs pytest then ShellSpec; qed acceptance criteria live in `specs/`. `tests/test_frontend.py` checks static markers; `test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. CLI tests call the real CLI at `API_BASE_URL` (`http://api:8000`), so they need the compose `api` service.
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs pytest then ShellSpec; qed criteria live in `specs/`. `tests/test_frontend.py` checks static markers, and `tests/test_api.py::test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. CLI tests need the compose `api` service.
 
 ## Data Modeling & CSV Mapping
 
@@ -57,14 +52,14 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one Shel
 
 ## Container Startup and Deployment
 
-- `src/entrypoint.sh` regenerates both modules from `/root/.config/recurrator` before the command; api and cli each do this.
-- `Dockerfile.dev` adds every test and verification tool to the app image, for the `develop` service behind the `develop` profile: `black`, `flake8`, `frictionless`, `httpx`, `mutmut`, `mypy`, `pylint`, `pytest`, `pytest-cov`, ShellSpec, qed and Lean. `Dockerfile` carries only what the app needs to run. Nothing in the dev layer is pinned; `lake build` follows qed's `lean-toolchain`. `.pipelines/verify.sh` runs `make verify` and CI calls it; it assumes the app image exists.
-- The published image runs without a code checkout in [`devarops/recurrator_setup`](https://github.com/devarops/recurrator_setup), which provisions the server; keep it self-contained and do not add a bind-mount dependency. Deployment runs no initialization step: the editable install is baked in at build time and `src/entrypoint.sh` generates the modules at container start.
-- `.github/workflows/actions.yml` builds `evaristor/recurrator:latest` from `Dockerfile`, builds `evaristor/recurrator:develop` on top of it, and runs `check`, `tests`, `coverage`, `mutants` and `verify` in the develop image. Nothing is pushed unless those pass, so a red run leaves the previous `latest` in production. It then boots the prod image alone, with no volumes, and asserts `/openapi.json` and `/` respond — the only check that catches a dependency that exists only in the dev image. Tags are `latest` plus `%y%V`; `:develop` is never published.
-- FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled. Keep the local address `http://localhost/` for local work.
-- Production serves the app at `http://recurrator/` over the tailnet: [`recurrator_setup`](https://github.com/devarops/recurrator_setup) maps host port 80 to the container's 8000, and the nightly probe in [`provisioner`](https://github.com/IslasGECI/provisioner) `src/Cronfile` requests that address. Local compose binds host 80 too. A port change touches all three, so ship them together.
+- `src/entrypoint.sh` regenerates both modules from `/root/.config/recurrator` before the command.
+- `Dockerfile.dev` adds every test and verification tool to the app image, for the `develop` service: `black`, `flake8`, `frictionless`, `httpx`, `mutmut`, `mypy`, `pylint`, `pytest`, `pytest-cov`, ShellSpec, qed and Lean. It builds `FROM evaristor/recurrator:latest`, so build the prod image first or the dev layer takes a stale base. `Dockerfile` carries only what the app needs to run. Nothing in the dev layer is pinned; `lake build` follows qed's `lean-toolchain`.
+- The published image runs without a code checkout in `recurrator_setup`; keep it self-contained and never add a bind mount. Deployment runs no initialization step: the editable install is baked in at build time and `src/entrypoint.sh` generates the modules at container start. The image has no default command, so every runner supplies uvicorn.
+- `.github/workflows/actions.yml` builds `evaristor/recurrator:latest`, builds `evaristor/recurrator:develop` on top, and runs `check`, `tests`, `coverage`, `mutants` and `verify` in the dev image. It pushes only if they pass, so a red run leaves the previous `latest` in production. Before pushing, it boots the prod image alone, with no volumes, and requires `/openapi.json` and `/` to respond; that is the only check for a dependency that exists only in dev. Tags are `latest` plus `%y%V`; `:develop` is never published.
+- FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled.
+- Production serves the app at `http://recurrator/` over the tailnet: `recurrator_setup` maps host port 80 to 8000, and the `provisioner` cron probes that address. Local compose binds host 80 too, so a port change touches all three repos.
 - `PUBLIC_DIR` walks up from `api.py` to the directory containing `public/index.html`, so app import and tests work from any working directory and under mutmut.
-- The app is reached over plain HTTP on Tailscale, where `crypto.subtle` is unavailable (plain HTTP is not a secure context); the frontend skips monster avatars instead of failing the page.
+- The app is reached over plain HTTP on Tailscale, where `crypto.subtle` is unavailable; the frontend skips monster avatars instead of failing the page.
 
 ## Mutation Testing
 
@@ -72,7 +67,7 @@ Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container.
 
 ## TODO.md
 
-`TODO.md` keeps one checklist above detail sections. Every `##` section appears as a checklist item linking to it with `details below`; items without one end with `backlog only`. Keep both in sync.
+`TODO.md` keeps one checklist above detail sections: every `##` section appears as an item linked with `details below`, and items without one end with `backlog only`.
 
 ---
 
@@ -90,7 +85,7 @@ docker compose --profile develop exec -T develop make tests
 docker compose --profile develop exec -T develop make verify
 ```
 
-The `develop` service shares the production-data mount with `api` and `cli`. `make setup` (`clean` + `install`) bootstraps with no production data; only `check_production_data` reads it, and nothing depends on that target, so CI never runs it.
+The `develop` service shares the production-data mount with `api` and `cli`. `make setup` (`clean` + `install`) bootstraps with no production data; only `check_production_data` reads it, and its single caller, `make check_data`, is never run by CI.
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
