@@ -220,18 +220,14 @@ function initContextPage() {
         .catch((error) => showError(errorElement, tasksElement, error));
 }
 
-function decorateTask(task) {
-    return {
-        ...task,
-        today: getTodayISO(),
-    };
-}
-
 function loadTask(taskId, taskElement, errorElement) {
     const scope = readScope();
     fetchJson(buildApiUrl(taskId, getCsvParam()))
         .then((task) => {
-            const decorated = decorateTask(task);
+            const decorated = {
+                ...task,
+                today: getTodayISO(),
+            };
             setBreadcrumb(breadcrumbItems(scope, decorated.context, decorated.id));
             taskElement.innerHTML = ui.renderMonsterCard(decorated);
             showContent(errorElement, taskElement);
