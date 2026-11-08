@@ -105,12 +105,33 @@ function showError(errorElement, contentElement, error) {
     }
 }
 
+function breadcrumbItems(scope, context, taskId) {
+    const items = [{ label: 'Recurrator', href: pageHref('index.html') }];
+    if (scope !== undefined && scope !== null) {
+        items.push({
+            label: ui.scopeLabel(scope),
+            href: pageHref('scope.html', { scope }),
+        });
+    }
+    if (context !== undefined && context !== null) {
+        items.push({
+            label: context,
+            href: pageHref('context.html', { context, scope }),
+        });
+    }
+    if (taskId !== undefined && taskId !== null) {
+        items.push({ label: '#' + taskId });
+    }
+    items[items.length - 1].href = null;
+    return items;
+}
+
 function initHomePage() {
     const headerElement = document.getElementById('pageHeader');
     const scopesElement = document.getElementById('scopes');
     const errorElement = document.getElementById('error');
 
-    headerElement.innerHTML = ui.renderBreadcrumb([{ label: 'Recurrator' }]);
+    headerElement.innerHTML = ui.renderBreadcrumb(breadcrumbItems());
     scopesElement.innerHTML = ui.renderSkeleton('tiles');
 
     fetchJson(buildContextUrl())
@@ -137,12 +158,8 @@ function initScopePage() {
     const contextsElement = document.getElementById('contexts');
     const errorElement = document.getElementById('error');
     const scope = readScope();
-    const label = ui.scopeLabel(scope);
 
-    headerElement.innerHTML = ui.renderBreadcrumb([
-        { label: 'Recurrator', href: pageHref('index.html') },
-        { label },
-    ]);
+    headerElement.innerHTML = ui.renderBreadcrumb(breadcrumbItems(scope));
     contextsElement.innerHTML = ui.renderSkeleton('grid');
 
     fetchJson(buildContextUrl())
@@ -172,11 +189,7 @@ function initContextPage() {
     const scope = readScope();
     const csvParam = getCsvParam();
 
-    headerElement.innerHTML = ui.renderBreadcrumb([
-        { label: 'Recurrator', href: pageHref('index.html') },
-        { label: ui.scopeLabel(scope), href: pageHref('scope.html', { scope }) },
-        { label: context || '' },
-    ]);
+    headerElement.innerHTML = ui.renderBreadcrumb(breadcrumbItems(scope, context || ''));
     tasksElement.innerHTML = ui.renderSkeleton('list');
 
     fetchJson(buildTasksByContextUrl(context))
@@ -201,31 +214,22 @@ function initContextPage() {
 }
 
 function decorateTask(task) {
-    const scope = readScope();
     return {
         ...task,
         today: getTodayISO(),
-        scopeLabel: ui.scopeLabel(scope),
-        links: {
-            home: pageHref('index.html'),
-            scope: pageHref('scope.html', { scope }),
-            context: pageHref('context.html', { context: task.context, scope }),
-        },
     };
 }
 
 function loadTask(taskId, taskElement, errorElement) {
     const headerElement = document.getElementById('pageHeader');
+    const scope = readScope();
     fetchJson(buildApiUrl(taskId, getCsvParam()))
         .then((task) => {
             const decorated = decorateTask(task);
             if (headerElement) {
-                headerElement.innerHTML = ui.renderBreadcrumb([
-                    { label: 'Recurrator', href: decorated.links.home },
-                    { label: decorated.scopeLabel, href: decorated.links.scope },
-                    { label: decorated.context, href: decorated.links.context },
-                    { label: '#' + decorated.id },
-                ]);
+                headerElement.innerHTML = ui.renderBreadcrumb(
+                    breadcrumbItems(scope, decorated.context, decorated.id)
+                );
             }
             taskElement.innerHTML = ui.renderMonsterCard(decorated);
             showContent(errorElement, taskElement);
