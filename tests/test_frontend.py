@@ -51,6 +51,7 @@ UI_FUNCTIONS = [
     "renderSkeleton",
     "renderEmpty",
     "renderError",
+    "renderBreadcrumb",
     "accentFor",
     "monsterTitle",
     "dueState",

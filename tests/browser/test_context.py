@@ -2,7 +2,6 @@ def test_context_rows_are_sorted_by_coins(page, page_url, open_page, csv_copy):
     csv_path = csv_copy("test_contexts.csv")
     open_page(page, page_url("context.html", csv_path, context="chores", date="2026-05-01"))
 
-    assert page.locator(".page-title").inner_text() == "chores"
     assert page.locator(".task-row").count() == 3
     assert page.locator(".task-row__title").all_inner_texts() == [
         "Recoger basura de",

@@ -47,3 +47,137 @@ def test_error_hides_tiles_and_shows_retry(page, page_url, csv_copy):
         assert page.locator("[data-retry]").is_visible()
     finally:
         page.unroute("**/context/*")
+
+
+def _assert_current(item, label):
+    assert item.inner_text() == label
+    assert item.get_attribute("aria-current") == "page"
+    assert item.evaluate("el => el.tagName") == "SPAN"
+    assert "breadcrumb__item--current" in (item.get_attribute("class") or "").split()
+
+
+def _assert_link(item, label):
+    assert item.inner_text() == label
+    assert item.evaluate("el => el.tagName") == "A"
+    assert "breadcrumb__item--current" not in (item.get_attribute("class") or "").split()
+
+
+def _assert_ratio(items, units):
+    widths = []
+    for index in range(items.count()):
+        box = items.nth(index).bounding_box()
+        assert box is not None
+        widths.append(box["width"])
+    scale = sum(widths) / sum(units)
+    for width, unit in zip(widths, units):
+        assert abs(width - scale * unit) <= 1.0
+
+
+def _assert_targets(item):
+    box = item.bounding_box()
+    assert box is not None
+    assert box["height"] >= 44
+    assert box["width"] >= 44
+
+
+def _assert_fits(item):
+    oval = item.locator(".breadcrumb__oval")
+    assert oval.count() == 1
+    box = oval.bounding_box()
+    assert box is not None
+    assert abs(box["height"] - 24) <= 1
+    assert oval.evaluate("el => el.scrollWidth <= el.clientWidth + 1")
+
+
+def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, csv_copy):
+    csv_path = csv_copy("test_contexts.csv")
+
+    open_page(page, page_url("index.html", csv_path, date="2026-05-01"))
+    header = page.locator("#pageHeader")
+    assert header.locator(".breadcrumb").count() == 1
+    assert header.locator(".page-title").count() == 0
+    assert header.locator(".subtitle").count() == 0
+    home_items = header.locator(".breadcrumb__item")
+    assert home_items.count() == 1
+    _assert_current(home_items.nth(0), "Recurrator")
+    _assert_ratio(home_items, [12])
+    home_width = home_items.nth(0).bounding_box()["width"]
+    nav_width = header.locator(".breadcrumb").bounding_box()["width"]
+    assert abs(home_width - nav_width) < 1
+
+    open_page(page, page_url("scope.html", csv_path, scope="work", date="2026-05-01"))
+    header = page.locator("#pageHeader")
+    assert header.locator(".page-title").count() == 0
+    assert header.locator(".subtitle").count() == 0
+    assert page.locator(".home-button").count() == 0
+    scope_items = header.locator(".breadcrumb__item")
+    assert scope_items.count() == 2
+    _assert_link(scope_items.nth(0), "Recurrator")
+    _assert_current(scope_items.nth(1), "Work")
+    _assert_ratio(scope_items, [3, 9])
+    _assert_targets(scope_items.nth(0))
+    assert page.locator(".context-card").count() == 3
+
+    open_page(page, page_url("context.html", csv_path, context="chores", date="2026-05-01"))
+    header = page.locator("#pageHeader")
+    assert header.locator(".page-title").count() == 0
+    assert header.locator(".subtitle").count() == 0
+    context_items = header.locator(".breadcrumb__item")
+    assert context_items.count() == 3
+    _assert_link(context_items.nth(0), "Recurrator")
+    _assert_link(context_items.nth(1), "All")
+    _assert_current(context_items.nth(2), "chores")
+    _assert_ratio(context_items, [3, 2, 7])
+    _assert_targets(context_items.nth(0))
+    _assert_targets(context_items.nth(1))
+    assert page.locator(".task-row").count() == 3
+
+    open_page(
+        page,
+        page_url("context.html", csv_path, context="chores", scope="personal", date="2026-05-01"),
+    )
+    header = page.locator("#pageHeader")
+    personal_items = header.locator(".breadcrumb__item")
+    assert personal_items.count() == 3
+    _assert_link(personal_items.nth(1), "Personal")
+    _assert_fits(personal_items.nth(1))
+    _assert_ratio(personal_items, [3, 2, 7])
+
+    open_page(page, page_url("task.html", csv_path, id=1, date="2026-05-01"))
+    assert page.locator("#pageHeader .breadcrumb").count() == 1
+    assert page.locator(".monster-card .breadcrumb").count() == 0
+    card_items = page.locator("#pageHeader .breadcrumb__item")
+    assert card_items.count() == 4
+    _assert_link(card_items.nth(0), "Recurrator")
+    _assert_link(card_items.nth(1), "All")
+    _assert_link(card_items.nth(2), "casa")
+    _assert_current(card_items.nth(3), "#1")
+    _assert_ratio(card_items, [3, 2, 6, 1])
+    _assert_targets(card_items.nth(0))
+    _assert_targets(card_items.nth(1))
+    _assert_targets(card_items.nth(2))
+    assert page.locator(".monster-card__title").inner_text() == "Reparar fuga escusado"
+    assert page.locator(".no-badge").inner_text() == "No. 1"
+    assert "RCR-001" in page.locator(".microtext").inner_text()
+
+    rendered = page.evaluate("""() => ui.renderBreadcrumb([
+            { label: 'Recurrator', href: '#' },
+            { label: 'All', href: '#' },
+            { label: 'casa', href: '#' },
+            { label: '#999' },
+        ])""")
+    page.evaluate(
+        """(html) => {
+            const host = document.createElement('div');
+            host.id = 'fakeHeader';
+            host.style.width = '353px';
+            host.innerHTML = html;
+            document.querySelector('main').appendChild(host);
+        }""",
+        rendered,
+    )
+    fake_items = page.locator("#fakeHeader .breadcrumb__item")
+    assert fake_items.count() == 4
+    _assert_current(fake_items.nth(3), "#999")
+    _assert_ratio(fake_items, [3, 2, 6, 1])
+    _assert_fits(fake_items.nth(3))
