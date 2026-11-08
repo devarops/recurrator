@@ -125,14 +125,10 @@ def post_task_done(task_id: int, csv: str = Query(None)):
 
     io.update_task_as_done(task_id, today, csv_path)
 
-    same_context_tasks = compute.filter_all_tasks_by_context(
-        io.import_tasks_from_csv(csv_path), current_task.context
+    opponents = compute.filter_opponents_with_different_rating(
+        io.import_tasks_from_csv(csv_path), current_task
     )
-    has_rated_opponent = any(
-        task.id != task_id and task.rating != current_task.rating
-        for task in same_context_tasks
-    )
-    if has_rated_opponent:
+    if opponents:
         io.update_task_rating(task_id, current_task.rating - 1, csv_path)
 
     updated_task = io.get_task_by_id(task_id, csv_path)
