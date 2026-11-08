@@ -186,8 +186,12 @@ def compute_match_updates(
         )
         for task in participants
     }
-    pre_ratings = {task_id: player.getRating() for task_id, player in players.items()}
-    pre_deviations = {task_id: player.getRd() for task_id, player in players.items()}
+    snapshot_ratings = {
+        task_id: player.getRating() for task_id, player in players.items()
+    }
+    snapshot_deviations = {
+        task_id: player.getRd() for task_id, player in players.items()
+    }
 
     completed_id = completed_task.id
     opponent_ids = [task.id for task in opponents]
@@ -198,8 +202,8 @@ def compute_match_updates(
     ) -> None:
         player = players[task_id]
         player.update_player(
-            [pre_ratings[opponent_id] for opponent_id in opponents_for_task],
-            [pre_deviations[opponent_id] for opponent_id in opponents_for_task],
+            [snapshot_ratings[opponent_id] for opponent_id in opponents_for_task],
+            [snapshot_deviations[opponent_id] for opponent_id in opponents_for_task],
             outcomes,
         )
         updates[task_id] = (round(player.getRating()), round(player.getRd()))
