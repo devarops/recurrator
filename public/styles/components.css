@@ -494,6 +494,9 @@
 .description .check-item {
   list-style: none;
 }
+.description .check-item + .check-item {
+  margin-top: -15px;
+}
 .description .check-item label {
   display: flex;
   align-items: flex-start;
