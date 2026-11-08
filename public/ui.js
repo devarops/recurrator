@@ -163,7 +163,10 @@
     }
 
     function renderMarkdown(markdown) {
-        var lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n');
+        var lines = String(markdown || '')
+            .replace(/\\n/g, '\n')
+            .replace(/\r\n/g, '\n')
+            .split('\n');
         var blocks = [];
         var paragraph = [];
         var list = null;
