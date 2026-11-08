@@ -447,3 +447,10 @@ def test_compute_live_rating_deviation_clamps_to_minimum():
     anchor = date(2026, 11, 8)
 
     assert rc.compute_live_rating_deviation(20, anchor, anchor) == 45
+
+
+def test_compute_live_rating_deviation_clamps_to_maximum():
+    """Verify a projected deviation above the maximum is lowered to 500."""
+    anchor = date(2026, 11, 8)
+
+    assert rc.compute_live_rating_deviation(600, anchor, anchor) == 500
