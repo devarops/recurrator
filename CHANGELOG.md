@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `rating` and `rating_deviation` fields in the `GET /task/{id}` and
+  `POST /task/{id}/done` responses.
+
 ### Fixed
 
 - `GET /task/{id}` now returns **404 Not Found** with the standard error

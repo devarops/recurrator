@@ -7,7 +7,6 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
 - Glicko rating system — [details below](#glicko-rating-system)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
-- Test frontend with Playwright or FastAPI TestClient — backlog only
 - Restore monster avatars on the deployed app — backlog only
 - Add search page to frontend — backlog only
 - Add page to create new tasks — backlog only

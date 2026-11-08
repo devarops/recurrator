@@ -33,6 +33,8 @@ Returns one task with its computed schedule.
   - `recurrence_days` (integer)
   - `due_date` (ISO 8601 date string)
   - `coins` (integer)
+  - `rating` (integer)
+  - `rating_deviation` (integer)
 - **Errors**: 404 when no task has the given ID
 - **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred.
 
@@ -70,5 +72,7 @@ Marks a task as completed on the server's current date.
   - `id` (integer)
   - `skip_count` (integer) — always 0 after completion
   - `due_date` (ISO 8601 date string) — recomputed next due date
+  - `rating` (integer)
+  - `rating_deviation` (integer)
 - **Errors**: 409 when the task was completed on the current date or the previous day; the body contains an `error` message
 - **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date.

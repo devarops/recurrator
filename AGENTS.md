@@ -26,6 +26,8 @@ The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**
 
 **Naming conventions in `compute.py`:** Pure functions use `reference_date` (not `today`) for the cut-off/current date parameter, and `is_*` prefix for boolean-returning functions.
 
+**Visual approval:** `tests/visual/capture.py` lists the scenarios; `make visual` rewrites `received/` and the human approves by copying into `approved/`. `tests/visual/specs/recurrator-frontend-spec.md` is the only reference, the mockups are retired, and `.opencode/commands/approval-testing.md` runs the comparison. `renderMarkdown` decodes the CSV's literal `\n` before parsing.
+
 ## TDD Cycle
 
 ```
@@ -33,13 +35,13 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 ```
 
 - **Fail sub-phase**: Write the test, run suite, confirm exactly one test fails for the right reason, commit.
-- If multiple tests fail for the same behavioral gap, defer extra tests to keep exactly one failing test per Red phase. Add them back after Green.
+- Defer extra tests for the same behavioral gap so exactly one test fails per Red phase; add them back after Green.
 - Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import). Otherwise write real assertions.
-- Tests that modify the CSV use a checksum restore: capture `_get_file_checksum`, mutate, undo with the matching `update_*` function, then assert `_assert_file_unchanged`. Do it inline as in `_verify_task_as_done` in `conftest.py`, or in `try/finally` as in `test_task_done_idempotency`.
+- Tests that modify the CSV restore it with the matching `update_*` function and assert `_assert_file_unchanged`; see `_verify_task_as_done` in `conftest.py` or the `try/finally` in `test_task_done_idempotency`.
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs the pytest unit tests; `make test-cli` runs ShellSpec; `make test-frontend` runs the Playwright browser suite in `tests/browser`; `make verify` runs the qed acceptance criteria. `tests/test_frontend.py` checks static markers, and `tests/test_api.py::test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. The browser suite starts its own API on an ephemeral port and copies the fixture per test; run one case with `RUN_BROWSER=1 pytest tests/browser/test_home.py::test_all_tile_shows_due_contexts`. CLI tests need the compose `api` service.
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `tests/test_frontend.py` checks static markers, and `tests/test_api.py::test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. The browser suite starts its own API on an ephemeral port and copies the fixture per test; run one case with `RUN_BROWSER=1 pytest tests/browser/test_home.py::test_all_tile_shows_due_contexts`. CLI tests need the compose `api` service.
 
 ## Data Modeling & CSV Mapping
 
@@ -48,14 +50,13 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one Shel
 - `latest_done_date` is a stored attribute (read from `date_4` in CSV) but lives in the `Dates` dataclass alongside computed fields. It is the first field in `Dates`.
 - Pattern for adding a new computed field: (1) pure function in `compute.py`, (2) orchestrate computation in `_row_to_task` via `io._compute_dates()` or equivalent, (3) add parameter to `Task.__init__` in `models.py`.
 - CSV conversion: `starred`: `0`→`False`, `1`→`True`. Date fields: `"NA"`→`None`, else `date.fromisoformat()`. `id`/`skip_count`: `int()`.
-- `recurrator/_contexts.py` is generated from the Frictionless `datapackage.json`, and `recurrator/_config.py` from `config.json` (built-in defaults when absent), by `make install` and by `src/entrypoint.sh` at container start. Both are gitignored. Without production files `create_contexts.sh` falls back to `tests/data/datapackage.json`.
+- `recurrator/_contexts.py` is generated from the Frictionless `datapackage.json`, and `recurrator/_config.py` from `config.json` (built-in defaults when absent), by `make install` and by `src/entrypoint.sh` from `/root/.config/recurrator` at container start. Both are gitignored. Without production files `create_contexts.sh` falls back to `tests/data/datapackage.json`.
 
 ## Container Startup and Deployment
 
-- `src/entrypoint.sh` regenerates both modules from `/root/.config/recurrator` before the command.
-- `Dockerfile.dev` adds every test and verification tool to the app image, for the `develop` service: `black`, `flake8`, `frictionless`, `httpx`, `mutmut`, `mypy`, `playwright` with Chromium, `pylint`, `pytest`, `pytest-cov`, ShellSpec, qed and Lean. It builds `FROM evaristor/recurrator:latest`, so build the prod image first or the dev layer takes a stale base. `Dockerfile` carries only what the app needs to run. Nothing in the dev layer is pinned; `lake build` follows qed's `lean-toolchain`.
-- The published image runs without a code checkout in `recurrator_setup`; keep it self-contained and never add a bind mount. Deployment runs no initialization step: the editable install is baked in at build time and `src/entrypoint.sh` generates the modules at container start. The image has no default command, so every runner supplies uvicorn.
-- `.github/workflows/actions.yml` builds `evaristor/recurrator:latest`, builds `evaristor/recurrator:develop` on top, and runs `check`, `tests`, `coverage`, `mutants` and `verify` in the dev image. It pushes only if they pass, so a red run leaves the previous `latest` in production. Before pushing, it boots the prod image alone, with no volumes, and requires `/openapi.json` and `/` to respond; that is the only check for a dependency that exists only in dev. Tags are `latest` plus `%y%V`; `:develop` is never published.
+- `Dockerfile.dev` adds every test and verification tool to the app image, for the `develop` service: `black`, `flake8`, `frictionless`, `httpx`, `mutmut`, `mypy`, `playwright` with Chromium, `pylint`, `pytest`, `pytest-cov`, ShellSpec, qed and Lean. It builds `FROM evaristor/recurrator:latest`, so build the prod image first or the dev layer takes a stale base.
+- The published image runs without a code checkout in `recurrator_setup`; keep it self-contained and never add a bind mount. Deployment runs no initialization step: the editable install is baked in at build time. The image has no default command, so every runner supplies uvicorn.
+- `.github/workflows/actions.yml` builds `evaristor/recurrator:latest`, builds `evaristor/recurrator:develop` on top, and runs `check`, `tests`, `coverage`, `mutants` and `verify` in the dev image. It pushes only if they pass, so a red run leaves the previous `latest` in production. Before pushing, it boots the prod image alone, with no volumes, and requires `/openapi.json` and `/` to respond. Tags are `latest` plus `%y%V`; `:develop` is never published.
 - FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled.
 - Production serves the app at `http://recurrator/` over the tailnet: `recurrator_setup` maps host port 80 to 8000, and the `provisioner` cron probes that address. Local compose binds host 80 too, so a port change touches all three repos.
 - `PUBLIC_DIR` walks up from `api.py` to the directory containing `public/index.html`, so app import and tests work from any working directory and under mutmut.
@@ -63,7 +64,7 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one Shel
 
 ## Mutation Testing
 
-Configured in `setup.cfg` under `[mutmut]`. Run `make mutants` inside container. Check survivors with `mutmut results`.
+Configured in `setup.cfg` under `[mutmut]`; run `make mutants` inside the container and check survivors with `mutmut results`.
 
 ## TODO.md
 
