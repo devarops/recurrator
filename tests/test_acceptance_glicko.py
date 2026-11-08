@@ -26,3 +26,22 @@ def test_glicko_integer_contract(tmp_path):
     completed = response.json()
     assert isinstance(completed["rating"], int)
     assert isinstance(completed["rating_deviation"], int)
+
+
+def test_glicko_inactivity_growth():
+    """An older rating anchor projects a larger deviation at the same reference date."""
+    fixture = "tests/data/acceptance_glicko_inactivity_growth.csv"
+    reference_date = "2026-11-08"
+
+    older = client.get(f"/task/1?csv={fixture}&date={reference_date}")
+    newer = client.get(f"/task/2?csv={fixture}&date={reference_date}")
+
+    assert older.status_code == 200
+    assert newer.status_code == 200
+
+    older_deviation = older.json()["rating_deviation"]
+    newer_deviation = newer.json()["rating_deviation"]
+
+    assert older_deviation > newer_deviation
+    assert 45 <= older_deviation <= 500
+    assert 45 <= newer_deviation <= 500
