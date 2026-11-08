@@ -208,7 +208,9 @@ def compute_match_updates(
         )
         updates[task_id] = (round(player.getRating()), round(player.getRd()))
 
-    play(completed_id, opponent_ids, [0.0] * len(opponent_ids))
+    completed_outcomes = [0.0] * len(opponent_ids)
+    opponent_outcomes = [1.0]
+    play(completed_id, opponent_ids, completed_outcomes)
     for opponent_id in opponent_ids:
-        play(opponent_id, [completed_id], [1.0])
+        play(opponent_id, [completed_id], opponent_outcomes)
     return updates
