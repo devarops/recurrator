@@ -353,3 +353,18 @@ def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     response = client.post(f"/task/1/done?csv={csv_path}")
 
     assert before - response.json()["rating"] > 1
+
+
+def test_task_done_preserves_total_rating(tmp_path):
+    """Verify a two-participant match conserves the total rating."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/test_two_ratings.csv", csv_path)
+
+    before = sum(
+        client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
+        for task_id in (1, 2)
+    )
+    response = client.post(f"/task/1/done?csv={csv_path}")
+    opponent = client.get(f"/task/2?csv={csv_path}").json()
+
+    assert response.json()["rating"] + opponent["rating"] == before
