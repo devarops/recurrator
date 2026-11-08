@@ -440,3 +440,10 @@ def test_compute_live_rating_deviation_without_elapsed_time():
     anchor = date(2026, 11, 8)
 
     assert rc.compute_live_rating_deviation(350, anchor, anchor) == 350
+
+
+def test_compute_live_rating_deviation_clamps_to_minimum():
+    """Verify a projected deviation below the minimum is raised to 45."""
+    anchor = date(2026, 11, 8)
+
+    assert rc.compute_live_rating_deviation(20, anchor, anchor) == 45
