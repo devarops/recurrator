@@ -433,3 +433,10 @@ def test_filter_one_extra_task_empty_list():
     reference_date = date(2026, 1, 1)
     obtained = rc.filter_one_extra_task(tasks, context, reference_date)
     assert obtained == []
+
+
+def test_compute_live_rating_deviation_without_elapsed_time():
+    """Verify the anchored rating deviation is unchanged on its anchor date."""
+    anchor = date(2026, 11, 8)
+
+    assert rc.compute_live_rating_deviation(350, anchor, anchor) == 350
