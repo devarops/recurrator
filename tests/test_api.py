@@ -402,3 +402,13 @@ def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
     response = client.post(f"/task/1/done?csv={csv_path}")
 
     assert before - response.json()["rating_deviation"] > 1
+
+
+def test_task_done_sets_completed_rating_to_simultaneous_value(tmp_path):
+    """Verify the completed rating matches a simultaneous Glicko update."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/test_two_ratings_frozen.csv", csv_path)
+
+    response = client.post(f"/task/1/done?csv={csv_path}")
+
+    assert response.json()["rating"] == 1367
