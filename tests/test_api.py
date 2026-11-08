@@ -330,3 +330,15 @@ def test_task_done_decreases_completed_rating(tmp_path):
     response = client.post(f"/task/1/done?csv={csv_path}")
 
     assert response.json()["rating"] < before
+
+
+def test_task_done_increases_opponent_rating(tmp_path):
+    """Verify completing one of two tasks raises the opponent rating."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/test_two_ratings.csv", csv_path)
+
+    before = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+    client.post(f"/task/1/done?csv={csv_path}")
+    after = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+
+    assert after > before
