@@ -122,7 +122,6 @@ function breadcrumbItems(scope, context, taskId) {
     if (taskId !== undefined && taskId !== null) {
         items.push({ label: '#' + taskId });
     }
-    items[items.length - 1].href = null;
     return items;
 }
 
