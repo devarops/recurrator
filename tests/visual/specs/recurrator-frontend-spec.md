@@ -84,27 +84,26 @@ ui.dueState(task)                                              // → 'due' | 'n
 - Page background: vertical gradient `#f6ecc9 → #f2e5bc → #ebdbb2`.
 - Body text never below 11px; every tappable target ≥ 44×44 CSS px.
 
-### Art-pixel → CSS-pixel conversion
-The approved mockups are 1080px wide (= 393 CSS px at DPR 2.75). Divide art px by **2.75**, then clamp to the minimums below.
+### Element sizes
 
-| Element | Art px | CSS px |
-|---|---|---|
-| Page title | 76 | 28 |
-| Scope tile title | 68 | 25 |
-| Monster card title | 62 | 23 |
-| Section header | 36 | 14 |
-| Body / row title | 40–42 | 15 |
-| Secondary | 30–32 | 12 |
-| Micro-label | 20–26 | **11** (clamped) |
-| Page gutter | 56 | 20 |
-| Home tile | 469×848 | 171×308 |
-| Context card | 470×240 | 171×87 |
-| Grid gap | 28–30 | 10 |
-| Monster card | 900×1260 | 327×458 min |
-| Icon disc — tile | 112 | 40 |
-| Icon disc — context card | 88 | 32 |
-| Bounty badge diameter | 116 | 42 |
-| Primary button height | 116 | **48** (clamped from 42) |
+| Element | CSS px |
+|---|---|
+| Page title | 28 |
+| Scope tile title | 25 |
+| Monster card title | 23 |
+| Section header | 14 |
+| Body / row title | 15 |
+| Secondary | 12 |
+| Micro-label | **11** |
+| Page gutter | 20 |
+| Home tile | 171×308 |
+| Context card | 171×87 |
+| Grid gap | 10 |
+| Monster card | 327×458 min |
+| Icon disc — tile | 40 |
+| Icon disc — context card | 32 |
+| Bounty badge diameter | 42 |
+| Primary button height | **48** |
 
 ---
 

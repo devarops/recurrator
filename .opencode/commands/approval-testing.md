@@ -16,7 +16,7 @@ command; do not run it.
 - `tests/visual/specs/recurrator-frontend-spec.md` must exist. If it does not, report and stop.
 - `git status --porcelain` must be empty apart from ignored files. If it is not, list the changes
   and stop: the approval commit must contain only the approval.
-- Read `tests/visual/specs/recurrator-frontend-spec.md` once. Read a mockup only as illustration.
+- Read `tests/visual/specs/recurrator-frontend-spec.md` once.
 
 ## Scenarios
 
@@ -34,16 +34,12 @@ For each scenario:
    judgement is needed.
 2. Otherwise read the received image and, when present, the approved image. Judge whether they are
    semantically the same.
-   - Any visible difference is meaningful, except the known-acceptable differences: emoji glyph
-     family (Noto on Linux, Apple in the mockups), font rasterization and anti-aliasing, and
-     scrollbar rendering.
+   - Any visible difference is meaningful.
    - A difference in text, geometry, colour, spacing, radius, shadow, weight, or clipping is
      meaningful, even when a changed fixture caused it.
 3. If the scenario is `same`, or there is no approved file, compare it with the reference:
-   - The spec is authoritative. Where the spec gives an explicit value it overrides the mockup, for
-     example the primary button is 48px, micro-labels are 11px, and tap targets are at least 44px.
-   - The mockup illustrates only what the spec leaves open. A screen's mockup is
-     `tests/visual/specs/<screen>.png`.
+   - The spec is the only reference. Judge against its explicit rules; where it is silent, name the
+     gap and do not infer a rule.
    - Agreement is `done`. A deviation is `iterate`, and you name the rule and the rendered state it
      contradicts.
 4. `approve` means a meaningful difference from the approved baseline. `iterate` means a deviation
@@ -68,8 +64,7 @@ Act only after the human explicitly approves in this session.
   checksums match.
 - If the human accepted a deviation from the reference, edit
   `tests/visual/specs/recurrator-frontend-spec.md` so it states the accepted behaviour in the same
-  commit. Never edit a mockup PNG; if the mockup itself must change, say so and leave it to the
-  human.
+  commit.
 - Stage only `tests/visual/approved/` and the spec file.
 - Commit with `📝 Approve visual baseline: <screens>` as the first line, a blank second line, and a
   body that lists the approved scenarios and any reference edits.
