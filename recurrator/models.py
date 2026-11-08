@@ -34,6 +34,7 @@ class Task:
         coins: int,
         rating: int = GLICKO_RATING_DEFAULT,
         rating_deviation: int = GLICKO_RD_DEFAULT,
+        rating_date: date | None = None,
     ):
         self.id = id
         self.description = description
@@ -47,3 +48,4 @@ class Task:
         self.coins = coins
         self.rating = rating
         self.rating_deviation = rating_deviation
+        self.rating_date = rating_date if rating_date is not None else dates.latest_done_date

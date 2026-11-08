@@ -23,15 +23,20 @@ def _resolve_csv_path(csv: str | None = None) -> str:
     return csv or DEFAULT_TASKS_CSV_PATH
 
 
-def _rating_fields(task: io.Task) -> dict:
+def _rating_fields(task: io.Task, reference_date: date | None = None) -> dict:
     """Return the Glicko fields shared by task responses."""
+    rating_deviation = task.rating_deviation
+    if reference_date is not None:
+        rating_deviation = compute.compute_live_rating_deviation(
+            task.rating_deviation, task.rating_date, reference_date
+        )
     return {
         "rating": task.rating,
-        "rating_deviation": task.rating_deviation,
+        "rating_deviation": rating_deviation,
     }
 
 
-def _task_to_dict(task: io.Task) -> dict:
+def _task_to_dict(task: io.Task, reference_date: date | None = None) -> dict:
     """Convert Task object to API response dictionary."""
     return {
         "id": task.id,
@@ -43,7 +48,7 @@ def _task_to_dict(task: io.Task) -> dict:
         "recurrence_days": task.recurrence_days,
         "due_date": task.due_date.isoformat(),
         "coins": task.coins,
-        **_rating_fields(task),
+        **_rating_fields(task, reference_date),
     }
 
 
@@ -62,13 +67,18 @@ def get_all_tasks(csv: str = Query(None)):
 
 
 @app.get("/task/{task_id}")
-def get_task_by_id(task_id: int, csv: str = Query(None)):
+def get_task_by_id(
+    task_id: int,
+    csv: str = Query(None),
+    reference_date: str = Query(None, alias="date"),
+):
     csv_path = _resolve_csv_path(csv)
     try:
         task = io.get_task_by_id(task_id, csv_path)
     except ValueError:
         return JSONResponse(content={"error": "Task not found"}, status_code=404)
-    return _task_to_dict(task)
+    parsed_reference_date = date.fromisoformat(reference_date) if reference_date else None
+    return _task_to_dict(task, parsed_reference_date)
 
 
 @app.get("/context/{context_id}")
