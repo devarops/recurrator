@@ -76,3 +76,19 @@ def test_render_scope_tile_shows_more_line(page, page_url, open_page, csv_copy):
             href: '#'
         })""")
     assert "+2 more" in rendered
+
+
+def test_render_markdown_escaped_single_line_break(page, page_url, open_page, csv_copy):
+    csv_path = csv_copy("test_contexts.csv")
+    open_page(page, page_url("index.html", csv_path, date="2026-05-01"))
+
+    rendered = page.evaluate("ui.renderMarkdown(String.raw`first\\nsecond`)")
+    assert rendered == "<p>first<br>second</p>"
+
+
+def test_render_markdown_escaped_paragraph_break(page, page_url, open_page, csv_copy):
+    csv_path = csv_copy("test_contexts.csv")
+    open_page(page, page_url("index.html", csv_path, date="2026-05-01"))
+
+    rendered = page.evaluate("ui.renderMarkdown(String.raw`first\\n\\nsecond`)")
+    assert rendered == "<p>first</p><p>second</p>"
