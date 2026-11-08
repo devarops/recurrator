@@ -161,7 +161,7 @@ task.html?id=<id>                   → monster card
 
 ---
 
-## 6. Screen 1 — Scope matrix (`index.html`)
+## 6. Screen 1 — Scope matrix (New `index.html`)
 
 **Header:** `Recurrator` (28px/700) · subtitle `Pick a scope to start` (12px, `--c-muted`).
 
@@ -183,7 +183,7 @@ Tiles and their accents: Work (💼, blue), Personal (🏡, green), Both (🔀, 
 
 ---
 
-## 7. Screen 2 — Context list (`scope.html`)
+## 7. Screen 2 — Context list (New `scope.html`)
 
 **Header:** home glyph button 32px (→ `index.html`) + title = scope display name (`All`, `Work`, `Personal`, `Both`; default `All` when the param is missing or unrecognised). Subtitle: `n contexts due` or `Victorious`.
 
