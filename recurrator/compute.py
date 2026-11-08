@@ -145,9 +145,10 @@ def filter_one_extra_task(tasks: list[Task], context: Context, reference_date: d
 
 
 def compute_live_rating_deviation(
-    rating_deviation: int, rating_date: date, reference_date: date
+    anchored_deviation: int, rating_date: date, reference_date: date
 ) -> int:
     """Project an anchored rating deviation to reference_date."""
+    live_deviation = anchored_deviation
     if reference_date > rating_date:
-        rating_deviation += 1
-    return min(max(rating_deviation, GLICKO_RD_MIN), GLICKO_RD_MAX)
+        live_deviation += 1
+    return min(max(live_deviation, GLICKO_RD_MIN), GLICKO_RD_MAX)
