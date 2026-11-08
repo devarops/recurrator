@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `rating` and `rating_deviation` fields in the `GET /task/{id}` and
   `POST /task/{id}/done` responses.
+- `GET /task/{id}` accepts an optional `date` query parameter and projects
+  `rating_deviation` to that date.
+
+### Changed
+
+- `POST /task/{id}/done` updates the rating and deviation of the other tasks
+  in the same context.
 
 ### Fixed
 

@@ -4,7 +4,6 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 
 - Add json schema validation for config file — backlog only
 - Set min and max recurrence days — backlog only
-- Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
 - Glicko rating system — [details below](#glicko-rating-system)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Restore monster avatars on the deployed app — backlog only
@@ -12,29 +11,6 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Add page to create new tasks — backlog only
 - Add blockers: a task is blocked while its blocker's row exists; removal needs DELETE /task/{id} — backlog only
 - Add sub-tasks: completing any child completes its parent upward, never downward; skip a parent completed in the last two days — backlog only
-
-## Add one extra task when we have fewer than 6 tasks
-
-**Purpose:** When a context has fewer than 6 due tasks, pick one upcoming (not yet due) task to pad the list. Complementary to `filter_n_tasks_by_context`.
-
-**Scope:** Within a single context (matching `filter_n_tasks_by_context`).
-
-**Side effects:** None. Skip tracking is handled elsewhere (API layer of prioritization algorithm).
-
-new function in `compute.py`:
-
-```python
-def filter_one_extra_task(
-    tasks: list[Task], context: Context, reference_date: date
-) -> list[Task]:
-```
-
-**Contract:**
-1. Start with `all_tasks_in_context = filter_all_tasks_by_context(tasks, context)`.
-2. Exclude tasks where `due_date <= reference_date` (already due/overdue — handled by other algorithms).
-3. Filter for `recurrence_days > 30` (strict; same as `>= 31`).
-4. Sort by `due_date` ASC, then `recurrence_days` DESC (closest due date first; larger recurrence breaks ties).
-5. Take the first element (nearest upcoming), return it as `[task]`, or `[]` if none qualify.
 
 ## Glicko rating system
 

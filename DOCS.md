@@ -23,6 +23,7 @@ Returns one task with its computed schedule.
   - `id` (integer) — task ID
 - **Query parameters**:
   - `csv` (string, optional) — path to the task data file; defaults to the configured file
+  - `date` (ISO 8601 date, optional) — reference date for projecting `rating_deviation`; without it the stored anchored deviation is returned
 - **Returns**: An object with these fields:
   - `id` (integer)
   - `description` (string)
@@ -36,7 +37,7 @@ Returns one task with its computed schedule.
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 404 when no task has the given ID
-- **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred.
+- **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. `rating_deviation` is projected to `date` when provided; otherwise it is the stored anchor.
 
 ### GET /context/
 
@@ -75,4 +76,4 @@ Marks a task as completed on the server's current date.
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 409 when the task was completed on the current date or the previous day; the body contains an `error` message
-- **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date.
+- **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date and also updates the rating and deviation of the other tasks in the same context.
