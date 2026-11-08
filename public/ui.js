@@ -296,40 +296,44 @@
         );
     }
 
-    function renderBreadcrumb(items) {
-        var parts = items.map(function (item, index) {
-            var last = index === items.length - 1;
-            var current = last || !item.href;
-            var kind = BREADCRUMB_KINDS[index] || 'context';
-            var classes =
-                'breadcrumb__item breadcrumb__item--' +
-                kind +
-                (current ? ' breadcrumb__item--current' : '');
-            var label =
-                '<span class="breadcrumb__oval">' + escapeHtml(item.label) + '</span>';
-            var title = ' title="' + escapeAttr(item.label) + '"';
-            if (current) {
-                return (
-                    '<span class="' +
-                    classes +
-                    '" aria-current="page"' +
-                    title +
-                    '>' +
-                    label +
-                    '</span>'
-                );
-            }
+    function renderBreadcrumbItem(item, index, count) {
+        var last = index === count - 1;
+        var current = last || !item.href;
+        var kind = BREADCRUMB_KINDS[index] || 'context';
+        var classes =
+            'breadcrumb__item breadcrumb__item--' +
+            kind +
+            (current ? ' breadcrumb__item--current' : '');
+        var label =
+            '<span class="breadcrumb__oval">' + escapeHtml(item.label) + '</span>';
+        var title = ' title="' + escapeAttr(item.label) + '"';
+        if (current) {
             return (
-                '<a class="' +
+                '<span class="' +
                 classes +
-                '" href="' +
-                escapeAttr(item.href) +
-                '"' +
+                '" aria-current="page"' +
                 title +
                 '>' +
                 label +
-                '</a>'
+                '</span>'
             );
+        }
+        return (
+            '<a class="' +
+            classes +
+            '" href="' +
+            escapeAttr(item.href) +
+            '"' +
+            title +
+            '>' +
+            label +
+            '</a>'
+        );
+    }
+
+    function renderBreadcrumb(items) {
+        var parts = items.map(function (item, index) {
+            return renderBreadcrumbItem(item, index, items.length);
         });
         return (
             '<nav class="breadcrumb" data-count="' +
