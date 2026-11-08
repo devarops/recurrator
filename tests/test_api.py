@@ -391,3 +391,14 @@ def test_task_done_lowers_opponent_rating_deviation(tmp_path):
     after = client.get(f"/task/2?csv={csv_path}").json()["rating_deviation"]
 
     assert after < before
+
+
+def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
+    """Verify the completed deviation drop exceeds the placeholder."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/test_two_ratings_frozen.csv", csv_path)
+
+    before = client.get(f"/task/1?csv={csv_path}").json()["rating_deviation"]
+    response = client.post(f"/task/1/done?csv={csv_path}")
+
+    assert before - response.json()["rating_deviation"] > 1
