@@ -255,6 +255,7 @@ function accentFor(name){
 ### 10.3 Markdown subset (`ui.renderMarkdown`)
 Supported: paragraphs, `**bold**`, `_italic_`, `` `code` ``, `- ` lists, `- [ ]` / `- [x]` check lists, `[text](url)`, line breaks. Everything else renders literally.
 - **Escape HTML before transforming.** Descriptions are user data.
+- **Decode the CSV line-break escape first.** The data stores a line break as the two characters backslash and n; the renderer turns them into a newline before block parsing, so a single escape breaks a line inside one paragraph and a double escape separates paragraphs.
 - Links: `target="_blank" rel="noopener noreferrer"`.
 - Check lists: real `<input type="checkbox">`, checked from the markdown, **toggling is local-only and not persisted** (§12, S5). Box styled with `accent-color: var(--c-orange)`; label text follows.
 
