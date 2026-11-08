@@ -129,7 +129,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
         io.import_tasks_from_csv(csv_path), current_task
     )
     if opponents:
-        io.update_task_rating(task_id, current_task.rating - 1, csv_path)
+        io.update_task_rating(task_id, current_task.rating - 2, csv_path)
         for opponent in opponents:
             io.update_task_rating(opponent.id, opponent.rating + 1, csv_path)
 
