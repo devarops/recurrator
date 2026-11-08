@@ -36,7 +36,6 @@ jobs:
         docker compose --profile develop exec -T develop make check
         docker compose --profile develop exec -T develop make tests
         docker compose --profile develop exec -T develop make coverage
-        docker compose --profile develop exec -T develop make mutants
 
     # Before mutants, because `make mutants` depends on `setup`, whose `clean`
     # deletes coverage.xml.
@@ -45,6 +44,9 @@ jobs:
       with:
         files: ./coverage.xml
         verbose: true
+
+    - name: Run mutation tests
+      run: docker compose --profile develop exec -T develop make mutants
 
     - name: Verify acceptance criteria
       run: bash .pipelines/verify.sh
@@ -64,7 +66,8 @@ jobs:
           sleep 2
         done
         curl --fail --show-error http://127.0.0.1:18000/openapi.json | grep --quiet 'FastAPI'
-        curl --fail --show-error http://127.0.0.1:18000/ | grep --quiet '<div id="contexts">'
+        curl --fail --show-error http://127.0.0.1:18000/ | grep --quiet '<div id="scopes"'
+        curl --fail --show-error http://127.0.0.1:18000/ui.js | grep --quiet 'renderMonsterCard'
         docker rm --force recurrator_smoke
 
     - name: Docker log-in
