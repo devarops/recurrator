@@ -368,3 +368,14 @@ def test_task_done_preserves_total_rating(tmp_path):
     opponent = client.get(f"/task/2?csv={csv_path}").json()
 
     assert response.json()["rating"] + opponent["rating"] == before
+
+
+def test_task_done_lowers_completed_rating_deviation(tmp_path):
+    """Verify a completion lowers the completed task deviation."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/test_two_ratings_frozen.csv", csv_path)
+
+    before = client.get(f"/task/1?csv={csv_path}").json()["rating_deviation"]
+    response = client.post(f"/task/1/done?csv={csv_path}")
+
+    assert response.json()["rating_deviation"] < before
