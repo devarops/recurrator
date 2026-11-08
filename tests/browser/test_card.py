@@ -107,3 +107,15 @@ def test_markdown_checklist_on_the_card(page, page_url, open_page, csv_copy):
     assert page.locator(".description .check-item").count() == 4
     assert page.locator(".description input[type=checkbox]").count() == 4
     assert page.locator(".description input[type=checkbox]").first.is_checked() is False
+
+
+def test_checklist_rows_are_visually_compact(page, page_url, open_page, csv_copy):
+    csv_path = csv_copy("test_markdown.csv")
+    open_page(page, page_url("task.html", csv_path, id=3, date="2026-05-01"))
+
+    labels = page.locator(".description .check-item label")
+    first = labels.nth(0).bounding_box()
+    second = labels.nth(1).bounding_box()
+
+    assert first["height"] >= 44
+    assert second["y"] - first["y"] < 30
