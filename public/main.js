@@ -105,21 +105,25 @@ function showError(errorElement, contentElement, error) {
     }
 }
 
+function hasValue(value) {
+    return value !== undefined && value !== null;
+}
+
 function breadcrumbItems(scope, context, taskId) {
     const items = [{ label: 'Recurrator', href: pageHref('index.html') }];
-    if (scope !== undefined && scope !== null) {
+    if (hasValue(scope)) {
         items.push({
             label: ui.scopeLabel(scope),
             href: pageHref('scope.html', { scope }),
         });
     }
-    if (context !== undefined && context !== null) {
+    if (hasValue(context)) {
         items.push({
             label: context,
             href: pageHref('context.html', { context, scope }),
         });
     }
-    if (taskId !== undefined && taskId !== null) {
+    if (hasValue(taskId)) {
         items.push({ label: '#' + taskId });
     }
     return items;
