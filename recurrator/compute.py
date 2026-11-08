@@ -47,6 +47,15 @@ def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Tas
     return [task for task in tasks if task.context == context]
 
 
+def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
+    """Filter tasks by due/overdue status.
+
+    Returns only tasks whose due date is on or before the reference date,
+    regardless of context.
+    """
+    return [task for task in tasks if task.due_date <= reference_date]
+
+
 def filter_due_tasks_by_context(
     tasks: list[Task], context: Context, reference_date: date
 ) -> list[Task]:
@@ -57,15 +66,6 @@ def filter_due_tasks_by_context(
     """
     due_tasks = filter_due_tasks(tasks, reference_date)
     return [task for task in due_tasks if task.context == context]
-
-
-def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
-    """Filter tasks by due/overdue status.
-
-    Returns only tasks whose due date is on or before the reference date,
-    regardless of context.
-    """
-    return [task for task in tasks if task.due_date <= reference_date]
 
 
 def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]:
