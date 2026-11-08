@@ -2,6 +2,8 @@ from collections.abc import Sequence
 from datetime import date, timedelta
 from statistics import median
 
+import glicko2
+
 from ._config import DEFAULT_RECURRENCE_DAYS, MIN_DAYS_GAP
 from .models import Context, GLICKO_RD_MAX, GLICKO_RD_MIN, Task
 
@@ -163,3 +165,55 @@ def compute_live_rating_deviation(
     elapsed_days = max((reference_date - rating_date).days, 0)
     live_deviation = anchored_deviation + elapsed_days
     return min(max(live_deviation, GLICKO_RD_MIN), GLICKO_RD_MAX)
+
+
+class _GlickoPlayer(glicko2.Player):
+    def _preRatingRD(self):
+        """The elapsed-time projection already set the pre-event deviation."""
+
+
+def compute_match_updates(
+    completed_task: Task, opponents: list[Task], reference_date: date
+) -> dict[int, tuple[int, int]]:
+    """Return simultaneous rating and deviation updates for one completion."""
+    participants = [completed_task, *opponents]
+    players = {
+        task.id: _GlickoPlayer(
+            task.rating,
+            compute_live_rating_deviation(
+                task.rating_deviation, task.rating_date, reference_date
+            ),
+        )
+        for task in participants
+    }
+    pre_ratings = {task_id: player.getRating() for task_id, player in players.items()}
+    pre_deviations = {task_id: player.getRd() for task_id, player in players.items()}
+
+    completed_id = completed_task.id
+    opponent_ids = [task.id for task in opponents]
+
+    completed_player = players[completed_id]
+    completed_player.update_player(
+        [pre_ratings[task_id] for task_id in opponent_ids],
+        [pre_deviations[task_id] for task_id in opponent_ids],
+        [0.0] * len(opponent_ids),
+    )
+
+    updates = {
+        completed_id: (
+            round(completed_player.getRating()),
+            round(completed_player.getRd()),
+        )
+    }
+    for opponent_id in opponent_ids:
+        opponent_player = players[opponent_id]
+        opponent_player.update_player(
+            [pre_ratings[completed_id]],
+            [pre_deviations[completed_id]],
+            [1.0],
+        )
+        updates[opponent_id] = (
+            round(opponent_player.getRating()),
+            round(opponent_player.getRd()),
+        )
+    return updates

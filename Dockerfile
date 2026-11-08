@@ -8,6 +8,7 @@ RUN apt update && apt install --yes \
     jq
 RUN pip install --upgrade pip && pip install \
     fastapi \
+    glicko2==2.1.0 \
     requests \
     typer \
     uvicorn
