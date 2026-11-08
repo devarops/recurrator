@@ -103,9 +103,13 @@ def count_completed_today(tasks: list[Task], reference_date: date) -> int:
 
 def _sorted_tasks(tasks: list[Task], odd_cycle: bool) -> list[Task]:
     """Sort tasks by the alternating selection-order key for the given cycle."""
-    if odd_cycle:
-        return sorted(tasks, key=lambda t: (-t.skip_count, t.due_date, -t.recurrence_days))
-    return sorted(tasks, key=lambda t: (-t.skip_count, -t.recurrence_days, t.due_date))
+
+    def sort_key(task: Task) -> tuple:
+        if odd_cycle:
+            return (-task.skip_count, task.due_date, -task.recurrence_days)
+        return (-task.skip_count, -task.recurrence_days, task.due_date)
+
+    return sorted(tasks, key=sort_key)
 
 
 def filter_n_tasks_by_context(
