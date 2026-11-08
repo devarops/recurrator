@@ -307,27 +307,23 @@
         var label =
             '<span class="breadcrumb__oval">' + escapeHtml(item.label) + '</span>';
         var title = ' title="' + escapeAttr(item.label) + '"';
-        if (current) {
-            return (
-                '<span class="' +
-                classes +
-                '" aria-current="page"' +
-                title +
-                '>' +
-                label +
-                '</span>'
-            );
-        }
+        var tag = current ? 'span' : 'a';
+        var attributes = current
+            ? ' aria-current="page"'
+            : ' href="' + escapeAttr(item.href) + '"';
         return (
-            '<a class="' +
+            '<' +
+            tag +
+            ' class="' +
             classes +
-            '" href="' +
-            escapeAttr(item.href) +
             '"' +
+            attributes +
             title +
             '>' +
             label +
-            '</a>'
+            '</' +
+            tag +
+            '>'
         );
     }
 
