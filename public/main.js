@@ -110,7 +110,7 @@ function initHomePage() {
     const scopesElement = document.getElementById('scopes');
     const errorElement = document.getElementById('error');
 
-    headerElement.innerHTML = ui.renderHomeHeader();
+    headerElement.innerHTML = ui.renderBreadcrumb([{ label: 'Recurrator' }]);
     scopesElement.innerHTML = ui.renderSkeleton('tiles');
 
     fetchJson(buildContextUrl())
@@ -138,19 +138,16 @@ function initScopePage() {
     const errorElement = document.getElementById('error');
     const scope = readScope();
     const label = ui.scopeLabel(scope);
-    const homeHref = pageHref('index.html');
 
-    headerElement.innerHTML = ui.renderScopeHeader({ label, count: null, homeHref });
+    headerElement.innerHTML = ui.renderBreadcrumb([
+        { label: 'Recurrator', href: pageHref('index.html') },
+        { label },
+    ]);
     contextsElement.innerHTML = ui.renderSkeleton('grid');
 
     fetchJson(buildContextUrl())
         .then((contexts) => {
             const filtered = applyScope(contexts, scope);
-            headerElement.innerHTML = ui.renderScopeHeader({
-                label,
-                count: filtered.length,
-                homeHref,
-            });
             if (filtered.length === 0) {
                 contextsElement.innerHTML = ui.renderEmpty('grid');
             } else {
@@ -175,14 +172,11 @@ function initContextPage() {
     const scope = readScope();
     const csvParam = getCsvParam();
 
-    headerElement.innerHTML = ui.renderContextHeader({
-        context,
-        scopeLabel: ui.scopeLabel(scope),
-        links: {
-            home: pageHref('index.html'),
-            scope: pageHref('scope.html', { scope }),
-        },
-    });
+    headerElement.innerHTML = ui.renderBreadcrumb([
+        { label: 'Recurrator', href: pageHref('index.html') },
+        { label: ui.scopeLabel(scope), href: pageHref('scope.html', { scope }) },
+        { label: context || '' },
+    ]);
     tasksElement.innerHTML = ui.renderSkeleton('list');
 
     fetchJson(buildTasksByContextUrl(context))
@@ -221,9 +215,18 @@ function decorateTask(task) {
 }
 
 function loadTask(taskId, taskElement, errorElement) {
+    const headerElement = document.getElementById('pageHeader');
     fetchJson(buildApiUrl(taskId, getCsvParam()))
         .then((task) => {
             const decorated = decorateTask(task);
+            if (headerElement) {
+                headerElement.innerHTML = ui.renderBreadcrumb([
+                    { label: 'Recurrator', href: decorated.links.home },
+                    { label: decorated.scopeLabel, href: decorated.links.scope },
+                    { label: decorated.context, href: decorated.links.context },
+                    { label: '#' + decorated.id },
+                ]);
+            }
             taskElement.innerHTML = ui.renderMonsterCard(decorated);
             showContent(errorElement, taskElement);
             attachDoneHandler(decorated, taskElement, errorElement);

@@ -32,13 +32,11 @@ body {
 }
 
 /* Headers */
-.page-header {
+#pageHeader {
   margin: 4px 0 18px;
 }
-.scope-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.page-header {
+  margin: 4px 0 18px;
 }
 .page-title {
   margin: 0;
@@ -50,25 +48,6 @@ body {
   margin: 2px 0 0;
   font-size: var(--fs-7);
   color: var(--c-muted);
-}
-.home-button {
-  position: relative;
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--r-sm);
-  background: color-mix(in srgb, var(--c-ink) 6%, transparent);
-  color: var(--c-ink);
-}
-.home-button::before {
-  content: "";
-  position: absolute;
-  inset: -6px;
-}
-.home-button svg {
-  display: block;
 }
 
 /* Page grids */

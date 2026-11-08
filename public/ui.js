@@ -14,6 +14,7 @@
         personal: 'Personal',
         both: 'Both',
     };
+    var BREADCRUMB_KINDS = ['home', 'scope', 'context', 'task'];
     var CONTEXT_META = {
         actividad: '🏃',
         admingeci: '🗄️',
@@ -32,10 +33,6 @@
         telefono: '📱',
         tresminutos: '⏱️',
     };
-    var HOME_ICON =
-        '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">' +
-        '<path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z" ' +
-        'fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
 
     function escapeHtml(value) {
         return String(value === null || value === undefined ? '' : value)
@@ -302,64 +299,44 @@
     function renderBreadcrumb(items) {
         var parts = items.map(function (item, index) {
             var last = index === items.length - 1;
-            if (last || !item.href) {
-                return '<span aria-current="page">' + escapeHtml(item.label) + '</span>';
+            var current = last || !item.href;
+            var kind = BREADCRUMB_KINDS[index] || 'context';
+            var classes =
+                'breadcrumb__item breadcrumb__item--' +
+                kind +
+                (current ? ' breadcrumb__item--current' : '');
+            var label =
+                '<span class="breadcrumb__oval">' + escapeHtml(item.label) + '</span>';
+            var title = ' title="' + escapeAttr(item.label) + '"';
+            if (current) {
+                return (
+                    '<span class="' +
+                    classes +
+                    '" aria-current="page"' +
+                    title +
+                    '>' +
+                    label +
+                    '</span>'
+                );
             }
-            return '<a href="' + escapeAttr(item.href) + '">' + escapeHtml(item.label) + '</a>';
+            return (
+                '<a class="' +
+                classes +
+                '" href="' +
+                escapeAttr(item.href) +
+                '"' +
+                title +
+                '>' +
+                label +
+                '</a>'
+            );
         });
         return (
-            '<nav class="breadcrumb" aria-label="Breadcrumb">' +
-            parts.join('<span aria-hidden="true">/</span>') +
+            '<nav class="breadcrumb" data-count="' +
+            items.length +
+            '" aria-label="Breadcrumb">' +
+            parts.join('') +
             '</nav>'
-        );
-    }
-
-    function renderHomeHeader() {
-        return (
-            '<header class="page-header">' +
-            '<h1 class="page-title">Recurrator</h1>' +
-            '<p class="subtitle">Pick a scope to start</p>' +
-            '</header>'
-        );
-    }
-
-    function renderScopeHeader(options) {
-        var subtitle = '';
-        if (options.count !== null && options.count !== undefined) {
-            subtitle =
-                options.count === 0
-                    ? 'Victorious'
-                    : options.count +
-                      ' ' +
-                      plural(options.count, 'context', 'contexts') +
-                      ' due';
-        }
-        return (
-            '<header class="page-header scope-header">' +
-            '<a class="home-button" href="' +
-            escapeAttr(options.homeHref) +
-            '" aria-label="Recurrator home">' +
-            HOME_ICON +
-            '</a>' +
-            '<div><h1 class="page-title">' +
-            escapeHtml(options.label) +
-            '</h1>' +
-            (subtitle ? '<p class="subtitle">' + subtitle + '</p>' : '') +
-            '</div></header>'
-        );
-    }
-
-    function renderContextHeader(options) {
-        return (
-            '<header class="page-header">' +
-            renderBreadcrumb([
-                { label: 'Recurrator', href: options.links.home },
-                { label: options.scopeLabel, href: options.links.scope },
-                { label: options.context || '' },
-            ]) +
-            '<h1 class="page-title">' +
-            escapeHtml(options.context || '') +
-            '</h1></header>'
         );
     }
 
@@ -514,15 +491,7 @@
                 );
             })
             .join('');
-        var links = task.links || {};
-        var breadcrumb = renderBreadcrumb([
-            { label: 'Recurrator', href: links.home },
-            { label: task.scopeLabel || 'All', href: links.scope },
-            { label: task.context, href: links.context },
-            { label: '#' + task.id },
-        ]);
         return (
-            breadcrumb +
             '<article class="monster-card ' +
             stateClass +
             '">' +
@@ -594,9 +563,6 @@
         renderSkeleton: renderSkeleton,
         renderEmpty: renderEmpty,
         renderError: renderError,
-        renderHomeHeader: renderHomeHeader,
-        renderScopeHeader: renderScopeHeader,
-        renderContextHeader: renderContextHeader,
         renderBreadcrumb: renderBreadcrumb,
         accentFor: accentFor,
         scopeLabel: scopeLabel,
