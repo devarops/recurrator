@@ -1,6 +1,2 @@
 id,context,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred
-3,chores,"Guardar cada cosa en su lugar
-- [ ] Encimera
-- [ ] Lavadora
-- [ ] Refri
-- [ ] Mesa",2025-09-13,2025-10-12,2026-01-24,2026-03-14,0,NA,0
+3,chores,"Guardar cada cosa en su lugar\n- [ ] Encimera\n- [ ] Lavadora\n- [ ] Refri\n- [ ] Mesa",2025-09-13,2025-10-12,2026-01-24,2026-03-14,0,NA,0
