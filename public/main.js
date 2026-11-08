@@ -1,7 +1,14 @@
+const SCOPES_ACTIVE = false; // S1 — set true when the API returns a scope for each context.
+
+const SCOPE_TILES = [
+    { scope: 'work', label: 'Work', emoji: '💼' },
+    { scope: 'personal', label: 'Personal', emoji: '🏡' },
+    { scope: 'both', label: 'Both', emoji: '🔀' },
+    { scope: 'all', label: 'All', emoji: '🗂️' },
+];
+
 function buildUrlWithParams(path, csvParam) {
-    return csvParam
-        ? `${path}?csv=${encodeURIComponent(csvParam)}`
-        : path;
+    return csvParam ? `${path}?csv=${encodeURIComponent(csvParam)}` : path;
 }
 
 function buildApiUrl(taskId, csvParam) {
@@ -12,176 +19,46 @@ function buildDoneUrl(taskId, csvParam) {
     return buildUrlWithParams(`/task/${taskId}/done`, csvParam);
 }
 
-function renderTaskRow(label, value) {
-    return `<tr><td>${label}</td><td>${value}</td></tr>`;
-}
-
-function isRecentlyCompleted(latestDate) {
-    const todayISO = getTodayISO();
-    const parts = todayISO.split('-').map(Number);
-    const yesterdayMS = Date.UTC(parts[0], parts[1] - 1, parts[2]) - 86400000;
-    const yesterday = new Date(yesterdayMS);
-    const yyyy = yesterday.getUTCFullYear();
-    const mm = String(yesterday.getUTCMonth() + 1).padStart(2, '0');
-    const dd = String(yesterday.getUTCDate()).padStart(2, '0');
-    const yesterdayISO = `${yyyy}-${mm}-${dd}`;
-    return latestDate === todayISO || latestDate === yesterdayISO;
-}
-
-function renderTask(task) {
-    return `
-        <table>
-            <tbody>
-                ${renderTaskRow('ID', task.id)}
-                ${renderTaskRow('Description', task.description)}
-                ${renderTaskRow('Context', task.context)}
-                ${renderTaskRow('Skip Count', task.skip_count)}
-                ${renderTaskRow('Starred', task.starred ? 'Yes' : 'No')}
-                ${renderTaskRow('Latest Date', task.latest_date)}
-                ${renderTaskRow('Recurrence', `${task.recurrence_days} days`)}
-                ${renderTaskRow('Due Date', task.due_date)}
-            </tbody>
-        </table>
-    `;
-}
-
-function renderError(error) {
-    return `Error: ${error.message}`;
-}
-
 function fetchJson(url, options = {}) {
-    return fetch(url, options).then(r => r.json());
-}
-
-function getQueryParams() {
-    return {
-        taskId: new URL(window.location).searchParams.get('id'),
-        csvParam: new URL(window.location).searchParams.get('csv')
-    };
-}
-
-function getDomElements() {
-    return {
-        taskElement: document.getElementById('task'),
-        errorElement: document.getElementById('error')
-    };
-}
-
-function displayTask(taskElement, errorElement, task) {
-    taskElement.innerHTML = renderTask(task);
-    var errorEl = document.getElementById('error');
-    if (errorEl) errorEl.hidden = true;
-    var doneBtn = document.getElementById('doneBtn');
-    if (doneBtn) {
-        doneBtn.classList.toggle('done-recently', isRecentlyCompleted(task.latest_date));
-    }
-}
-
-function displayError(errorElement, error) {
-    var errorEl = document.getElementById('error') || errorElement;
-    errorEl.innerHTML = renderError(error);
-    errorEl.hidden = false;
-}
-
-function _fetchAndRender(url, renderFn, contentElement, errorElement, csvParam) {
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            contentElement.innerHTML = renderFn(data, csvParam);
-        })
-        .catch(err => {
-            displayError(errorElement, err);
-            contentElement.innerHTML = '';
-        });
-}
-
-function markDoneAndRefresh(context) {
-    const { taskId, csvParam, taskElement, errorElement, apiUrl } = context;
-    const doneUrl = buildDoneUrl(taskId, csvParam);
-
-    return fetch(doneUrl, { method: 'POST' })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(body => {
-                    throw new Error(body.error || `HTTP ${response.status}`);
-                });
-            }
-        })
-        .then(() => fetchJson(apiUrl))
-        .then(updatedTask => {
-            displayTask(taskElement, errorElement, updatedTask);
-            return updatedTask;
-        })
-        .catch(err => {
-            displayError(errorElement, err);
-            throw err;
-        });
-}
-
-function attachDoneButtonHandler(doneBtn, context) {
-    doneBtn.addEventListener('click', () => {
-        markDoneAndRefresh(context);
+    return fetch(url, options).then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
     });
 }
 
-function initTaskPage() {
-    const { taskElement, errorElement } = getDomElements();
-    console.assert(taskElement, 'Missing #task element in task.html');
-    const { taskId, csvParam } = getQueryParams();
-    const apiUrl = buildApiUrl(taskId, csvParam);
-
-    function makeContextHref(contextName, csvParam) {
-        return csvParam
-            ? `context.html?context=${encodeURIComponent(contextName)}&csv=${encodeURIComponent(csvParam)}`
-            : `context.html?context=${encodeURIComponent(contextName)}`;
-    }
-
-    fetchJson(apiUrl)
-        .then(task => {
-            displayTask(taskElement, errorElement, task);
-            const contextLink = document.getElementById('contextLink');
-            if (contextLink) {
-                contextLink.href = makeContextHref(task.context, csvParam);
-                contextLink.textContent = task.context;
-            }
-            var monster = document.getElementById('monster');
-            if (monster) {
-                sha256Hex(String(task.id)).then(function (hash) {
-                    if (!hash) return;
-                    var img = document.createElement('img');
-                    img.src = 'https://gravatar.com/avatar/' + hash + '?d=monsterid&s=256&f=y';
-                    img.alt = '';
-                    monster.prepend(img);
-                });
-            }
-            const doneBtn = document.getElementById('doneBtn');
-            const context = { taskId, csvParam, taskElement, errorElement, apiUrl };
-            attachDoneButtonHandler(doneBtn, context);
-        })
-        .catch(err => {
-            displayError(errorElement, err);
-        });
+function currentParams() {
+    return new URL(window.location).searchParams;
 }
 
-function sha256Hex(str) {
-    if (!window.crypto || !window.crypto.subtle) {
-        return Promise.resolve(null);
-    }
-    var encoder = new TextEncoder();
-    var data = encoder.encode(str);
-    return window.crypto.subtle.digest('SHA-256', data).then(function (buffer) {
-        var bytes = new Uint8Array(buffer);
-        return Array.from(bytes).map(function (b) {
-            return b.toString(16).padStart(2, '0');
-        }).join('');
+function getCsvParam() {
+    return currentParams().get('csv');
+}
+
+function readScope() {
+    return currentParams().get('scope') || 'all';
+}
+
+function pageHref(page, extra = {}) {
+    const params = new URLSearchParams();
+    const current = currentParams();
+    ['csv', 'date'].forEach((key) => {
+        const value = current.get(key);
+        if (value) params.set(key, value);
     });
+    Object.keys(extra).forEach((key) => {
+        const value = extra[key];
+        if (value !== undefined && value !== null && value !== '') {
+            params.set(key, value);
+        }
+    });
+    const query = params.toString();
+    return query ? `${page}?${query}` : page;
 }
 
 function getTodayISO() {
-    const pinned = new URL(window.location).searchParams.get('date');
+    const pinned = currentParams().get('date');
     if (pinned && /^\d{4}-\d{2}-\d{2}$/.test(pinned)) {
         return pinned;
     }
@@ -193,144 +70,234 @@ function getTodayISO() {
     }).format();
 }
 
-function buildContextUrl(csvParam) {
-    const today = getTodayISO();
-    const url = `/context/?date=${today}`;
-    return csvParam
-        ? `${url}&csv=${encodeURIComponent(csvParam)}`
-        : url;
+function buildContextUrl() {
+    const url = `/context/?date=${getTodayISO()}`;
+    const csv = getCsvParam();
+    return csv ? `${url}&csv=${encodeURIComponent(csv)}` : url;
 }
 
-function renderContextList(contexts, csvParam) {
-    if (contexts.length === 0) {
-        return '<p>No tasks due.</p>';
+function buildTasksByContextUrl(contextName) {
+    const url = `/context/${encodeURIComponent(contextName)}?date=${getTodayISO()}`;
+    const csv = getCsvParam();
+    return csv ? `${url}&csv=${encodeURIComponent(csv)}` : url;
+}
+
+function applyScope(contexts, scope) {
+    if (!SCOPES_ACTIVE) {
+        return contexts;
     }
-
-    const items = contexts.map(ctx => {
-        const href = csvParam
-            ? `context.html?context=${encodeURIComponent(ctx)}&csv=${encodeURIComponent(csvParam)}`
-            : `context.html?context=${encodeURIComponent(ctx)}`;
-        return `<li><a href="${href}">${ctx}</a></li>`;
-    }).join('');
-
-    return `<ul>${items}</ul>`;
+    return contexts.filter((context) => context.scope === scope);
 }
 
-function buildTasksByContextUrl(contextName, csvParam) {
-    const today = getTodayISO();
-    const url = `/context/${encodeURIComponent(contextName)}?date=${today}`;
-    return csvParam
-        ? `${url}&csv=${encodeURIComponent(csvParam)}`
-        : url;
+function showContent(errorElement, contentElement) {
+    errorElement.hidden = true;
+    contentElement.hidden = false;
 }
 
-function renderTaskLinks(tasks, csvParam) {
-    if (tasks.length === 0) {
-        return '<p>No tasks due.</p>';
+function showError(errorElement, contentElement, error) {
+    console.error(error);
+    errorElement.innerHTML = ui.renderError(error);
+    errorElement.hidden = false;
+    contentElement.hidden = true;
+    const retry = errorElement.querySelector('[data-retry]');
+    if (retry) {
+        retry.addEventListener('click', () => window.location.reload());
     }
+}
 
-    const sorted = tasks.sort((a, b) => b.coins - a.coins);
+function initHomePage() {
+    const headerElement = document.getElementById('pageHeader');
+    const scopesElement = document.getElementById('scopes');
+    const errorElement = document.getElementById('error');
 
-    const rows = sorted.map(task => {
-        const href = csvParam
-            ? `task.html?id=${task.id}&csv=${encodeURIComponent(csvParam)}`
-            : `task.html?id=${task.id}`;
-        return `<tr><td><a href="${href}"><img class="monster-img" data-task-id="${task.id}" alt=""></a></td><td><a href="${href}">${task.description}</a></td><td>${task.coins}</td></tr>`;
-    }).join('');
+    headerElement.innerHTML = ui.renderHomeHeader();
+    scopesElement.innerHTML = ui.renderSkeleton('tiles');
 
-    return `\
-<table><thead><tr><th>Monster</th><th>Description</th><th>Coins</th></tr></thead>\
-<tbody>${rows}</tbody></table>`;
+    fetchJson(buildContextUrl())
+        .then((contexts) => {
+            const names = contexts.slice(0, 4);
+            scopesElement.innerHTML = SCOPE_TILES.map((tile) => {
+                const isAll = tile.scope === 'all';
+                return ui.renderScopeTile({
+                    scope: tile.scope,
+                    label: tile.label,
+                    emoji: tile.emoji,
+                    dueCount: isAll ? contexts.length : null,
+                    names: isAll ? names : [],
+                    href: pageHref('scope.html', { scope: tile.scope }),
+                });
+            }).join('');
+            showContent(errorElement, scopesElement);
+        })
+        .catch((error) => showError(errorElement, scopesElement, error));
+}
+
+function initScopePage() {
+    const headerElement = document.getElementById('pageHeader');
+    const contextsElement = document.getElementById('contexts');
+    const errorElement = document.getElementById('error');
+    const scope = readScope();
+    const label = ui.scopeLabel(scope);
+    const homeHref = pageHref('index.html');
+
+    headerElement.innerHTML = ui.renderScopeHeader({ label, count: null, homeHref });
+    contextsElement.innerHTML = ui.renderSkeleton('grid');
+
+    fetchJson(buildContextUrl())
+        .then((contexts) => {
+            const filtered = applyScope(contexts, scope);
+            headerElement.innerHTML = ui.renderScopeHeader({
+                label,
+                count: filtered.length,
+                homeHref,
+            });
+            if (filtered.length === 0) {
+                contextsElement.innerHTML = ui.renderEmpty('grid');
+            } else {
+                contextsElement.innerHTML = ui.renderScopeGrid(
+                    filtered.map((name) => ({
+                        name,
+                        href: pageHref('context.html', { context: name, scope }),
+                    })),
+                    scope
+                );
+            }
+            showContent(errorElement, contextsElement);
+        })
+        .catch((error) => showError(errorElement, contextsElement, error));
 }
 
 function initContextPage() {
+    const headerElement = document.getElementById('pageHeader');
     const tasksElement = document.getElementById('tasks');
     const errorElement = document.getElementById('error');
-    const contextNameElement = document.getElementById('contextName');
-    console.assert(tasksElement, 'Missing #tasks element in context.html');
-    console.assert(errorElement, 'Missing #error element in context.html');
-    console.assert(contextNameElement, 'Missing #contextName element in context.html');
-    const params = new URL(window.location).searchParams;
-    const contextName = params.get('context');
-    const csvParam = params.get('csv');
+    const context = currentParams().get('context');
+    const scope = readScope();
+    const csvParam = getCsvParam();
 
-    if (contextName) {
-        contextNameElement.textContent = contextName;
-    }
+    headerElement.innerHTML = ui.renderContextHeader({
+        context,
+        scopeLabel: ui.scopeLabel(scope),
+        links: {
+            home: pageHref('index.html'),
+            scope: pageHref('scope.html', { scope }),
+        },
+    });
+    tasksElement.innerHTML = ui.renderSkeleton('list');
 
-    const listUrl = buildTasksByContextUrl(contextName, csvParam);
-
-    fetch(listUrl)
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return response.json();
-        })
-        .then(taskIds => {
-            const detailUrls = taskIds.map(id => buildApiUrl(id, csvParam));
-            return Promise.all(detailUrls.map(url => fetchJson(url)));
-        })
-        .then(tasks => {
-            tasksElement.innerHTML = renderTaskLinks(tasks, csvParam);
-            errorElement.hidden = true;
-            var monsterImgs = document.querySelectorAll('.monster-img');
-            monsterImgs.forEach(function (img) {
-                var taskId = img.getAttribute('data-task-id');
-                sha256Hex(String(taskId)).then(function (hash) {
-                    if (!hash) {
-                        img.hidden = true;
-                        return;
-                    }
-                    img.src = 'https://gravatar.com/avatar/' + hash + '?d=monsterid&s=64&f=y';
+    fetchJson(buildTasksByContextUrl(context))
+        .then((taskIds) => Promise.all(taskIds.map((id) => fetchJson(buildApiUrl(id, csvParam)))))
+        .then((tasks) => {
+            tasks.sort((a, b) => b.coins - a.coins);
+            const decorated = tasks.map((task) => ({
+                ...task,
+                href: pageHref('task.html', { id: task.id, scope }),
+            }));
+            if (decorated.length === 0) {
+                tasksElement.innerHTML = ui.renderEmpty('list', {
+                    backHref: pageHref('scope.html', { scope }),
+                    backLabel: ui.scopeLabel(scope),
                 });
-            });
+            } else {
+                tasksElement.innerHTML = ui.renderTaskList(decorated);
+            }
+            showContent(errorElement, tasksElement);
         })
-        .catch(err => {
-            displayError(errorElement, err);
-            tasksElement.innerHTML = '';
-        });
+        .catch((error) => showError(errorElement, tasksElement, error));
 }
 
-function initIndexPage() {
-    const contextsElement = document.getElementById('contexts');
-    const errorElement = document.getElementById('error');
-    console.assert(contextsElement, 'Missing #contexts element in index.html');
-    console.assert(errorElement, 'Missing #error element in index.html');
-    const { csvParam } = getQueryParams();
-    const url = buildContextUrl(csvParam);
+function decorateTask(task) {
+    const scope = readScope();
+    return {
+        ...task,
+        today: getTodayISO(),
+        scopeLabel: ui.scopeLabel(scope),
+        links: {
+            home: pageHref('index.html'),
+            scope: pageHref('scope.html', { scope }),
+            context: pageHref('context.html', { context: task.context, scope }),
+        },
+    };
+}
 
-    _fetchAndRender(url, renderContextList, contextsElement, errorElement, csvParam);
+function loadTask(taskId, taskElement, errorElement) {
+    fetchJson(buildApiUrl(taskId, getCsvParam()))
+        .then((task) => {
+            const decorated = decorateTask(task);
+            taskElement.innerHTML = ui.renderMonsterCard(decorated);
+            showContent(errorElement, taskElement);
+            attachDoneHandler(decorated, taskElement, errorElement);
+        })
+        .catch((error) => showError(errorElement, taskElement, error));
+}
+
+function attachDoneHandler(task, taskElement, errorElement) {
+    const button = document.getElementById('doneBtn');
+    if (!button || button.disabled) {
+        return;
+    }
+    button.addEventListener('click', () => {
+        const label = document.getElementById('doneLabel');
+        const saveError = document.getElementById('saveError');
+        button.disabled = true;
+        if (label) label.textContent = 'Saving…';
+
+        fetch(buildDoneUrl(task.id, getCsvParam()), { method: 'POST' })
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then((body) => {
+                        throw new Error(body.error || `HTTP ${response.status}`);
+                    });
+                }
+            })
+            .then(() => loadTask(task.id, taskElement, errorElement))
+            .catch((error) => {
+                console.error(error);
+                button.disabled = false;
+                if (label) label.textContent = '✓ Mark as Done';
+                if (saveError) saveError.hidden = false;
+            });
+    });
+}
+
+function initTaskPage() {
+    const taskElement = document.getElementById('task');
+    const errorElement = document.getElementById('error');
+    const taskId = currentParams().get('id');
+    taskElement.innerHTML = ui.renderSkeleton('card');
+    loadTask(taskId, taskElement, errorElement);
+}
+
+function sha256Hex(value) {
+    if (!window.crypto || !window.crypto.subtle) {
+        return Promise.resolve(null);
+    }
+    const encoder = new TextEncoder();
+    const data = encoder.encode(value);
+    return window.crypto.subtle.digest('SHA-256', data).then((buffer) => {
+        const bytes = new Uint8Array(buffer);
+        return Array.from(bytes)
+            .map((byte) => byte.toString(16).padStart(2, '0'))
+            .join('');
+    });
 }
 
 function initPage() {
-    const contextsElement = document.getElementById('contexts');
-    const tasksElement = document.getElementById('tasks');
-    if (contextsElement) {
-        initIndexPage();
+    if (document.getElementById('scopes')) {
+        initHomePage();
         return;
     }
-    if (tasksElement) {
+    if (document.getElementById('contexts')) {
+        initScopePage();
+        return;
+    }
+    if (document.getElementById('tasks')) {
         initContextPage();
         return;
     }
     initTaskPage();
 }
 
-function _selfCheck() {
-    var required = [
-        'buildApiUrl', 'buildDoneUrl', 'renderTask', 'renderError',
-        'fetchJson', 'sha256Hex', 'markDoneAndRefresh', 'initTaskPage',
-        'initContextPage', 'initIndexPage', 'renderTaskLinks',
-        'renderContextList', 'isRecentlyCompleted',
-    ];
-    required.forEach(function (name) {
-        console.assert(
-            typeof window[name] !== 'undefined',
-            'Missing function: ' + name
-        );
-    });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    _selfCheck();
     initPage();
 });

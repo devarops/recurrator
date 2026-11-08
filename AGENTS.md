@@ -53,13 +53,13 @@ Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one Shel
 ## Container Startup and Deployment
 
 - `src/entrypoint.sh` regenerates both modules from `/root/.config/recurrator` before the command.
-- `Dockerfile.dev` adds every test and verification tool to the app image, for the `develop` service: `black`, `flake8`, `frictionless`, `httpx`, `mutmut`, `mypy`, `pylint`, `pytest`, `pytest-cov`, ShellSpec, qed and Lean. It builds `FROM evaristor/recurrator:latest`, so build the prod image first or the dev layer takes a stale base. `Dockerfile` carries only what the app needs to run. Nothing in the dev layer is pinned; `lake build` follows qed's `lean-toolchain`.
+- `Dockerfile.dev` adds every test and verification tool to the app image, for the `develop` service: `black`, `flake8`, `frictionless`, `httpx`, `mutmut`, `mypy`, `playwright` with Chromium, `pylint`, `pytest`, `pytest-cov`, ShellSpec, qed and Lean. It builds `FROM evaristor/recurrator:latest`, so build the prod image first or the dev layer takes a stale base. `Dockerfile` carries only what the app needs to run. Nothing in the dev layer is pinned; `lake build` follows qed's `lean-toolchain`.
 - The published image runs without a code checkout in `recurrator_setup`; keep it self-contained and never add a bind mount. Deployment runs no initialization step: the editable install is baked in at build time and `src/entrypoint.sh` generates the modules at container start. The image has no default command, so every runner supplies uvicorn.
 - `.github/workflows/actions.yml` builds `evaristor/recurrator:latest`, builds `evaristor/recurrator:develop` on top, and runs `check`, `tests`, `coverage`, `mutants` and `verify` in the dev image. It pushes only if they pass, so a red run leaves the previous `latest` in production. Before pushing, it boots the prod image alone, with no volumes, and requires `/openapi.json` and `/` to respond; that is the only check for a dependency that exists only in dev. Tags are `latest` plus `%y%V`; `:develop` is never published.
 - FastAPI serves `public/` at `/` after the API routes. The frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled.
 - Production serves the app at `http://recurrator/` over the tailnet: `recurrator_setup` maps host port 80 to 8000, and the `provisioner` cron probes that address. Local compose binds host 80 too, so a port change touches all three repos.
 - `PUBLIC_DIR` walks up from `api.py` to the directory containing `public/index.html`, so app import and tests work from any working directory and under mutmut.
-- The app is reached over plain HTTP on Tailscale, where `crypto.subtle` is unavailable; the frontend skips monster avatars instead of failing the page.
+- The app is reached over plain HTTP on Tailscale, where `crypto.subtle` is unavailable; the frontend uses the local placeholder art and makes no remote requests.
 
 ## Mutation Testing
 

@@ -1,28 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Recurrator</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-    <style>
-        #monster {
-            text-align: center;
-            margin: 0 0 2.625rem 0;
-        }
-        button.done-recently {
-            --background-color: #2ecc71;
-            --border-color: #2ecc71;
-        }
-    </style>
+    <link rel="stylesheet" href="styles/tokens.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/pages.css">
 </head>
-<body>
-    <main class="container">
-        <h1><a id="contextLink" href="index.html">Recurrator</a></h1>
-        <figure id="monster"></figure>
-        <button id="doneBtn">Mark as Done</button>
+<body class="page page--task">
+    <main class="app">
+        <div id="task"></div>
         <article id="error" hidden></article>
-        <div id="task">Loading...</div>
     </main>
+    <script src="ui.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

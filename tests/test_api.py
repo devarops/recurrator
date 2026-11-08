@@ -15,16 +15,21 @@ client = TestClient(app)
 
 
 def test_frontend_is_served_from_the_api_app():
-    """Verify the API serves the index page and its JavaScript asset."""
+    """Verify the API serves the index page and its JavaScript assets."""
     index_response = client.get("/")
 
     assert index_response.status_code == 200
-    assert '<div id="contexts">' in index_response.text
+    assert '<div id="scopes"' in index_response.text
 
     script_response = client.get("/main.js")
 
     assert script_response.status_code == 200
     assert "function initPage" in script_response.text
+
+    ui_response = client.get("/ui.js")
+
+    assert ui_response.status_code == 200
+    assert "renderMonsterCard" in ui_response.text
 
 
 def test_get_single_task_id():
