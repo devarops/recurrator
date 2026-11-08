@@ -462,3 +462,14 @@ def test_compute_live_rating_deviation_grows_after_elapsed_time():
     later = date(2026, 11, 9)
 
     assert rc.compute_live_rating_deviation(350, anchor, later) > 350
+
+
+def test_compute_live_rating_deviation_grows_more_with_more_elapsed_time():
+    """Verify a longer elapsed time produces a larger deviation."""
+    anchor = date(2026, 11, 8)
+    one_day = date(2026, 11, 9)
+    two_days = date(2026, 11, 10)
+
+    assert rc.compute_live_rating_deviation(
+        350, anchor, two_days
+    ) > rc.compute_live_rating_deviation(350, anchor, one_day)
