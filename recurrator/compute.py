@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from statistics import median
 
 from ._config import DEFAULT_RECURRENCE_DAYS, MIN_DAYS_GAP
-from .models import Task, Context
+from .models import Context, GLICKO_RD_MIN, Task
 
 
 def compute_intervals(dates: list[date | None]) -> list[int]:
@@ -148,4 +148,4 @@ def compute_live_rating_deviation(
     rating_deviation: int, rating_date: date, reference_date: date
 ) -> int:
     """Project an anchored rating deviation to reference_date."""
-    return max(rating_deviation, 45)
+    return max(rating_deviation, GLICKO_RD_MIN)

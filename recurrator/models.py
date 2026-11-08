@@ -6,6 +6,7 @@ from ._contexts import Context
 SKIP_COUNT_RESET = 0
 GLICKO_RATING_DEFAULT = 1500
 GLICKO_RD_DEFAULT = 350
+GLICKO_RD_MIN = 45
 
 
 @dataclass
