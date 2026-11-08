@@ -148,4 +148,4 @@ def compute_live_rating_deviation(
     rating_deviation: int, rating_date: date, reference_date: date
 ) -> int:
     """Project an anchored rating deviation to reference_date."""
-    return rating_deviation
+    return max(rating_deviation, 45)
