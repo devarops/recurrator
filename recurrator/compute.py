@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from datetime import date, timedelta
 from statistics import median
 
-import glicko2
+import glicko2  # type: ignore[import-untyped]
 
 from ._config import DEFAULT_RECURRENCE_DAYS, MIN_DAYS_GAP
 from .models import Context, GLICKO_RD_MAX, GLICKO_RD_MIN, Task
@@ -49,9 +49,7 @@ def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Tas
     return [task for task in tasks if task.context == context]
 
 
-def filter_opponents_with_different_rating(
-    tasks: list[Task], completed_task: Task
-) -> list[Task]:
+def filter_opponents_with_different_rating(tasks: list[Task], completed_task: Task) -> list[Task]:
     """Return other tasks in the context with a different rating."""
     same_context_tasks = filter_all_tasks_by_context(tasks, completed_task.context)
     return [
@@ -180,26 +178,18 @@ def compute_match_updates(
     players = {
         task.id: _GlickoPlayer(
             task.rating,
-            compute_live_rating_deviation(
-                task.rating_deviation, task.rating_date, reference_date
-            ),
+            compute_live_rating_deviation(task.rating_deviation, task.rating_date, reference_date),
         )
         for task in participants
     }
-    snapshot_ratings = {
-        task_id: player.getRating() for task_id, player in players.items()
-    }
-    snapshot_deviations = {
-        task_id: player.getRd() for task_id, player in players.items()
-    }
+    snapshot_ratings = {task_id: player.getRating() for task_id, player in players.items()}
+    snapshot_deviations = {task_id: player.getRd() for task_id, player in players.items()}
 
     completed_id = completed_task.id
     opponent_ids = [task.id for task in opponents]
     updates: dict[int, tuple[int, int]] = {}
 
-    def play(
-        task_id: int, opponents_for_task: list[int], outcomes: list[float]
-    ) -> None:
+    def play(task_id: int, opponents_for_task: list[int], outcomes: list[float]) -> None:
         player = players[task_id]
         player.update_player(
             [snapshot_ratings[opponent_id] for opponent_id in opponents_for_task],

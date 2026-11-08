@@ -361,8 +361,7 @@ def test_task_done_preserves_total_rating(tmp_path):
     copyfile("tests/data/test_two_ratings.csv", csv_path)
 
     before = sum(
-        client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
-        for task_id in (1, 2)
+        client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"] for task_id in (1, 2)
     )
     response = client.post(f"/task/1/done?csv={csv_path}")
     opponent = client.get(f"/task/2?csv={csv_path}").json()
