@@ -163,6 +163,7 @@ SCENARIOS = [
     Scenario("card", "due-starred", "task.html?id=1", "test_contexts.csv", "2026-05-01"),
     Scenario("card", "overdue-starred", "task.html?id=1", "test_contexts.csv", "2026-06-01"),
     Scenario("card", "not-due-unstarred", "task.html?id=10", "test_contexts.csv", "2026-05-01"),
+    Scenario("card", "markdown", "task.html?id=3", "test_markdown.csv", "2026-05-01"),
 ]
 
 
