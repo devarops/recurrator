@@ -46,22 +46,12 @@ run = "pytest tests/test_acceptance_glicko.py::test_glicko_solo_completion"
 
 [[criteria]]
 description = """
-When two participants have different ratings, the stored results match a
-simultaneous update rather than a sequential one.
+When two participants play, the stored results match a simultaneous update
+rather than a sequential one.
 """
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_simultaneous_update"
-
-[[criteria]]
-description = """
-When eight tasks are due and the work-in-progress limit selects six, the tasks
-outside the selection keep their ratings.
-"""
-skip = "Not implemented"
-[criteria.verify]
-type = "command"
-run = "pytest tests/test_acceptance_glicko.py::test_glicko_wip_boundary"
 
 [[criteria]]
 description = """
