@@ -292,6 +292,15 @@ def test_get_task_by_id_rating_deviation():
     assert response.json()["rating_deviation"] == 350
 
 
+def test_get_task_by_id_projects_rating_deviation():
+    """Verify GET /task/{id} projects the deviation to the requested date."""
+    response = client.get(
+        "/task/1?csv=tests/data/acceptance_glicko_inactivity_growth.csv&date=2025-11-09"
+    )
+
+    assert response.json()["rating_deviation"] > 350
+
+
 def test_task_done_rating(tmp_path):
     """Verify POST /task/{id}/done returns the task rating."""
     csv_path = tmp_path / "task.csv"
