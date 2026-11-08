@@ -125,12 +125,18 @@ function breadcrumbItems(scope, context, taskId) {
     return items;
 }
 
-function initHomePage() {
+function setBreadcrumb(items) {
     const headerElement = document.getElementById('pageHeader');
+    if (headerElement) {
+        headerElement.innerHTML = ui.renderBreadcrumb(items);
+    }
+}
+
+function initHomePage() {
     const scopesElement = document.getElementById('scopes');
     const errorElement = document.getElementById('error');
 
-    headerElement.innerHTML = ui.renderBreadcrumb(breadcrumbItems());
+    setBreadcrumb(breadcrumbItems());
     scopesElement.innerHTML = ui.renderSkeleton('tiles');
 
     fetchJson(buildContextUrl())
@@ -153,12 +159,11 @@ function initHomePage() {
 }
 
 function initScopePage() {
-    const headerElement = document.getElementById('pageHeader');
     const contextsElement = document.getElementById('contexts');
     const errorElement = document.getElementById('error');
     const scope = readScope();
 
-    headerElement.innerHTML = ui.renderBreadcrumb(breadcrumbItems(scope));
+    setBreadcrumb(breadcrumbItems(scope));
     contextsElement.innerHTML = ui.renderSkeleton('grid');
 
     fetchJson(buildContextUrl())
@@ -181,14 +186,13 @@ function initScopePage() {
 }
 
 function initContextPage() {
-    const headerElement = document.getElementById('pageHeader');
     const tasksElement = document.getElementById('tasks');
     const errorElement = document.getElementById('error');
     const context = currentParams().get('context');
     const scope = readScope();
     const csvParam = getCsvParam();
 
-    headerElement.innerHTML = ui.renderBreadcrumb(breadcrumbItems(scope, context || ''));
+    setBreadcrumb(breadcrumbItems(scope, context || ''));
     tasksElement.innerHTML = ui.renderSkeleton('list');
 
     fetchJson(buildTasksByContextUrl(context))
@@ -220,16 +224,11 @@ function decorateTask(task) {
 }
 
 function loadTask(taskId, taskElement, errorElement) {
-    const headerElement = document.getElementById('pageHeader');
     const scope = readScope();
     fetchJson(buildApiUrl(taskId, getCsvParam()))
         .then((task) => {
             const decorated = decorateTask(task);
-            if (headerElement) {
-                headerElement.innerHTML = ui.renderBreadcrumb(
-                    breadcrumbItems(scope, decorated.context, decorated.id)
-                );
-            }
+            setBreadcrumb(breadcrumbItems(scope, decorated.context, decorated.id));
             taskElement.innerHTML = ui.renderMonsterCard(decorated);
             showContent(errorElement, taskElement);
             attachDoneHandler(decorated, taskElement, errorElement);
