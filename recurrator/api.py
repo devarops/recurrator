@@ -130,7 +130,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     )
     if opponents:
         rating_delta = 2
-        deviation_delta = 1
+        deviation_delta = 2
         io.update_task_rating(task_id, current_task.rating - rating_delta, csv_path)
         io.update_task_rating_deviation(
             task_id, current_task.rating_deviation - deviation_delta, csv_path
