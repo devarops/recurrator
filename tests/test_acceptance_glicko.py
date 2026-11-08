@@ -1,3 +1,5 @@
+import csv
+from datetime import date
 from shutil import copyfile
 
 from fastapi.testclient import TestClient
@@ -45,3 +47,30 @@ def test_glicko_inactivity_growth():
     assert older_deviation > newer_deviation
     assert 45 <= older_deviation <= 500
     assert 45 <= newer_deviation <= 500
+
+
+def test_glicko_simultaneous_update(tmp_path):
+    """Two different ratings match a simultaneous update, not a sequential one."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/acceptance_glicko_simultaneous_update.csv", csv_path)
+
+    with open(csv_path, newline="") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        fieldnames = reader.fieldnames
+    assert fieldnames is not None
+    for row in rows:
+        row["rating_date"] = date.today().isoformat()
+    with open(csv_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    response = client.post(f"/task/1/done?csv={csv_path}")
+    assert response.status_code == 200
+
+    completed = response.json()
+    opponent = client.get(f"/task/2?csv={csv_path}").json()
+
+    assert (completed["rating"], completed["rating_deviation"]) == (1367, 292)
+    assert (opponent["rating"], opponent["rating_deviation"]) == (1733, 292)
