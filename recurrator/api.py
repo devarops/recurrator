@@ -116,14 +116,24 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     today = date.today()
 
-    last_completion_date = io.get_task_by_id(task_id, csv_path).latest_done_date
-    if not compute.is_done_allowed(last_completion_date, today):
+    current_task = io.get_task_by_id(task_id, csv_path)
+    if not compute.is_done_allowed(current_task.latest_done_date, today):
         return JSONResponse(
             content={"error": "Task was already completed too recently"},
             status_code=409,
         )
 
     io.update_task_as_done(task_id, today, csv_path)
+
+    same_context_tasks = compute.filter_all_tasks_by_context(
+        io.import_tasks_from_csv(csv_path), current_task.context
+    )
+    has_rated_opponent = any(
+        task.id != task_id and task.rating != current_task.rating
+        for task in same_context_tasks
+    )
+    if has_rated_opponent:
+        io.update_task_rating(task_id, current_task.rating - 1, csv_path)
 
     updated_task = io.get_task_by_id(task_id, csv_path)
     return {
