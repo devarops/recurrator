@@ -13,9 +13,12 @@ RUN pip install \
     httpx \
     mutmut \
     mypy \
+    playwright \
     pylint \
     pytest \
     pytest-cov
+
+RUN playwright install --with-deps chromium
 
 RUN curl --fail --location https://git.io/shellspec --show-error --silent | sh -s -- --yes
 ENV PATH="/root/.local/lib/shellspec:$PATH"

@@ -37,3 +37,9 @@ def test_html_files_have_expected_structure():
             content = f.read()
         for marker in expected_markers:
             assert marker in content, f"{filename} missing expected element: {marker}"
+
+
+def test_main_js_reads_the_pinned_date():
+    """Verify the frontend clock accepts the date query parameter used by captures."""
+    content = (PUBLIC_DIR / "main.js").read_text()
+    assert "searchParams.get('date')" in content

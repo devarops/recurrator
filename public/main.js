@@ -181,6 +181,10 @@ function sha256Hex(str) {
 }
 
 function getTodayISO() {
+    const pinned = new URL(window.location).searchParams.get('date');
+    if (pinned && /^\d{4}-\d{2}-\d{2}$/.test(pinned)) {
+        return pinned;
+    }
     return new Intl.DateTimeFormat('en-CA', {
         timeZone: 'America/Los_Angeles',
         year: 'numeric',

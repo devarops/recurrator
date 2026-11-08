@@ -13,7 +13,9 @@ all: check coverage mutants
 		setup \
 		test-cli \
 		tests \
-		verify
+		verify \
+		visual \
+		visual-check
 
 module = recurrator
 codecov_token = 39e783f6-020b-4e84-b333-2f8a40f9df2b
@@ -87,6 +89,12 @@ test-cli:
 
 verify:
 	qed verify specs
+
+visual:
+	python tests/visual/capture.py
+
+visual-check:
+	python tests/visual/capture.py --check
 
 red: format
 	pytest --verbose --ignore-glob='*_acceptance_*.py' \

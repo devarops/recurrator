@@ -89,9 +89,9 @@ The `develop` service shares the production-data mount with `api` and `cli`. `ma
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest unit tests), `test-cli` (ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed acceptance tests, inside the develop image).
+**Useful make targets:** `tests` (pytest unit tests), `test-cli` (ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed acceptance tests, inside the develop image), `visual` (capture approval screenshots into `tests/visual/received`), `visual-check` (capture twice and confirm the screenshots are identical).
 
-`pyproject.toml` declares only `typer`. `fastapi`, `uvicorn` and `requests` come from `Dockerfile`; `black`, `flake8`, `mypy`, `pylint`, `pytest`, `pytest-cov`, `mutmut`, `frictionless`, `httpx` and ShellSpec come from `Dockerfile.dev`. A native install needs both lists.
+`pyproject.toml` declares only `typer`. `fastapi`, `uvicorn` and `requests` come from `Dockerfile`; `black`, `flake8`, `mypy`, `pylint`, `playwright`, `pytest`, `pytest-cov`, `mutmut`, `frictionless`, `httpx` and ShellSpec come from `Dockerfile.dev`. A native install needs both lists.
 
 `make tests` is the unit suite, `make check` the gate, and `make verify` runs the qed acceptance tests inside the develop image. CI runs all three in the develop image; `coverage` and `mutants` report and do not gate the publish.
 
