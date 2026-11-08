@@ -80,7 +80,6 @@ When two otherwise identical tasks have last updates a year apart, reading
 both at the same reference date shows the older task with the larger rating
 deviation, and both stay within 45 and 500.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_inactivity_growth"
