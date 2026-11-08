@@ -26,7 +26,7 @@ The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**
 
 **Naming conventions in `compute.py`:** Pure functions use `reference_date` (not `today`) for the cut-off/current date parameter, and `is_*` prefix for boolean-returning functions.
 
-**Visual approval:** `tests/visual/capture.py` lists the scenarios; `make visual` rewrites `received/` and the human approves by copying into `approved/`. `tests/visual/specs/recurrator-frontend-spec.md` is the only reference, the mockups are retired, and `.opencode/commands/approval-testing.md` runs the comparison. `renderMarkdown` decodes the CSV's literal `\n` before parsing.
+**Visual approval:** `tests/visual/capture.py` lists the scenarios; `make visual` rewrites `received/` and the human approves. The local `ui-red`, `ui-green`, `ui-refactor`, and `ui-approve` commands run the frontend TDD loop; `ui-approve` requires a fresh capture, runs the three suites, writes `tests/visual/review.html`, and on approval copies `received/` into `approved/` and updates the spec and styleguide in the same commit. `tests/visual/specs/recurrator-frontend-spec.md` is the only reference, the mockups are retired, and the browser tests, approved PNGs, spec, and styleguide must agree. `renderMarkdown` decodes the CSV's literal `\n` before parsing.
 
 ## TDD Cycle
 

@@ -2,3 +2,4 @@
 .OPEN.md
 recurrator/_*
 /tests/visual/received/
+/tests/visual/review.html
