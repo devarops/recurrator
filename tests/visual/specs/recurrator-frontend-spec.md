@@ -32,7 +32,7 @@ public/
   index.html            → scope matrix (NEW; was the context list)
   scope.html            → context list, scaffolded with ?scope=  (NEW, replaces old index.html)
   context.html          → task list (kept, restyled)
-  task.html             → monster card (kept, restyled)
+  task.html             → monster card plus the shared page header (kept, restyled)
   ui.js                 → every render* function (designer owns this file)
   main.js               → data flow, URLs, params, POST (designer does NOT open this file)
   styles/tokens.css     → :root custom properties only
@@ -67,12 +67,13 @@ ui.renderMarkdown(md)                                          // description �
 ui.renderSkeleton(kind)                                        // 'tiles' | 'grid' | 'list' | 'card'
 ui.renderEmpty(kind, ctx)                                      // 'grid' | 'list'
 ui.renderError(err)                                            // never prints raw error text
+ui.renderBreadcrumb(items)                                     // shared page header trail
 ui.accentFor(name)                                             // → 'orange' | 'yellow' | … (hashed)
 ui.monsterTitle(description)                                   // first 3 words, markdown-stripped
 ui.dueState(task)                                              // → 'due' | 'not-due'
 ```
 
-`main.js` keeps: URL building, `csv` passthrough, `getTodayISO()`, `sha256Hex` (unused now), `POST /done`, and the `initPage()` dispatch (add a `#scopes` branch). All rendered markup lives in `ui.*`; `main.js` assigns those strings and wires events.
+`main.js` keeps: URL building, `csv` passthrough, `getTodayISO()`, the breadcrumb item data, `POST /done`, and the `initPage()` dispatch. All rendered markup lives in `ui.*`; `main.js` assigns those strings and wires events.
 
 ---
 
@@ -82,19 +83,23 @@ ui.dueState(task)                                              // → 'due' | 'n
 - No responsive breakpoints. The only media query is `prefers-reduced-motion` (§11).
 - `padding-top: max(20px, env(safe-area-inset-top))`, `padding-bottom: max(20px, env(safe-area-inset-bottom))`.
 - Page background: vertical gradient `#f6ecc9 → #f2e5bc → #ebdbb2`.
-- Body text never below 11px; every tappable target ≥ 44×44 CSS px.
+- Body text never below 11px; the 1-unit task oval is the documented 10px exception. Every tappable target ≥ 44×44 CSS px.
+- Breadcrumb trail: a 12-unit row with 4px gaps; each oval is 24px high; the ancestor links use the 44px row height as their target (§5).
 
 ### Element sizes
 
 | Element | CSS px |
 |---|---|
-| Page title | 28 |
+| Page title (styleguide only) | 28 |
 | Scope tile title | 25 |
 | Monster card title | 23 |
 | Section header | 14 |
 | Body / row title | 15 |
 | Secondary | 12 |
 | Micro-label | **11** |
+| Task oval label | **10** |
+| Breadcrumb row | 44 |
+| Breadcrumb oval | 24 |
 | Page gutter | 20 |
 | Home tile | 171×308 |
 | Context card | 171×87 |
@@ -133,7 +138,7 @@ ui.dueState(task)                                              // → 'due' | 'n
   --border-card:1.5px solid rgba(60,56,54,.16);
 
   --fs-1:28px; --fs-2:25px; --fs-3:23px; --fs-4:16px;
-  --fs-5:15px; --fs-6:14px; --fs-7:12px; --fs-8:11px;
+  --fs-5:15px; --fs-6:14px; --fs-7:12px; --fs-8:11px; --fs-9:10px;
 
   --font-sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --font-mono:ui-monospace,"SF Mono",Menlo,monospace;
@@ -156,14 +161,15 @@ context.html?context=<name>         → task list for that context
 task.html?id=<id>                   → monster card
 ```
 
-- All four scope tiles are **live links** and send `?scope=<value>`. `scope.html` reads the param, uses it for the title, and **does not filter** (§12, stub S1).
-- Breadcrumbs: `Recurrator / <Scope> / <Context> / #<id>`, first three items are links, current page is muted.
+- All four scope tiles are **live links** and send `?scope=<value>`. `scope.html` reads the param, uses it for the scope oval label, and **does not filter** (§12, stub S1).
+- Breadcrumbs: one row of equal-height ovals. Home `Recurrator` (12 units); scope `Recurrator / <Scope>` (3 + 9); context `Recurrator / <Scope> / <Context>` (3 + 2 + 7); card `Recurrator / <Scope> / <Context> / #<id>` (3 + 2 + 6 + 1). The last oval present absorbs the units of the missing descendants; the current page is the filled last oval, the ancestors are links. The row has 4px gaps, 24px-high ovals, and no separators.
+- Oval recipe: 12px sans with 10px horizontal padding; the 2-unit scope ancestor uses 12px with 2px padding, and the 1-unit task oval uses 10px mono with 2px padding. Ancestors use `--c-surface` fill and `--c-blue` text; the current page uses `--c-ink` fill and cream text. There is no border. The row is 44px tall and the ancestor links are the targets.
 
 ---
 
 ## 6. Screen 1 — Scope matrix (New `index.html`)
 
-**Header:** `Recurrator` (28px/700) · subtitle `Pick a scope to start` (12px, `--c-muted`).
+**Header:** the breadcrumb trail's only oval, `Recurrator`, filled and 12 units wide. There is no subtitle.
 
 **Content:** 2×2 grid of tiles, gap 10px, tile 171×308, radius 34px, `--c-surface`, `--border-card`, `--shadow-tile`.
 
@@ -185,7 +191,7 @@ Tiles and their accents: Work (💼, blue), Personal (🏡, green), Both (🔀, 
 
 ## 7. Screen 2 — Context list (New `scope.html`)
 
-**Header:** home glyph button 32px (→ `index.html`) + title = scope display name (`All`, `Work`, `Personal`, `Both`; default `All` when the param is missing or unrecognised). Subtitle: `n contexts due` or `Victorious`.
+**Header:** `Recurrator` (3 units, link) + the scope display name (9 units, filled current). The label is `All`, `Work`, `Personal`, or `Both`; default `All` when the param is missing or unrecognised. There is no home glyph, subtitle, or count.
 
 **Content:** 2-column grid, gap 10px, card 171×87, radius 18px, `--c-surface`, `--border-card`, `--shadow-card`.
 
@@ -198,7 +204,7 @@ Tiles and their accents: Work (💼, blue), Personal (🏡, green), Both (🔀, 
 
 ## 8. Screen 3 — Task list (`context.html`)
 
-**Header:** breadcrumb `Recurrator / <Scope> / <Context>`; `<h1>` = context name (28px).
+**Header:** `Recurrator` (3 units, link) + `<Scope>` (2 units, link) + `<Context>` (7 units, filled current). There is no separate `<h1>`; the filled context oval is the page identity.
 
 **Content:** single-column rows, gap 9px, row ≈ 64px, radius 18px, `--c-surface`. Sorted by `coins` **descending** (unchanged from today).
 
@@ -210,7 +216,7 @@ Tiles and their accents: Work (💼, blue), Personal (🏡, green), Both (🔀, 
 
 ## 9. Screen 4 — Monster card (`task.html`)
 
-**Breadcrumb:** `Recurrator / <Scope> / <Context> / #<id>`.
+**Header:** mounted in `task.html` as `#pageHeader`: `Recurrator` (3 units, link) + `<Scope>` (2 units, link) + `<Context>` (6 units, link) + `#<id>` (1 unit, filled current, 10px mono). The card itself has no breadcrumb. The ID also appears in the `No. <id>` badge and the microtext.
 
 **Card:** 327 wide and at least 458 high, radius 26px, `--c-surface`, `--border-card`, `--shadow-card`, frame 6px inset in the **state** colour (§10.4), plus a 1px hairline inset 2px.
 
@@ -285,7 +291,7 @@ Dates in the stat grid stay **ISO** (`2026-08-10`) — the status line is the hu
 
 ## 11. Accessibility
 
-- Every target ≥ 44×44 CSS px. The home glyph and chevrons get invisible padding to reach it.
+- Every target ≥ 44×44 CSS px. The breadcrumb row is 44px tall; the Recurrator, Scope, and Context ancestor cells are at least 44px wide. The current ovals and the 1-unit task oval are not links. The current page carries `aria-current="page"`.
 - Star badge: `aria-label="Starred"` / `aria-label="Not starred"`; not a button.
 - Decorative discs, dots, chevrons: `aria-hidden="true"`.
 - Contrast: `--c-ink` on `--c-surface` = 8.6:1. `--c-muted` on `--c-surface` = 4.6:1 (body ok, not for 11px labels — those use `--c-ink-2` or `--c-faint` only for non-essential text). Verify every pairing before handoff.
@@ -299,13 +305,12 @@ Dates in the stat grid stay **ISO** (`2026-08-10`) — the status line is the hu
 
 | # | Stub | Where | Replace with |
 |---|---|---|---|
-| S1 | `?scope=` is read but never filters; page only changes its title | `main.js: getAllContexts()` | filter by `context.scope` |
+| S1 | `?scope=` is read but never filters; the scope oval label changes | `main.js: applyScope()` | filter by `context.scope` |
 | S2 | Placeholder PNG for every monster | `ui.js` | sprite/art lookup |
 | S3 | Bounty badge is a status indicator, not a star toggle | `ui.renderMonsterCard` | `PATCH /task/{id}/star` |
 | S4 | `Edit monster` is `aria-disabled="true"`, no handler | `ui.renderMonsterCard` | `edit.html` + `PATCH /task/{id}` |
 | S5 | Check lists toggle in memory only | `ui.renderMarkdown` | `PATCH /task/{id}` notes |
 | S6 | Context roster/emoji map is hardcoded | `ui.js: CONTEXT_META` | derive from API |
-| S7 | `sha256Hex` remains in `main.js`, now unused | `main.js` | delete |
 
 S1 is gated by one exported constant so the future flip is obvious. S2–S4 stay documented stubs with their own replacement points:
 ```js
@@ -326,18 +331,21 @@ Must show, each labelled:
 7. Markdown rendering — all seven supported constructs.
 8. Buttons — primary, saving, done, secondary-disabled.
 9. Skeleton, empty, error.
+10. Breadcrumb — home, scope, context, card trails; current/ancestor; long `Personal` and `doctoradoadmin`; `#999` task.
 
 ---
 
 ## 14. Definition of done
 
 1. Four screens render at 393px with no horizontal scroll and nothing clipped.
-2. `grep -E "#[0-9a-fA-F]{3,6}" styles/components.css styles/pages.css` → no results.
-3. No network requests except the API (no CDN, no fonts, no Gravatar) — verified in DevTools.
-4. Every state in §13 visually verified.
-5. All targets ≥44px; contrast checked; keyboard focus visible.
-6. `main.js` may add the page initialisers and data flow the new information architecture needs. No rendering logic may live in it.
-7. `<meta name="viewport">` present in all four HTML files; Pico `<link>` gone.
+2. The four headers use the 12-unit oval trail: home 12; scope 3+9; context 3+2+7; card 3+2+6+1. The card header is in `#pageHeader`; there is no home glyph, page title, subtitle, or header count.
+3. `grep -E "#[0-9a-fA-F]{3,6}" styles/components.css styles/pages.css` → no results.
+4. No network requests except the API (no CDN, no fonts, no Gravatar) — verified in DevTools.
+5. Every state in §13 visually verified.
+6. All targets ≥44px; the breadcrumb ancestor links meet 44×44; contrast checked; keyboard focus visible.
+7. `main.js` may add the page initialisers and data flow the new information architecture needs. No rendering logic may live in it.
+8. `<meta name="viewport">` present in all four HTML files; Pico `<link>` gone.
+9. The current page oval is filled and every ancestor is a link; `Personal` fits the 2-unit scope oval and `#999` fits the 1-unit task oval.
 
 ---
 

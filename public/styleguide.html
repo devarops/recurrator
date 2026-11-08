@@ -29,6 +29,7 @@
             <p class="sg-type" style="font-size: var(--fs-5)">Body 15</p>
             <p class="sg-type" style="font-size: var(--fs-7); color: var(--c-muted)">Secondary 12</p>
             <p class="sg-type" style="font-family: var(--font-mono); font-size: var(--fs-8); color: var(--c-faint)">MICRO 11</p>
+            <p class="sg-type" style="font-family: var(--font-mono); font-size: var(--fs-9); color: var(--c-faint)">TASK OVAL 10</p>
         </section>
 
         <section>
@@ -80,6 +81,11 @@
                 <div class="sg-frame" id="sg-empty"></div>
                 <div class="sg-frame" id="sg-error"></div>
             </div>
+        </section>
+
+        <section>
+            <h2>10. Breadcrumb</h2>
+            <div id="sg-breadcrumbs" style="display: grid; gap: 18px"></div>
         </section>
     </main>
 
@@ -152,8 +158,6 @@
             coins: 22,
             starred: false,
             today: '2026-08-10',
-            scopeLabel: 'All',
-            links: { home: '#', scope: '#', context: '#' },
             description:
                 'Revisar presión y dibujo de las cuatro llantas, incluyendo la de repuesto.\n\n' +
                 '- [x] Delantera izquierda\n- [ ] Delantera derecha',
@@ -194,6 +198,54 @@
         document.getElementById('sg-empty').innerHTML =
             ui.renderEmpty('grid') + ui.renderEmpty('list', { backHref: '#', backLabel: 'All' });
         document.getElementById('sg-error').innerHTML = ui.renderError();
+
+        document.getElementById('sg-breadcrumbs').innerHTML = [
+            ['home', [{ label: 'Recurrator' }]],
+            ['scope', [{ label: 'Recurrator', href: '#' }, { label: 'All' }]],
+            [
+                'context',
+                [
+                    { label: 'Recurrator', href: '#' },
+                    { label: 'All', href: '#' },
+                    { label: 'chores' },
+                ],
+            ],
+            [
+                'card',
+                [
+                    { label: 'Recurrator', href: '#' },
+                    { label: 'All', href: '#' },
+                    { label: 'casa', href: '#' },
+                    { label: '#1' },
+                ],
+            ],
+            [
+                'context — long names',
+                [
+                    { label: 'Recurrator', href: '#' },
+                    { label: 'Personal', href: '#' },
+                    { label: 'doctoradoadmin' },
+                ],
+            ],
+            [
+                'card — 3-digit ID',
+                [
+                    { label: 'Recurrator', href: '#' },
+                    { label: 'All', href: '#' },
+                    { label: 'casa', href: '#' },
+                    { label: '#999' },
+                ],
+            ],
+        ]
+            .map(
+                ([label, items]) =>
+                    '<div><p class="subtitle">' +
+                    label +
+                    '</p>' +
+                    ui.renderBreadcrumb(items) +
+                    '</div>'
+            )
+            .join('');
     </script>
 </body>
 </html>
