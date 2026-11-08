@@ -191,29 +191,20 @@ def compute_match_updates(
 
     completed_id = completed_task.id
     opponent_ids = [task.id for task in opponents]
+    updates: dict[int, tuple[int, int]] = {}
 
-    completed_player = players[completed_id]
-    completed_player.update_player(
-        [pre_ratings[task_id] for task_id in opponent_ids],
-        [pre_deviations[task_id] for task_id in opponent_ids],
-        [0.0] * len(opponent_ids),
-    )
-
-    updates = {
-        completed_id: (
-            round(completed_player.getRating()),
-            round(completed_player.getRd()),
+    def play(
+        task_id: int, opponents_for_task: list[int], outcomes: list[float]
+    ) -> None:
+        player = players[task_id]
+        player.update_player(
+            [pre_ratings[opponent_id] for opponent_id in opponents_for_task],
+            [pre_deviations[opponent_id] for opponent_id in opponents_for_task],
+            outcomes,
         )
-    }
+        updates[task_id] = (round(player.getRating()), round(player.getRd()))
+
+    play(completed_id, opponent_ids, [0.0] * len(opponent_ids))
     for opponent_id in opponent_ids:
-        opponent_player = players[opponent_id]
-        opponent_player.update_player(
-            [pre_ratings[completed_id]],
-            [pre_deviations[completed_id]],
-            [1.0],
-        )
-        updates[opponent_id] = (
-            round(opponent_player.getRating()),
-            round(opponent_player.getRd()),
-        )
+        play(opponent_id, [completed_id], [1.0])
     return updates
