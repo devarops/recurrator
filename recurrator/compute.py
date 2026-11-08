@@ -137,3 +137,10 @@ def filter_n_tasks_by_context(
 def filter_one_extra_task(tasks: list[Task], context: Context, reference_date: date) -> list[Task]:
     """Return one upcoming task to pad the list when fewer than 6 tasks are due."""
     return []
+
+
+def compute_live_rating_deviation(
+    rating_deviation: int, rating_date: date, reference_date: date
+) -> int:
+    """Project an anchored rating deviation to reference_date."""
+    return rating_deviation
