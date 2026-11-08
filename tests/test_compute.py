@@ -454,3 +454,11 @@ def test_compute_live_rating_deviation_clamps_to_maximum():
     anchor = date(2026, 11, 8)
 
     assert rc.compute_live_rating_deviation(600, anchor, anchor) == 500
+
+
+def test_compute_live_rating_deviation_grows_after_elapsed_time():
+    """Verify a later reference date increases the anchored deviation."""
+    anchor = date(2026, 11, 8)
+    later = date(2026, 11, 9)
+
+    assert rc.compute_live_rating_deviation(350, anchor, later) > 350
