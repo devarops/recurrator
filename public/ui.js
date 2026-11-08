@@ -199,11 +199,11 @@
                 }
                 var checked = check[1].toLowerCase() === 'x' ? ' checked' : '';
                 list.items.push(
-                    '<li class="check-item"><input type="checkbox"' +
+                    '<li class="check-item"><label><input type="checkbox"' +
                         checked +
                         '> <span>' +
                         renderInline(check[2]) +
-                        '</span></li>'
+                        '</span></label></li>'
                 );
                 return;
             }

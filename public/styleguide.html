@@ -36,6 +36,7 @@
             <div class="sg-row">
                 <div class="sg-frame"><div class="tile-grid" id="sg-tile-normal"></div></div>
                 <div class="sg-frame"><div class="tile-grid" id="sg-tile-zero"></div></div>
+                <div class="sg-frame"><div class="tile-grid" id="sg-tile-more"></div></div>
             </div>
         </section>
 
@@ -85,7 +86,7 @@
     <script src="ui.js"></script>
     <script>
         const TOKENS = [
-            '--c-bg-0', '--c-bg-1', '--c-bg-2', '--c-bg-3', '--c-bg-4',
+            '--c-bg-0', '--c-bg-1', '--c-bg-2', '--c-bg-3', '--c-bg-4', '--c-bg-page',
             '--c-surface', '--c-ink', '--c-ink-2', '--c-muted', '--c-faint',
             '--c-orange', '--c-yellow', '--c-green', '--c-aqua', '--c-blue',
             '--c-purple', '--c-red', '--state-due', '--state-not-due', '--state-starred',
@@ -111,6 +112,14 @@
             names: [],
             href: '#',
         });
+        document.getElementById('sg-tile-more').innerHTML = ui.renderScopeTile({
+            scope: 'both',
+            label: 'Both',
+            emoji: '🔀',
+            dueCount: 6,
+            names: ['Activity', 'Chores', 'GECI Code', 'Bycatch Code'],
+            href: '#',
+        });
 
         document.getElementById('sg-context').innerHTML = ui.renderScopeGrid([
             { name: 'chores', href: '#' },
@@ -123,12 +132,14 @@
             { name: 'bycatchcode', href: '#' },
             { name: 'gecicode', href: '#' },
             { name: 'telefono', href: '#' },
+            { name: 'lectura', href: '#' },
         ], 'all');
 
         document.getElementById('sg-rows').innerHTML = ui.renderTaskList([
             { id: 17, description: 'Checar llantas carro', coins: 22, href: '#' },
             { id: 18, description: 'Recoger basura de los tambos de afuera', coins: 48, href: '#' },
             { id: 19, description: 'Limpiar refri', coins: 35, href: '#' },
+            { id: 20, description: 'Lavar uniformes taekwondo', coins: 14, href: '#' },
         ]);
 
         const base = {
