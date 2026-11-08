@@ -239,7 +239,6 @@
   align-items: center;
   min-width: 0;
   min-height: 44px;
-  color: var(--c-blue);
   text-decoration: none;
 }
 .breadcrumb__item:focus-visible {
@@ -263,9 +262,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.breadcrumb__item--current {
-  color: var(--c-bg-0);
 }
 .breadcrumb__item--current .breadcrumb__oval {
   background: var(--c-ink);
