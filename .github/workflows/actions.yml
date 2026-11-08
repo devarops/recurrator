@@ -35,6 +35,7 @@ jobs:
         docker compose --profile develop exec -T develop make setup
         docker compose --profile develop exec -T develop make check
         docker compose --profile develop exec -T develop make tests
+        docker compose --profile develop exec -T develop make test-frontend
         docker compose --profile develop exec -T develop make coverage
 
     # Before mutants, because `make mutants` depends on `setup`, whose `clean`

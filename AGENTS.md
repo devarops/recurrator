@@ -39,7 +39,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs the pytest unit tests; `make test-cli` runs ShellSpec; `make verify` runs the qed acceptance criteria. `tests/test_frontend.py` checks static markers, and `tests/test_api.py::test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. CLI tests need the compose `api` service.
+Run one test with `pytest tests/test_api.py::test_get_due_contexts`, or one ShellSpec example with `shellspec spec/create_config_spec.sh`. `make tests` runs the pytest unit tests; `make test-cli` runs ShellSpec; `make test-frontend` runs the Playwright browser suite in `tests/browser`; `make verify` runs the qed acceptance criteria. `tests/test_frontend.py` checks static markers, and `tests/test_api.py::test_frontend_is_served_from_the_api_app` checks the served index and JavaScript. The browser suite starts its own API on an ephemeral port and copies the fixture per test; run one case with `RUN_BROWSER=1 pytest tests/browser/test_home.py::test_all_tile_shows_due_contexts`. CLI tests need the compose `api` service.
 
 ## Data Modeling & CSV Mapping
 
@@ -89,7 +89,7 @@ The `develop` service shares the production-data mount with `api` and `cli`. `ma
 
 **TZ=America/Los_Angeles** in Dockerfile. `POST /task/{id}/done` uses `date.today()` reflecting this timezone. Do not change without updating all date-dependent assertions.
 
-**Useful make targets:** `tests` (pytest unit tests), `test-cli` (ShellSpec), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed acceptance tests, inside the develop image), `visual` (capture approval screenshots into `tests/visual/received`), `visual-check` (capture twice and confirm the screenshots are identical).
+**Useful make targets:** `tests` (pytest unit tests), `test-cli` (ShellSpec), `test-frontend` (Playwright browser suite), `check` (lint + typecheck + test data validation), `coverage`, `mutants` (mutation testing via mutmut), `check_data` (Frictionless Data validation), `format` (black formatter), `setup` (`clean` + `install`), `verify` (qed acceptance tests, inside the develop image), `visual` (capture approval screenshots into `tests/visual/received`), `visual-check` (capture twice and confirm the screenshots are identical).
 
 `pyproject.toml` declares only `typer`. `fastapi`, `uvicorn` and `requests` come from `Dockerfile`; `black`, `flake8`, `mypy`, `pylint`, `playwright`, `pytest`, `pytest-cov`, `mutmut`, `frictionless`, `httpx` and ShellSpec come from `Dockerfile.dev`. A native install needs both lists.
 

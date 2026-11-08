@@ -12,6 +12,7 @@ all: check coverage mutants
 		mutants \
 		setup \
 		test-cli \
+		test-frontend \
 		tests \
 		verify \
 		visual \
@@ -56,7 +57,7 @@ clean:
 	rm --force ${module}/_config.py
 
 coverage: setup
-	pytest --cov=${module} --cov-report=xml --verbose && \
+	pytest --cov=${module} --cov-report=xml --verbose --ignore=tests/browser && \
 	coverage report --show-missing
 
 format:
@@ -82,10 +83,13 @@ mutants: setup
 setup: clean install
 
 tests:
-	pytest --verbose tests --ignore-glob='*_acceptance_*.py'
+	pytest --verbose tests --ignore-glob='*_acceptance_*.py' --ignore=tests/browser
 
 test-cli:
 	shellspec
+
+test-frontend:
+	RUN_BROWSER=1 pytest --verbose tests/browser
 
 verify:
 	qed verify specs

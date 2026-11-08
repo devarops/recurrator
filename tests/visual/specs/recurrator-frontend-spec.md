@@ -245,7 +245,7 @@ function accentFor(name){
   return ACCENTS[s % 7];
 }
 ```
-`activity` → 116 → `blue`. Deterministic, no storage. Adjacent cards may collide; that is accepted, not a bug.
+`activity` → 877 → `green`. Deterministic, no storage. Adjacent cards may collide; that is accepted, not a bug.
 
 ### 10.2 Title from description
 1. Strip markdown syntax and leading list markers / numbering.
