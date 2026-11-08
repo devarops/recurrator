@@ -49,7 +49,6 @@ description = """
 When two participants have different ratings, the stored results match a
 simultaneous update rather than a sequential one.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_simultaneous_update"
