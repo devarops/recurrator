@@ -271,20 +271,6 @@ function initTaskPage() {
     loadTask(taskId, taskElement, errorElement);
 }
 
-function sha256Hex(value) {
-    if (!window.crypto || !window.crypto.subtle) {
-        return Promise.resolve(null);
-    }
-    const encoder = new TextEncoder();
-    const data = encoder.encode(value);
-    return window.crypto.subtle.digest('SHA-256', data).then((buffer) => {
-        const bytes = new Uint8Array(buffer);
-        return Array.from(bytes)
-            .map((byte) => byte.toString(16).padStart(2, '0'))
-            .join('');
-    });
-}
-
 function initPage() {
     if (document.getElementById('scopes')) {
         initHomePage();
