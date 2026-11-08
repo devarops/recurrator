@@ -32,9 +32,7 @@ body {
 }
 
 /* Headers */
-#pageHeader {
-  margin: 4px 0 18px;
-}
+#pageHeader,
 .page-header {
   margin: 4px 0 18px;
 }
