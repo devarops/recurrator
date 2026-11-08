@@ -148,7 +148,6 @@ def compute_live_rating_deviation(
     anchored_deviation: int, rating_date: date, reference_date: date
 ) -> int:
     """Project an anchored rating deviation to reference_date."""
-    live_deviation = anchored_deviation
-    if reference_date > rating_date:
-        live_deviation += 1
+    elapsed_days = max((reference_date - rating_date).days, 0)
+    live_deviation = anchored_deviation + elapsed_days
     return min(max(live_deviation, GLICKO_RD_MIN), GLICKO_RD_MAX)
