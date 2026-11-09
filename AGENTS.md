@@ -7,7 +7,7 @@ The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**
 
 **Layered Module Structure (strict one-way dependencies):**
 - `models.py` — domain data structures. Zero external dependencies.
-- `compute.py` — pure business logic. Depends only on `models`.
+- `compute.py` — pure business logic. Depends on `models`, the generated `_config` constants, and `glicko2`.
 - `io.py` — persistence. Depends on `compute` and `models`.
 - `api.py` / `cli.py` — interfaces. Depend on `io`.
 
@@ -18,7 +18,7 @@ The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**
 - Single-responsibility endpoints: list endpoints return identities, detail endpoints return attributes.
 - Action responses return confirmation subsets (`id` + changed fields), not full resources.
 - Error envelope: `{"error": "<message>"}`; non-200 responses use `JSONResponse(content=..., status_code=N)`, not a returned `(dict, int)`, which serializes as a JSON array.
-- CLI tabular output MUST be valid CSV (header + data rows); non-tabular output uses JSON.
+- CLI tabular output MUST be valid CSV (header + data rows); non-tabular output uses JSON, except informational and version messages, which may use plain text.
 
 **Documentation:** `DOCS.md` lists the HTTP API only; describe the frontend and CLI in `README.md`. `CHANGELOG.md` records only endpoint changes.
 
