@@ -72,8 +72,8 @@ def filter_due_tasks_by_context(
     Returns only tasks whose context matches and whose due date
     is on or before the reference date.
     """
-    due_tasks = filter_due_tasks(tasks, reference_date)
-    return [task for task in due_tasks if task.context == context]
+    context_tasks = filter_all_tasks_by_context(tasks, context)
+    return filter_due_tasks(context_tasks, reference_date)
 
 
 def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]:
