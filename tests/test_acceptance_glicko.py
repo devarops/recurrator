@@ -163,3 +163,15 @@ def test_glicko_default_date_projection(tmp_path):
     assert undated.status_code == 200
     assert dated.status_code == 200
     assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
+
+
+def test_glicko_completion_anchor(tmp_path):
+    """A completion moves the anchor so the next undated read matches."""
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
+
+    completed = client.post(f"/task/8/done?csv={csv_path}")
+    assert completed.status_code == 200
+
+    undated = client.get(f"/task/8?csv={csv_path}")
+
+    assert undated.json()["rating_deviation"] == completed.json()["rating_deviation"]
