@@ -84,7 +84,6 @@ description = """
 When a task is read without a date, its rating deviation equals the value
 returned when the same task is read with today as the date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_default_date_projection"
