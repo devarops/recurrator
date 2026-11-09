@@ -56,7 +56,6 @@ description = """
 When a task is completed in one context, tasks in another context keep their
 ratings.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_context_isolation"
