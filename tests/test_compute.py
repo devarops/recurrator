@@ -518,3 +518,10 @@ def test_build_synthetic_opponent_has_no_task_id():
     opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
 
     assert opponent.id is None
+
+
+def test_compute_elapsed_rating_periods_for_a_year():
+    """Verify a year becomes fractional rating periods."""
+    periods = rc.compute_elapsed_rating_periods(date(2025, 11, 8), date(2026, 11, 8))
+
+    assert periods == 365 * 0.21436
