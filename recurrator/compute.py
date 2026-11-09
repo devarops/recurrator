@@ -162,14 +162,10 @@ def filter_one_extra_task(tasks: list[Task], context: Context, reference_date: d
     return []
 
 
-def _elapsed_days(rating_date: date, reference_date: date) -> int:
-    """Return the whole days since the anchor, never negative."""
-    return max((reference_date - rating_date).days, 0)
-
-
 def compute_elapsed_rating_periods(rating_date: date, reference_date: date) -> float:
     """Return the fractional rating periods elapsed, never negative."""
-    return _elapsed_days(rating_date, reference_date) * GLICKO_RATING_PERIODS_PER_DAY
+    elapsed_days = max((reference_date - rating_date).days, 0)
+    return elapsed_days * GLICKO_RATING_PERIODS_PER_DAY
 
 
 def compute_live_rating_deviation(
