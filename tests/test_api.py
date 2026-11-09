@@ -301,6 +301,16 @@ def test_get_task_by_id_projects_rating_deviation():
     assert response.json()["rating_deviation"] > 350
 
 
+def test_get_task_by_id_projects_deviation_to_today():
+    """Verify GET /task/{id} without a date projects the deviation to today."""
+    fixture = "tests/data/acceptance_glicko_default_date_projection.csv"
+
+    undated = client.get(f"/task/1?csv={fixture}")
+    dated = client.get(f"/task/1?csv={fixture}&date={date.today().isoformat()}")
+
+    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
+
+
 def test_task_done_rating(tmp_path):
     """Verify POST /task/{id}/done returns the task rating."""
     csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
