@@ -175,3 +175,12 @@ def test_glicko_completion_anchor(tmp_path):
     undated = client.get(f"/task/8?csv={csv_path}")
 
     assert undated.json()["rating_deviation"] == completed.json()["rating_deviation"]
+
+
+def test_glicko_deviation_growth():
+    """A year without a match projects the deviation to 362."""
+    fixture = "tests/data/acceptance_glicko_deviation_growth.csv"
+
+    response = client.get(f"/task/1?csv={fixture}&date=2026-11-08")
+
+    assert response.json()["rating_deviation"] == 362
