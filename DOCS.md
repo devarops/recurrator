@@ -76,4 +76,4 @@ Marks a task as completed on the server's current date.
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 409 when the task was completed on the current date or the previous day; the body contains an `error` message
-- **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date and also updates the rating and deviation of the other tasks in the same context.
+- **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date, also updates the rating and deviation of the other tasks in the same context, and anchors the updated deviations to the completion date.
