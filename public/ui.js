@@ -520,23 +520,18 @@
             escapeHtml(task.context) +
             '</span><img class="art-panel__monster" src="monster-placeholder.png" alt="" width="139" height="139">' +
             '<span class="art-panel__shadow" aria-hidden="true"></span>' +
-            '<span class="no-badge">No. ' +
-            task.id +
-            '</span></div>' +
+            '<span class="rating-badge">' +
+            '<span class="visually-hidden">Rating </span>' +
+            '<span class="rating-badge__value">' +
+            task.rating +
+            '</span></span></div>' +
             '<div class="stat-grid">' +
             stats +
             '</div>' +
             statusLine +
             '<div class="description">' +
             renderMarkdown(task.description) +
-            '</div>' +
-            '<p class="microtext">RCR-' +
-            String(task.id).padStart(3, '0') +
-            ' · ' +
-            escapeHtml(task.context) +
-            ' · ' +
-            task.recurrence_days +
-            'd</p></article>' +
+            '</div></article>' +
             '<div class="actions"><button' +
             buttonId +
             ' class="' +

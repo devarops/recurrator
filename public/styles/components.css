@@ -7,6 +7,19 @@
 .accent-purple { --accent: var(--c-purple); }
 .accent-red { --accent: var(--c-red); }
 
+/* Visually hidden text for assistive technology. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Icon disc */
 .disc {
   display: grid;
@@ -438,7 +451,7 @@
   font-size: var(--fs-7);
   font-weight: 600;
 }
-.no-badge {
+.rating-badge {
   position: absolute;
   right: 10px;
   bottom: 10px;
@@ -553,15 +566,6 @@
   font-family: var(--font-mono);
   font-size: 0.95em;
 }
-.microtext {
-  margin: auto 0 0;
-  padding-top: 6px;
-  font-family: var(--font-mono);
-  font-size: var(--fs-8);
-  color: var(--c-faint);
-  text-align: right;
-}
-
 /* Actions */
 .actions {
   display: flex;
