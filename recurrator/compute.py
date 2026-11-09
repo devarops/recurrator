@@ -204,7 +204,7 @@ def compute_match_updates(
     completed_task: Task,
     opponents: Sequence[Task | SyntheticOpponent],
     reference_date: date,
-) -> dict[int | None, tuple[int, int]]:
+) -> dict[int, tuple[int, int]]:
     """Return simultaneous rating and deviation updates for one completion."""
     participants: list[Task | SyntheticOpponent] = [completed_task, *opponents]
     players: dict[int | None, _GlickoPlayer] = {
@@ -219,11 +219,9 @@ def compute_match_updates(
 
     completed_id = completed_task.id
     opponent_ids: list[int | None] = [task.id for task in opponents]
-    updates: dict[int | None, tuple[int, int]] = {}
+    updates: dict[int, tuple[int, int]] = {}
 
-    def play(
-        task_id: int | None, opponents_for_task: list[int | None], outcomes: list[float]
-    ) -> None:
+    def play(task_id: int, opponents_for_task: Sequence[int | None], outcomes: list[float]) -> None:
         player = players[task_id]
         player.update_player(
             [snapshot_ratings[opponent_id] for opponent_id in opponents_for_task],
@@ -236,5 +234,7 @@ def compute_match_updates(
     opponent_outcomes = [1.0]
     play(completed_id, opponent_ids, completed_outcomes)
     for opponent_id in opponent_ids:
+        if opponent_id is None:
+            continue
         play(opponent_id, [completed_id], opponent_outcomes)
     return updates

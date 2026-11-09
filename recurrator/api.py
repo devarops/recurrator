@@ -129,8 +129,6 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     opponents = compute.select_opponents(tasks, current_task, today)
     updates = compute.compute_match_updates(current_task, opponents, today)
     for updated_id, (rating, rating_deviation) in updates.items():
-        if updated_id is None:
-            continue
         io.update_task_rating(updated_id, rating, csv_path)
         io.update_task_rating_deviation(updated_id, rating_deviation, csv_path)
 
