@@ -68,3 +68,33 @@ deviation, and both stay within 45 and 500.
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_inactivity_growth"
+
+[[criteria]]
+description = """
+When a task anchored at rating deviation 350 is read one year after its rating
+date, its rating deviation is 362.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_deviation_growth"
+
+[[criteria]]
+description = """
+When a task is read without a date, its rating deviation equals the value
+returned when the same task is read with today as the date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_default_date_projection"
+
+[[criteria]]
+description = """
+When a task is completed, reading it without a date returns the same rating
+deviation as the completion response.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_completion_anchor"

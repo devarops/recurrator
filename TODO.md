@@ -21,7 +21,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 
 ## Glicko rating system
 
-Implement the acceptance criteria in `specs/glicko.spec.toml`. The implementation still uses a linear deviation projection, an all-context opponent selection, and the stored-anchor API default.
+Implement the acceptance criteria in `specs/glicko.spec.toml`. The implementation still uses a linear deviation projection and the stored-anchor API default.
 
 ### Deviation growth
 
@@ -35,14 +35,6 @@ RD = min(max(round(RD), GLICKO_RD_MIN), GLICKO_RD_MAX)
 
 Add `GLICKO_VOLATILITY_DEFAULT = 0.06`, `GLICKO_SCALE = 173.7178`, and `RATING_PERIODS_PER_DAY = 0.21436`, plus `compute_elapsed_rating_periods`. The `_GlickoPlayer` adapter keeps the library from applying step 6 a second time.
 
-### Participation
-
-The event includes every due or overdue task in the completed task's context, plus the completed task even when it was not due. Other not-due tasks stay out. The context page's WIP limit is a display rule only and does not restrict the rating event.
-
-### Match update
-
-When the completed task is alone, add one internal synthetic opponent whose rating and deviation are the live medians of every task in the CSV; `compute_universe_medians` supplies them. Never write the synthetic.
-
 ### Rating-date anchor
 
 After a completion, set `rating_date` to the completion date for the completed task and every real opponent whose rating or deviation changed. Add `update_task_rating_date(task_id, rating_date, csv_path)` in `io.py`, mirroring `update_task_rating` and `update_task_rating_deviation`, and call it from `post_task_done` for each updated id. Keep the per-field writes; do not add the one-pass record function.
@@ -53,11 +45,11 @@ After a completion, set `rating_date` to the completion date for the completed t
 
 ### Tests
 
-Update the unit tests for the step-6 projection, the due/overdue selection, the synthetic medians, and the rating-date anchor.
+Update the unit tests for the step-6 projection, the default read, and the rating-date anchor.
 
-### Data migration
+### Deployment migration
 
-The production migration of `devarops/recurrator.config` remains; run it before deploying the image that reads the columns.
+The production migration of `devarops/recurrator.config` is deployment work; run it before deploying the image that reads the columns.
 
 ## Coins from Glicko rating
 
