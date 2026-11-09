@@ -1,5 +1,7 @@
 import hashlib
 from datetime import date
+from shutil import copyfile
+
 import recurrator.io as io
 
 # Test data constants
@@ -21,6 +23,13 @@ TASK_5_EXPECTED_AFTER_COMPLETION = [
     date(2025, 3, 14),
     date(2026, 5, 4),
 ]
+
+
+def _copy_fixture(fixture, tmp_path):
+    """Copy a task fixture into the test's temporary directory."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile(fixture, csv_path)
+    return csv_path
 
 
 def _get_file_checksum(path: str) -> str:

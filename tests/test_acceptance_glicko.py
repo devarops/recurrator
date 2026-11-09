@@ -1,9 +1,9 @@
 import csv
 from datetime import date
-from shutil import copyfile
 
 from fastapi.testclient import TestClient
 from recurrator.api import app
+from conftest import _copy_fixture
 
 client = TestClient(app)
 
@@ -27,8 +27,7 @@ def test_glicko_integer_contract(tmp_path):
     assert isinstance(task["rating"], int)
     assert isinstance(task["rating_deviation"], int)
 
-    completion_csv = tmp_path / "task.csv"
-    copyfile(FIXTURE, completion_csv)
+    completion_csv = _copy_fixture(FIXTURE, tmp_path)
 
     response = client.post(f"/task/8/done?csv={completion_csv}")
     assert response.status_code == 200
@@ -40,8 +39,7 @@ def test_glicko_integer_contract(tmp_path):
 
 def test_glicko_four_tasks(tmp_path):
     """The completed task loses rating, its three due peers change, and others keep theirs."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/acceptance_glicko_four_tasks.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_four_tasks.csv", tmp_path)
 
     before = _ratings(csv_path, range(1, 7))
 
@@ -59,8 +57,7 @@ def test_glicko_four_tasks(tmp_path):
 
 def test_glicko_early_completion(tmp_path):
     """A not-yet-due completion joins the four due tasks and all five ratings change."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/acceptance_glicko_early_completion.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_early_completion.csv", tmp_path)
 
     before = _ratings(csv_path, range(1, 6))
 
@@ -95,8 +92,7 @@ def test_glicko_inactivity_growth():
 
 def test_glicko_simultaneous_update(tmp_path):
     """Two different ratings match a simultaneous update, not a sequential one."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/acceptance_glicko_simultaneous_update.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_simultaneous_update.csv", tmp_path)
 
     with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)

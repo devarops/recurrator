@@ -1,10 +1,10 @@
 from datetime import date
-from shutil import copyfile
 
 from fastapi.testclient import TestClient
 from recurrator.api import app
 import recurrator.io as io
 from conftest import (
+    _copy_fixture,
     _get_file_checksum,
     _assert_file_unchanged,
     TASK_2_ORIGINAL_DATES,
@@ -12,13 +12,6 @@ from conftest import (
 )
 
 client = TestClient(app)
-
-
-def _copy_fixture(fixture, tmp_path):
-    """Copy a task fixture into the test's temporary directory."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile(fixture, csv_path)
-    return csv_path
 
 
 def test_frontend_is_served_from_the_api_app():
