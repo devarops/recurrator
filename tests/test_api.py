@@ -445,3 +445,13 @@ def test_task_done_changes_solo_rating(tmp_path):
     after = client.get(f"/task/1?csv={csv_path}").json()["rating"]
 
     assert after != before
+
+
+def test_task_done_updates_rating_date_anchor(tmp_path):
+    """Verify a completion moves the completed task's rating anchor to today."""
+    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
+
+    client.post(f"/task/1/done?csv={csv_path}")
+
+    task = io.get_task_by_id(1, csv_path)
+    assert task.rating_date == date.today()
