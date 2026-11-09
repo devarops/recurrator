@@ -37,7 +37,6 @@ description = """
 When the context page holds a single due task, completing it changes its
 rating and no synthetic task appears in the task list.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_solo_completion"
