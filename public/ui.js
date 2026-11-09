@@ -514,13 +514,13 @@
             ' days</p></div>' +
             '<div class="art-panel accent-' +
             accent +
-            '"><span class="context-chip"><span aria-hidden="true">' +
+            '"><span class="context-chip art-panel__pill"><span aria-hidden="true">' +
             (CONTEXT_META[task.context] || '🗂️') +
             '</span>' +
             escapeHtml(task.context) +
             '</span><img class="art-panel__monster" src="monster-placeholder.png" alt="" width="139" height="139">' +
             '<span class="art-panel__shadow" aria-hidden="true"></span>' +
-            '<span class="rating-badge">' +
+            '<span class="rating-badge art-panel__pill">' +
             '<span class="visually-hidden">Rating </span>' +
             '<span class="rating-badge__value">' +
             task.rating +

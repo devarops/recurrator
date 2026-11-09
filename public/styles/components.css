@@ -437,27 +437,27 @@
   filter: blur(1px);
   transform: translateX(-50%);
 }
-.context-chip {
+/* Pills placed over the art panel. */
+.art-panel__pill {
   position: absolute;
+  z-index: 1;
+  border-radius: 999px;
+}
+.context-chip {
   top: 10px;
   left: 10px;
-  z-index: 1;
   display: flex;
   align-items: center;
   gap: 5px;
   padding: 3px 9px;
-  border-radius: 999px;
   background: color-mix(in srgb, var(--c-surface) 94%, transparent);
   font-size: var(--fs-7);
   font-weight: 600;
 }
 .rating-badge {
-  position: absolute;
   right: 10px;
   bottom: 10px;
-  z-index: 1;
   padding: 2px 8px;
-  border-radius: 999px;
   background: color-mix(in srgb, var(--c-surface) 90%, transparent);
   font-family: var(--font-mono);
   font-size: var(--fs-8);
