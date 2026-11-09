@@ -9,6 +9,7 @@ from .models import (
     Context,
     GLICKO_RD_MAX,
     GLICKO_RD_MIN,
+    RATING_PERIODS_PER_DAY,
     SyntheticOpponent,
     Task,
 )
@@ -156,6 +157,12 @@ def filter_n_tasks_by_context(
 def filter_one_extra_task(tasks: list[Task], context: Context, reference_date: date) -> list[Task]:
     """Return one upcoming task to pad the list when fewer than 6 tasks are due."""
     return []
+
+
+def compute_elapsed_rating_periods(rating_date: date, reference_date: date) -> float:
+    """Return the fractional rating periods elapsed, never negative."""
+    elapsed_days = max((reference_date - rating_date).days, 0)
+    return elapsed_days * RATING_PERIODS_PER_DAY
 
 
 def compute_live_rating_deviation(
