@@ -7,8 +7,8 @@ import glicko2  # type: ignore[import-untyped]
 from ._config import DEFAULT_RECURRENCE_DAYS, MIN_DAYS_GAP
 from .models import (
     Context,
-    GLICKO_RD_MAX,
-    GLICKO_RD_MIN,
+    GLICKO_RATING_DEVIATION_MAX,
+    GLICKO_RATING_DEVIATION_MIN,
     GLICKO_RATING_PERIODS_PER_DAY,
     SyntheticOpponent,
     Task,
@@ -174,7 +174,7 @@ def compute_live_rating_deviation(
 ) -> int:
     """Project an anchored rating deviation to reference_date."""
     live_deviation = anchored_deviation + _elapsed_days(rating_date, reference_date)
-    return min(max(live_deviation, GLICKO_RD_MIN), GLICKO_RD_MAX)
+    return min(max(live_deviation, GLICKO_RATING_DEVIATION_MIN), GLICKO_RATING_DEVIATION_MAX)
 
 
 def compute_universe_medians(tasks: list[Task], reference_date: date) -> tuple[int, int]:

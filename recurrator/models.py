@@ -5,9 +5,9 @@ from ._contexts import Context
 
 SKIP_COUNT_RESET = 0
 GLICKO_RATING_DEFAULT = 1500
-GLICKO_RD_DEFAULT = 350
-GLICKO_RD_MIN = 45
-GLICKO_RD_MAX = 500
+GLICKO_RATING_DEVIATION_DEFAULT = 350
+GLICKO_RATING_DEVIATION_MIN = 45
+GLICKO_RATING_DEVIATION_MAX = 500
 GLICKO_RATING_PERIODS_PER_DAY = 0.21436
 
 
@@ -44,7 +44,7 @@ class Task:
         dates: Dates,
         coins: int,
         rating: int = GLICKO_RATING_DEFAULT,
-        rating_deviation: int = GLICKO_RD_DEFAULT,
+        rating_deviation: int = GLICKO_RATING_DEVIATION_DEFAULT,
         rating_date: date | None = None,
     ):
         self.id = id
