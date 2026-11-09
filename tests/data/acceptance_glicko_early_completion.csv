@@ -1,0 +1,6 @@
+id,context,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred,rating,rating_deviation,rating_date
+1,chores,"Due one",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2026-11-07
+2,chores,"Due two",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2026-11-07
+3,chores,"Due three",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2026-11-07
+4,chores,"Due four",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2026-11-07
+5,chores,"Not due completed",2023-01-01,2024-01-01,2025-01-01,2026-01-01,0,NA,0,1500,350,2026-11-07

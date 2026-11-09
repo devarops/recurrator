@@ -55,6 +55,29 @@ def test_glicko_four_tasks(tmp_path):
         assert after[task_id] == before[task_id]
 
 
+def test_glicko_early_completion(tmp_path):
+    """A not-yet-due completion joins the four due tasks and all five ratings change."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/acceptance_glicko_early_completion.csv", csv_path)
+
+    before = {
+        task_id: client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
+        for task_id in range(1, 6)
+    }
+
+    response = client.post(f"/task/5/done?csv={csv_path}")
+    assert response.status_code == 200
+
+    after = {
+        task_id: client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
+        for task_id in range(1, 6)
+    }
+
+    assert after[5] < before[5]
+    for task_id in range(1, 5):
+        assert after[task_id] != before[task_id]
+
+
 def test_glicko_inactivity_growth():
     """An older rating anchor projects a larger deviation at the same reference date."""
     fixture = "tests/data/acceptance_glicko_inactivity_growth.csv"
