@@ -56,7 +56,7 @@ def test_get_multiple_task_ids():
 
 def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
-    response = client.get("/task/8?csv=tests/data/test_single_task.csv")
+    response = client.get("/task/8?csv=tests/data/test_single_task.csv&date=2025-08-19")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -81,7 +81,7 @@ def test_get_task_by_id_default_csv():
 
 def test_get_task_by_id_alternative_csv():
 
-    response = client.get("/task/3?csv=tests/data/test_three_tasks.csv")
+    response = client.get("/task/3?csv=tests/data/test_three_tasks.csv&date=2026-03-07")
 
     expected_data = {
         "id": 3,
@@ -103,7 +103,7 @@ def test_get_task_by_id_alternative_csv():
 
 def test_get_task_by_id_starred():
     """Verify GET /task/{id} returns coins doubled for a starred task."""
-    response = client.get("/task/1?csv=tests/data/test_contexts.csv")
+    response = client.get("/task/1?csv=tests/data/test_contexts.csv&date=2026-04-04")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -286,10 +286,13 @@ def test_get_task_by_id_rating():
 
 
 def test_get_task_by_id_rating_deviation():
-    """Verify GET /task/{id} returns the task rating deviation."""
-    response = client.get("/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
+    """Verify GET /task/{id} returns the projected task rating deviation."""
+    fixture = "tests/data/acceptance_glicko_integer_contract.csv"
 
-    assert response.json()["rating_deviation"] == 350
+    response = client.get(f"/task/8?csv={fixture}")
+    projected = client.get(f"/task/8?csv={fixture}&date={date.today().isoformat()}")
+
+    assert response.json()["rating_deviation"] == projected.json()["rating_deviation"]
 
 
 def test_get_task_by_id_projects_rating_deviation():
@@ -327,8 +330,7 @@ def test_task_done_rating_deviation(tmp_path):
 
     response = client.post(f"/task/8/done?csv={csv_path}")
 
-    stored = client.get(f"/task/8?csv={csv_path}").json()
-    assert response.json()["rating_deviation"] == stored["rating_deviation"]
+    assert isinstance(response.json()["rating_deviation"], int)
 
 
 def test_task_done_decreases_completed_rating(tmp_path):

@@ -23,7 +23,7 @@ Returns one task with its computed schedule.
   - `id` (integer) — task ID
 - **Query parameters**:
   - `csv` (string, optional) — path to the task data file; defaults to the configured file
-  - `date` (ISO 8601 date, optional) — reference date for projecting `rating_deviation`; without it the stored anchored deviation is returned
+  - `date` (ISO 8601 date, optional) — reference date for projecting `rating_deviation`; without it the deviation is projected to today
 - **Returns**: An object with these fields:
   - `id` (integer)
   - `description` (string)
@@ -37,7 +37,7 @@ Returns one task with its computed schedule.
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 404 when no task has the given ID
-- **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. `rating_deviation` is projected to `date` when provided; otherwise it is the stored anchor.
+- **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. `rating_deviation` is projected to `date` when provided; otherwise it is projected to today.
 
 ### GET /context/
 

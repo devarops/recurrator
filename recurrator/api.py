@@ -77,7 +77,7 @@ def get_task_by_id(
         task = io.get_task_by_id(task_id, csv_path)
     except ValueError:
         return JSONResponse(content={"error": "Task not found"}, status_code=404)
-    parsed_reference_date = date.fromisoformat(reference_date) if reference_date else None
+    parsed_reference_date = date.fromisoformat(reference_date) if reference_date else date.today()
     return _task_to_dict(task, parsed_reference_date)
 
 

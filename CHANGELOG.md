@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `POST /task/{id}/done` updates the rating and deviation of the other tasks
   in the same context.
+- `GET /task/{id}` projects `rating_deviation` to today when `date` is
+  omitted.
 
 ### Fixed
 
