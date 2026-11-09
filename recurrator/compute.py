@@ -1,12 +1,17 @@
 from collections.abc import Sequence
 from datetime import date, timedelta
 from statistics import median
-from types import SimpleNamespace
 
 import glicko2  # type: ignore[import-untyped]
 
 from ._config import DEFAULT_RECURRENCE_DAYS, MIN_DAYS_GAP
-from .models import Context, GLICKO_RD_MAX, GLICKO_RD_MIN, Task
+from .models import (
+    Context,
+    GLICKO_RD_MAX,
+    GLICKO_RD_MIN,
+    SyntheticOpponent,
+    Task,
+)
 
 
 def compute_intervals(dates: list[date | None]) -> list[int]:
@@ -172,10 +177,10 @@ def compute_universe_medians(tasks: list[Task], reference_date: date) -> tuple[i
     return round(median(ratings)), round(median(deviations))
 
 
-def build_synthetic_opponent(tasks: list[Task], reference_date: date) -> SimpleNamespace:
+def build_synthetic_opponent(tasks: list[Task], reference_date: date) -> SyntheticOpponent:
     """Build an internal opponent from the universe medians."""
     rating, rating_deviation = compute_universe_medians(tasks, reference_date)
-    return SimpleNamespace(rating=rating, rating_deviation=rating_deviation)
+    return SyntheticOpponent(rating=rating, rating_deviation=rating_deviation)
 
 
 class _GlickoPlayer(glicko2.Player):

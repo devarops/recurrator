@@ -20,6 +20,14 @@ class Dates:
     due_date: date
 
 
+@dataclass
+class SyntheticOpponent:
+    """An internal opponent built from the universe medians."""
+
+    rating: int
+    rating_deviation: int
+
+
 class Task:
     """Represents a task imported from CSV."""
 
