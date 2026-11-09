@@ -1,0 +1,4 @@
+id,context,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred,rating,rating_deviation,rating_date
+1,chores,"Completed context task",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2026-11-07
+2,chores,"Same-context peer",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2026-11-07
+3,casa,"Other context task",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2026-11-07

@@ -114,3 +114,18 @@ def test_glicko_simultaneous_update(tmp_path):
 
     assert (completed["rating"], completed["rating_deviation"]) == (1367, 292)
     assert (opponent["rating"], opponent["rating_deviation"]) == (1733, 292)
+
+
+def test_glicko_context_isolation(tmp_path):
+    """Completing a task in one context leaves another context's rating unchanged."""
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_context_isolation.csv", tmp_path)
+
+    before = _ratings(csv_path, range(1, 4))
+
+    response = client.post(f"/task/1/done?csv={csv_path}")
+    assert response.status_code == 200
+
+    after = _ratings(csv_path, range(1, 4))
+
+    assert after[2] != before[2]
+    assert after[3] == before[3]
