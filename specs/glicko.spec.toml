@@ -28,7 +28,6 @@ description = """
 When four tasks are due and a fifth task that is not yet due is completed, all
 five take part in the event and all five ratings change.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_early_completion"
