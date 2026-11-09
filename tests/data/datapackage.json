@@ -18,7 +18,10 @@
           {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
           {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
           {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
         ],
         "missingValues": ["NA"]
       }
@@ -39,7 +42,10 @@
           {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
           {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
           {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
         ],
         "missingValues": ["NA"]
       }
@@ -60,7 +66,10 @@
           {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
           {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
           {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
         ],
         "missingValues": ["NA"]
       }
@@ -81,7 +90,10 @@
           {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
           {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
           {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
         ],
         "missingValues": ["NA"]
       }
@@ -102,7 +114,370 @@
           {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
           {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
           {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}}
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-context-isolation",
+      "path": "acceptance_glicko_context_isolation.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-default-date-projection",
+      "path": "acceptance_glicko_default_date_projection.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-deviation-growth",
+      "path": "acceptance_glicko_deviation_growth.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-early-completion",
+      "path": "acceptance_glicko_early_completion.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-four-tasks",
+      "path": "acceptance_glicko_four_tasks.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-inactivity-growth",
+      "path": "acceptance_glicko_inactivity_growth.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-integer-contract",
+      "path": "acceptance_glicko_integer_contract.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-simultaneous-update",
+      "path": "acceptance_glicko_simultaneous_update.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "acceptance-glicko-solo-completion",
+      "path": "acceptance_glicko_solo_completion.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-due-and-not-due",
+      "path": "test_due_and_not_due.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-two-equal-ratings",
+      "path": "test_two_equal_ratings.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-two-ratings",
+      "path": "test_two_ratings.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-two-ratings-frozen",
+      "path": "test_two_ratings_frozen.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-universe-medians",
+      "path": "test_universe_medians.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+        ],
+        "missingValues": ["NA"]
+      }
+    },
+    {
+      "name": "test-universe-medians-even",
+      "path": "test_universe_medians_even.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
+          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
+          {"name": "description", "type": "string", "constraints": {"required": true}},
+          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
+          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
+          {"name": "starred", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
+          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
         ],
         "missingValues": ["NA"]
       }

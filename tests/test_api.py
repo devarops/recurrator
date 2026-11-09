@@ -14,6 +14,15 @@ from conftest import (
 client = TestClient(app)
 
 
+def _restore_rating_fields(csv_path, tasks):
+    """Restore every task's rating, deviation, and anchor."""
+    for task in tasks:
+        assert task.rating_date is not None
+        io.update_task_rating(task.id, task.rating, csv_path)
+        io.update_task_rating_deviation(task.id, task.rating_deviation, csv_path)
+        io.update_task_rating_date(task.id, task.rating_date, csv_path)
+
+
 def test_frontend_is_served_from_the_api_app():
     """Verify the API serves the index page and its JavaScript assets."""
     index_response = client.get("/")
@@ -140,6 +149,7 @@ def test_set_task_as_done():
 
     csv_path = "tests/data/test_three_tasks.csv"
     original_checksum = _get_file_checksum(csv_path)
+    original_tasks = io.import_tasks_from_csv(csv_path)
 
     task_id = 5
     original_task = client.get(f"/task/{task_id}?csv={csv_path}").json()
@@ -164,6 +174,7 @@ def test_set_task_as_done():
     # Undo changes to CSV file for other tests
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
     io.update_task_dates(task_id, TASK_5_ORIGINAL_DATES, csv_path)
+    _restore_rating_fields(csv_path, original_tasks)
 
     _assert_file_unchanged(csv_path, original_checksum)
 
@@ -173,6 +184,7 @@ def test_task_done_idempotency():
 
     csv_path = "tests/data/test_three_tasks.csv"
     original_checksum = _get_file_checksum(csv_path)
+    original_tasks = io.import_tasks_from_csv(csv_path)
 
     task_id = 2
     original_skip_count = io.get_task_by_id(task_id, csv_path).skip_count
@@ -188,6 +200,7 @@ def test_task_done_idempotency():
         # Undo changes to CSV file for other tests
         io.update_task_skip_count(task_id, original_skip_count, csv_path)
         io.update_task_dates(task_id, TASK_2_ORIGINAL_DATES, csv_path)
+        _restore_rating_fields(csv_path, original_tasks)
 
     _assert_file_unchanged(csv_path, original_checksum)
 
