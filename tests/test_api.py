@@ -344,6 +344,18 @@ def test_task_done_increases_opponent_rating(tmp_path):
     assert after > before
 
 
+def test_task_done_changes_equal_rated_opponent(tmp_path):
+    """Verify completing a task raises an equal-rated opponent in the same context."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile("tests/data/test_two_equal_ratings.csv", csv_path)
+
+    before = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+    client.post(f"/task/1/done?csv={csv_path}")
+    after = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+
+    assert after > before
+
+
 def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     """Verify the completed rating change exceeds the one-point placeholder."""
     csv_path = tmp_path / "tasks.csv"
