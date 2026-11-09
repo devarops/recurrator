@@ -163,7 +163,7 @@ task.html?id=<id>                   → monster card
 
 - All four scope tiles are **live links** and send `?scope=<value>`. `scope.html` reads the param, uses it for the scope oval label, and **does not filter** (§12, stub S1).
 - Breadcrumbs: one row of equal-height ovals. Home `Recurrator` (12 units); scope `Recurrator / <Scope>` (3 + 9); context `Recurrator / <Scope> / <Context>` (3 + 2 + 7); card `Recurrator / <Scope> / <Context> / #<id>` (3 + 2 + 6 + 1). The last oval present absorbs the units of the missing descendants; the current page is the filled last oval, the ancestors are links. The row has 4px gaps, 24px-high ovals, and no separators.
-- Oval recipe: 12px sans with 10px horizontal padding; the 2-unit scope ancestor uses 12px with 2px padding, and the 1-unit task oval uses 10px mono with 2px padding. Ancestors use `--c-surface` fill and `--c-blue` text; the current page uses `--c-ink` fill and cream text. There is no border. The row is 44px tall and the ancestor links are the targets.
+- Oval recipe: 12px sans with 10px horizontal padding; the 2-unit scope ancestor uses 12px with 2px padding, and the 1-unit task oval uses 10px mono with 2px padding. Ancestors use `--c-surface` fill and `--c-blue` text; the current page uses `--c-ink` fill and cream text. There is no border. The row is 44px tall and the ancestor links are the targets. The context oval prefixes the context emoji, hidden from assistive technology, before the label.
 
 ---
 
@@ -222,15 +222,13 @@ Tiles and their accents: Work (💼, blue), Personal (🏡, green), Both (🔀, 
 
 **Anatomy top → bottom**
 1. **Title** 23px/700 = `ui.monsterTitle(description)`, max 2 lines.
-2. **Subtitle** 12px muted: `<context> · every <recurrence_days> days`.
-3. **Bounty badge**, top-right, 42px: **circle** when not starred (`--state-starred` ink numeral on a 15% tint, 36% ring) · **star** when starred (solid `--state-starred` fill, cream numeral). `BOUNTY` label 11px mono under the shape. Display-only (§12, S3).
-4. **Art panel** 295×164, radius 18px: tinted gradient + 6px pixel-checker overlay + placeholder PNG at 139×139, centred, with a 56×10 elliptical shadow beneath.
-5. **Context chip** top-left of the art panel: emoji + context name, 12px, `--c-surface` at 94% behind it.
-6. **Rating** badge bottom-right of the art panel, mono 11px: the task's `rating`, preceded by a visually hidden `Rating`.
-7. **Stat grid 2×2**, labels 11px uppercase (`letter-spacing:.06em`, `--c-ink-2`), values 16px/700 `--c-ink`:
+2. **Bounty badge**, top-right, 42px: **circle** when not starred (`--state-starred` ink numeral on a 15% tint, 36% ring) · **star** when starred (solid `--state-starred` fill, cream numeral). `BOUNTY` label 11px mono under the shape. Display-only (§12, S3).
+3. **Art panel** 295×164, radius 18px: tinted gradient + 6px pixel-checker overlay + placeholder PNG at 139×139, centred, with a 56×10 elliptical shadow beneath.
+4. **Rating** badge bottom-right of the art panel, mono 11px: the task's `rating`, preceded by a visually hidden `Rating`.
+5. **Stat grid 2×2**, labels 11px uppercase (`letter-spacing:.06em`, `--c-ink-2`), values 16px/700 `--c-ink`:
    `RECURRENCE` · `SKIP COUNT` · `DUE DATE` · `LATEST DONE`. Vertical 1px rule between columns.
-8. **Status line** (§10.5), 12px, colour per state.
-9. **Description** (`ui.renderMarkdown`) clamped to 4 lines, 14px, `--c-ink-2`. Check items are 44px label targets, so the clamp may show fewer items.
+6. **Status line** (§10.5), 12px, colour per state.
+7. **Description** (`ui.renderMarkdown`) clamped to 4 lines, 14px, `--c-ink-2`. Check items are 44px label targets, so the clamp may show fewer items.
 
 **Actions (inline, under the card):**
 - Primary, full width, 48px, radius 18px, `--state-due` fill, cream label `✓ Mark as Done`. While POSTing: `Saving…` + `disabled`. On success: `--state-not-due` fill, `Done today ✓`, `disabled` until reload. `aria-live="polite"` on the label.
@@ -293,6 +291,7 @@ Dates in the stat grid stay **ISO** (`2026-08-10`) — the status line is the hu
 - Every target ≥ 44×44 CSS px. The breadcrumb row is 44px tall; the Recurrator, Scope, and Context ancestor cells are at least 44px wide. The current ovals and the 1-unit task oval are not links. The current page carries `aria-current="page"`.
 - Star badge: `aria-label="Starred"` / `aria-label="Not starred"`; not a button.
 - Rating badge: a visually hidden `Rating` prefix gives the accessible name `Rating 1500`; the visible value is the number alone.
+- Breadcrumb context emoji: hidden from assistive technology; the oval's accessible name stays the context label.
 - Decorative discs, dots, chevrons: `aria-hidden="true"`.
 - Contrast: `--c-ink` on `--c-surface` = 8.6:1. `--c-muted` on `--c-surface` = 4.6:1 (body ok, not for 11px labels — those use `--c-ink-2` or `--c-faint` only for non-essential text). Verify every pairing before handoff.
 - Focus visible on all links and buttons: 2px `--c-blue` offset 2px.
