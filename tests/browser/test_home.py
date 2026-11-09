@@ -157,9 +157,10 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     _assert_targets(card_items.nth(1))
     _assert_targets(card_items.nth(2))
     assert page.locator(".monster-card__title").inner_text() == "Reparar fuga escusado"
-    assert page.locator(".rating-badge").count() == 1
-    assert page.locator(".rating-badge__value").inner_text() == "1500"
-    assert page.locator(".rating-badge .visually-hidden").text_content().strip() == "Rating"
+    badge = page.locator(".rating-badge")
+    assert badge.count() == 1
+    assert badge.locator(".rating-badge__value").inner_text() == "1500"
+    assert badge.locator(".visually-hidden").text_content().strip() == "Rating"
     assert page.locator(".microtext").count() == 0
 
     rendered = page.evaluate("""() => ui.renderBreadcrumb([
