@@ -150,3 +150,16 @@ def test_glicko_solo_completion(tmp_path):
 
     assert client.get(f"/task/?csv={csv_path}").json() == [1]
     assert client.get(f"/context/chores?csv={csv_path}&date={reference_date}").json() == []
+
+
+def test_glicko_default_date_projection(tmp_path):
+    """A read without a date projects the deviation to today."""
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_default_date_projection.csv", tmp_path)
+    today = date.today().isoformat()
+
+    undated = client.get(f"/task/1?csv={csv_path}")
+    dated = client.get(f"/task/1?csv={csv_path}&date={today}")
+
+    assert undated.status_code == 200
+    assert dated.status_code == 200
+    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
