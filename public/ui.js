@@ -34,6 +34,10 @@
         tresminutos: '⏱️',
     };
 
+    function contextEmoji(name) {
+        return CONTEXT_META[name] || '🗂️';
+    }
+
     function escapeHtml(value) {
         return String(value === null || value === undefined ? '' : value)
             .replace(/&/g, '&amp;')
@@ -312,7 +316,7 @@
         var emoji =
             kind === 'context'
                 ? '<span class="breadcrumb__emoji" aria-hidden="true">' +
-                  (CONTEXT_META[item.label] || '🗂️') +
+                  contextEmoji(item.label) +
                   '</span> '
                 : '';
         var label =
@@ -414,7 +418,7 @@
         var cards = contexts
             .map(function (context) {
                 var accent = accentFor(context.name);
-                var emoji = CONTEXT_META[context.name] || '🗂️';
+                var emoji = contextEmoji(context.name);
                 var long = context.name.length > 10 ? ' context-card__title--long' : '';
                 if (context.name.length > 12) {
                     long += ' context-card__title--xlong';
