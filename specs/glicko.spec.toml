@@ -74,7 +74,6 @@ description = """
 When a task anchored at rating deviation 350 is read one year after its rating
 date, its rating deviation is 362.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_deviation_growth"
