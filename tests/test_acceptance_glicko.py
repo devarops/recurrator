@@ -10,6 +10,14 @@ client = TestClient(app)
 FIXTURE = "tests/data/acceptance_glicko_integer_contract.csv"
 
 
+def _ratings(csv_path, task_ids):
+    """Return each task's rating from the fixture."""
+    return {
+        task_id: client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
+        for task_id in task_ids
+    }
+
+
 def test_glicko_integer_contract(tmp_path):
     """Rating and rating deviation are integers when a task is read or completed."""
     response = client.get(f"/task/8?csv={FIXTURE}")
@@ -35,18 +43,12 @@ def test_glicko_four_tasks(tmp_path):
     csv_path = tmp_path / "tasks.csv"
     copyfile("tests/data/acceptance_glicko_four_tasks.csv", csv_path)
 
-    before = {
-        task_id: client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
-        for task_id in range(1, 7)
-    }
+    before = _ratings(csv_path, range(1, 7))
 
     response = client.post(f"/task/1/done?csv={csv_path}")
     assert response.status_code == 200
 
-    after = {
-        task_id: client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
-        for task_id in range(1, 7)
-    }
+    after = _ratings(csv_path, range(1, 7))
 
     assert after[1] < before[1]
     for task_id in (2, 3, 4):
@@ -60,18 +62,12 @@ def test_glicko_early_completion(tmp_path):
     csv_path = tmp_path / "tasks.csv"
     copyfile("tests/data/acceptance_glicko_early_completion.csv", csv_path)
 
-    before = {
-        task_id: client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
-        for task_id in range(1, 6)
-    }
+    before = _ratings(csv_path, range(1, 6))
 
     response = client.post(f"/task/5/done?csv={csv_path}")
     assert response.status_code == 200
 
-    after = {
-        task_id: client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"]
-        for task_id in range(1, 6)
-    }
+    after = _ratings(csv_path, range(1, 6))
 
     assert after[5] < before[5]
     for task_id in range(1, 5):
