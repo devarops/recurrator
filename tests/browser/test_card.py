@@ -9,7 +9,12 @@ def test_due_starred_card(page, page_url, open_page, csv_copy):
     card = page.locator(".monster-card")
     assert "monster-card--due" in card.get_attribute("class")
     assert page.locator(".monster-card__title").inner_text() == "Reparar fuga escusado"
-    assert page.locator(".monster-card__subtitle").inner_text() == "casa · every 21 days"
+    assert page.locator(".monster-card__subtitle").count() == 0
+    assert page.locator(".context-chip").count() == 0
+    context_item = page.locator("#pageHeader .breadcrumb__item").nth(2)
+    assert context_item.locator(".breadcrumb__emoji").count() == 1
+    assert context_item.locator(".breadcrumb__emoji").get_attribute("aria-hidden") == "true"
+    assert context_item.inner_text().endswith("casa")
     assert page.locator(".bounty-badge").get_attribute("aria-label") == "Starred"
     assert page.locator(".bounty-badge--star").count() == 1
     assert page.locator(".bounty-badge__value").inner_text() == "42"

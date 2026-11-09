@@ -50,14 +50,16 @@ def test_error_hides_tiles_and_shows_retry(page, page_url, csv_copy):
 
 
 def _assert_current(item, label):
-    assert item.inner_text() == label
+    text = item.inner_text()
+    assert text == label or text.endswith(" " + label)
     assert item.get_attribute("aria-current") == "page"
     assert item.evaluate("el => el.tagName") == "SPAN"
     assert "breadcrumb__item--current" in (item.get_attribute("class") or "").split()
 
 
 def _assert_link(item, label):
-    assert item.inner_text() == label
+    text = item.inner_text()
+    assert text == label or text.endswith(" " + label)
     assert item.evaluate("el => el.tagName") == "A"
     assert "breadcrumb__item--current" not in (item.get_attribute("class") or "").split()
 
