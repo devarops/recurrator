@@ -37,11 +37,11 @@ Add `GLICKO_VOLATILITY_DEFAULT = 0.06`, `GLICKO_SCALE = 173.7178`, and `RATING_P
 
 ### Participation
 
-The event includes every due or overdue task in the completed task's context, plus the completed task even when it was not due. Other not-due tasks stay out. Remove the different-rating condition from `filter_opponents_with_different_rating`; the identity and context conditions remain. The context page's WIP limit is a display rule only and does not restrict the rating event.
+The event includes every due or overdue task in the completed task's context, plus the completed task even when it was not due. Other not-due tasks stay out. The context page's WIP limit is a display rule only and does not restrict the rating event.
 
 ### Match update
 
-The current star is the target: the completed task plays every participant and loses; each opponent plays only the completed and wins; opponents do not play each other. Keep `compute_match_updates`. When the completed task is alone, add one internal synthetic opponent whose rating and deviation are the live medians of every task in the CSV; `compute_universe_medians` supplies them. Never write the synthetic.
+When the completed task is alone, add one internal synthetic opponent whose rating and deviation are the live medians of every task in the CSV; `compute_universe_medians` supplies them. Never write the synthetic.
 
 ### Rating-date anchor
 
@@ -53,11 +53,11 @@ After a completion, set `rating_date` to the completion date for the completed t
 
 ### Tests
 
-Update the unit tests for the step-6 projection, the due/overdue selection without the rating filter, the synthetic medians, and the rating-date anchor.
+Update the unit tests for the step-6 projection, the due/overdue selection, the synthetic medians, and the rating-date anchor.
 
 ### Data migration
 
-The test CSVs and `tests/data/datapackage.json` already have the three rating columns. The production migration of `devarops/recurrator.config` remains; run it before deploying the image that reads the columns.
+The production migration of `devarops/recurrator.config` remains; run it before deploying the image that reads the columns.
 
 ## Coins from Glicko rating
 
