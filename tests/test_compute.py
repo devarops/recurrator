@@ -491,3 +491,12 @@ def test_compute_universe_medians_even_count():
     medians = rc.compute_universe_medians(tasks, date(2026, 11, 8))
 
     assert medians == (1550, 350)
+
+
+def test_build_synthetic_opponent_uses_universe_medians():
+    """Verify the synthetic opponent carries the universe medians."""
+    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+
+    opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
+
+    assert (opponent.rating, opponent.rating_deviation) == (1550, 350)
