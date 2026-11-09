@@ -14,6 +14,13 @@ from conftest import (
 client = TestClient(app)
 
 
+def _copy_fixture(fixture, tmp_path):
+    """Copy a task fixture into the test's temporary directory."""
+    csv_path = tmp_path / "tasks.csv"
+    copyfile(fixture, csv_path)
+    return csv_path
+
+
 def test_frontend_is_served_from_the_api_app():
     """Verify the API serves the index page and its JavaScript assets."""
     index_response = client.get("/")
@@ -303,8 +310,7 @@ def test_get_task_by_id_projects_rating_deviation():
 
 def test_task_done_rating(tmp_path):
     """Verify POST /task/{id}/done returns the task rating."""
-    csv_path = tmp_path / "task.csv"
-    copyfile("tests/data/acceptance_glicko_integer_contract.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
 
     response = client.post(f"/task/8/done?csv={csv_path}")
 
@@ -313,8 +319,7 @@ def test_task_done_rating(tmp_path):
 
 def test_task_done_rating_deviation(tmp_path):
     """Verify POST /task/{id}/done returns the task rating deviation."""
-    csv_path = tmp_path / "task.csv"
-    copyfile("tests/data/acceptance_glicko_integer_contract.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
 
     response = client.post(f"/task/8/done?csv={csv_path}")
 
@@ -323,8 +328,7 @@ def test_task_done_rating_deviation(tmp_path):
 
 def test_task_done_decreases_completed_rating(tmp_path):
     """Verify completing one of two tasks lowers its rating."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/test_two_ratings.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
 
     before = client.get(f"/task/1?csv={csv_path}").json()["rating"]
     response = client.post(f"/task/1/done?csv={csv_path}")
@@ -334,8 +338,7 @@ def test_task_done_decreases_completed_rating(tmp_path):
 
 def _assert_opponent_rating_rises(fixture, tmp_path):
     """Assert that completing task 1 raises task 2's rating."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile(fixture, csv_path)
+    csv_path = _copy_fixture(fixture, tmp_path)
 
     before = client.get(f"/task/2?csv={csv_path}").json()["rating"]
     client.post(f"/task/1/done?csv={csv_path}")
@@ -356,8 +359,7 @@ def test_task_done_changes_equal_rated_opponent(tmp_path):
 
 def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     """Verify the completed rating change exceeds the one-point placeholder."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/test_two_ratings.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
 
     before = client.get(f"/task/1?csv={csv_path}").json()["rating"]
     response = client.post(f"/task/1/done?csv={csv_path}")
@@ -367,8 +369,7 @@ def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
 
 def test_task_done_preserves_total_rating(tmp_path):
     """Verify a two-participant match conserves the total rating."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/test_two_ratings.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
 
     before = sum(
         client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"] for task_id in (1, 2)
@@ -381,8 +382,7 @@ def test_task_done_preserves_total_rating(tmp_path):
 
 def test_task_done_lowers_completed_rating_deviation(tmp_path):
     """Verify a completion lowers the completed task deviation."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/test_two_ratings_frozen.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
     before = client.get(f"/task/1?csv={csv_path}").json()["rating_deviation"]
     response = client.post(f"/task/1/done?csv={csv_path}")
@@ -392,8 +392,7 @@ def test_task_done_lowers_completed_rating_deviation(tmp_path):
 
 def test_task_done_lowers_opponent_rating_deviation(tmp_path):
     """Verify a completion lowers the opponent deviation."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/test_two_ratings_frozen.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
     before = client.get(f"/task/2?csv={csv_path}").json()["rating_deviation"]
     client.post(f"/task/1/done?csv={csv_path}")
@@ -404,8 +403,7 @@ def test_task_done_lowers_opponent_rating_deviation(tmp_path):
 
 def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
     """Verify the completed deviation drop exceeds the placeholder."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/test_two_ratings_frozen.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
     before = client.get(f"/task/1?csv={csv_path}").json()["rating_deviation"]
     response = client.post(f"/task/1/done?csv={csv_path}")
@@ -415,8 +413,7 @@ def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
 
 def test_task_done_sets_completed_rating_to_simultaneous_value(tmp_path):
     """Verify the completed rating matches a simultaneous Glicko update."""
-    csv_path = tmp_path / "tasks.csv"
-    copyfile("tests/data/test_two_ratings_frozen.csv", csv_path)
+    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
     response = client.post(f"/task/1/done?csv={csv_path}")
 
