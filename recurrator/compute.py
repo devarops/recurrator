@@ -163,11 +163,12 @@ def compute_live_rating_deviation(
 
 def compute_universe_medians(tasks: list[Task], reference_date: date) -> tuple[int, int]:
     """Return the median rating and live deviation of every task."""
-    task = tasks[0]
-    return (
-        task.rating,
-        compute_live_rating_deviation(task.rating_deviation, task.rating_date, reference_date),
-    )
+    ratings = [task.rating for task in tasks]
+    deviations = [
+        compute_live_rating_deviation(task.rating_deviation, task.rating_date, reference_date)
+        for task in tasks
+    ]
+    return round(median(ratings)), round(median(deviations))
 
 
 class _GlickoPlayer(glicko2.Player):
