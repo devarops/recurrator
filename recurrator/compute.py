@@ -9,7 +9,7 @@ from .models import (
     Context,
     GLICKO_RD_MAX,
     GLICKO_RD_MIN,
-    RATING_PERIODS_PER_DAY,
+    GLICKO_RATING_PERIODS_PER_DAY,
     SyntheticOpponent,
     Task,
 )
@@ -166,7 +166,7 @@ def _elapsed_days(rating_date: date, reference_date: date) -> int:
 
 def compute_elapsed_rating_periods(rating_date: date, reference_date: date) -> float:
     """Return the fractional rating periods elapsed, never negative."""
-    return _elapsed_days(rating_date, reference_date) * RATING_PERIODS_PER_DAY
+    return _elapsed_days(rating_date, reference_date) * GLICKO_RATING_PERIODS_PER_DAY
 
 
 def compute_live_rating_deviation(
