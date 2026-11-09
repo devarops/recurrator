@@ -180,6 +180,10 @@ def update_task_rating_deviation(task_id: int, rating_deviation: int, csv_path: 
     _set_csv_field(task_id, "rating_deviation", str(rating_deviation), csv_path)
 
 
+def update_task_rating_date(task_id: int, rating_date: date, csv_path: str) -> None:
+    _set_csv_field(task_id, "rating_date", _format_date(rating_date), csv_path)
+
+
 def update_task_as_skipped(task_id: int, skip_date: date, csv_path: str) -> None:
     current_task = get_task_by_id(task_id, csv_path)
     update_task_skip_count(task_id, current_task.skip_count + 1, csv_path)
