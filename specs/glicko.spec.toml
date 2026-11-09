@@ -19,7 +19,6 @@ When four tasks are due in one context and one is completed, the completed
 task loses rating, the other three change, and every other task keeps its
 rating.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_four_tasks"
