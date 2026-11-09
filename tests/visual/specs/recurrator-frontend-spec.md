@@ -1,7 +1,7 @@
 # Recurrator — Front-End Implementation Spec
 
 **Audience:** the web designer implementing `public/` · **Date:** November 2026
-**Constraint that overrides everything:** the backend is frozen. No API change, no new endpoint, no new field.
+**Constraint that overrides everything:** the backend is frozen. Do not add endpoints or fields; use only fields the API already returns. The rating badge displays the existing `rating` field.
 **Ambition:** the front end should look and feel finished even where behaviour must be stubbed. Every stub is listed in §12 with its replacement point, so the backend team can find and replace each one with a single grep. S1 is additionally gated by one named constant.
 
 ---
@@ -216,7 +216,7 @@ Tiles and their accents: Work (💼, blue), Personal (🏡, green), Both (🔀, 
 
 ## 9. Screen 4 — Monster card (`task.html`)
 
-**Header:** mounted in `task.html` as `#pageHeader`: `Recurrator` (3 units, link) + `<Scope>` (2 units, link) + `<Context>` (6 units, link) + `#<id>` (1 unit, filled current, 10px mono). The card itself has no breadcrumb. The ID also appears in the `No. <id>` badge and the microtext.
+**Header:** mounted in `task.html` as `#pageHeader`: `Recurrator` (3 units, link) + `<Scope>` (2 units, link) + `<Context>` (6 units, link) + `#<id>` (1 unit, filled current, 10px mono). The card itself has no breadcrumb.
 
 **Card:** 327 wide and at least 458 high, radius 26px, `--c-surface`, `--border-card`, `--shadow-card`, frame 6px inset in the **state** colour (§10.4), plus a 1px hairline inset 2px.
 
@@ -226,12 +226,11 @@ Tiles and their accents: Work (💼, blue), Personal (🏡, green), Both (🔀, 
 3. **Bounty badge**, top-right, 42px: **circle** when not starred (`--state-starred` ink numeral on a 15% tint, 36% ring) · **star** when starred (solid `--state-starred` fill, cream numeral). `BOUNTY` label 11px mono under the shape. Display-only (§12, S3).
 4. **Art panel** 295×164, radius 18px: tinted gradient + 6px pixel-checker overlay + placeholder PNG at 139×139, centred, with a 56×10 elliptical shadow beneath.
 5. **Context chip** top-left of the art panel: emoji + context name, 12px, `--c-surface` at 94% behind it.
-6. **`No. <id>`** badge bottom-right of the art panel, mono 11px.
+6. **Rating** badge bottom-right of the art panel, mono 11px: the task's `rating`, preceded by a visually hidden `Rating`.
 7. **Stat grid 2×2**, labels 11px uppercase (`letter-spacing:.06em`, `--c-ink-2`), values 16px/700 `--c-ink`:
    `RECURRENCE` · `SKIP COUNT` · `DUE DATE` · `LATEST DONE`. Vertical 1px rule between columns.
 8. **Status line** (§10.5), 12px, colour per state.
 9. **Description** (`ui.renderMarkdown`) clamped to 4 lines, 14px, `--c-ink-2`. Check items are 44px label targets, so the clamp may show fewer items.
-10. **Microtext** mono 11px `--c-faint`, right-aligned: `RCR-<id> · <context> · <n>d`.
 
 **Actions (inline, under the card):**
 - Primary, full width, 48px, radius 18px, `--state-due` fill, cream label `✓ Mark as Done`. While POSTing: `Saving…` + `disabled`. On success: `--state-not-due` fill, `Done today ✓`, `disabled` until reload. `aria-live="polite"` on the label.
@@ -293,6 +292,7 @@ Dates in the stat grid stay **ISO** (`2026-08-10`) — the status line is the hu
 
 - Every target ≥ 44×44 CSS px. The breadcrumb row is 44px tall; the Recurrator, Scope, and Context ancestor cells are at least 44px wide. The current ovals and the 1-unit task oval are not links. The current page carries `aria-current="page"`.
 - Star badge: `aria-label="Starred"` / `aria-label="Not starred"`; not a button.
+- Rating badge: a visually hidden `Rating` prefix gives the accessible name `Rating 1500`; the visible value is the number alone.
 - Decorative discs, dots, chevrons: `aria-hidden="true"`.
 - Contrast: `--c-ink` on `--c-surface` = 8.6:1. `--c-muted` on `--c-surface` = 4.6:1 (body ok, not for 11px labels — those use `--c-ink-2` or `--c-faint` only for non-essential text). Verify every pairing before handoff.
 - Focus visible on all links and buttons: 2px `--c-blue` offset 2px.
