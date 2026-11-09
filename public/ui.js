@@ -105,6 +105,10 @@
         return latest === today || daysBetween(today, latest) === -1;
     }
 
+    function doneText(task) {
+        return task.latest_date === task.today ? 'Done today' : 'Done yesterday';
+    }
+
     function plural(count, singular, pluralWord) {
         return count === 1 ? singular : pluralWord;
     }
@@ -115,7 +119,7 @@
             return '';
         }
         if (kind === 'done') {
-            return task.latest_date === task.today ? 'Done today' : 'Done yesterday';
+            return doneText(task);
         }
         if (kind === 'due') {
             if (task.due_date === task.today) {
@@ -457,11 +461,7 @@
         var accent = accentFor(task.context);
         var title = monsterTitle(task.description);
         var doneRecent = isDoneRecently(task.latest_date, task.today);
-        var doneLabel = doneRecent
-            ? task.latest_date === task.today
-                ? 'Done today ✓'
-                : 'Done yesterday ✓'
-            : '✓ Mark as Done';
+        var doneLabel = doneRecent ? doneText(task) + ' ✓' : '✓ Mark as Done';
         var doneClass = doneRecent ? 'btn btn--primary btn--done' : 'btn btn--primary';
         var buttonId = interactive ? ' id="doneBtn"' : '';
         var labelId = interactive ? ' id="doneLabel"' : '';
