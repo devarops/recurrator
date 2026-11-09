@@ -285,14 +285,17 @@ def test_get_task_by_id_rating():
     assert response.json()["rating"] == 1500
 
 
+def _assert_undated_matches_today(fixture, task_id):
+    """Assert that an undated read projects the deviation to today."""
+    undated = client.get(f"/task/{task_id}?csv={fixture}")
+    dated = client.get(f"/task/{task_id}?csv={fixture}&date={date.today().isoformat()}")
+
+    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
+
+
 def test_get_task_by_id_rating_deviation():
     """Verify GET /task/{id} returns the projected task rating deviation."""
-    fixture = "tests/data/acceptance_glicko_integer_contract.csv"
-
-    response = client.get(f"/task/8?csv={fixture}")
-    projected = client.get(f"/task/8?csv={fixture}&date={date.today().isoformat()}")
-
-    assert response.json()["rating_deviation"] == projected.json()["rating_deviation"]
+    _assert_undated_matches_today("tests/data/acceptance_glicko_integer_contract.csv", 8)
 
 
 def test_get_task_by_id_projects_rating_deviation():
@@ -306,12 +309,7 @@ def test_get_task_by_id_projects_rating_deviation():
 
 def test_get_task_by_id_projects_deviation_to_today():
     """Verify GET /task/{id} without a date projects the deviation to today."""
-    fixture = "tests/data/acceptance_glicko_default_date_projection.csv"
-
-    undated = client.get(f"/task/1?csv={fixture}")
-    dated = client.get(f"/task/1?csv={fixture}&date={date.today().isoformat()}")
-
-    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
+    _assert_undated_matches_today("tests/data/acceptance_glicko_default_date_projection.csv", 1)
 
 
 def test_task_done_rating(tmp_path):
