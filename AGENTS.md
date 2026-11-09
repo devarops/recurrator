@@ -43,7 +43,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Run a unit test with `pytest tests/test_api.py::test_get_due_contexts`; browser: `RUN_BROWSER=1 pytest tests/browser/test_home.py::test_all_tile_shows_due_contexts`; CLI tests need the compose `api` service.
+Example unit test: `pytest tests/test_api.py::test_get_due_contexts`; browser tests set `RUN_BROWSER=1`; CLI tests need the compose `api` service.
 
 ## Data Modeling & CSV Mapping
 
@@ -51,6 +51,7 @@ Run a unit test with `pytest tests/test_api.py::test_get_due_contexts`; browser:
 - `latest_done_date` is stored in `date_4` but lives in `Dates` alongside computed fields, first.
 - Add a computed field in `compute.py`, orchestrate it in `_row_to_task`, and pass it to `Task.__init__`.
 - CSV conversion: `starred` `0`/`1` → `False`/`True`; dates `"NA"` → `None`, else `date.fromisoformat()`; `id`/`skip_count` → `int()`.
+- Glicko fields: `rating`, `rating_deviation`, and `rating_date` follow `starred`; the API rounds the projected float and `_GlickoPlayer` prevents a second step 6.
 - `recurrator/_contexts.py` is generated from the Frictionless datapackage and `_config.py` from `config.json` by `make install`/`src/entrypoint.sh`; both are gitignored, and `create_contexts.sh` falls back to `tests/data/datapackage.json` without production files.
 
 ## Container Startup and Deployment
@@ -60,7 +61,7 @@ Run a unit test with `pytest tests/test_api.py::test_get_due_contexts`; browser:
 - `.github/workflows/actions.yml` builds `latest` then `develop`, runs `check`, `tests`, `test-frontend`, `coverage`, `mutants` and `verify`, smoke-tests prod, and pushes only if all pass; tags are `latest` and `%y%V`.
 - FastAPI serves `public/` at `/` after the API routes. Frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled.
 - `PUBLIC_DIR` walks up from `api.py` to `public/index.html`, so app import and tests work from any working directory and under mutmut.
-- The frontend uses local art and makes no remote requests.
+- Frontend art is local; no remote requests.
 
 ## Mutation Testing
 

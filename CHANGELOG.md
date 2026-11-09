@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   date.
 - `GET /task/{id}` projects `rating_deviation` to today when `date` is
   omitted.
+- `GET /task/{id}` and `POST /task/{id}/done` require `rating_date` in the
+  task data file to project and anchor the rating deviation.
 
 ### Fixed
 

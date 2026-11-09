@@ -13,7 +13,7 @@ Returns the IDs of all tasks.
 - **Query parameters**:
   - `csv` (string, optional) — path to the task data file; defaults to the configured file
 - **Returns**: `[<integer>, ...]` — task IDs from the task data file
-- **Notes**: The task data file must contain `id`, `context`, `description`, `date_1` through `date_4`, `skip_count`, `skip_date`, and `starred`. Dates are ISO 8601 or `NA`; `starred` is `0` or `1`.
+- **Notes**: The task data file must contain `id`, `context`, `description`, `date_1` through `date_4`, `skip_count`, `skip_date`, `starred`, and `rating_date`. Dates are ISO 8601 or `NA`; `starred` is `0` or `1`.
 
 ### GET /task/{id}
 
