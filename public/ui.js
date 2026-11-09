@@ -454,6 +454,24 @@
         return '<div class="task-list">' + rows + '</div>';
     }
 
+    function renderArtPanel(task, accent) {
+        return (
+            '<div class="art-panel accent-' +
+            accent +
+            '"><span class="context-chip art-panel__pill"><span aria-hidden="true">' +
+            (CONTEXT_META[task.context] || '🗂️') +
+            '</span>' +
+            escapeHtml(task.context) +
+            '</span><img class="art-panel__monster" src="monster-placeholder.png" alt="" width="139" height="139">' +
+            '<span class="art-panel__shadow" aria-hidden="true"></span>' +
+            '<span class="rating-badge art-panel__pill">' +
+            '<span class="visually-hidden">Rating </span>' +
+            '<span class="rating-badge__value">' +
+            task.rating +
+            '</span></span></div>'
+        );
+    }
+
     function renderMonsterCard(task, options) {
         var interactive = !options || options.interactive !== false;
         var state = dueState(task);
@@ -513,19 +531,7 @@
             ' · every ' +
             task.recurrence_days +
             ' days</p></div>' +
-            '<div class="art-panel accent-' +
-            accent +
-            '"><span class="context-chip art-panel__pill"><span aria-hidden="true">' +
-            (CONTEXT_META[task.context] || '🗂️') +
-            '</span>' +
-            escapeHtml(task.context) +
-            '</span><img class="art-panel__monster" src="monster-placeholder.png" alt="" width="139" height="139">' +
-            '<span class="art-panel__shadow" aria-hidden="true"></span>' +
-            '<span class="rating-badge art-panel__pill">' +
-            '<span class="visually-hidden">Rating </span>' +
-            '<span class="rating-badge__value">' +
-            task.rating +
-            '</span></span></div>' +
+            renderArtPanel(task, accent) +
             '<div class="stat-grid">' +
             stats +
             '</div>' +
