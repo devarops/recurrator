@@ -5,7 +5,6 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Add json schema validation for config file — backlog only
 - Set min and max recurrence days — backlog only
 - Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
-- Glicko rating system — [details below](#glicko-rating-system)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Restore monster avatars on the deployed app — backlog only
 - Add search page to frontend — backlog only
@@ -18,38 +17,6 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 ## Add one extra task when we have fewer than 6 tasks
 
 `filter_one_extra_task` exists in `compute.py` as a stub returning `[]`. Implement the acceptance criteria in `specs/one_extra_task.spec.toml` and call the selector from `GET /context/{context_id}` after the WIP selection. Keep it complementary to `filter_n_tasks_by_context`.
-
-## Glicko rating system
-
-Implement the acceptance criteria in `specs/glicko.spec.toml`. The implementation still uses a linear deviation projection and the stored-anchor API default.
-
-### Deviation growth
-
-Replace the linear projection in `compute_live_rating_deviation` with the Lichess step-6 formula. The `glicko2` package already applies one rating period in `Player._preRatingRD` with its 0.06 volatility and 173.7178 scale; the missing part is the fractional periods between `rating_date` and the reference date.
-
-```text
-elapsed_periods = max((reference_date - rating_date).days, 0) * RATING_PERIODS_PER_DAY
-RD = sqrt(RD_anchor^2 + elapsed_periods * (GLICKO_SCALE * GLICKO_VOLATILITY_DEFAULT)^2)
-RD = min(max(round(RD), GLICKO_RD_MIN), GLICKO_RD_MAX)
-```
-
-Add `GLICKO_VOLATILITY_DEFAULT = 0.06`, `GLICKO_SCALE = 173.7178`, and `RATING_PERIODS_PER_DAY = 0.21436`, plus `compute_elapsed_rating_periods`. The `_GlickoPlayer` adapter keeps the library from applying step 6 a second time.
-
-### Rating-date anchor
-
-After a completion, set `rating_date` to the completion date for the completed task and every real opponent whose rating or deviation changed. Add `update_task_rating_date(task_id, rating_date, csv_path)` in `io.py`, mirroring `update_task_rating` and `update_task_rating_deviation`, and call it from `post_task_done` for each updated id. Keep the per-field writes; do not add the one-pass record function.
-
-### API
-
-`GET /task/{id}` without `date` should project `rating_deviation` to today. This is the selected change from the current stored-anchor default. When the code lands, update `DOCS.md` and `CHANGELOG.md` with the new default and the anchor behaviour. The POST response reads the stored post-match values after the anchor update.
-
-### Tests
-
-Update the unit tests for the step-6 projection, the default read, and the rating-date anchor.
-
-### Deployment migration
-
-The production migration of `devarops/recurrator.config` is deployment work; run it before deploying the image that reads the columns.
 
 ## Coins from Glicko rating
 
