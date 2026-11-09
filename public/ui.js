@@ -472,12 +472,7 @@
         );
     }
 
-    function renderMonsterCard(task, options) {
-        var interactive = !options || options.interactive !== false;
-        var state = dueState(task);
-        var stateClass = state ? 'monster-card--' + state : 'monster-card--none';
-        var accent = accentFor(task.context);
-        var title = monsterTitle(task.description);
+    function renderCardActions(task, interactive) {
         var doneRecent = isDoneRecently(task.latest_date, task.today);
         var doneLabel = doneRecent ? doneText(task) + ' ✓' : '✓ Mark as Done';
         var doneClass = doneRecent ? 'btn btn--primary btn--done' : 'btn btn--primary';
@@ -486,6 +481,30 @@
         var saveError = interactive
             ? '<p id="saveError" class="save-error" hidden>Didn\'t save. Try again.</p>'
             : '';
+        return (
+            '<div class="actions"><button' +
+            buttonId +
+            ' class="' +
+            doneClass +
+            '" type="button"' +
+            (doneRecent ? ' disabled' : '') +
+            '><span' +
+            labelId +
+            ' aria-live="polite">' +
+            doneLabel +
+            '</span></button>' +
+            saveError +
+            '<button class="btn btn--secondary" type="button" aria-disabled="true">✎ Edit monster</button>' +
+            '</div>'
+        );
+    }
+
+    function renderMonsterCard(task, options) {
+        var interactive = !options || options.interactive !== false;
+        var state = dueState(task);
+        var stateClass = state ? 'monster-card--' + state : 'monster-card--none';
+        var accent = accentFor(task.context);
+        var title = monsterTitle(task.description);
         var status = statusText(task);
         var statusLine = status
             ? '<p class="status-line status-line--' +
@@ -539,20 +558,7 @@
             '<div class="description">' +
             renderMarkdown(task.description) +
             '</div></article>' +
-            '<div class="actions"><button' +
-            buttonId +
-            ' class="' +
-            doneClass +
-            '" type="button"' +
-            (doneRecent ? ' disabled' : '') +
-            '><span' +
-            labelId +
-            ' aria-live="polite">' +
-            doneLabel +
-            '</span></button>' +
-            saveError +
-            '<button class="btn btn--secondary" type="button" aria-disabled="true">✎ Edit monster</button>' +
-            '</div>'
+            renderCardActions(task, interactive)
         );
     }
 
