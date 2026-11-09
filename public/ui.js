@@ -110,13 +110,17 @@
     }
 
     function statusText(task) {
-        if (!task.due_date) {
+        var kind = statusKind(task);
+        if (kind === 'none') {
             return '';
         }
-        if (isDoneRecently(task.latest_date, task.today)) {
+        if (kind === 'done') {
             return task.latest_date === task.today ? 'Done today' : 'Done yesterday';
         }
-        if (task.due_date < task.today) {
+        if (kind === 'due') {
+            if (task.due_date === task.today) {
+                return 'Due today';
+            }
             var overdue = daysBetween(task.due_date, task.today);
             if (overdue < 30) {
                 return 'Overdue by ' + overdue + ' ' + plural(overdue, 'day', 'days');
@@ -125,9 +129,6 @@
             return (
                 'Overdue by ' + overdueMonths + ' ' + plural(overdueMonths, 'month', 'months')
             );
-        }
-        if (task.due_date === task.today) {
-            return 'Due today';
         }
         var ahead = daysBetween(task.today, task.due_date);
         if (ahead <= 45) {
