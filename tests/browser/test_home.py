@@ -49,17 +49,20 @@ def test_error_hides_tiles_and_shows_retry(page, page_url, csv_copy):
         page.unroute("**/context/*")
 
 
-def _assert_current(item, label):
+def _assert_oval_label(item, label):
     text = item.inner_text()
     assert text == label or text.endswith(" " + label)
+
+
+def _assert_current(item, label):
+    _assert_oval_label(item, label)
     assert item.get_attribute("aria-current") == "page"
     assert item.evaluate("el => el.tagName") == "SPAN"
     assert "breadcrumb__item--current" in (item.get_attribute("class") or "").split()
 
 
 def _assert_link(item, label):
-    text = item.inner_text()
-    assert text == label or text.endswith(" " + label)
+    _assert_oval_label(item, label)
     assert item.evaluate("el => el.tagName") == "A"
     assert "breadcrumb__item--current" not in (item.get_attribute("class") or "").split()
 
