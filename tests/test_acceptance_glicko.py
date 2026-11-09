@@ -129,3 +129,24 @@ def test_glicko_context_isolation(tmp_path):
 
     assert after[2] != before[2]
     assert after[3] == before[3]
+
+
+def test_glicko_solo_completion(tmp_path):
+    """A solo completion changes the rating and leaves no synthetic task."""
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_solo_completion.csv", tmp_path)
+    reference_date = "2026-11-08"
+
+    context_before = client.get(f"/context/chores?csv={csv_path}&date={reference_date}")
+    assert context_before.status_code == 200
+    assert context_before.json() == [1]
+
+    before = client.get(f"/task/1?csv={csv_path}").json()["rating"]
+
+    response = client.post(f"/task/1/done?csv={csv_path}")
+    assert response.status_code == 200
+
+    after = client.get(f"/task/1?csv={csv_path}").json()["rating"]
+    assert after != before
+
+    assert client.get(f"/task/?csv={csv_path}").json() == [1]
+    assert client.get(f"/context/chores?csv={csv_path}&date={reference_date}").json() == []
