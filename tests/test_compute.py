@@ -509,3 +509,12 @@ def test_build_synthetic_opponent_anchors_at_reference_date():
     opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
 
     assert opponent.rating_date == date(2026, 11, 8)
+
+
+def test_build_synthetic_opponent_has_no_task_id():
+    """Verify the synthetic opponent has no stored task id."""
+    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+
+    opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
+
+    assert opponent.id is None
