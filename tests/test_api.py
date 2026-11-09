@@ -357,6 +357,17 @@ def test_task_done_changes_equal_rated_opponent(tmp_path):
     _assert_opponent_rating_rises("tests/data/test_two_equal_ratings.csv", tmp_path)
 
 
+def test_task_done_keeps_not_due_peer_rating(tmp_path):
+    """Verify completing a due task leaves a not-due peer's rating unchanged."""
+    csv_path = _copy_fixture("tests/data/test_due_and_not_due.csv", tmp_path)
+
+    before = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+    client.post(f"/task/1/done?csv={csv_path}")
+    after = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+
+    assert after == before
+
+
 def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     """Verify the completed rating change exceeds the one-point placeholder."""
     csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
