@@ -52,11 +52,7 @@ def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Tas
 def filter_opponents_with_different_rating(tasks: list[Task], completed_task: Task) -> list[Task]:
     """Return other tasks in the context with a different rating."""
     same_context_tasks = filter_all_tasks_by_context(tasks, completed_task.context)
-    return [
-        task
-        for task in same_context_tasks
-        if task.id != completed_task.id and task.rating != completed_task.rating
-    ]
+    return [task for task in same_context_tasks if task.id != completed_task.id]
 
 
 def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
