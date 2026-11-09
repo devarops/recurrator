@@ -8,7 +8,11 @@ const SCOPE_TILES = [
 ];
 
 function buildUrlWithParams(path, csvParam) {
-    return csvParam ? `${path}?csv=${encodeURIComponent(csvParam)}` : path;
+    if (!csvParam) {
+        return path;
+    }
+    const separator = path.includes('?') ? '&' : '?';
+    return `${path}${separator}csv=${encodeURIComponent(csvParam)}`;
 }
 
 function buildApiUrl(taskId, csvParam) {
@@ -71,15 +75,12 @@ function getTodayISO() {
 }
 
 function buildContextUrl() {
-    const url = `/context/?date=${getTodayISO()}`;
-    const csv = getCsvParam();
-    return csv ? `${url}&csv=${encodeURIComponent(csv)}` : url;
+    return buildUrlWithParams(`/context/?date=${getTodayISO()}`, getCsvParam());
 }
 
 function buildTasksByContextUrl(contextName) {
-    const url = `/context/${encodeURIComponent(contextName)}?date=${getTodayISO()}`;
-    const csv = getCsvParam();
-    return csv ? `${url}&csv=${encodeURIComponent(csv)}` : url;
+    const path = `/context/${encodeURIComponent(contextName)}?date=${getTodayISO()}`;
+    return buildUrlWithParams(path, getCsvParam());
 }
 
 function applyScope(contexts, scope) {
