@@ -482,3 +482,12 @@ def test_compute_universe_medians_single_task():
     medians = rc.compute_universe_medians(tasks, date(2026, 11, 8))
 
     assert medians == (1600, 350)
+
+
+def test_compute_universe_medians_even_count():
+    """Verify an even number of tasks returns the mean of the middle ratings."""
+    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+
+    medians = rc.compute_universe_medians(tasks, date(2026, 11, 8))
+
+    assert medians == (1550, 350)
