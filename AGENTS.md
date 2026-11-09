@@ -39,6 +39,8 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 - Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import); otherwise write real assertions.
 - Tests that modify the CSV restore with the matching `update_*` and assert `_assert_file_unchanged`; see `_verify_task_as_done` or `test_task_done_idempotency`.
 
+**Acceptance specs:** `specs/*.spec.toml` holds the qed criteria; each names one user-observable HTTP API scenario and a pytest command. A criterion carries `skip = "Not implemented"` until its test in `tests/test_acceptance_*.py` exists.
+
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
 Run a unit test with `pytest tests/test_api.py::test_get_due_contexts`; browser: `RUN_BROWSER=1 pytest tests/browser/test_home.py::test_all_tile_shows_due_contexts`; CLI tests need the compose `api` service.
