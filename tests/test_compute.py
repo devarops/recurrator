@@ -500,3 +500,12 @@ def test_build_synthetic_opponent_uses_universe_medians():
     opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
 
     assert (opponent.rating, opponent.rating_deviation) == (1550, 350)
+
+
+def test_build_synthetic_opponent_anchors_at_reference_date():
+    """Verify the synthetic opponent is anchored to the reference date."""
+    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+
+    opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
+
+    assert opponent.rating_date == date(2026, 11, 8)
