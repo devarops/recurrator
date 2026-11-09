@@ -422,3 +422,14 @@ def test_task_done_sets_completed_rating_to_simultaneous_value(tmp_path):
     response = client.post(f"/task/1/done?csv={csv_path}")
 
     assert response.json()["rating"] == 1367
+
+
+def test_task_done_changes_solo_rating(tmp_path):
+    """Verify completing a solo task changes its rating."""
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_solo_completion.csv", tmp_path)
+
+    before = client.get(f"/task/1?csv={csv_path}").json()["rating"]
+    client.post(f"/task/1/done?csv={csv_path}")
+    after = client.get(f"/task/1?csv={csv_path}").json()["rating"]
+
+    assert after != before
