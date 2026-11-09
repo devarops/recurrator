@@ -473,3 +473,12 @@ def test_compute_live_rating_deviation_grows_more_with_more_elapsed_time():
     assert rc.compute_live_rating_deviation(
         350, anchor, two_days
     ) > rc.compute_live_rating_deviation(350, anchor, one_day)
+
+
+def test_compute_universe_medians_single_task():
+    """Verify a single task supplies its own rating and live deviation."""
+    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians.csv")
+
+    medians = rc.compute_universe_medians(tasks, date(2026, 11, 8))
+
+    assert medians == (1600, 350)
