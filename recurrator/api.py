@@ -125,7 +125,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
 
     io.update_task_as_done(task_id, today, csv_path)
 
-    opponents = compute.filter_opponents(io.import_tasks_from_csv(csv_path), current_task)
+    opponents = compute.filter_opponents(io.import_tasks_from_csv(csv_path), current_task, today)
     if opponents:
         updates = compute.compute_match_updates(current_task, opponents, today)
         for updated_id, (rating, rating_deviation) in updates.items():

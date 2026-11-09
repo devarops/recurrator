@@ -49,10 +49,14 @@ def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Tas
     return [task for task in tasks if task.context == context]
 
 
-def filter_opponents(tasks: list[Task], completed_task: Task) -> list[Task]:
-    """Return other tasks in the completed task's context."""
+def filter_opponents(tasks: list[Task], completed_task: Task, reference_date: date) -> list[Task]:
+    """Return other due or overdue tasks in the completed task's context."""
     same_context_tasks = filter_all_tasks_by_context(tasks, completed_task.context)
-    return [task for task in same_context_tasks if task.id != completed_task.id]
+    return [
+        task
+        for task in same_context_tasks
+        if task.id != completed_task.id and task.due_date <= reference_date
+    ]
 
 
 def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
