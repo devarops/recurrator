@@ -337,11 +337,6 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.monster-card__subtitle {
-  margin: 2px 0 0;
-  font-size: var(--fs-7);
-  color: var(--c-muted);
-}
 .bounty-badge {
   position: absolute;
   top: -2px;
@@ -442,17 +437,6 @@
   position: absolute;
   z-index: 1;
   border-radius: 999px;
-}
-.context-chip {
-  top: 10px;
-  left: 10px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  background: color-mix(in srgb, var(--c-surface) 94%, transparent);
-  font-size: var(--fs-7);
-  font-weight: 600;
 }
 .rating-badge {
   right: 10px;

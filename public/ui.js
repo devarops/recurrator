@@ -309,8 +309,14 @@
             'breadcrumb__item breadcrumb__item--' +
             kind +
             (current ? ' breadcrumb__item--current' : '');
+        var emoji =
+            kind === 'context'
+                ? '<span class="breadcrumb__emoji" aria-hidden="true">' +
+                  (CONTEXT_META[item.label] || '🗂️') +
+                  '</span> '
+                : '';
         var label =
-            '<span class="breadcrumb__oval">' + escapeHtml(item.label) + '</span>';
+            '<span class="breadcrumb__oval">' + emoji + escapeHtml(item.label) + '</span>';
         var title = ' title="' + escapeAttr(item.label) + '"';
         var tag = current ? 'span' : 'a';
         var attributes = current
@@ -458,11 +464,7 @@
         return (
             '<div class="art-panel accent-' +
             accent +
-            '"><span class="context-chip art-panel__pill"><span aria-hidden="true">' +
-            (CONTEXT_META[task.context] || '🗂️') +
-            '</span>' +
-            escapeHtml(task.context) +
-            '</span><img class="art-panel__monster" src="monster-placeholder.png" alt="" width="139" height="139">' +
+            '"><img class="art-panel__monster" src="monster-placeholder.png" alt="" width="139" height="139">' +
             '<span class="art-panel__shadow" aria-hidden="true"></span>' +
             '<span class="rating-badge art-panel__pill">' +
             '<span class="visually-hidden">Rating </span>' +
@@ -545,11 +547,7 @@
             '<span class="bounty-badge__value">' +
             task.coins +
             '</span></span><span class="bounty-badge__label">BOUNTY</span></div>' +
-            '<p class="monster-card__subtitle">' +
-            escapeHtml(task.context) +
-            ' · every ' +
-            task.recurrence_days +
-            ' days</p></div>' +
+            '</div>' +
             renderArtPanel(task, accent) +
             '<div class="stat-grid">' +
             stats +
