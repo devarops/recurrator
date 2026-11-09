@@ -185,17 +185,29 @@ def build_synthetic_opponent(tasks: list[Task], reference_date: date) -> Synthet
     )
 
 
+def select_opponents(
+    tasks: list[Task], completed_task: Task, reference_date: date
+) -> Sequence[Task | SyntheticOpponent]:
+    """Return the real opponents, or the synthetic one when none are due."""
+    opponents = filter_opponents(tasks, completed_task, reference_date)
+    if opponents:
+        return opponents
+    return [build_synthetic_opponent(tasks, reference_date)]
+
+
 class _GlickoPlayer(glicko2.Player):
     def _preRatingRD(self):
         """The elapsed-time projection already set the pre-event deviation."""
 
 
 def compute_match_updates(
-    completed_task: Task, opponents: list[Task], reference_date: date
-) -> dict[int, tuple[int, int]]:
+    completed_task: Task,
+    opponents: Sequence[Task | SyntheticOpponent],
+    reference_date: date,
+) -> dict[int | None, tuple[int, int]]:
     """Return simultaneous rating and deviation updates for one completion."""
-    participants = [completed_task, *opponents]
-    players = {
+    participants: list[Task | SyntheticOpponent] = [completed_task, *opponents]
+    players: dict[int | None, _GlickoPlayer] = {
         task.id: _GlickoPlayer(
             task.rating,
             compute_live_rating_deviation(task.rating_deviation, task.rating_date, reference_date),
@@ -206,10 +218,12 @@ def compute_match_updates(
     snapshot_deviations = {task_id: player.getRd() for task_id, player in players.items()}
 
     completed_id = completed_task.id
-    opponent_ids = [task.id for task in opponents]
-    updates: dict[int, tuple[int, int]] = {}
+    opponent_ids: list[int | None] = [task.id for task in opponents]
+    updates: dict[int | None, tuple[int, int]] = {}
 
-    def play(task_id: int, opponents_for_task: list[int], outcomes: list[float]) -> None:
+    def play(
+        task_id: int | None, opponents_for_task: list[int | None], outcomes: list[float]
+    ) -> None:
         player = players[task_id]
         player.update_player(
             [snapshot_ratings[opponent_id] for opponent_id in opponents_for_task],

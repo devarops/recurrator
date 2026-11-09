@@ -307,7 +307,8 @@ def test_task_done_rating(tmp_path):
 
     response = client.post(f"/task/8/done?csv={csv_path}")
 
-    assert response.json()["rating"] == 1500
+    stored = client.get(f"/task/8?csv={csv_path}").json()
+    assert response.json()["rating"] == stored["rating"]
 
 
 def test_task_done_rating_deviation(tmp_path):
@@ -316,7 +317,8 @@ def test_task_done_rating_deviation(tmp_path):
 
     response = client.post(f"/task/8/done?csv={csv_path}")
 
-    assert response.json()["rating_deviation"] == 350
+    stored = client.get(f"/task/8?csv={csv_path}").json()
+    assert response.json()["rating_deviation"] == stored["rating_deviation"]
 
 
 def test_task_done_decreases_completed_rating(tmp_path):

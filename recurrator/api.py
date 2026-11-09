@@ -125,12 +125,14 @@ def post_task_done(task_id: int, csv: str = Query(None)):
 
     io.update_task_as_done(task_id, today, csv_path)
 
-    opponents = compute.filter_opponents(io.import_tasks_from_csv(csv_path), current_task, today)
-    if opponents:
-        updates = compute.compute_match_updates(current_task, opponents, today)
-        for updated_id, (rating, rating_deviation) in updates.items():
-            io.update_task_rating(updated_id, rating, csv_path)
-            io.update_task_rating_deviation(updated_id, rating_deviation, csv_path)
+    tasks = io.import_tasks_from_csv(csv_path)
+    opponents = compute.select_opponents(tasks, current_task, today)
+    updates = compute.compute_match_updates(current_task, opponents, today)
+    for updated_id, (rating, rating_deviation) in updates.items():
+        if updated_id is None:
+            continue
+        io.update_task_rating(updated_id, rating, csv_path)
+        io.update_task_rating_deviation(updated_id, rating_deviation, csv_path)
 
     updated_task = io.get_task_by_id(task_id, csv_path)
     return {
