@@ -161,6 +161,15 @@ def compute_live_rating_deviation(
     return min(max(live_deviation, GLICKO_RD_MIN), GLICKO_RD_MAX)
 
 
+def compute_universe_medians(tasks: list[Task], reference_date: date) -> tuple[int, int]:
+    """Return the median rating and live deviation of every task."""
+    task = tasks[0]
+    return (
+        task.rating,
+        compute_live_rating_deviation(task.rating_deviation, task.rating_date, reference_date),
+    )
+
+
 class _GlickoPlayer(glicko2.Player):
     def _preRatingRD(self):
         """The elapsed-time projection already set the pre-event deviation."""
