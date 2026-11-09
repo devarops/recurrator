@@ -27,6 +27,7 @@ class SyntheticOpponent:
     rating: int
     rating_deviation: int
     rating_date: date
+    id: int | None = None
 
 
 class Task:
