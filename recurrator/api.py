@@ -25,10 +25,13 @@ def _resolve_csv_path(csv: str | None = None) -> str:
 
 def _rating_fields(task: io.Task, reference_date: date | None = None) -> dict:
     """Return the Glicko fields shared by task responses."""
-    rating_deviation = task.rating_deviation
-    if reference_date is not None:
-        rating_deviation = compute.compute_live_rating_deviation(
-            task.rating_deviation, task.rating_date, reference_date
+    if reference_date is None:
+        rating_deviation = task.rating_deviation
+    else:
+        rating_deviation = round(
+            compute.compute_live_rating_deviation(
+                task.rating_deviation, task.rating_date, reference_date
+            )
         )
     return {
         "rating": task.rating,

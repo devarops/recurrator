@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 from datetime import date, timedelta
+from math import sqrt
 from statistics import median
 
 import glicko2  # type: ignore[import-untyped]
@@ -10,6 +11,8 @@ from .models import (
     GLICKO_RATING_DEVIATION_MAX,
     GLICKO_RATING_DEVIATION_MIN,
     GLICKO_RATING_PERIODS_PER_DAY,
+    GLICKO_SCALE,
+    GLICKO_VOLATILITY_DEFAULT,
     SyntheticOpponent,
     Task,
 )
@@ -171,9 +174,11 @@ def compute_elapsed_rating_periods(rating_date: date, reference_date: date) -> f
 
 def compute_live_rating_deviation(
     anchored_deviation: int, rating_date: date, reference_date: date
-) -> int:
+) -> float:
     """Project an anchored rating deviation to reference_date."""
-    live_deviation = anchored_deviation + _elapsed_days(rating_date, reference_date)
+    elapsed_periods = compute_elapsed_rating_periods(rating_date, reference_date)
+    growth_per_period = (GLICKO_SCALE * GLICKO_VOLATILITY_DEFAULT) ** 2
+    live_deviation = sqrt(anchored_deviation**2 + growth_per_period * elapsed_periods)
     return min(max(live_deviation, GLICKO_RATING_DEVIATION_MIN), GLICKO_RATING_DEVIATION_MAX)
 
 
