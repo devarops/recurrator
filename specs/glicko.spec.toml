@@ -93,7 +93,6 @@ description = """
 When a task is completed, reading it without a date returns the same rating
 deviation as the completion response.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_completion_anchor"
