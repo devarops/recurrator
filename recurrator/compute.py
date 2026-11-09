@@ -180,7 +180,9 @@ def compute_universe_medians(tasks: list[Task], reference_date: date) -> tuple[i
 def build_synthetic_opponent(tasks: list[Task], reference_date: date) -> SyntheticOpponent:
     """Build an internal opponent from the universe medians."""
     rating, rating_deviation = compute_universe_medians(tasks, reference_date)
-    return SyntheticOpponent(rating=rating, rating_deviation=rating_deviation)
+    return SyntheticOpponent(
+        rating=rating, rating_deviation=rating_deviation, rating_date=reference_date
+    )
 
 
 class _GlickoPlayer(glicko2.Player):

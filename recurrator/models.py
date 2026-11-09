@@ -26,6 +26,7 @@ class SyntheticOpponent:
 
     rating: int
     rating_deviation: int
+    rating_date: date
 
 
 class Task:
