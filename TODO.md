@@ -4,6 +4,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 
 - Add json schema validation for config file — backlog only
 - Set min and max recurrence days — backlog only
+- Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
 - Glicko rating system — [details below](#glicko-rating-system)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Restore monster avatars on the deployed app — backlog only
@@ -12,9 +13,13 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Add blockers: a task is blocked while its blocker's row exists; removal needs DELETE /task/{id} — backlog only
 - Add sub-tasks: completing any child completes its parent upward, never downward; skip a parent completed in the last two days — backlog only
 
+## Add one extra task when we have fewer than 6 tasks
+
+`filter_one_extra_task` exists in `compute.py` as a stub returning `[]`. Implement the acceptance criteria in `specs/one_extra_task.spec.toml` and call the selector from `GET /context/{context_id}` after the WIP selection. Keep it complementary to `filter_n_tasks_by_context`.
+
 ## Glicko rating system
 
-Three of the seven acceptance criteria in `specs/glicko.spec.toml` pass: the integer contract, the simultaneous update, and the inactivity growth. The remaining four are the four-task event, early completion, solo completion, and context isolation. The implementation still uses a linear deviation projection, an all-context opponent selection, and the stored-anchor API default.
+Implement the acceptance criteria in `specs/glicko.spec.toml`. The implementation still uses a linear deviation projection, an all-context opponent selection, and the stored-anchor API default.
 
 ### Deviation growth
 
@@ -46,7 +51,7 @@ After a completion, set `rating_date` to the completion date for the completed t
 
 ### Tests
 
-Add the four missing acceptance tests in `tests/test_acceptance_glicko.py` and remove their `skip` fields: four-task event, early completion, solo completion, and context isolation. Update the unit tests for the step-6 projection, the due/overdue selection without the rating filter, the synthetic medians, and the rating-date anchor. The three existing criteria keep their tests. The WIP criterion and its test are removed.
+Update the unit tests for the step-6 projection, the due/overdue selection without the rating filter, the synthetic medians, and the rating-date anchor.
 
 ### Data migration
 

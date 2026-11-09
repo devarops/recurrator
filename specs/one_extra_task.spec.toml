@@ -1,0 +1,60 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "one_extra_task"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_one_extra_task.py exists.
+
+[[criteria]]
+description = """
+When a context has at least one and fewer than the work-in-progress limit of
+due and overdue tasks, and an upcoming task with recurrence days greater than
+30 exists, the response appends exactly one extra task after the due tasks.
+The extra task is the nearest such task, with larger recurrence days breaking a
+due-date tie.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_one_extra_task.py::test_extra_task_when_fewer_than_limit_due"
+
+[[criteria]]
+description = """
+When a context has no due tasks and an upcoming task with recurrence days
+greater than 30 exists, the response contains that one extra task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_one_extra_task.py::test_extra_task_when_zero_due"
+
+[[criteria]]
+description = """
+When a context has at least the work-in-progress limit of due and overdue
+tasks, the response contains only the WIP-selected due tasks and no extra task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_at_limit"
+
+[[criteria]]
+description = """
+When a context has fewer than the work-in-progress limit of due tasks but no
+upcoming task with recurrence days greater than 30 exists, the response
+contains only the due tasks and no extra task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_without_long_recurrence"
+
+[[criteria]]
+description = """
+When the extra task is appended, it belongs to the completed context, is not
+due, and its skip_count and skip_date remain unchanged.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_one_extra_task.py::test_extra_task_is_not_skipped_and_stays_in_context"
