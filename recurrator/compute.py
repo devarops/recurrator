@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 from datetime import date, timedelta
 from statistics import median
+from types import SimpleNamespace
 
 import glicko2  # type: ignore[import-untyped]
 
@@ -169,6 +170,12 @@ def compute_universe_medians(tasks: list[Task], reference_date: date) -> tuple[i
         for task in tasks
     ]
     return round(median(ratings)), round(median(deviations))
+
+
+def build_synthetic_opponent(tasks: list[Task], reference_date: date) -> SimpleNamespace:
+    """Build an internal opponent from the universe medians."""
+    rating, rating_deviation = compute_universe_medians(tasks, reference_date)
+    return SimpleNamespace(rating=rating, rating_deviation=rating_deviation)
 
 
 class _GlickoPlayer(glicko2.Player):
