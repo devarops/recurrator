@@ -262,3 +262,21 @@ def test_import_tasks_from_csv_rating_deviation():
     expected_rating_deviation = 350
     obtained_rating_deviation = task_list[0].rating_deviation
     assert obtained_rating_deviation == expected_rating_deviation
+
+
+def test_update_task_rating_date_in_csv():
+    """Verify update_task_rating_date writes and restores the rating anchor."""
+    task_id = 1
+    csv_path = "tests/data/test_two_ratings.csv"
+
+    original_checksum = _get_file_checksum(csv_path)
+    original_task = io.get_task_by_id(task_id, csv_path)
+
+    new_rating_date = date(2026, 11, 8)
+    io.update_task_rating_date(task_id, new_rating_date, csv_path)
+    assert io.get_task_by_id(task_id, csv_path).rating_date == new_rating_date
+
+    io.update_task_rating_date(task_id, original_task.rating_date, csv_path)
+    assert io.get_task_by_id(task_id, csv_path).rating_date == original_task.rating_date
+
+    _assert_file_unchanged(csv_path, original_checksum)
