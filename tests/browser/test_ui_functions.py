@@ -92,3 +92,13 @@ def test_render_markdown_escaped_paragraph_break(page, page_url, open_page, csv_
 
     rendered = page.evaluate("ui.renderMarkdown(String.raw`first\\n\\nsecond`)")
     assert rendered == "<p>first</p><p>second</p>"
+
+
+def test_render_markdown_leaves_a_literal_escape_alone(
+    page, page_url, open_page, csv_copy
+):
+    csv_path = csv_copy("test_contexts.csv")
+    open_page(page, page_url("index.html", csv_path, date="2026-05-01"))
+
+    rendered = page.evaluate("ui.renderMarkdown(String.raw`first\\nsecond`)")
+    assert rendered == "<p>first\\nsecond</p>"
