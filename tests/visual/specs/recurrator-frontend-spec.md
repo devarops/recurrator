@@ -30,6 +30,7 @@ These decisions supersede the four-screen spec and the unmerged v3.2 draft where
 | Q13 | Search is specified now; its capture and browser tests follow later. `DOCS.md` already describes the endpoint; `CHANGELOG.md` follows the implementation. |
 | Q14 | The frontend adopts the path-based interface: `/context/` is the full roster, `/context/{id}` is a read-only roster, and `/context/{id}/due/{date}` is the only context call that writes. |
 | Q15 | Every dated call carries an explicit date in the path, because captures pin the date; the undated `/due/` aliases serve people typing URLs, not the app. |
+| Q16 | Description checkboxes are a read-only pending marker: they show `[ ]` and `[x]` and never write. An item is ticked by editing the description through `PATCH /task/{id}/description`; the rendered checkbox is disabled, not focusable, and hidden from assistive technology because the text already states the state. |
 
 ---
 
@@ -129,7 +130,7 @@ The interface below is the documented one, and the frontend uses only these call
 | `GET /scope/{scope_id}/` | contexts in a scope that have tasks, alphabetical | search scope map | `scope_id` is a stored scope or `all` |
 | `GET /scope/{scope_id}/due/{date}` | due contexts in a scope | home, scope list | `all` matches `/context/due/{date}` |
 | `PATCH /task/{id}/starred` | `id`, `starred` | card, once the toggle ships | always 200; a repeat is idempotent |
-| `PATCH /task/{id}/description` | `id`, `description` | card, once the edit flow ships | 400 for an empty description |
+| `PATCH /task/{id}/description` | `id`, `description` — the stored text, unchanged | card, once the edit flow ships | 422 malformed body, 404 unknown task, 400 empty; whitespace is not trimmed |
 | `POST /task/{id}/done` | new `due_date`, `latest_done_date`, `rating`; **409** if done today or yesterday | card | see §11.6 |
 
 **R1** Never call `/context/{id}/due/{date}` to enumerate or search: it mutates the data file and truncates the result. Use `/context/{id}` for the roster.
@@ -450,7 +451,7 @@ Paragraphs, `**bold**`, `_italic_`, `` `code` ``, `- ` lists, `- [ ]`/`- [x]` ch
 - Escape HTML before transforming. Descriptions are user data.
 - Descriptions store real line breaks: one breaks a line inside a paragraph, two separate paragraphs. A literal backslash-n is ordinary text.
 - Links `target="_blank" rel="noopener noreferrer"`.
-- Checks: real checkbox, `accent-color: var(--c-orange)`, toggling local-only (S5).
+- Checks: a real checkbox with `accent-color: var(--c-orange)`, rendered `disabled`, not focusable and `aria-hidden="true"`. It is a pending marker, not a control: tapping it changes nothing, and an item is ticked by editing the description (Q16).
 
 ### 11.4 Due state
 ```js
@@ -510,10 +511,9 @@ Other failures: button returns to `✓ Mark as Done`, inline `Didn't save. Try a
 | S2 | One placeholder PNG for every monster | `ui.js` | sprite/art lookup |
 | S3 | Bounty badge displays, never toggles | `ui.renderMonsterCard` | `PATCH /task/{id}/starred` — UI work pending |
 | S4 | `Edit monster` disabled, no handler | `ui.renderMonsterCard` | `PATCH /task/{id}/description` — UI work pending |
-| S5 | Checks toggle in memory only | `ui.renderMarkdown` | `PATCH /task/{id}/description` — UI work pending |
 | S6 | Context emoji hardcoded; the roster and scope grouping come from the scope views | `ui.js: CONTEXT_META` | an emoji field, if the API ever has one |
 
-`S1` retired: the scope views filter the lists and supply the grouping; see Appendix A. `S7` retired: the summariser keeps one request per task, because no bulk route is planned. `S8` retired: search calls the documented endpoint.
+`S1` retired: the scope views filter the lists and supply the grouping; see Appendix A. `S5` retired: checks are a read-only pending marker, not a stub; see Q16. `S7` retired: the summariser keeps one request per task, because no bulk route is planned. `S8` retired: search calls the documented endpoint.
 
 ### 13.3 Dependencies
 
@@ -535,7 +535,7 @@ Each stub has a working fallback. None of them justifies a blank screen or an in
 4. Context card — short, `doctoradoadmin`, each accent.
 5. Task row — short, long/truncated, with bounty, with the emoji meta line.
 6. Monster card — not-due/unstarred, due/starred, overdue/starred, no-due-date; `LATEST DONE` label.
-7. Markdown — seven constructs plus a single and a double line break.
+7. Markdown — seven constructs plus a single and a double line break, and the `- [ ]` / `- [x]` marker rendered non-interactive.
 8. Buttons — primary, saving, done, 409, secondary-disabled.
 9. Skeleton, empty (celebratory), error, **no-results**.
 10. Trail — home, scope, context, card, search (both 3-level and 4-level); ancestor vs current vs **inert** vs **widening button**; `Personal` + `doctoradoadmin` + `#999`; collapsed `…` variant.
@@ -564,6 +564,7 @@ Each stub has a working fallback. None of them justifies a blank screen or an in
 17. The current oval fills the row up to the magnifier's reserved edge, ancestors are content-sized, and no oval wraps.
 18. The celebratory empty state is the same component and copy on both lists, with no back link.
 19. `LATEST DONE` displays `latest_done_date`, including when a skip has moved `latest_date`.
+20. Description checkboxes render non-interactive and never write; only the description text records a tick (Q16).
 
 ---
 
@@ -608,3 +609,5 @@ Each stub has a working fallback. None of them justifies a blank screen or an in
 | Width contract 393/320/443 variants. | One `max-width: 420px`; 393px capture reference only. |
 | v3.2 scope map (15 contexts). | Actual `context.csv` map: Work 5, Personal 8, Both 3. |
 | Empty task list “No monsters left here.” + back link. | One celebratory state reused on both lists, no back link. |
+| Descriptions stored a line break as the characters backslash and n, and `renderMarkdown` decoded it. | Descriptions store real line breaks; a literal backslash-n is ordinary text. |
+| Checks toggled in memory only, a stub awaiting a write route (`S5`). | Checks are a read-only pending marker; the description text is the record (`Q16`). |

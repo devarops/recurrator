@@ -71,3 +71,33 @@ message.
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_description_unknown_task_returns_404"
+
+[[criteria]]
+description = """
+When the body omits the description or sends a non-string, the write returns
+422 with an error message, and a later read reports the previous text.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_malformed_description_body_is_rejected"
+
+[[criteria]]
+description = """
+When the description carries leading or trailing whitespace, the write stores
+it untrimmed, and the response returns that exact text.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_description_whitespace_is_preserved"
+
+[[criteria]]
+description = """
+When no task has the given ID and the description is empty, the write returns
+404, because the task is looked up before the text is validated.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_unknown_task_takes_precedence_over_an_empty_description"

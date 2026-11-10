@@ -58,7 +58,7 @@ Returns one task with its computed schedule.
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 404 when no task has the given ID
-- **Notes**: `latest_date` is the later of the last completion date and the skip date. `latest_done_date` is the last completion date itself, unaffected by the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. `rating_deviation` is projected to `date` when provided; otherwise it is projected to today.
+- **Notes**: `latest_date` is the later of the last completion date and the skip date. `latest_done_date` is the last completion date itself, unaffected by the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. `rating_deviation` is projected to `date` when provided; otherwise it is projected to today. `description` is markdown text that may contain real line breaks, returned as newlines.
 
 ### GET /search/
 
@@ -176,8 +176,8 @@ Replaces a task's description.
 - **Returns**: An object with these fields:
   - `id` (integer)
   - `description` (string)
-- **Errors**: 404 when no task has the given ID; 400 when the description is empty or only whitespace; 422 when `description` is missing or not a string
-- **Notes**: The text is stored verbatim, including markdown and line breaks; it is not trimmed.
+- **Errors**: 422 when `description` is missing or not a string; 404 when no task has the given ID; 400 when the description is empty or only whitespace
+- **Notes**: The body is validated before the task is looked up, and the task before the text: a malformed body returns 422, an unknown ID returns 404 even when the description is empty, and only an existing task with an empty description returns 400. The text is stored verbatim, including markdown and real line breaks; it is not trimmed. A read returns the same text unchanged, and the characters backslash and n are ordinary text.
 
 ### POST /task/{id}/done
 
