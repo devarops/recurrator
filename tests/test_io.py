@@ -158,6 +158,21 @@ def test_update_task_skip_count_in_csv():
     _assert_file_unchanged(csv_path, original_checksum)
 
 
+def test_write_preserves_quotes_in_description():
+    """Verify an unrelated write leaves a quoted description intact."""
+    task_id = 1
+    csv_path = "tests/data/test_quoted_description.csv"
+    original_checksum = _get_file_checksum(csv_path)
+    expected_description = 'He said "hola" once, and left.'
+
+    io.update_task_skip_count(task_id, 3, csv_path)
+    obtained_description = io.get_task_by_id(task_id, csv_path).description
+    assert obtained_description == expected_description
+
+    io.update_task_skip_count(task_id, 0, csv_path)
+    _assert_file_unchanged(csv_path, original_checksum)
+
+
 def test_update_task_as_done_in_csv():
     """Verify update_task_as_done_in_csv correctly updates dates and skip count."""
     csv_path = "tests/data/test_three_tasks.csv"
