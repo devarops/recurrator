@@ -359,9 +359,7 @@
         var search = options && options.search ? renderSearchStub() : '';
         return (
             '<div class="breadcrumb-row">' +
-            '<nav class="breadcrumb" data-count="' +
-            items.length +
-            '" aria-label="Breadcrumb">' +
+            '<nav class="breadcrumb" aria-label="Breadcrumb">' +
             parts.join('') +
             '</nav>' +
             search +
