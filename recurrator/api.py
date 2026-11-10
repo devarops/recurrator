@@ -123,6 +123,8 @@ class DescriptionUpdate(BaseModel):
 def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
     """Replace a task's description with the given text."""
     csv_path = _resolve_csv_path(csv)
+    if not body.description.strip():
+        return JSONResponse(content={"error": "Description must not be empty"}, status_code=400)
     io.update_task_description(task_id, body.description, csv_path)
     return {"id": task_id, "description": body.description}
 
