@@ -260,9 +260,8 @@
   min-width: max-content;
   max-width: none;
 }
-.breadcrumb__item:focus-visible {
-  outline: 2px solid var(--c-blue);
-  outline-offset: 2px;
+.breadcrumb__item:focus-visible,
+.search-button:focus-visible {
   border-radius: 999px;
 }
 .breadcrumb__oval {
@@ -303,11 +302,6 @@
   background: transparent;
   color: var(--c-muted);
   cursor: default;
-}
-.search-button:focus-visible {
-  outline: 2px solid var(--c-blue);
-  outline-offset: 2px;
-  border-radius: 999px;
 }
 .search-button__icon {
   width: 18px;
