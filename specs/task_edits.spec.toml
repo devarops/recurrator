@@ -50,7 +50,6 @@ description = """
 When a description is written, the response returns its ID and the new text,
 and a later read reports the text unchanged, markdown included.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_description_is_written_verbatim"
