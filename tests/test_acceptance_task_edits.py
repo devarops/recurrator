@@ -24,3 +24,17 @@ def test_description_is_written_verbatim(tmp_path):
     with open(csv_path, newline="") as file:
         stored = list(csv.DictReader(file))
     assert stored[0]["description"] == text
+
+
+def test_empty_description_is_rejected(tmp_path):
+    """An empty or whitespace-only description is refused and the text survives."""
+    csv_path = _copy_fixture(FIXTURE, tmp_path)
+    before = client.get(f"/task/2?csv={csv_path}").json()["description"]
+
+    for text in ("", "   ", "\n\t "):
+        response = client.patch(f"/task/2/description?csv={csv_path}", json={"description": text})
+
+        assert response.status_code == 400
+        assert "error" in response.json()
+
+    assert client.get(f"/task/2?csv={csv_path}").json()["description"] == before
