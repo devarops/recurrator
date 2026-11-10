@@ -1,4 +1,5 @@
 import csv
+import os
 from collections.abc import Callable, Sequence
 from datetime import date
 
@@ -135,7 +136,7 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
 def _update_task_in_csv(
     task_id: int, modify_row: Callable[[dict, int], None], csv_path: str
 ) -> None:
-    """Generic CSV update: read, apply modification callback, write back."""
+    """Generic CSV update: read, apply modification callback, write back atomically."""
     with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
@@ -143,11 +144,19 @@ def _update_task_in_csv(
     for row in rows:
         modify_row(row, task_id)
     assert fieldnames is not None
-    with open(csv_path, "w", newline="") as f:
-        f.write(",".join(fieldnames) + "\n")
-        for row in rows:
-            line = _format_csv_line(fieldnames, row)
-            f.write(line + "\n")
+
+    temporary_path = f"{csv_path}.tmp"
+    try:
+        with open(temporary_path, "w", newline="") as f:
+            f.write(",".join(fieldnames) + "\n")
+            for row in rows:
+                f.write(_format_csv_line(fieldnames, row) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temporary_path, csv_path)
+    finally:
+        if os.path.exists(temporary_path):
+            os.unlink(temporary_path)
 
 
 def update_task_dates(task_id: int, dates: list[date | None], csv_path: str) -> None:
