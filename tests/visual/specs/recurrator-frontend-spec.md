@@ -448,7 +448,7 @@ Strip markdown and leading list markers → first 3 words of the first non-empty
 ### 11.3 Markdown subset
 Paragraphs, `**bold**`, `_italic_`, `` `code` ``, `- ` lists, `- [ ]`/`- [x]` checks, `[text](url)`, line breaks; everything else literal.
 - Escape HTML before transforming. Descriptions are user data.
-- Decode the CSV line-break escape first: the data stores a break as the characters backslash and n; one escape breaks a line inside a paragraph, two separate paragraphs.
+- Descriptions store real line breaks: one breaks a line inside a paragraph, two separate paragraphs. A literal backslash-n is ordinary text.
 - Links `target="_blank" rel="noopener noreferrer"`.
 - Checks: real checkbox, `accent-color: var(--c-orange)`, toggling local-only (S5).
 
@@ -535,7 +535,7 @@ Each stub has a working fallback. None of them justifies a blank screen or an in
 4. Context card — short, `doctoradoadmin`, each accent.
 5. Task row — short, long/truncated, with bounty, with the emoji meta line.
 6. Monster card — not-due/unstarred, due/starred, overdue/starred, no-due-date; `LATEST DONE` label.
-7. Markdown — seven constructs plus `\n` and `\n\n` decoded.
+7. Markdown — seven constructs plus a single and a double line break.
 8. Buttons — primary, saving, done, 409, secondary-disabled.
 9. Skeleton, empty (celebratory), error, **no-results**.
 10. Trail — home, scope, context, card, search (both 3-level and 4-level); ancestor vs current vs **inert** vs **widening button**; `Personal` + `doctoradoadmin` + `#999`; collapsed `…` variant.

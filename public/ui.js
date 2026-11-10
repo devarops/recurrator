@@ -170,7 +170,6 @@
 
     function renderMarkdown(markdown) {
         var lines = String(markdown || '')
-            .replace(/\\n/g, '\n')
             .replace(/\r\n/g, '\n')
             .split('\n');
         var blocks = [];
