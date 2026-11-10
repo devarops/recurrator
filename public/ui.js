@@ -342,16 +342,30 @@
         );
     }
 
-    function renderBreadcrumb(items) {
+    function renderSearchStub() {
+        return (
+            '<button class="search-button" type="button" aria-label="Search" aria-disabled="true">' +
+            '<svg class="search-button__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+            '<circle cx="11" cy="11" r="6"></circle>' +
+            '<line x1="16" y1="16" x2="21" y2="21"></line>' +
+            '</svg></button>'
+        );
+    }
+
+    function renderBreadcrumb(items, options) {
         var parts = items.map(function (item, index) {
             return renderBreadcrumbItem(item, index, items.length);
         });
+        var search = options && options.search ? renderSearchStub() : '';
         return (
+            '<div class="breadcrumb-row">' +
             '<nav class="breadcrumb" data-count="' +
             items.length +
             '" aria-label="Breadcrumb">' +
             parts.join('') +
-            '</nav>'
+            '</nav>' +
+            search +
+            '</div>'
         );
     }
 

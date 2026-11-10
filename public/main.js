@@ -130,10 +130,10 @@ function breadcrumbItems(scope, context, taskId) {
     return items;
 }
 
-function setBreadcrumb(items) {
+function setBreadcrumb(items, options) {
     const headerElement = document.getElementById('pageHeader');
     if (headerElement) {
-        headerElement.innerHTML = ui.renderBreadcrumb(items);
+        headerElement.innerHTML = ui.renderBreadcrumb(items, options);
     }
 }
 
@@ -141,7 +141,7 @@ function initHomePage() {
     const scopesElement = document.getElementById('scopes');
     const errorElement = document.getElementById('error');
 
-    setBreadcrumb(breadcrumbItems());
+    setBreadcrumb(breadcrumbItems(), { search: true });
     scopesElement.innerHTML = ui.renderSkeleton('tiles');
 
     fetchJson(buildContextUrl())
@@ -168,7 +168,7 @@ function initScopePage() {
     const errorElement = document.getElementById('error');
     const scope = readScope();
 
-    setBreadcrumb(breadcrumbItems(scope));
+    setBreadcrumb(breadcrumbItems(scope), { search: true });
     contextsElement.innerHTML = ui.renderSkeleton('grid');
 
     fetchJson(buildContextUrl())
@@ -197,7 +197,7 @@ function initContextPage() {
     const scope = readScope();
     const csvParam = getCsvParam();
 
-    setBreadcrumb(breadcrumbItems(scope, context || ''));
+    setBreadcrumb(breadcrumbItems(scope, context || ''), { search: true });
     tasksElement.innerHTML = ui.renderSkeleton('list');
 
     fetchJson(buildTasksByContextUrl(context))
