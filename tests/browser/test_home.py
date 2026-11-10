@@ -103,6 +103,7 @@ def _assert_targets(item):
     assert box is not None
     assert box["height"] >= 44
     assert box["width"] >= 44
+    return box
 
 
 def _assert_fits(item):
@@ -117,10 +118,7 @@ def _assert_search_stub(header):
     assert button.get_attribute("aria-disabled") == "true"
     assert button.get_attribute("href") is None
     assert button.evaluate("el => el.tagName") == "BUTTON"
-    box = button.bounding_box()
-    assert box is not None
-    assert box["width"] >= 44
-    assert box["height"] >= 44
+    box = _assert_targets(button)
     nav_box = header.locator(".breadcrumb").bounding_box()
     assert nav_box is not None
     assert box["x"] >= nav_box["x"] + nav_box["width"] - 1
