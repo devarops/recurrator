@@ -1,0 +1,76 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "task_edits"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_task_edits.py exists.
+
+[[criteria]]
+description = """
+When a task is starred, the response returns its ID and the new flag, and a
+later read reports the task as starred.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_starred_task_is_reported"
+
+[[criteria]]
+description = """
+When a starred task is read, its coins are twice the recurrence days, and
+unstarring it restores the single value.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_starred_task_doubles_coins"
+
+[[criteria]]
+description = """
+When the same starred value is written twice, both writes return 200 with the
+same confirmation subset.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_starring_is_idempotent"
+
+[[criteria]]
+description = """
+When no task has the given ID, the starred write returns 404 with an error
+message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_star_unknown_task_returns_404"
+
+[[criteria]]
+description = """
+When a description is written, the response returns its ID and the new text,
+and a later read reports the text unchanged, markdown included.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_description_is_written_verbatim"
+
+[[criteria]]
+description = """
+When the description is empty or only whitespace, the write returns 400 with an
+error message, and a later read reports the previous text.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_empty_description_is_rejected"
+
+[[criteria]]
+description = """
+When no task has the given ID, the description write returns 404 with an error
+message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_description_unknown_task_returns_404"

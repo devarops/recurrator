@@ -1,0 +1,83 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "search"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_search.py exists.
+
+[[criteria]]
+description = """
+When the query appears in a description, the search returns that task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_query_matches_a_description"
+
+[[criteria]]
+description = """
+When a word of eight or more letters carries one transposition, the search
+still returns the task, because the similarity stays above the 80 cutoff.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_one_typo_still_matches"
+
+[[criteria]]
+description = """
+When the query is unrelated to every description, the search returns no tasks.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_unrelated_query_returns_nothing"
+
+[[criteria]]
+description = """
+When the query differs from a description only in case or accents, the search
+returns that task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_case_and_accents_are_ignored"
+
+[[criteria]]
+description = """
+When the query is missing, the search returns every task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_missing_query_returns_every_task"
+
+[[criteria]]
+description = """
+When the query is present but empty, the search returns 400 with an error
+message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_empty_query_is_rejected"
+
+[[criteria]]
+description = """
+When the query is shorter than three characters after trimming, the search
+returns 400 with an error message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_short_query_is_rejected"
+
+[[criteria]]
+description = """
+When a task matches, the response carries the full task object, including
+latest_done_date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_results_carry_full_task_objects"

@@ -51,13 +51,24 @@ Returns one task with its computed schedule.
   - `skip_count` (integer)
   - `starred` (boolean)
   - `latest_date` (ISO 8601 date string)
+  - `latest_done_date` (ISO 8601 date string)
   - `recurrence_days` (integer)
   - `due_date` (ISO 8601 date string)
   - `coins` (integer)
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 404 when no task has the given ID
-- **Notes**: `latest_date` is the later of the last completion date and the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. `rating_deviation` is projected to `date` when provided; otherwise it is projected to today.
+- **Notes**: `latest_date` is the later of the last completion date and the skip date. `latest_done_date` is the last completion date itself, unaffected by the skip date. `recurrence_days` is the median interval between completions, defaulting to 14. `due_date` is `latest_date` plus `recurrence_days`. `coins` equals `recurrence_days`, doubled when the task is starred. `rating_deviation` is projected to `date` when provided; otherwise it is projected to today.
+
+### GET /search/
+
+Returns the tasks whose description matches a query.
+
+- **Query parameters**:
+  - `query` (string, optional) — text to match against each description; without it, every task is returned
+- **Returns**: `[{...}, ...]` — full task objects, with the same fields as `GET /task/{id}`, in an order the API does not define
+- **Errors**: 400 when `query` is present but empty, or shorter than three characters after trimming; the body contains an `error` message
+- **Notes**: A description matches when its similarity to the query is at least 80, measured with RapidFuzz's WRatio after folding case and accents. Only `description` is matched; context names are not. The query is trimmed before the length check and before matching. Read-only.
 
 ### GET /context/
 
@@ -140,6 +151,34 @@ Returns the contexts in a scope with at least one task due on or before today.
 - **Returns**: `["<context>", ...]` — the same contexts as `GET /scope/{scope_id}/due/{date}` for today's date in `America/Los_Angeles`
 - **Errors**: 404 when `scope_id` is neither a stored scope nor `all`
 
+### PATCH /task/{id}/starred
+
+Sets whether a task is starred.
+
+- **Path parameters**:
+  - `id` (integer) — task ID
+- **Body**:
+  - `starred` (boolean, required)
+- **Returns**: An object with these fields:
+  - `id` (integer)
+  - `starred` (boolean)
+- **Errors**: 404 when no task has the given ID; 422 when `starred` is missing or not a boolean
+- **Notes**: The write is idempotent: setting the value the task already has returns 200. `coins` doubles when a task is starred, visible on the next read.
+
+### PATCH /task/{id}/description
+
+Replaces a task's description.
+
+- **Path parameters**:
+  - `id` (integer) — task ID
+- **Body**:
+  - `description` (string, required)
+- **Returns**: An object with these fields:
+  - `id` (integer)
+  - `description` (string)
+- **Errors**: 404 when no task has the given ID; 400 when the description is empty or only whitespace; 422 when `description` is missing or not a string
+- **Notes**: The text is stored verbatim, including markdown and line breaks; it is not trimmed.
+
 ### POST /task/{id}/done
 
 Marks a task as completed on the server's current date.
@@ -150,6 +189,7 @@ Marks a task as completed on the server's current date.
   - `id` (integer)
   - `skip_count` (integer) — always 0 after completion
   - `due_date` (ISO 8601 date string) — recomputed next due date
+  - `latest_done_date` (ISO 8601 date string) — the completion date
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 409 when the task was completed on the current date or the previous day; the body contains an `error` message
@@ -159,3 +199,4 @@ Marks a task as completed on the server's current date.
 
 - `GET /task/due` redirects with 307 to `GET /task/due/`
 - `GET /context/due` redirects with 307 to `GET /context/due/`
+- `GET /search` redirects with 307 to `GET /search/`
