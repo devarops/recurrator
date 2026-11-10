@@ -126,7 +126,7 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
     for field in fieldnames:
         value = row[field]
         if field == "description":
-            line_parts.append(f'"{value}"')
+            line_parts.append('"' + value.replace('"', '""') + '"')
         else:
             line_parts.append(value)
     return ",".join(line_parts)
