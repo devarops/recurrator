@@ -1,4 +1,7 @@
 from datetime import date
+from pathlib import Path
+
+import pytest
 
 import recurrator.io as io
 from recurrator.io import Context
@@ -171,6 +174,26 @@ def test_write_preserves_quotes_in_description():
 
     io.update_task_skip_count(task_id, 0, csv_path)
     _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_failed_write_leaves_the_file_unchanged(monkeypatch):
+    """Verify a write that fails partway does not touch the stored file."""
+    csv_path = "tests/data/test_three_tasks.csv"
+    original_checksum = _get_file_checksum(csv_path)
+    calls = {"count": 0}
+
+    def failing_formatter(fieldnames, row):
+        calls["count"] += 1
+        if calls["count"] == 2:
+            raise RuntimeError("write failed")
+        return io._format_csv_line(fieldnames, row)
+
+    monkeypatch.setattr(io, "_format_csv_line", failing_formatter)
+    with pytest.raises(RuntimeError):
+        io.update_task_skip_count(2, 5, csv_path)
+
+    _assert_file_unchanged(csv_path, original_checksum)
+    assert not Path(csv_path + ".tmp").exists()
 
 
 def test_update_task_as_done_in_csv():
