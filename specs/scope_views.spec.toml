@@ -1,0 +1,87 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "scope_views"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_scope_views.py exists.
+
+[[criteria]]
+description = """
+When the context data names scopes, a read of the scope collection returns the
+stored scopes sorted alphabetically and never the all alias.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_stored_scopes_are_listed"
+
+[[criteria]]
+description = """
+When several contexts belong to a scope and hold tasks, a read of that scope
+returns exactly those contexts, sorted alphabetically.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_contexts_in_a_scope_are_listed"
+
+[[criteria]]
+description = """
+When some contexts in a scope have a task due on or before the reference date, a
+dated due read of that scope returns exactly those contexts, sorted
+alphabetically.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_due_contexts_in_a_scope_are_listed"
+
+[[criteria]]
+description = """
+When the scope due read carries no date, it returns the same contexts as the due
+read for today's date in America/Los_Angeles.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_undated_due_read_uses_today"
+
+[[criteria]]
+description = """
+When the all alias is read, it returns every context, identical to the context
+collection.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_all_alias_lists_every_context"
+
+[[criteria]]
+description = """
+When the all alias is read with a date, it returns every context with a due
+task, identical to the dated due read of the context collection.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_all_alias_lists_every_due_context"
+
+[[criteria]]
+description = """
+When the all alias due read carries no date, it returns the same contexts as the
+dated due read for today's date in America/Los_Angeles.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_all_alias_undated_due_read_uses_today"
+
+[[criteria]]
+description = """
+When the scope is neither stored nor the all alias, the scope read returns 404
+with an error message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_scope_views.py::test_unknown_scope_returns_404"

@@ -1,0 +1,100 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "context_views"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_context_views.py exists.
+
+[[criteria]]
+description = """
+When the task file names several contexts, a read of the context collection
+returns every context that appears at least once, sorted alphabetically,
+including contexts with no due task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_all_contexts_are_listed"
+
+[[criteria]]
+description = """
+When a context has at least one task due on or before the reference date, a
+dated due read of the context collection includes it, and excludes every
+context whose tasks are all later.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_due_contexts_are_listed_for_a_date"
+
+[[criteria]]
+description = """
+When the due read carries no date, it returns the same contexts as the due read
+for today's date in America/Los_Angeles.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_undated_due_read_uses_today"
+
+[[criteria]]
+description = """
+When the due read omits the trailing slash, the response redirects to the due
+collection with the trailing slash and does not list context names.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_due_read_without_trailing_slash_redirects"
+
+[[criteria]]
+description = """
+When the context collection is read with a date query parameter, it returns the
+same contexts as a read without it, so the parameter does not narrow the list.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_date_query_parameter_is_ignored"
+
+[[criteria]]
+description = """
+When one context is read without a due segment, the response returns every task
+ID in that context and changes neither the skip count nor the skip date of any
+task.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_context_tasks_are_read_only"
+
+[[criteria]]
+description = """
+When a context has more due tasks than its available work-in-progress slots, a
+dated due read returns the prioritized selection in priority order and omits the
+deferred tasks.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_due_tasks_are_prioritized"
+
+[[criteria]]
+description = """
+When a dated due read defers the surplus, each deferred non-starred task gains
+one skip count and its skip date becomes the reference date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_deferred_tasks_are_skipped"
+
+[[criteria]]
+description = """
+When the context is absent from the task file, both the bare read and the dated
+due read return 404 with an error message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_unknown_context_returns_404"

@@ -1,0 +1,56 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "tasks_views"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_tasks_views.py exists.
+
+[[criteria]]
+description = """
+When the task file holds several tasks, a read of the task collection returns
+every task ID in file order, including tasks that are not yet due.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_all_tasks_are_listed"
+
+[[criteria]]
+description = """
+When a task is due on or before the reference date, a dated due read of the task
+collection returns its ID, and no ID whose due date is later.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_due_tasks_are_listed_for_a_date"
+
+[[criteria]]
+description = """
+When the due read carries no date, it returns the same IDs as the due read for
+today's date in America/Los_Angeles.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_undated_due_read_uses_today"
+
+[[criteria]]
+description = """
+When the due read omits the trailing slash, the response redirects to the due
+collection with the trailing slash and does not list task IDs.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_due_read_without_trailing_slash_redirects"
+
+[[criteria]]
+description = """
+When the task collection is read with a date query parameter, it returns the
+same IDs as a read without it, so the parameter does not narrow the list.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_date_query_parameter_is_ignored"
