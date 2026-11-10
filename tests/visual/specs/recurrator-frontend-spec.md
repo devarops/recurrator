@@ -1,8 +1,8 @@
 # Recurrator — Front-End Implementation Spec
 
-**Version:** 3.3 — merged five-screen spec · **Date:** November 2026
+**Version:** 3.4 — path-based API views · **Date:** November 2026
 **Audience:** the web designer implementing `public/`
-**API posture:** the API is a dependency, not a frozen constraint. The frontend uses only the calls in §2.4. Where it needs a field or endpoint the API does not yet return, the need is a numbered dependency in §13.3. Every dependency has a working fallback.
+**API posture:** the API is a dependency, not a frozen constraint. The frontend uses only the calls in §2.4, which follow the documented interface: an undated collection is an inventory, a dated collection is a due view. Where it needs a field or endpoint the API does not yet return, the need is a numbered dependency in §13.3. Every dependency has a working fallback.
 **Ambition:** the front end should look and feel finished even where behaviour must be stubbed. Every stub is listed in §13.2 with its replacement point, so the backend team can find and replace each one with a single grep.
 
 > **Status of the search screen.** §10 is the specified target but is not yet in the visual capture matrix or the approved PNG baseline. The four existing screens remain the current approved baseline; search captures and browser tests land in the next frontend loop.
@@ -19,8 +19,8 @@ These decisions supersede the four-screen spec and the unmerged v3.2 draft where
 | Q2 | One width contract: `max-width: 420px`, fluid below it. The capture reference stays 393px; there are no separate 393/443 layout variants and no width-specific media queries. |
 | Q3 | Breadcrumb uses the v3.2 geometry: 32px ovals, content-sized ancestors, the current oval absorbing the remainder, a 48px magnifier reserve, and `…` collapse. |
 | Q4 | The actual `?scope=` is carried through context, card, and search trails, defaulting to `All`. |
-| Q5 | All four home tiles count and preview their share through the hardcoded scope map. The scope list still does **not** filter until `D1`. |
-| Q6 | The task list uses `GET /context/{id}` as the source, preserves its API order, never sorts client-side, and never prefetches. |
+| Q5 | All four home tiles count and preview their due contexts through their own scope view, and the scope list filters through the same views. The `all` view is the alias for the whole context collection. |
+| Q6 | The task list uses the dated due view of one context, preserves its API order, never sorts client-side, and never prefetches. |
 | Q7 | The card keeps `LATEST DONE` and uses `latest_date` as the fallback. `D5` requests `latest_done_date` (`date_4`) for both the stat and the done status. |
 | Q8 | A 409 completion re-fetches the task and shows the actual state. |
 | Q9 | One celebratory empty state is reused for both lists: “You are victorious!” / “You have vanquished all the monsters!” |
@@ -28,6 +28,8 @@ These decisions supersede the four-screen spec and the unmerged v3.2 draft where
 | Q11 | Search keeps URL state (`q`, `c`, `scope`, `s`) and a sticky trail + field, but does **not** restore scroll position. Its count row shows `<n> tasks` only; “Clear all” returns to bare `search.html`. |
 | Q12 | Token role-based swap: drop `--c-bg-3`, `--c-bg-4`, `--c-ink-2`; rename `--c-bg-0` to `--c-cream`; drop the 28px and 10px type sizes; add no new colour or derived tokens. |
 | Q13 | Search is specified now; its capture and browser tests follow later. No `DOCS.md` or `CHANGELOG.md` entry until the API fields/endpoints exist. |
+| Q14 | The frontend adopts the path-based interface: `/context/` is the full roster, `/context/{id}` is a read-only roster, and `/context/{id}/due/{date}` is the only context call that writes. |
+| Q15 | Every dated call carries an explicit date in the path, because captures pin the date; the undated `/due/` aliases serve people typing URLs, not the app. |
 
 ---
 
@@ -42,7 +44,7 @@ These decisions supersede the four-screen spec and the unmerged v3.2 draft where
 ### Out of scope (do not attempt)
 - **Server work of any kind**: endpoints, fields, bulk routes, server-side search, persistence. Record the need in §13.3 instead.
 - Monster artwork. One placeholder PNG for every task.
-- Any write other than `POST /task/{id}/done`. `GET /context/{id}` writes skip data on the server; that is an API fact, not a frontend write.
+- Any write other than `POST /task/{id}/done`. The dated due view of a context writes skip data on the server; that is an API fact, not a frontend write.
 - Dark theme. Build for it (all colour via tokens) but do not design it.
 - Desktop, tablet, landscape. Phone portrait only; the layout is fluid up to the 420px cap.
 - Editing a task, starring, skipping, adding or deleting anything.
@@ -104,28 +106,36 @@ ui.accentFor(name)                                // → 'orange' | 'yellow' | �
 ui.monsterTitle(description)                      // first 3 words, markdown-stripped
 ui.dueState(task)                                 // → 'due' | 'not-due'
 ui.statusLine(task)                               // §11.5
-ui.contextMeta(name)                              // { emoji, scope } from the hardcoded map
+ui.contextMeta(name)                              // { emoji, scope } from the static map; the scope views confirm it
 ```
 
 `main.js` keeps: URL building, `csv` passthrough, `getTodayISO()`, breadcrumb data, the summary cache (§2.5), the search index, `POST /done`, search URL state, `initPage()`.
 
 ### 2.4 API facts the UI is built on
 
-Only these five calls exist today. Anything else is a `D#`.
+The interface below is the documented one. The running service still answers the older query-based forms, so `main.js` changes its URL builders in one place when the path-based routes ship.
 
 | Call | Returns | Used by | Caution |
 |---|---|---|---|
-| `GET /task/` | **ids only**, 223 today | search fallback | not a summary — every row needs a second call |
+| `GET /task/` | **ids only**, 223 today | search catalogue | not a summary — every row needs a second call |
+| `GET /task/due/{date}` | due and overdue ids, file order | not used today | read-only |
 | `GET /task/{id}` | `description`, `context`, `due_date`, `coins`, `starred`, `latest_date`, `rating`; `D5` adds `latest_done_date` | cards, both lists | N+1 by design |
-| `GET /context/?date=` | due/overdue context names, alphabetical | home, scope list | due only — never a full roster |
-| `GET /context/{id}?date=` | prioritized ids, **WIP-limited**, and it **writes** `skip_count`/`skip_date` | task list only | see R1, R2, R4 |
+| `GET /context/` | every context named in the file | search pills | not a due view |
+| `GET /context/due/{date}` | due and overdue context names, alphabetical | not used today — the `all` view covers it | due only — never a full roster |
+| `GET /context/{id}` | every task id in the context, file order | not used today — the due view is the list source | read-only; the only context call safe for enumeration |
+| `GET /context/{id}/due/{date}` | prioritized ids, **WIP-limited**, and it **writes** `skip_count`/`skip_date` | task list only | see R1, R2, R4 |
+| `GET /scope/` | stored scope names (`both`, `personal`, `work`) | not used today — the four scopes are fixed | the `all` alias is not listed |
+| `GET /scope/{s}/` | contexts in a scope that have tasks, alphabetical | search scope map | `s` is a stored scope or `all` |
+| `GET /scope/{s}/due/{date}` | due contexts in a scope | home, scope list | `all` matches `/context/due/{date}` |
 | `POST /task/{id}/done` | new `due_date`, `rating`; **409** if done today or yesterday | card | see §11.6 |
 
-**R1** Never call `/context/{id}` to enumerate or search: it mutates the data file and truncates the result.
-**R2** Preserve the order returned by `/context/{id}` — it encodes WIP priority and deferral. No client sort.
+**R1** Never call `/context/{id}/due/{date}` to enumerate or search: it mutates the data file and truncates the result. Use `/context/{id}` for the roster.
+**R2** Preserve the order returned by `/context/{id}/due/{date}` — it encodes WIP priority and deferral. No client sort.
 **R3** `due_date` is always computable (`latest_date + recurrence_days`); “no due date” is a styleguide-only state.
-**R4** Never prefetch a task list; loading `context.html` for a context is a write.
+**R4** Never prefetch a task list; loading `context.html` for a context is a write to the due view.
 **R5** `latest_date` is the later of the last completion and the skip date. The card’s `LATEST DONE` target is `latest_done_date` (`date_4`), requested by `D5`; until it exists, the fallback is `latest_date` and the discrepancy is known.
+**R6** An absent context or scope returns 404. Show the error state, never an empty list.
+**R7** Every dated call carries an explicit date from `getTodayISO()`, so captures and tests stay deterministic.
 
 ### 2.5 The task summariser (one data path, three screens)
 
@@ -135,7 +145,7 @@ summaries(ids) → [{ id, context, description, due_date, coins, starred, latest
 
 - Pool of **6** concurrent requests; renders per arrival; never blocks on the whole set.
 - `Map` in memory + `sessionStorage` (`recurrator.summaries.v1`), TTL **5 min**, invalidated after a successful `POST /done` or after a 409 re-fetch.
-- `context.html` calls it with the ids returned by `/context/{id}` (up to the WIP limit of 6); `search.html` with 223 in the fallback; the card fetches its own task.
+- `context.html` calls it with the ids returned by `/context/{id}/due/{date}` (up to the WIP limit of 6); `search.html` with 223 in the fallback; the card fetches its own task.
 - When `D3` lands only this function changes. Nothing in `ui.js` moves.
 - When `D6` lands, search uses it instead of `GET /task/` plus `summaries()`; the render functions do not move.
 
@@ -300,7 +310,7 @@ Tapping a pill *narrows*; tapping the scope oval *widens*. That is the whole int
 5. Up to 4 due context names (15px) with a 3px accent dot; `+n more` in `--c-faint`.
 6. `OPEN ›` mono 11 bottom-left, chevron accent bottom-right.
 
-**Data:** one `GET /context/?date=<today>`. **Every tile counts and previews its own share** of those context names through the §13.1 map: four tiles, four numbers, no extra request, and the four counts sum to the `All` count. The scope list still does not filter (§13.2, S1).
+**Data:** one `GET /scope/{s}/due/{date}` per tile, with `all` for the last one. **Every tile counts and previews the contexts its own view returns**: four tiles, four numbers, and the four counts sum to the `All` count because the stored scopes partition the contexts.
 **Zero state:** `Victorious` in `--state-not-due`; no names.
 **Loading:** 4 skeletons. **Error:** `Couldn't load` + retry.
 **Tiles:** Work (💼, blue), Personal (🏡, green), Both (🔀, purple), All (🗂️, orange) — fixed accents.
@@ -313,7 +323,7 @@ Tapping a pill *narrows*; tapping the scope oval *widens*. That is the whole int
 **Content:** 2-column grid, gap 10, card min-height 87, radius 18, `--c-surface`, `--border-card`, `--shadow-card`. Grid cells are `1fr`.
 **Card:** icon disc 32 + title 14/600 (shrink to 12, then 11, then ellipsis — `doctoradoadmin` survives), chevron. No second line, no counts.
 **Accent:** `ui.accentFor(name)`.
-**Data:** `GET /context/` — due-only. The scope label changes, but **the list is not filtered** until `D1`; every due context appears under `Work`, `Personal`, `Both`, and `All`. Empty means nothing is due anywhere, not “no contexts exist”.
+**Data:** `GET /scope/{s}/due/{date}` for the active scope, `all` included. The API filters the list, so a scope with nothing due renders the empty state.
 **States:** loading → 4 skeletons; empty → the celebratory state (§9); error → retry card; 40px bottom fade.
 
 ---
@@ -321,7 +331,7 @@ Tapping a pill *narrows*; tapping the scope oval *widens*. That is the whole int
 ## 8. Screen 3 — Task list (`context.html`)
 
 **Header:** `Recurrator` (link) / `<Scope>` (link) / context (current), plus the magnifier — which carries `&c=<context>` into search.
-**Source:** `GET /context/{id}?date=<today>` → ids → `summaries(ids)`. This call **writes** (R1, R4): no prefetch, no polling.
+**Source:** `GET /context/{id}/due/{date}` → ids → `summaries(ids)`. This call **writes** (R1, R4): no prefetch, no polling.
 **Order:** exactly the API order (R2). No client sort.
 **Row:** thumb 40×40 (radius 10) · `ui.monsterTitle(description)` 15/600, one line, ellipsis · bounty chip right (pill, `--c-yellow` at 15% fill, mono 12px numeral with a 6px dot). One height, 64px.
 **No state colour on rows** — inside a context everything is due.
@@ -375,7 +385,7 @@ Home and the `All` scope are the identical entry — `Recurrator/All` in both ca
 
 ### 10.5 The pill row
 - Items are the alternatives at the current level, **minus the active value**. There is no reset pill and no `×`.
-- **Wraps to multiple rows** (no horizontal scroll), order as given by the data: scopes `All, Work, Personal, Both`; contexts alphabetical.
+- **Wraps to multiple rows** (no horizontal scroll), in fixed display order: scopes `All, Work, Personal, Both`; contexts alphabetical.
 - Pill 32px, `--c-surface` at rest, label 12px/600 centered, `--c-muted`.
 - **Pill width = measured label width + 24, and that same measurement sets the row advance.** Measure once, use twice: it is the invariant that stops a label overflowing its pill. `doctoradoadmin` is the case that exposes a violation.
 - Gap **8px inline and 8px block**; wrap when `x + w` exceeds the current content width (373 at the 393 reference, 380 at the 420 cap).
@@ -416,8 +426,8 @@ Reuse `ui.renderTaskRow` (§8) with the meta line:
 `search.html?q=karla&c=telefono&s=desc&scope=all`. Supported keys: `q` (string), `c` (context name), `scope` (`all|work|personal|both`), `s` (`asc|desc`). Writing is `history.replaceState` on a 200ms debounce. **No scroll restoration**: the page does not save or restore `scrollTop`; the browser’s native behavior is accepted.
 
 ### 10.11 Data and performance
-- **Fallback (today):** `GET /task/` → `summaries(ids)` → browser matches, filters and sorts. Scope filtering uses `contextMeta(name).scope` until `D1`/`D6` supplies a `scope` field.
-- **Target (`D6`):** `GET /search/?q={s}` returns the matching full task objects. The browser still applies the context/scope pills and the Sort control; the server matches the description only. The returned `scope` field replaces the map for this screen.
+- **Fallback (today):** `GET /task/` → `summaries(ids)` → browser matches, filters and sorts. Scope filtering uses the context lists cached from the scope views (§2.4).
+- **Target (`D6`):** `GET /search/?q={s}` returns the matching full task objects. The browser still applies the context/scope pills and the Sort control; the server matches the description only. The cached scope lists still map each context to its scope.
 - 223 rows, no virtualisation. First open costs `1 + 223` requests at pool 6 (`S7`) in the fallback; the session cache makes the second visit instant. Revisit above ~500 tasks.
 
 ---
@@ -490,33 +500,35 @@ Other failures: button returns to `✓ Mark as Done`, inline `Didn't save. Try a
 | Personal | `actividad`, `casa`, `chores`, `electronica`, `laptop`, `lectura`, `mandado`, `telefono` |
 | Both | `escritura`, `estudio`, `tresminutos` |
 
-`Both` means *neither scope, or both* — a bucket, not an intersection. It lives in `ui.js: CONTEXT_META` beside the emoji, and is replaced by `D1` when the field exists. The mockup’s `Work 5 / Personal 7 / Both 3 / All 15` is consistent with this map when one Personal context is not due that day.
+`Both` means *neither scope, or both* — a bucket, not an intersection. It lives in `ui.js: CONTEXT_META` beside the emoji, for labels and trails. The scope views in §2.4 supply the same grouping to every list, so this table is display metadata and the browser tests' fixture, not a second source for filtering. The mockup’s `Work 5 / Personal 7 / Both 3 / All 15` is consistent with this map when one Personal context is not due that day.
 
 ### 13.2 Stubs
 
 | # | Stub | Where | Replace with |
 |---|---|---|---|
-| S1 | The scope label changes but the scope list is **not filtered**; the four home counts use the hardcoded map | `main.js: applyScope()`, `ui.contextMeta()` | `D1` → the API's scope field |
 | S2 | One placeholder PNG for every monster | `ui.js` | sprite/art lookup |
 | S3 | Bounty badge displays, never toggles | `ui.renderMonsterCard` | `D2` |
 | S4 | `Edit monster` disabled, no handler | `ui.renderMonsterCard` | `edit.html` + `D4` |
 | S5 | Checks toggle in memory only | `ui.renderMarkdown` | `D4` |
-| S6 | Context roster, emoji and scope hardcoded | `ui.js: CONTEXT_META` | roster from the API |
+| S6 | Context emoji hardcoded; the roster and scope grouping come from the scope views | `ui.js: CONTEXT_META` | an emoji field, if the API ever has one |
 | S7 | Summaries fetched one id at a time | `main.js: summaries()` | `D3` — only this function changes |
 | S8 | Search matching is client-side over the cached catalogue; the browser still filters and sorts after `D6` | `main.js` | `D6` — the server matches the description |
+
+`S1` retired: the scope views filter the lists and supply the grouping; see Appendix A.
 
 ### 13.3 Dependencies
 
 | # | Needed | Blocks | Minimal assumed shape |
 |---|---|---|---|
-| D1 | Scope on tasks/contexts | S1/S6's map retirement, real scope filtering | `scope: "work" \| "personal" \| "both"` |
 | D2 | Star toggle | S3 | `PATCH /task/{id}` with `starred` |
 | D3 | Bulk task summaries | S7 (search speed) | `GET /task/?summary=1` → the §2.5 array |
 | D4 | Description write | S4, S5 | `PATCH /task/{id}` with `description` |
 | D5 | Last completion date | `LATEST DONE` and the done status | `latest_done_date` (`date_4`) in `GET /task/{id}` |
-| D6 | Server-side text search | S8 | `GET /search/?q={s}` → full task objects (including `context`, `scope`, `due_date`); description match only |
+| D6 | Server-side text search | S8 | `GET /search/?q={s}` → full task objects (including `context` and `due_date`); description match only |
 
-**D6 detail.** The endpoint matches `q` in `description`, case- and diacritic-insensitively, and returns the same task fields as `GET /task/{id}` plus `scope`. The browser applies the context/scope pills and the Sort control; the endpoint does not accept those parameters. Use the canonical trailing-slash route `/search/`; do not rely on FastAPI's slash redirect.
+The former `D1` (a scope field on tasks and contexts) is retired: the scope views in §2.4 supply the grouping.
+
+**D6 detail.** The endpoint matches `q` in `description`, case- and diacritic-insensitively, and returns the same task fields as `GET /task/{id}`. The browser applies the context/scope pills and the Sort control; the endpoint does not accept those parameters. Use the canonical trailing-slash route `/search/`; do not rely on FastAPI's slash redirect.
 
 **D5 detail.** The target value is the stored fourth completion date, not the skip-adjusted `latest_date`. The backend already computes it as `Task.latest_done_date`; the change is serialization. Until it lands, `LATEST DONE` displays `latest_date` and a skipped task may show a skip date.
 
@@ -548,7 +560,7 @@ Each dependency has a working fallback. None of them justifies a blank screen or
 4. `grep -E "#[0-9a-fA-F]{3,6}" styles/components.css styles/pages.css` → no results.
 5. The token file contains only the §4 closed set; no new colour or derived tokens were added.
 6. No network requests except the API.
-7. **No call to `/context/{id}` originates from `search.html`.**
+7. **No call to `/context/{id}/due/{date}` originates from `search.html`.**
 8. The task list renders in API order, unsorted client-side.
 9. Search: `?q=karla&c=telefono` survives a reload; Back does **not** restore scroll position; the result bar announces once per settle.
 10. Row meta truncates the context, never the status.
@@ -556,7 +568,7 @@ Each dependency has a working fallback. None of them justifies a blank screen or
 12. Targets ≥44px, contrast checked, focus visible.
 13. `main.js` may add initialisers and data flow; no rendering logic in it.
 14. `<meta name="viewport">` in all five shells; Pico `<link>` gone.
-15. Each home tile's count equals its share of the due contexts, and the four counts sum to the `All` count.
+15. Each home tile's count equals the length of its scope view, and the four counts sum to the `All` count.
 16. No pill label ever overflows its pill at any filter level — `doctoradoadmin` is the test case.
 17. The current oval fills the row up to the magnifier's reserved edge, ancestors are content-sized, and no oval wraps.
 18. The celebratory empty state is the same component and copy on both lists, with no back link.
@@ -578,9 +590,10 @@ Each dependency has a working fallback. None of them justifies a blank screen or
 | O8 | Cannot narrow to a context from scope level | accepted; **fallback** if it bites: a `Scopes ⇄ Contexts` level switch at the head of the pill row, no layout change |
 | O9 | `Sort` scrolls away with the count row | accepted at 223 tasks; revisit if it becomes a top action |
 | O10 | No-results `Clear all` widens to bare `search.html` | accepted — the empty state offers the maximal widening, the trail offers the minimal one |
-| O11 | Scope map in §13.1 | settled from `context.csv` |
+| O11 | Scope map in §13.1 | settled from `context.csv`; the scope views are the runtime source |
 | O12 | `D6` route uses a trailing slash | settled: `/search/?q={s}` |
 | O13 | Search captures and browser tests | next frontend loop; the four existing screens remain the approved baseline |
+| O14 | The path-based routes are documented but not yet served | the frontend switches calls when they land; §2.4 names the one place |
 
 ---
 
@@ -588,11 +601,14 @@ Each dependency has a working fallback. None of them justifies a blank screen or
 
 | Previous rule | Merged rule |
 |---|---|
-| “The backend is frozen; use only existing fields.” | API is a dependency; `D1–D6` with fallbacks. |
+| “The backend is frozen; use only existing fields.” | API is a dependency; `D2–D6` with fallbacks. |
 | Four screens. | Five screens, including search. |
 | Breadcrumb: 12 units, 24px ovals, 10px task oval. | Content-sized ancestors, 32px ovals, 11px task oval, magnifier reserve, `…` collapse. |
-| Only the `All` tile counts and previews. | All four tiles count and preview through the real scope map; the scope list stays unfiltered until `D1`. |
-| Task list sorted by `coins` descending. | `GET /context/{id}` order, untouched; no client sort. |
+| Only the `All` tile counts and previews. | All four tiles count and preview through their scope views; the scope list filters through the same views. |
+| Task list sorted by `coins` descending. | `/context/{id}/due/{date}` order, untouched; no client sort. |
+| The context collection returned only due contexts, and `?date=` narrowed it. | The collection returns the full roster; the date lives in the path and the due views carry it. |
+| The context detail always wrote skip data. | The bare detail is a read-only roster; only the dated due view writes. |
+| Scope filtering depended on a scope field (`D1`). | The scope views supply the grouping; the field dependency is retired. |
 | `LATEST DONE` shows the current value with no caveat. | `LATEST DONE` stays; `D5` requests `latest_done_date`; fallback documented. |
 | Any non-2xx completion is a generic failure. | 409 is a normal outcome; re-fetch and show the actual state. |
 | No search. | Search screen, `D6` q-only endpoint, client fallback, URL state, sticky header, one “Clear all”. |
