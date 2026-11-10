@@ -201,8 +201,8 @@
         document.getElementById('sg-error').innerHTML = ui.renderError();
 
         document.getElementById('sg-breadcrumbs').innerHTML = [
-            ['home', [{ label: 'Recurrator' }]],
-            ['scope', [{ label: 'Recurrator', href: '#' }, { label: 'All' }]],
+            ['home', [{ label: 'Recurrator' }], true],
+            ['scope', [{ label: 'Recurrator', href: '#' }, { label: 'All' }], true],
             [
                 'context',
                 [
@@ -210,6 +210,7 @@
                     { label: 'All', href: '#' },
                     { label: 'chores' },
                 ],
+                true,
             ],
             [
                 'card',
@@ -219,6 +220,7 @@
                     { label: 'casa', href: '#' },
                     { label: '#1' },
                 ],
+                false,
             ],
             [
                 'context — long names',
@@ -227,6 +229,7 @@
                     { label: 'Personal', href: '#' },
                     { label: 'doctoradoadmin' },
                 ],
+                true,
             ],
             [
                 'card — 3-digit ID',
@@ -236,14 +239,15 @@
                     { label: 'casa', href: '#' },
                     { label: '#999' },
                 ],
+                false,
             ],
         ]
             .map(
-                ([label, items]) =>
+                ([label, items, search]) =>
                     '<div><p class="subtitle">' +
                     label +
                     '</p>' +
-                    ui.renderBreadcrumb(items) +
+                    ui.renderBreadcrumb(items, { search }) +
                     '</div>'
             )
             .join('');
