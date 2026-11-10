@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `PATCH /task/{id}/description` replaces a task's description.
 - `rating` and `rating_deviation` fields in the `GET /task/{id}` and
   `POST /task/{id}/done` responses.
 - `GET /task/{id}` accepts an optional `date` query parameter and projects

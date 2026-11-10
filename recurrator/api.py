@@ -125,6 +125,10 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     csv_path = _resolve_csv_path(csv)
     if not body.description.strip():
         return JSONResponse(content={"error": "Description must not be empty"}, status_code=400)
+    try:
+        io.get_task_by_id(task_id, csv_path)
+    except ValueError:
+        return JSONResponse(content={"error": "Task not found"}, status_code=404)
     io.update_task_description(task_id, body.description, csv_path)
     return {"id": task_id, "description": body.description}
 
