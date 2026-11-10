@@ -192,12 +192,12 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     _assert_current(card_items.nth(3), "#1")
     _assert_trail(card_items)
     assert header.locator(".search-button").count() == 0
-    assert (
+    font_size = (
         card_items.nth(3)
         .locator(".breadcrumb__oval")
         .evaluate("el => getComputedStyle(el).fontSize")
-        == "11px"
     )
+    assert font_size == "11px"
     _assert_targets(card_items.nth(0))
     _assert_targets(card_items.nth(1))
     _assert_targets(card_items.nth(2))
