@@ -38,3 +38,13 @@ def test_empty_description_is_rejected(tmp_path):
         assert "error" in response.json()
 
     assert client.get(f"/task/2?csv={csv_path}").json()["description"] == before
+
+
+def test_description_unknown_task_returns_404(tmp_path):
+    """A write for a missing task is refused instead of silently succeeding."""
+    csv_path = _copy_fixture(FIXTURE, tmp_path)
+
+    response = client.patch(f"/task/999/description?csv={csv_path}", json={"description": "x"})
+
+    assert response.status_code == 404
+    assert "error" in response.json()

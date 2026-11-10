@@ -68,7 +68,6 @@ description = """
 When no task has the given ID, the description write returns 404 with an error
 message.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_description_unknown_task_returns_404"
