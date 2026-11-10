@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from . import compute, io
 from ._config import DEFAULT_TASKS_CSV_PATH, WIP_LIMIT
@@ -112,6 +113,18 @@ def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, a
     tasks, parsed_reference_date = _load_tasks_and_date(csv_path, reference_date)
     due_contexts = compute.filter_due_contexts(tasks, parsed_reference_date)
     return [context.value for context in due_contexts]
+
+
+class DescriptionUpdate(BaseModel):
+    description: str
+
+
+@app.patch("/task/{task_id}/description")
+def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
+    """Replace a task's description with the given text."""
+    csv_path = _resolve_csv_path(csv)
+    io.update_task_description(task_id, body.description, csv_path)
+    return {"id": task_id, "description": body.description}
 
 
 @app.post("/task/{task_id}/done")

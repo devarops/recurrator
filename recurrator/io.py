@@ -180,6 +180,10 @@ def _set_csv_field(task_id: int, field_name: str, value: str, csv_path: str) -> 
     _update_task_in_csv(task_id, modify_row, csv_path)
 
 
+def update_task_description(task_id: int, description: str, csv_path: str) -> None:
+    _set_csv_field(task_id, "description", description, csv_path)
+
+
 def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
     _set_csv_field(task_id, "skip_count", str(skip_count), csv_path)
 
