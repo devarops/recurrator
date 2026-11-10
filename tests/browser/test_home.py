@@ -73,6 +73,7 @@ def _assert_oval_height(item):
     box = oval.bounding_box()
     assert box is not None
     assert abs(box["height"] - 32) <= 1
+    return oval
 
 
 def _assert_current_absorbs(items):
@@ -105,11 +106,7 @@ def _assert_targets(item):
 
 
 def _assert_fits(item):
-    oval = item.locator(".breadcrumb__oval")
-    assert oval.count() == 1
-    box = oval.bounding_box()
-    assert box is not None
-    assert abs(box["height"] - 32) <= 1
+    oval = _assert_oval_height(item)
     assert oval.evaluate("el => el.scrollWidth <= el.clientWidth + 1")
 
 
