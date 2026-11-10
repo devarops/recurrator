@@ -67,15 +67,34 @@ def _assert_link(item, label):
     assert "breadcrumb__item--current" not in (item.get_attribute("class") or "").split()
 
 
-def _assert_ratio(items, units):
-    widths = []
+def _assert_oval_height(item):
+    oval = item.locator(".breadcrumb__oval")
+    assert oval.count() == 1
+    box = oval.bounding_box()
+    assert box is not None
+    assert abs(box["height"] - 32) <= 1
+
+
+def _assert_current_absorbs(items):
+    current = items.nth(items.count() - 1)
+    current_box = current.locator(".breadcrumb__oval").bounding_box()
+    assert current_box is not None
+    for index in range(items.count() - 1):
+        ancestor_box = items.nth(index).locator(".breadcrumb__oval").bounding_box()
+        assert ancestor_box is not None
+        assert current_box["width"] > ancestor_box["width"]
+
+
+def _assert_trail(items):
     for index in range(items.count()):
-        box = items.nth(index).bounding_box()
-        assert box is not None
-        widths.append(box["width"])
-    scale = sum(widths) / sum(units)
-    for width, unit in zip(widths, units):
-        assert abs(width - scale * unit) <= 1.0
+        _assert_oval_height(items.nth(index))
+    nav = items.first.locator("xpath=..")
+    assert nav.evaluate("el => getComputedStyle(el).display") == "flex"
+    if items.count() > 1:
+        for index in range(items.count() - 1):
+            assert items.nth(index).evaluate("el => getComputedStyle(el).flexGrow") == "0"
+        assert items.nth(items.count() - 1).evaluate("el => getComputedStyle(el).flexGrow") == "1"
+        _assert_current_absorbs(items)
 
 
 def _assert_targets(item):
@@ -90,8 +109,24 @@ def _assert_fits(item):
     assert oval.count() == 1
     box = oval.bounding_box()
     assert box is not None
-    assert abs(box["height"] - 24) <= 1
+    assert abs(box["height"] - 32) <= 1
     assert oval.evaluate("el => el.scrollWidth <= el.clientWidth + 1")
+
+
+def _assert_search_stub(header):
+    button = header.locator(".search-button")
+    assert button.count() == 1
+    assert button.get_attribute("aria-label") == "Search"
+    assert button.get_attribute("aria-disabled") == "true"
+    assert button.get_attribute("href") is None
+    assert button.evaluate("el => el.tagName") == "BUTTON"
+    box = button.bounding_box()
+    assert box is not None
+    assert box["width"] >= 44
+    assert box["height"] >= 44
+    nav_box = header.locator(".breadcrumb").bounding_box()
+    assert nav_box is not None
+    assert box["x"] >= nav_box["x"] + nav_box["width"] - 1
 
 
 def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, csv_copy):
@@ -105,7 +140,8 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     home_items = header.locator(".breadcrumb__item")
     assert home_items.count() == 1
     _assert_current(home_items.nth(0), "Recurrator")
-    _assert_ratio(home_items, [12])
+    _assert_trail(home_items)
+    _assert_search_stub(header)
     home_width = home_items.nth(0).bounding_box()["width"]
     nav_width = header.locator(".breadcrumb").bounding_box()["width"]
     assert abs(home_width - nav_width) < 1
@@ -119,7 +155,8 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     assert scope_items.count() == 2
     _assert_link(scope_items.nth(0), "Recurrator")
     _assert_current(scope_items.nth(1), "Work")
-    _assert_ratio(scope_items, [3, 9])
+    _assert_trail(scope_items)
+    _assert_search_stub(header)
     _assert_targets(scope_items.nth(0))
     assert page.locator(".context-card").count() == 3
 
@@ -132,7 +169,8 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     _assert_link(context_items.nth(0), "Recurrator")
     _assert_link(context_items.nth(1), "All")
     _assert_current(context_items.nth(2), "chores")
-    _assert_ratio(context_items, [3, 2, 7])
+    _assert_trail(context_items)
+    _assert_search_stub(header)
     _assert_targets(context_items.nth(0))
     _assert_targets(context_items.nth(1))
     assert page.locator(".task-row").count() == 3
@@ -146,7 +184,7 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     assert personal_items.count() == 3
     _assert_link(personal_items.nth(1), "Personal")
     _assert_fits(personal_items.nth(1))
-    _assert_ratio(personal_items, [3, 2, 7])
+    _assert_trail(personal_items)
 
     open_page(page, page_url("task.html", csv_path, id=1, date="2026-05-01"))
     assert page.locator("#pageHeader .breadcrumb").count() == 1
@@ -157,7 +195,14 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     _assert_link(card_items.nth(1), "All")
     _assert_link(card_items.nth(2), "casa")
     _assert_current(card_items.nth(3), "#1")
-    _assert_ratio(card_items, [3, 2, 6, 1])
+    _assert_trail(card_items)
+    assert header.locator(".search-button").count() == 0
+    assert (
+        card_items.nth(3)
+        .locator(".breadcrumb__oval")
+        .evaluate("el => getComputedStyle(el).fontSize")
+        == "11px"
+    )
     _assert_targets(card_items.nth(0))
     _assert_targets(card_items.nth(1))
     _assert_targets(card_items.nth(2))
@@ -187,5 +232,5 @@ def test_breadcrumb_trail_is_consistent_across_pages(page, page_url, open_page, 
     fake_items = page.locator("#fakeHeader .breadcrumb__item")
     assert fake_items.count() == 4
     _assert_current(fake_items.nth(3), "#999")
-    _assert_ratio(fake_items, [3, 2, 6, 1])
+    _assert_trail(fake_items)
     _assert_fits(fake_items.nth(3))
