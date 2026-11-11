@@ -11,18 +11,6 @@ services:
       - $PWD:/workdir
       - ~/.config/recurrator:/root/.config/recurrator
 
-  cli:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: evaristor/recurrator:latest
-    command: bash
-    volumes:
-      - $PWD:/workdir
-      - ~/.config/recurrator:/root/.config/recurrator
-    depends_on:
-      - api
-
   develop:
     profiles: ["develop"]
     build:

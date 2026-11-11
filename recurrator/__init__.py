@@ -15,6 +15,3 @@ from .compute import (  # noqa: F401
 
 # I/O utilities
 from .io import import_tasks_from_csv  # noqa: F401
-
-# CLI
-from .cli import app  # noqa: F401

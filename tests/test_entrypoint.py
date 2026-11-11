@@ -17,7 +17,6 @@ def _write_fixture_data(config_dir: Path) -> None:
     (config_dir / "config.json").write_text(
         json.dumps(
             {
-                "api_base_url": "http://api:8000",
                 "default_recurrence_days": 14,
                 "default_tasks_csv_path": "/root/.config/recurrator/tasks.csv",
                 "min_days_gap": 2,

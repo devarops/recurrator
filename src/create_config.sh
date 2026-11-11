@@ -25,7 +25,6 @@ if [ -n "$CONFIG_SOURCE" ]; then
     ' "$CONFIG_SOURCE" >> "$OUTPUT"
 else
     cat >> "$OUTPUT" <<- 'EOF'
-API_BASE_URL = "http://api:8000"
 DEFAULT_RECURRENCE_DAYS = 14
 DEFAULT_TASKS_CSV_PATH = "/root/.config/recurrator/tasks.csv"
 MIN_DAYS_GAP = 2
