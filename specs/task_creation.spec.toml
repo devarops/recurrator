@@ -1,0 +1,145 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "task_creation"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_task_creation.py exists.
+
+[[criteria]]
+description = """
+When a task is created, a later read reports it with a recurrence of 14 days and
+a due date equal to the server's current date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_created_task_is_due_today"
+
+[[criteria]]
+description = """
+When a task is created, the 201 response carries the full task object: the new
+description and context, and every field GET /api/task/{id} returns.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_creation_returns_the_full_task_object"
+
+[[criteria]]
+description = """
+When the task data file holds tasks whose highest ID is N, the created task
+takes ID N + 1.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_created_task_takes_the_next_id"
+
+[[criteria]]
+description = """
+When the task data file holds no tasks, the first created task takes ID 1.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_first_task_takes_id_one"
+
+[[criteria]]
+description = """
+When a task is created, its stored dates are NA, NA, the current date minus 28
+days, and the current date minus 14 days, in that order.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_creation_seeds_the_dates"
+
+[[criteria]]
+description = """
+When a task is created, it starts unstarred with no skips, a rating of 1500, a
+rating deviation of 350, and a rating date on its last seeded date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_created_task_starts_neutral"
+
+[[criteria]]
+description = """
+When the description equals the newest task's, the request returns 409 with an
+error message and that task's ID, and the task data file gains no row.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_duplicate_of_the_newest_task_is_refused"
+
+[[criteria]]
+description = """
+When the description differs from the newest task's only in case, accents, or
+leading and trailing whitespace, the request returns the same 409.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_duplicate_comparison_folds_case_accents_and_edges"
+
+[[criteria]]
+description = """
+When the description differs from the newest task's only in the whitespace
+inside the text, the request returns the same 409.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_duplicate_comparison_ignores_inner_whitespace"
+
+[[criteria]]
+description = """
+When the description equals a task's that does not hold the highest ID, the
+request returns 201 and the task data file gains a row.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_duplicate_of_an_older_task_is_accepted"
+
+[[criteria]]
+description = """
+When the description is empty or only whitespace, the request returns 400 with
+an error message and the task data file gains no row.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_empty_description_is_refused"
+
+[[criteria]]
+description = """
+When the body omits the description or sends a non-string, the request returns
+422 and the task data file gains no row.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_malformed_description_is_refused"
+
+[[criteria]]
+description = """
+When the context is missing or names no stored context, the request returns 422
+and the task data file gains no row.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_unknown_context_is_refused"
+
+[[criteria]]
+description = """
+When the same request is sent twice, the second returns 409 and the task data
+file holds one row for the description, not two.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_repeated_creation_writes_one_row"

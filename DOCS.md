@@ -154,6 +154,17 @@ Returns the contexts in a scope with at least one task due on or before today.
 - **Returns**: `["<context>", ...]` — the same contexts as `GET /api/scope/{scope_id}/due/{date}` for today's date in `America/Los_Angeles`
 - **Errors**: 404 when `scope_id` is neither a stored scope nor `all`
 
+### POST /api/task/
+
+Creates a task.
+
+- **Body**:
+  - `context` (string, required) — a stored context value
+  - `description` (string, required) — the task text, stored verbatim
+- **Returns**: 201 with the full task object, with the same fields as `GET /api/task/{id}`
+- **Errors**: 422 when `description` is missing or not a string, or `context` is missing or not a stored context; 400 when the description is empty or only whitespace; 409 when the description duplicates the newest task's, with the body `{"error": "<message>", "id": <integer>}` naming that task
+- **Notes**: The new task takes `max(id) + 1`, or 1 when the task data file holds no rows. Its stored dates are `NA, NA, today - 28, today - 14`, using the `America/Los_Angeles` calendar date, so it is due today with a recurrence of 14 days. `skip_count` is 0, `starred` is false, `rating` is 1500, `rating_deviation` is 350, and `rating_date` is the last seeded date. The body carries neither dates nor flags, so a caller cannot create a task with a history. The duplicate check compares the description against the task that currently holds `max(id)` and never against the rest of the file; the comparison strips leading and trailing whitespace, drops the whitespace inside the text, folds case and folds accents, while the stored text stays exactly as sent. The body is validated before the file is read: a malformed body returns 422, an empty description returns 400, and a duplicate returns 409, in that order. Creation is not idempotent: repeating a request whose description still matches the newest task returns 409 rather than writing a second row.
+
 ### PATCH /api/task/{id}/starred
 
 Sets whether a task is starred.
