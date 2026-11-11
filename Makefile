@@ -12,11 +12,8 @@ all: check coverage mutants
 		mutants \
 		setup \
 		test-cli \
-		test-frontend \
 		tests \
-		verify \
-		visual \
-		visual-check
+		verify
 
 module = recurrator
 codecov_token = 39e783f6-020b-4e84-b333-2f8a40f9df2b
@@ -57,7 +54,7 @@ clean:
 	rm --force ${module}/_config.py
 
 coverage: setup
-	pytest --cov=${module} --cov-report=xml --verbose --ignore=tests/browser && \
+	pytest --cov=${module} --cov-report=xml --verbose && \
 	coverage report --show-missing
 
 format:
@@ -83,22 +80,13 @@ mutants: setup
 setup: clean install
 
 tests:
-	pytest --verbose tests --ignore-glob='*_acceptance_*.py' --ignore=tests/browser
+	pytest --verbose tests --ignore-glob='*_acceptance_*.py'
 
 test-cli:
 	shellspec
 
-test-frontend:
-	RUN_BROWSER=1 pytest --verbose tests/browser
-
 verify:
 	qed verify specs
-
-visual:
-	python tests/visual/capture.py
-
-visual-check:
-	python tests/visual/capture.py --check
 
 red: format
 	pytest --verbose --ignore-glob='*_acceptance_*.py' \

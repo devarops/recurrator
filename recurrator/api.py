@@ -1,22 +1,20 @@
 from datetime import date
-from pathlib import Path
 
-from fastapi import FastAPI, Query
+from fastapi import APIRouter, FastAPI, Query
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import compute, io
 from ._config import DEFAULT_TASKS_CSV_PATH, WIP_LIMIT
 from .models import Context
 
-app = FastAPI()
-
-PUBLIC_DIR = next(
-    parent / "public"
-    for parent in Path(__file__).resolve().parents
-    if (parent / "public" / "index.html").is_file()
+app = FastAPI(
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
 )
+
+api = APIRouter(prefix="/api")
 
 
 def _resolve_csv_path(csv: str | None = None) -> str:
@@ -63,14 +61,14 @@ def _load_tasks_and_date(csv_path: str, reference_date: str) -> tuple:
     return tasks, parsed_reference_date
 
 
-@app.get("/task/")
+@api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
     return [task.id for task in tasks]
 
 
-@app.get("/task/{task_id}")
+@api.get("/task/{task_id}")
 def get_task_by_id(
     task_id: int,
     csv: str = Query(None),
@@ -85,7 +83,7 @@ def get_task_by_id(
     return _task_to_dict(task, parsed_reference_date)
 
 
-@app.get("/context/{context_id}")
+@api.get("/context/{context_id}")
 def get_tasks_by_context(
     context_id: str,
     csv: str = Query(None),
@@ -106,7 +104,7 @@ def get_tasks_by_context(
     return [task.id for task in selected]
 
 
-@app.get("/context/")
+@api.get("/context/")
 def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, alias="date")):
     """Return unique contexts from tasks due on or before the given date."""
     csv_path = _resolve_csv_path(csv)
@@ -119,7 +117,7 @@ class DescriptionUpdate(BaseModel):
     description: str
 
 
-@app.patch("/task/{task_id}/description")
+@api.patch("/task/{task_id}/description")
 def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
     """Replace a task's description with the given text."""
     csv_path = _resolve_csv_path(csv)
@@ -133,7 +131,7 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     return {"id": task_id, "description": body.description}
 
 
-@app.post("/task/{task_id}/done")
+@api.post("/task/{task_id}/done")
 def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
     today = date.today()
@@ -164,4 +162,4 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     }
 
 
-app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="public")
+app.include_router(api)
