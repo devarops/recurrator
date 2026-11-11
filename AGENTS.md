@@ -1,7 +1,7 @@
 # Developer Guidelines & Project Standards
 
-**Public Interface:** In this project, the **Public Interface** is the HTTP API defined in `api.py`, the single authoritative interface to task data. The static frontend mount in `api.py` is browser delivery, not part of the task-data Public Interface.
-The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**; both are optional clients of the API and never access the CSV directly.
+**Public Interface:** In this project, the **Public Interface** is the HTTP API under `/api`, defined in `api.py`, the single authoritative interface to task data.
+The browser frontend and the terminal client (TUI) are separate repositories; both are clients of this API, speak only HTTP, and never access the CSV directly.
 
 ## Architecture
 
@@ -9,24 +9,19 @@ The browser pages in `public/` are the **frontend**, and `cli.py` is the **CLI**
 - `models.py` — domain data structures. Zero external dependencies.
 - `compute.py` — pure business logic. Depends on `models`, the generated `_config` constants, and `glicko2`.
 - `io.py` — persistence. Depends on `compute` and `models`.
-- `api.py` / `cli.py` — interfaces. Depend on `io`.
+- `api.py` — the interface. Depends on `io`.
 
 **Lower layers NEVER import from higher layers.**
 
 **API conventions:**
-- API is single source of truth; CLI is a thin HTTP client with zero business logic.
+- API is the single source of truth; clients live in other repositories and speak only HTTP.
 - Single-responsibility endpoints: list endpoints return identities, detail endpoints return attributes.
 - Action responses return confirmation subsets (`id` + changed fields), not full resources.
 - Error envelope: `{"error": "<message>"}`; non-200 responses use `JSONResponse(content=..., status_code=N)`, not a returned `(dict, int)`, which serializes as a JSON array.
-- CLI tabular output MUST be valid CSV (header + data rows); non-tabular output uses JSON, except informational and version messages, which may use plain text.
 
-**Documentation:** `DOCS.md` lists the HTTP API only; describe the frontend and CLI in `README.md`. `CHANGELOG.md` records only endpoint changes.
-
-**No Derived Values in Presentation Layer:** The frontend may transform data for display but must never compute new atomic values (no arithmetic, statistics, joins, or aggregations); derived values belong in `compute_*`.
+**Documentation:** `DOCS.md` lists the HTTP API only; the frontend, the TUI, and their documents live in their own repositories. `CHANGELOG.md` records only endpoint changes.
 
 **Naming conventions in `compute.py`:** Pure functions use `reference_date` (not `today`) for the cut-off/current date parameter, and `is_*` prefix for boolean-returning functions.
-
-**Visual approval:** `tests/visual/capture.py` lists the scenarios; `make visual` rewrites `received/` and the human approves. The local `ui-red`, `ui-green`, `ui-refactor`, and `ui-approve` commands run the frontend TDD loop; `ui-approve` requires a fresh capture, runs the three suites, writes `tests/visual/review.html`, and on approval copies `received/` into `approved/` and updates the spec and styleguide in the same commit. `tests/visual/specs/recurrator-frontend-spec.md` is the only reference, and the browser tests, approved PNGs, spec, and styleguide must agree. Descriptions store real line breaks, and `renderMarkdown` splits on them directly.
 
 ## TDD Cycle
 
@@ -43,7 +38,7 @@ Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
 
 **Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
 
-Example unit test: `pytest tests/test_api.py::test_get_due_contexts`; browser tests set `RUN_BROWSER=1`; CLI tests need the compose `api` service.
+Example unit test: `pytest tests/test_api.py::test_get_single_task_id`.
 
 ## Data Modeling & CSV Mapping
 
@@ -58,10 +53,10 @@ Example unit test: `pytest tests/test_api.py::test_get_due_contexts`; browser te
 
 - `Dockerfile.dev` adds the test and verification tools on top of `evaristor/recurrator:latest`; build prod first or the dev layer takes a stale base.
 - The editable install is baked in at build time; the image has no default command, so every runner supplies uvicorn.
-- `.github/workflows/actions.yml` builds `latest` then `develop`, runs `check`, `tests`, `test-frontend`, `coverage`, `mutants` and `verify`, smoke-tests prod, and pushes only if all pass; tags are `latest` and `%y%V`.
-- FastAPI serves `public/` at `/` after the API routes. Frontend and API share an origin, use root-relative API paths, and have no API-address setting; CORS is not enabled.
-- `PUBLIC_DIR` walks up from `api.py` to `public/index.html`, so app import and tests work from any working directory and under mutmut.
-- Frontend art is local; no remote requests.
+- `.github/workflows/actions.yml` builds `latest` then `develop`, runs `check`, `tests`, `coverage`, `mutants` and `verify`, smoke-tests prod, and pushes only if all pass; tags are `latest` and `%y%V`.
+- FastAPI serves the API under `/api`; `GET /` is not a route, there is no static mount, and this repository holds no frontend.
+- The contract surface is `GET /api/openapi.json`, `GET /api/docs`, and `GET /api/redoc`.
+- The gateway that fronts this API and the frontend belongs to `recurrator_setup`; this image publishes no static files.
 
 ## Mutation Testing
 
@@ -75,10 +70,10 @@ Configured in `setup.cfg` under `[mutmut]`; run `make mutants` inside the contai
 
 Run targets inside `develop`: `make setup && make check && make tests`, then `make verify`. The service shares the production-data mount; only `make check_data` reads it, and CI never runs it.
 
-`TZ=America/Los_Angeles` in `Dockerfile`; `POST /task/{id}/done` uses `date.today()` in that timezone. Do not change without updating date-dependent assertions.
+`TZ=America/Los_Angeles` in `Dockerfile`; `POST /api/task/{id}/done` uses `date.today()` in that timezone. Do not change without updating date-dependent assertions.
 
-Targets: `tests`, `test-cli`, `test-frontend`, `check`, `coverage`, `mutants`, `check_data`, `format`, `setup`, `verify`, `visual`. `make tests` is the unit suite, `make check` the gate, and `make verify` runs qed acceptance tests in the develop image.
+Targets: `tests`, `test-shell`, `check`, `coverage`, `mutants`, `check_data`, `format`, `setup`, `verify`. `make tests` is the unit suite, `make check` the gate, and `make verify` runs qed acceptance tests in the develop image.
 
-`pyproject.toml` declares `typer` and `glicko2==2.1.0`; `fastapi`, `uvicorn`, `requests` and `glicko2` come from `Dockerfile`, and the test tools from `Dockerfile.dev`. `glicko2` has no type stubs, so `compute.py` carries a scoped `# type: ignore[import-untyped]`. The dev tools are unpinned; run `make format` before pushing.
+`pyproject.toml` declares `glicko2==2.1.0`; `fastapi`, `uvicorn` and `glicko2` come from `Dockerfile`, and the test tools from `Dockerfile.dev`. `glicko2` has no type stubs, so `compute.py` carries a scoped `# type: ignore[import-untyped]`. The dev tools are unpinned; run `make format` before pushing.
 
 The editable install lives in the image, so `docker compose --profile develop run --rm develop make tests` works without a long-lived container; CI starts `recurrator_dev` and `exec`s into it.

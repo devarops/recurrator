@@ -9,24 +9,23 @@ how often you actually complete each task and adjusts when it appears again.
 Tasks you do often return sooner; tasks you do rarely wait longer. There is
 nothing to schedule and no recurrence rule to configure.
 
-## How to use it
+This repository is the API product. The browser frontend and the terminal client
+are separate repositories; both consume this API over HTTP and never read the
+task file directly.
 
-1. Open the start page to see the areas of your life that have work waiting.
-2. Choose an area to see the tasks that are due there.
-3. Pick a task to view its details.
-4. Select **Mark as Done** when you finish it.
+## What it exposes
 
-The task stops appearing in the due list until its next due date. Completed work
-also updates the task's rhythm, so the schedule keeps adapting.
+Every entry point lives under `/api`:
 
-The app and its data are served at the same address. Open
-`http://localhost/` for local use, or `http://<host>/` from another
-device that can reach the host.
+- `GET /api/task/` and `GET /api/task/{id}` — task identities and task detail
+- `GET /api/context/` and `GET /api/context/{id}` — the areas of your life
+- `PATCH /api/task/{id}/description` and `POST /api/task/{id}/done` — the writes
+- `GET /api/openapi.json`, `GET /api/docs`, and `GET /api/redoc` — the published
+  contract, generated from the code
 
-For terminal users, `recurrator list-all-tasks --csv <file>` prints the task IDs
-from the same task file while the service is running.
+`DOCS.md` is the reference for every entry point and the exact response fields.
 
-## Before you start
+## The task file
 
 Recurrator keeps your tasks in a file at:
 
@@ -40,8 +39,13 @@ dates it was completed. Keep it backed up; it is your task history.
 ## Run the project
 
 ```bash
-docker compose up
+docker compose up api
 ```
 
-This starts the service at `http://localhost/`. Then open
-`http://localhost/` in your browser.
+This starts the API at `http://localhost/`. Then open
+`http://localhost/api/docs` for the interactive contract, or call an entry point
+directly:
+
+```bash
+curl 'http://localhost/api/task/?csv=/root/.config/recurrator/tasks.csv'
+```

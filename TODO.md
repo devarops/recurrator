@@ -6,17 +6,17 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Set min and max recurrence days — backlog only
 - Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
-- Restore monster avatars on the deployed app — backlog only
-- Add search page to frontend — backlog only
-- Add page to create new tasks — backlog only
-- Move the relative date labels from the frontend into compute_* and the API — backlog only
-      Test: The done, overdue, and upcoming labels come from API fields, and public/ui.js performs no date arithmetic.
-- Add blockers: a task is blocked while its blocker's row exists; removal needs DELETE /task/{id} — backlog only
+- Describe every response in the OpenAPI document — [details below](#describe-every-response-in-the-openapi-document)
+- Move the relative date labels from the client into compute_* and the API — backlog only
+      Test: The done, overdue, and upcoming labels come from API fields, and the frontend performs no date arithmetic.
+- Implement or remove the documented endpoints that do not exist — backlog only
+- Reconcile the browser reference date with the server timezone — backlog only
+- Add blockers: a task is blocked while its blocker's row exists; removal needs DELETE /api/task/{id} — backlog only
 - Add sub-tasks: completing any child completes its parent upward, never downward; skip a parent completed in the last two days — backlog only
 
 ## Add one extra task when we have fewer than 6 tasks
 
-`filter_one_extra_task` exists in `compute.py` as a stub returning `[]`. Implement the acceptance criteria in `specs/one_extra_task.spec.toml` and call the selector from `GET /context/{context_id}` after the WIP selection. Keep it complementary to `filter_n_tasks_by_context`.
+`filter_one_extra_task` exists in `compute.py` as a stub returning `[]`. Implement the acceptance criteria in `specs/one_extra_task.spec.toml` and call the selector from `GET /api/context/{context_id}` after the WIP selection. Keep it complementary to `filter_n_tasks_by_context`.
 
 ## Coins from Glicko rating
 
@@ -87,3 +87,18 @@ Rewrite `test_compute_coins` to test the new signature and formula. Boundary-val
 - Task model — `starred` stays; `coins` stays as a runtime attribute.
 - API response shape — field name and position unchanged.
 - Frontend — no code changes; the value displayed changes naturally.
+
+## Describe every response in the OpenAPI document
+
+Every endpoint returns a bare `dict`, so the 200 response of every path in
+`/api/openapi.json` has an empty schema. Declare a `response_model` per endpoint
+and return the model, so `_task_to_dict` disappears and there is one definition.
+
+The criterion already exists in `specs/contract.spec.toml` and is skipped:
+
+> When the OpenAPI document is read, the 200 response of every task endpoint
+> declares at least one property.
+
+Definition of done: its test in `tests/test_acceptance_contract.py` exists and the
+criterion stops being skipped. Symmetric work in the frontend belongs to
+`recurrator.web`.

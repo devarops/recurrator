@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Every entry point moves under the `/api` prefix. The API no longer serves the
+  frontend, and the `recurrator` CLI is removed.
+
 ### Added
 
 - `PATCH /task/{id}/description` replaces a task's description.
