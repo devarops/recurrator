@@ -1,0 +1,16 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "contract"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_contract.py exists.
+
+[[criteria]]
+description = """
+When the OpenAPI document is read, the 200 response of every task endpoint
+declares at least one property.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_response_properties"

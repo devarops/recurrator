@@ -23,27 +23,9 @@ def _restore_rating_fields(csv_path, tasks):
         io.update_task_rating_date(task.id, task.rating_date, csv_path)
 
 
-def test_frontend_is_served_from_the_api_app():
-    """Verify the API serves the index page and its JavaScript assets."""
-    index_response = client.get("/")
-
-    assert index_response.status_code == 200
-    assert '<div id="scopes"' in index_response.text
-
-    script_response = client.get("/main.js")
-
-    assert script_response.status_code == 200
-    assert "function initPage" in script_response.text
-
-    ui_response = client.get("/ui.js")
-
-    assert ui_response.status_code == 200
-    assert "renderMonsterCard" in ui_response.text
-
-
 def test_get_single_task_id():
     """Verify GET /task/ returns a list of raw task IDs."""
-    response = client.get("/task/?csv=tests/data/test_single_task.csv")
+    response = client.get("/api/task/?csv=tests/data/test_single_task.csv")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -56,7 +38,7 @@ def test_get_single_task_id():
 
 def test_get_multiple_task_ids():
     """Verify GET /task/ returns a list of raw task IDs when multiple tasks are present."""
-    response = client.get("/task/?csv=tests/data/test_three_tasks.csv")
+    response = client.get("/api/task/?csv=tests/data/test_three_tasks.csv")
 
     expected_data = [2, 3, 5]
     obtained_data = response.json()
@@ -65,7 +47,7 @@ def test_get_multiple_task_ids():
 
 def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
-    response = client.get("/task/8?csv=tests/data/test_single_task.csv&date=2025-08-19")
+    response = client.get("/api/task/8?csv=tests/data/test_single_task.csv&date=2025-08-19")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -90,7 +72,7 @@ def test_get_task_by_id_default_csv():
 
 def test_get_task_by_id_alternative_csv():
 
-    response = client.get("/task/3?csv=tests/data/test_three_tasks.csv&date=2026-03-07")
+    response = client.get("/api/task/3?csv=tests/data/test_three_tasks.csv&date=2026-03-07")
 
     expected_data = {
         "id": 3,
@@ -112,7 +94,7 @@ def test_get_task_by_id_alternative_csv():
 
 def test_get_task_by_id_starred():
     """Verify GET /task/{id} returns coins doubled for a starred task."""
-    response = client.get("/task/1?csv=tests/data/test_contexts.csv&date=2026-04-04")
+    response = client.get("/api/task/1?csv=tests/data/test_contexts.csv&date=2026-04-04")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -137,7 +119,7 @@ def test_get_task_by_id_starred():
 
 def test_get_nonexistent_task_returns_404():
     """Verify GET /task/{id} returns 404 when the task is not found."""
-    response = client.get("/task/999?csv=tests/data/test_single_task.csv")
+    response = client.get("/api/task/999?csv=tests/data/test_single_task.csv")
 
     expected_status_code = 404
     obtained_status_code = response.status_code
@@ -152,8 +134,8 @@ def test_set_task_as_done():
     original_tasks = io.import_tasks_from_csv(csv_path)
 
     task_id = 5
-    original_task = client.get(f"/task/{task_id}?csv={csv_path}").json()
-    response = client.post(f"/task/{task_id}/done?csv={csv_path}")
+    original_task = client.get(f"/api/task/{task_id}?csv={csv_path}").json()
+    response = client.post(f"/api/task/{task_id}/done?csv={csv_path}")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -190,10 +172,10 @@ def test_task_done_idempotency():
     original_skip_count = io.get_task_by_id(task_id, csv_path).skip_count
 
     try:
-        first_response = client.post(f"/task/{task_id}/done?csv={csv_path}")
+        first_response = client.post(f"/api/task/{task_id}/done?csv={csv_path}")
         assert first_response.status_code == 200
 
-        second_response = client.post(f"/task/{task_id}/done?csv={csv_path}")
+        second_response = client.post(f"/api/task/{task_id}/done?csv={csv_path}")
         assert second_response.status_code == 409
         assert "error" in second_response.json()
     finally:
@@ -210,7 +192,7 @@ def test_get_due_contexts():
 
     csv_path = "tests/data/test_contexts.csv"
     reference_date = "2026-05-01"
-    response = client.get(f"/context/?csv={csv_path}&date={reference_date}")
+    response = client.get(f"/api/context/?csv={csv_path}&date={reference_date}")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -235,7 +217,7 @@ def test_get_tasks_by_context():
         task_id: io.get_task_by_id(task_id, csv_path) for task_id in deferred_task_ids
     }
 
-    response = client.get(f"/context/{context}?csv={csv_path}&date={reference_date}")
+    response = client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -267,7 +249,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
         task_id: io.get_task_by_id(task_id, csv_path) for task_id in deferred_task_ids
     }
 
-    response = client.get(f"/context/{context}?csv={csv_path}&date={reference_date}")
+    response = client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
 
     expected_status_code = 200
     obtained_status_code = response.status_code
@@ -293,15 +275,15 @@ def test_get_tasks_by_context_defers_remaining_tasks():
 
 def test_get_task_by_id_rating():
     """Verify GET /task/{id} returns the task rating."""
-    response = client.get("/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
+    response = client.get("/api/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
 
     assert response.json()["rating"] == 1500
 
 
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
-    undated = client.get(f"/task/{task_id}?csv={fixture}")
-    dated = client.get(f"/task/{task_id}?csv={fixture}&date={date.today().isoformat()}")
+    undated = client.get(f"/api/task/{task_id}?csv={fixture}")
+    dated = client.get(f"/api/task/{task_id}?csv={fixture}&date={date.today().isoformat()}")
 
     assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
 
@@ -314,7 +296,7 @@ def test_get_task_by_id_rating_deviation():
 def test_get_task_by_id_projects_rating_deviation():
     """Verify GET /task/{id} projects the deviation to the requested date."""
     response = client.get(
-        "/task/1?csv=tests/data/acceptance_glicko_inactivity_growth.csv&date=2026-11-08"
+        "/api/task/1?csv=tests/data/acceptance_glicko_inactivity_growth.csv&date=2026-11-08"
     )
 
     assert response.json()["rating_deviation"] > 350
@@ -329,9 +311,9 @@ def test_task_done_rating(tmp_path):
     """Verify POST /task/{id}/done returns the task rating."""
     csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
 
-    response = client.post(f"/task/8/done?csv={csv_path}")
+    response = client.post(f"/api/task/8/done?csv={csv_path}")
 
-    stored = client.get(f"/task/8?csv={csv_path}").json()
+    stored = client.get(f"/api/task/8?csv={csv_path}").json()
     assert response.json()["rating"] == stored["rating"]
 
 
@@ -339,7 +321,7 @@ def test_task_done_rating_deviation(tmp_path):
     """Verify POST /task/{id}/done returns the task rating deviation."""
     csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
 
-    response = client.post(f"/task/8/done?csv={csv_path}")
+    response = client.post(f"/api/task/8/done?csv={csv_path}")
 
     assert isinstance(response.json()["rating_deviation"], int)
 
@@ -348,8 +330,8 @@ def test_task_done_decreases_completed_rating(tmp_path):
     """Verify completing one of two tasks lowers its rating."""
     csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
 
-    before = client.get(f"/task/1?csv={csv_path}").json()["rating"]
-    response = client.post(f"/task/1/done?csv={csv_path}")
+    before = client.get(f"/api/task/1?csv={csv_path}").json()["rating"]
+    response = client.post(f"/api/task/1/done?csv={csv_path}")
 
     assert response.json()["rating"] < before
 
@@ -358,9 +340,9 @@ def _assert_opponent_rating_rises(fixture, tmp_path):
     """Assert that completing task 1 raises task 2's rating."""
     csv_path = _copy_fixture(fixture, tmp_path)
 
-    before = client.get(f"/task/2?csv={csv_path}").json()["rating"]
-    client.post(f"/task/1/done?csv={csv_path}")
-    after = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+    before = client.get(f"/api/task/2?csv={csv_path}").json()["rating"]
+    client.post(f"/api/task/1/done?csv={csv_path}")
+    after = client.get(f"/api/task/2?csv={csv_path}").json()["rating"]
 
     assert after > before
 
@@ -379,9 +361,9 @@ def test_task_done_keeps_not_due_peer_rating(tmp_path):
     """Verify completing a due task leaves a not-due peer's rating unchanged."""
     csv_path = _copy_fixture("tests/data/test_due_and_not_due.csv", tmp_path)
 
-    before = client.get(f"/task/2?csv={csv_path}").json()["rating"]
-    client.post(f"/task/1/done?csv={csv_path}")
-    after = client.get(f"/task/2?csv={csv_path}").json()["rating"]
+    before = client.get(f"/api/task/2?csv={csv_path}").json()["rating"]
+    client.post(f"/api/task/1/done?csv={csv_path}")
+    after = client.get(f"/api/task/2?csv={csv_path}").json()["rating"]
 
     assert after == before
 
@@ -390,8 +372,8 @@ def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     """Verify the completed rating change exceeds the one-point placeholder."""
     csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
 
-    before = client.get(f"/task/1?csv={csv_path}").json()["rating"]
-    response = client.post(f"/task/1/done?csv={csv_path}")
+    before = client.get(f"/api/task/1?csv={csv_path}").json()["rating"]
+    response = client.post(f"/api/task/1/done?csv={csv_path}")
 
     assert before - response.json()["rating"] > 1
 
@@ -401,10 +383,10 @@ def test_task_done_preserves_total_rating(tmp_path):
     csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
 
     before = sum(
-        client.get(f"/task/{task_id}?csv={csv_path}").json()["rating"] for task_id in (1, 2)
+        client.get(f"/api/task/{task_id}?csv={csv_path}").json()["rating"] for task_id in (1, 2)
     )
-    response = client.post(f"/task/1/done?csv={csv_path}")
-    opponent = client.get(f"/task/2?csv={csv_path}").json()
+    response = client.post(f"/api/task/1/done?csv={csv_path}")
+    opponent = client.get(f"/api/task/2?csv={csv_path}").json()
 
     assert response.json()["rating"] + opponent["rating"] == before
 
@@ -413,8 +395,8 @@ def test_task_done_lowers_completed_rating_deviation(tmp_path):
     """Verify a completion lowers the completed task deviation."""
     csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
-    before = client.get(f"/task/1?csv={csv_path}").json()["rating_deviation"]
-    response = client.post(f"/task/1/done?csv={csv_path}")
+    before = client.get(f"/api/task/1?csv={csv_path}").json()["rating_deviation"]
+    response = client.post(f"/api/task/1/done?csv={csv_path}")
 
     assert response.json()["rating_deviation"] < before
 
@@ -423,9 +405,9 @@ def test_task_done_lowers_opponent_rating_deviation(tmp_path):
     """Verify a completion lowers the opponent deviation."""
     csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
-    before = client.get(f"/task/2?csv={csv_path}").json()["rating_deviation"]
-    client.post(f"/task/1/done?csv={csv_path}")
-    after = client.get(f"/task/2?csv={csv_path}").json()["rating_deviation"]
+    before = client.get(f"/api/task/2?csv={csv_path}").json()["rating_deviation"]
+    client.post(f"/api/task/1/done?csv={csv_path}")
+    after = client.get(f"/api/task/2?csv={csv_path}").json()["rating_deviation"]
 
     assert after < before
 
@@ -434,8 +416,8 @@ def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
     """Verify the completed deviation drop exceeds the placeholder."""
     csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
-    before = client.get(f"/task/1?csv={csv_path}").json()["rating_deviation"]
-    response = client.post(f"/task/1/done?csv={csv_path}")
+    before = client.get(f"/api/task/1?csv={csv_path}").json()["rating_deviation"]
+    response = client.post(f"/api/task/1/done?csv={csv_path}")
 
     assert before - response.json()["rating_deviation"] > 1
 
@@ -444,7 +426,7 @@ def test_task_done_sets_completed_rating_to_simultaneous_value(tmp_path):
     """Verify the completed rating matches a simultaneous Glicko update."""
     csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
 
-    response = client.post(f"/task/1/done?csv={csv_path}")
+    response = client.post(f"/api/task/1/done?csv={csv_path}")
 
     assert response.json()["rating"] == 1367
 
@@ -453,9 +435,9 @@ def test_task_done_changes_solo_rating(tmp_path):
     """Verify completing a solo task changes its rating."""
     csv_path = _copy_fixture("tests/data/acceptance_glicko_solo_completion.csv", tmp_path)
 
-    before = client.get(f"/task/1?csv={csv_path}").json()["rating"]
-    client.post(f"/task/1/done?csv={csv_path}")
-    after = client.get(f"/task/1?csv={csv_path}").json()["rating"]
+    before = client.get(f"/api/task/1?csv={csv_path}").json()["rating"]
+    client.post(f"/api/task/1/done?csv={csv_path}")
+    after = client.get(f"/api/task/1?csv={csv_path}").json()["rating"]
 
     assert after != before
 
@@ -464,7 +446,7 @@ def test_task_done_updates_rating_date_anchor(tmp_path):
     """Verify a completion moves the completed task's rating anchor to today."""
     csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
 
-    client.post(f"/task/1/done?csv={csv_path}")
+    client.post(f"/api/task/1/done?csv={csv_path}")
 
     task = io.get_task_by_id(1, csv_path)
     assert task.rating_date == date.today()
