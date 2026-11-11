@@ -9,21 +9,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -33,21 +110,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -57,21 +211,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -81,45 +312,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
-      }
-    },
-    {
-      "name": "test-markdown",
-      "path": "test_markdown.csv",
-      "profile": "tabular-data-resource",
-      "encoding": "utf-8",
-      "schema": {
-        "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
-        ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -129,21 +413,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -153,21 +514,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -177,21 +615,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -201,21 +716,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -225,21 +817,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -249,21 +918,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -273,21 +1019,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -297,21 +1120,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -321,21 +1221,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -345,21 +1322,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -369,21 +1423,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -393,21 +1524,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -417,21 +1625,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -441,21 +1726,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     },
     {
@@ -465,21 +1827,98 @@
       "encoding": "utf-8",
       "schema": {
         "fields": [
-          {"name": "id", "type": "integer", "constraints": {"required": true, "unique": true}},
-          {"name": "context", "type": "string", "constraints": {"required": true, "enum": ["casa", "chores", "laptop"]}},
-          {"name": "description", "type": "string", "constraints": {"required": true}},
-          {"name": "date_1", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_2", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_3", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "date_4", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "skip_count", "type": "integer", "constraints": {"required": true}},
-          {"name": "skip_date", "type": "date", "format": "%Y-%m-%d"},
-          {"name": "starred", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_deviation", "type": "integer", "constraints": {"required": true}},
-          {"name": "rating_date", "type": "date", "format": "%Y-%m-%d", "constraints": {"required": true}}
+          {
+            "name": "id",
+            "type": "integer",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "context",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "enum": [
+                "casa",
+                "chores",
+                "laptop"
+              ]
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "date_1",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_2",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_3",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "date_4",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "skip_count",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "skip_date",
+            "type": "date",
+            "format": "%Y-%m-%d"
+          },
+          {
+            "name": "starred",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_deviation",
+            "type": "integer",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "rating_date",
+            "type": "date",
+            "format": "%Y-%m-%d",
+            "constraints": {
+              "required": true
+            }
+          }
         ],
-        "missingValues": ["NA"]
+        "missingValues": [
+          "NA"
+        ]
       }
     }
   ]

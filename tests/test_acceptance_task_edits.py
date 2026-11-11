@@ -32,7 +32,9 @@ def test_empty_description_is_rejected(tmp_path):
     before = client.get(f"/api/task/2?csv={csv_path}").json()["description"]
 
     for text in ("", "   ", "\n\t "):
-        response = client.patch(f"/api/task/2/description?csv={csv_path}", json={"description": text})
+        response = client.patch(
+            f"/api/task/2/description?csv={csv_path}", json={"description": text}
+        )
 
         assert response.status_code == 400
         assert "error" in response.json()
