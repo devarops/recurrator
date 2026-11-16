@@ -1,11 +1,6 @@
 import csv
 
-from conftest import (
-    THREE_TASKS_CSV,
-    _copy_fixture,
-    _patch_description,
-    _read_task,
-)
+from conftest import THREE_TASKS_CSV, _copy_fixture, _patch_description, _read_task, client
 
 
 def _assert_description_written(csv_path, task_id, text):
@@ -89,3 +84,17 @@ def test_unknown_task_takes_precedence_over_an_empty_description(tmp_path):
 
         assert response.status_code == 404
         assert "error" in response.json()
+
+
+def test_malformed_description_body_is_rejected(tmp_path):
+    """A body without the text, or with a non-string, is refused."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+    previous = _read_task(csv_path, 2).json()["description"]
+
+    for payload in ({}, {"description": 123}, {"description": None}):
+        response = client.patch(f"/api/task/2/description?csv={csv_path}", json=payload)
+
+        assert response.status_code == 422
+        assert "error" in response.json()
+
+    assert _read_task(csv_path, 2).json()["description"] == previous
