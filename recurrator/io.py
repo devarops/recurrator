@@ -98,10 +98,15 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
         return [_row_to_task(row) for row in reader]
 
 
+def _is_task_row(row: dict, task_id: int) -> bool:
+    """Return whether the row's id column names the task."""
+    return int(row["id"]) == task_id
+
+
 def _find_task_row(rows: Iterable[dict], task_id: int, csv_path: str) -> dict:
     """Return the CSV row whose id column matches, or raise ValueError."""
     for row in rows:
-        if int(row["id"]) == task_id:
+        if _is_task_row(row, task_id):
             return row
     raise ValueError(f"Task {task_id} not found in {csv_path}")
 
@@ -142,7 +147,7 @@ def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_
         rows = list(reader)
         fieldnames = reader.fieldnames
     for row in rows:
-        if int(row["id"]) == task_id:
+        if _is_task_row(row, task_id):
             apply_update(row)
     assert fieldnames is not None
 
