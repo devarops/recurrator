@@ -61,6 +61,11 @@ def _load_tasks_and_date(csv_path: str, reference_date: str) -> tuple:
     return tasks, parsed_reference_date
 
 
+def _error_response(message: str, status_code: int) -> JSONResponse:
+    """Return the error envelope shared by every failed request."""
+    return JSONResponse(content={"error": message}, status_code=status_code)
+
+
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
@@ -78,7 +83,7 @@ def get_task_by_id(
     try:
         task = io.get_task_by_id(task_id, csv_path)
     except ValueError:
-        return JSONResponse(content={"error": "Task not found"}, status_code=404)
+        return _error_response("Task not found", 404)
     parsed_reference_date = date.fromisoformat(reference_date) if reference_date else date.today()
     return _task_to_dict(task, parsed_reference_date)
 
@@ -122,11 +127,11 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     """Replace a task's description with the given text."""
     csv_path = _resolve_csv_path(csv)
     if not body.description.strip():
-        return JSONResponse(content={"error": "Description must not be empty"}, status_code=400)
+        return _error_response("Description must not be empty", 400)
     try:
         io.get_task_by_id(task_id, csv_path)
     except ValueError:
-        return JSONResponse(content={"error": "Task not found"}, status_code=404)
+        return _error_response("Task not found", 404)
     io.update_task_description(task_id, body.description, csv_path)
     return {"id": task_id, "description": body.description}
 
@@ -138,10 +143,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
 
     current_task = io.get_task_by_id(task_id, csv_path)
     if not compute.is_done_allowed(current_task.latest_done_date, today):
-        return JSONResponse(
-            content={"error": "Task was already completed too recently"},
-            status_code=409,
-        )
+        return _error_response("Task was already completed too recently", 409)
 
     io.update_task_as_done(task_id, today, csv_path)
 
