@@ -18,6 +18,16 @@ def _assert_description_written(csv_path, task_id, text):
     assert response.json() == {"id": task_id, "description": text}
 
 
+def _assert_description_reads_back(csv_path, task_id, text):
+    """Write a description and check that a later read returns it."""
+    _assert_description_written(csv_path, task_id, text)
+
+    response = _read_task(csv_path, task_id)
+
+    assert response.status_code == 200
+    assert response.json()["description"] == text
+
+
 def test_description_is_written_verbatim(tmp_path):
     """A written description reads back unchanged, markdown and line breaks included."""
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
@@ -61,12 +71,7 @@ def test_description_whitespace_is_preserved(tmp_path):
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
     text = "\t  Buy milk\n- [ ] eggs  \t\n"
 
-    _assert_description_written(csv_path, 2, text)
-
-    response = _read_task(csv_path, 2)
-
-    assert response.status_code == 200
-    assert response.json()["description"] == text
+    _assert_description_reads_back(csv_path, 2, text)
 
 
 def test_backslash_and_n_are_ordinary_text(tmp_path):
@@ -74,9 +79,4 @@ def test_backslash_and_n_are_ordinary_text(tmp_path):
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
     text = "one\\ntwo"
 
-    _assert_description_written(csv_path, 2, text)
-
-    response = _read_task(csv_path, 2)
-
-    assert response.status_code == 200
-    assert response.json()["description"] == text
+    _assert_description_reads_back(csv_path, 2, text)
