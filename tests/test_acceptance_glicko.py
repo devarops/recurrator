@@ -3,6 +3,9 @@ from datetime import date
 
 from conftest import (
     GLICKO_CONTRACT_CSV,
+    GLICKO_DEFAULT_DATE_CSV,
+    GLICKO_INACTIVITY_CSV,
+    GLICKO_SOLO_CSV,
     _copy_fixture,
     _read_task,
     _read_task_on,
@@ -72,7 +75,7 @@ def test_glicko_early_completion(tmp_path):
 
 def test_glicko_inactivity_growth():
     """An older rating anchor projects a larger deviation at the same reference date."""
-    fixture = "tests/data/acceptance_glicko_inactivity_growth.csv"
+    fixture = GLICKO_INACTIVITY_CSV
     reference_date = "2026-11-08"
 
     older = _read_task_on(fixture, 1, reference_date)
@@ -132,7 +135,7 @@ def test_glicko_context_isolation(tmp_path):
 
 def test_glicko_solo_completion(tmp_path):
     """A solo completion changes the rating and leaves no synthetic task."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_solo_completion.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_SOLO_CSV, tmp_path)
     reference_date = "2026-11-08"
 
     context_before = _read_context_task_ids(csv_path, "chores", reference_date)
@@ -153,7 +156,7 @@ def test_glicko_solo_completion(tmp_path):
 
 def test_glicko_default_date_projection(tmp_path):
     """A read without a date projects the deviation to today."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_default_date_projection.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_DEFAULT_DATE_CSV, tmp_path)
     today = date.today().isoformat()
 
     undated = _read_task(csv_path, 1)

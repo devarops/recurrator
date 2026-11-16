@@ -14,6 +14,9 @@ from conftest import (
     CONTEXTS_CSV,
     EIGHT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
+    GLICKO_DEFAULT_DATE_CSV,
+    GLICKO_INACTIVITY_CSV,
+    GLICKO_SOLO_CSV,
     SINGLE_TASK_CSV,
     THREE_TASKS_CSV,
     TWO_RATINGS_CSV,
@@ -306,14 +309,14 @@ def test_get_task_by_id_rating_deviation():
 
 def test_get_task_by_id_projects_rating_deviation():
     """Verify GET /task/{id} projects the deviation to the requested date."""
-    response = _read_task_on("tests/data/acceptance_glicko_inactivity_growth.csv", 1, "2026-11-08")
+    response = _read_task_on(GLICKO_INACTIVITY_CSV, 1, "2026-11-08")
 
     assert response.json()["rating_deviation"] > 350
 
 
 def test_get_task_by_id_projects_deviation_to_today():
     """Verify GET /task/{id} without a date projects the deviation to today."""
-    _assert_undated_matches_today("tests/data/acceptance_glicko_default_date_projection.csv", 1)
+    _assert_undated_matches_today(GLICKO_DEFAULT_DATE_CSV, 1)
 
 
 def test_task_done_rating(tmp_path):
@@ -428,7 +431,7 @@ def test_task_done_sets_completed_rating_to_simultaneous_value(tmp_path):
 
 def test_task_done_changes_solo_rating(tmp_path):
     """Verify completing a solo task changes its rating."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_solo_completion.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_SOLO_CSV, tmp_path)
 
     before = _task_field(csv_path, 1, "rating")
     _complete(csv_path, 1)
