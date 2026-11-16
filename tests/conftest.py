@@ -101,6 +101,12 @@ def _assert_file_unchanged(path: str, original_checksum: str) -> None:
     assert final_checksum == original_checksum, "CSV was modified after undo"
 
 
+def _restore_completion_fields(task_id: int, skip_count: int, dates: list, csv_path: str) -> None:
+    """Restore the fields a completion changes on the completed task."""
+    io.update_task_skip_count(task_id, skip_count, csv_path)
+    io.update_task_dates(task_id, dates, csv_path)
+
+
 def _verify_task_as_done(
     task_id: int,
     csv_path: str,
@@ -125,6 +131,4 @@ def _verify_task_as_done(
 
     assert io.import_dates_from_csv(task_id, csv_path) == expected_dates
 
-    # Undo changes to CSV file for other tests
-    io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    io.update_task_dates(task_id, original_dates, csv_path)
+    _restore_completion_fields(task_id, original_skip_count, original_dates, csv_path)

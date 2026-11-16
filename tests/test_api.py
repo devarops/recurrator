@@ -12,6 +12,7 @@ from conftest import (
     _read_due_contexts,
     _read_task_ids,
     _patch_description,
+    _restore_completion_fields,
     CONTEXTS_CSV,
     EIGHT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -186,8 +187,7 @@ def test_set_task_as_done():
     assert completed["due_date"] != original_task["due_date"]
 
     # Undo changes to CSV file for other tests
-    io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    io.update_task_dates(task_id, TASK_5_ORIGINAL_DATES, csv_path)
+    _restore_completion_fields(task_id, original_skip_count, TASK_5_ORIGINAL_DATES, csv_path)
     _restore_rating_fields(csv_path, original_tasks)
 
     _assert_file_unchanged(csv_path, original_checksum)
@@ -211,8 +211,7 @@ def test_task_done_idempotency():
         assert "error" in second_response.json()
     finally:
         # Undo changes to CSV file for other tests
-        io.update_task_skip_count(task_id, original_skip_count, csv_path)
-        io.update_task_dates(task_id, TASK_2_ORIGINAL_DATES, csv_path)
+        _restore_completion_fields(task_id, original_skip_count, TASK_2_ORIGINAL_DATES, csv_path)
         _restore_rating_fields(csv_path, original_tasks)
 
     _assert_file_unchanged(csv_path, original_checksum)
