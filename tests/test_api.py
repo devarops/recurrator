@@ -11,6 +11,7 @@ from conftest import (
     _read_context_task_ids,
     _read_due_contexts,
     _read_task_ids,
+    client,
     CONTEXTS_CSV,
     EIGHT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -432,3 +433,12 @@ def test_task_done_updates_rating_date_anchor(tmp_path):
 
     task = io.get_task_by_id(1, csv_path)
     assert task.rating_date == date.today()
+
+
+def test_empty_description_for_unknown_task_returns_404(tmp_path):
+    """An unknown task answers 404 before its empty text is refused."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+
+    response = client.patch(f"/api/task/999/description?csv={csv_path}", json={"description": ""})
+
+    assert response.status_code == 404
