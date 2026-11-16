@@ -31,6 +31,14 @@ def _chores_task(
     )
 
 
+def _selected_task_id(tasks, reference_date, available_slots):
+    """Return the id of the top task the prioritizer selects."""
+    selected, _ = rc.filter_n_tasks_by_context(
+        tasks, Context.CHORES, reference_date, available_slots
+    )
+    return selected[0].id
+
+
 def test_compute_intervals():
     """Verify compute_intervals returns correct day intervals."""
 
@@ -295,10 +303,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
         _chores_task(1, "Low skip"),
         _chores_task(2, "High skip", skip_count=3),
     ]
-    expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
-    obtained_selected_id = selected[0].id
-    assert obtained_selected_id == expected_selected_id
+    assert _selected_task_id(tasks, reference_date, 1) == 2
 
 
 def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
@@ -308,10 +313,7 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
         _chores_task(1, "Low rec"),
         _chores_task(2, "High rec", recurrence_days=21),
     ]
-    expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
-    obtained_selected_id = selected[0].id
-    assert obtained_selected_id == expected_selected_id
+    assert _selected_task_id(tasks, reference_date, 1) == 2
 
 
 def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
@@ -321,10 +323,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
         _chores_task(1, "Low rec", starred=True),
         _chores_task(2, "High rec", starred=True, recurrence_days=21),
     ]
-    expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
-    obtained_selected_id = selected[0].id
-    assert obtained_selected_id == expected_selected_id
+    assert _selected_task_id(tasks, reference_date, 1) == 2
 
 
 def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
@@ -334,10 +333,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
         _chores_task(1, "Low skip", starred=True),
         _chores_task(2, "High skip", starred=True, skip_count=3),
     ]
-    expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
-    obtained_selected_id = selected[0].id
-    assert obtained_selected_id == expected_selected_id
+    assert _selected_task_id(tasks, reference_date, 1) == 2
 
 
 def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
@@ -347,10 +343,7 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
         _chores_task(1, "Later due", starred=True, due_date=date(2026, 6, 6)),
         _chores_task(2, "Earlier due", starred=True),
     ]
-    expected_selected_id = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
-    obtained_selected_id = selected[0].id
-    assert obtained_selected_id == expected_selected_id
+    assert _selected_task_id(tasks, reference_date, 1) == 2
 
 
 def test_compute_available_wip_slots():
