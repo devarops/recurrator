@@ -3,11 +3,9 @@ from datetime import date
 
 from fastapi.testclient import TestClient
 from recurrator.api import app
-from conftest import _copy_fixture
+from conftest import GLICKO_CONTRACT_CSV, _copy_fixture
 
 client = TestClient(app)
-
-FIXTURE = "tests/data/acceptance_glicko_integer_contract.csv"
 
 
 def _ratings(csv_path, task_ids):
@@ -20,14 +18,14 @@ def _ratings(csv_path, task_ids):
 
 def test_glicko_integer_contract(tmp_path):
     """Rating and rating deviation are integers when a task is read or completed."""
-    response = client.get(f"/api/task/8?csv={FIXTURE}")
+    response = client.get(f"/api/task/8?csv={GLICKO_CONTRACT_CSV}")
     assert response.status_code == 200
 
     task = response.json()
     assert isinstance(task["rating"], int)
     assert isinstance(task["rating_deviation"], int)
 
-    completion_csv = _copy_fixture(FIXTURE, tmp_path)
+    completion_csv = _copy_fixture(GLICKO_CONTRACT_CSV, tmp_path)
 
     response = client.post(f"/api/task/8/done?csv={completion_csv}")
     assert response.status_code == 200
@@ -167,7 +165,7 @@ def test_glicko_default_date_projection(tmp_path):
 
 def test_glicko_completion_anchor(tmp_path):
     """A completion moves the anchor so the next undated read matches."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_CONTRACT_CSV, tmp_path)
 
     completed = client.post(f"/api/task/8/done?csv={csv_path}")
     assert completed.status_code == 200

@@ -10,6 +10,7 @@ from conftest import (
     _assert_file_unchanged,
     _verify_task_as_done,
     CONTEXTS_CSV,
+    GLICKO_CONTRACT_CSV,
     THREE_TASKS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_2_UPDATED_DATES,
@@ -236,7 +237,7 @@ def test_update_task_as_skipped_in_csv():
 
 def test_import_tasks_from_csv_rating():
     """Verify import_tasks_from_csv reads the task rating as an integer."""
-    csv_path = "tests/data/acceptance_glicko_integer_contract.csv"
+    csv_path = GLICKO_CONTRACT_CSV
     task_list = io.import_tasks_from_csv(csv_path)
 
     assert task_list[0].rating == 1500
@@ -244,7 +245,7 @@ def test_import_tasks_from_csv_rating():
 
 def test_import_tasks_from_csv_rating_deviation():
     """Verify import_tasks_from_csv reads the task rating deviation as an integer."""
-    csv_path = "tests/data/acceptance_glicko_integer_contract.csv"
+    csv_path = GLICKO_CONTRACT_CSV
     task_list = io.import_tasks_from_csv(csv_path)
 
     assert task_list[0].rating_deviation == 350

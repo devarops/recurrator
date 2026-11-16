@@ -8,6 +8,7 @@ from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
     CONTEXTS_CSV,
+    GLICKO_CONTRACT_CSV,
     THREE_TASKS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
@@ -299,7 +300,7 @@ def test_get_task_by_id_rating():
 
 def test_get_task_by_id_rating_deviation():
     """Verify GET /task/{id} returns the projected task rating deviation."""
-    _assert_undated_matches_today("tests/data/acceptance_glicko_integer_contract.csv", 8)
+    _assert_undated_matches_today(GLICKO_CONTRACT_CSV, 8)
 
 
 def test_get_task_by_id_projects_rating_deviation():
@@ -318,7 +319,7 @@ def test_get_task_by_id_projects_deviation_to_today():
 
 def test_task_done_rating(tmp_path):
     """Verify POST /task/{id}/done returns the task rating."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_CONTRACT_CSV, tmp_path)
 
     response = _complete(csv_path, 8)
 
@@ -327,7 +328,7 @@ def test_task_done_rating(tmp_path):
 
 def test_task_done_rating_deviation(tmp_path):
     """Verify POST /task/{id}/done returns the task rating deviation."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_integer_contract.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_CONTRACT_CSV, tmp_path)
 
     response = _complete(csv_path, 8)
 
