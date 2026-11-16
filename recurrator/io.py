@@ -20,6 +20,8 @@ from .models import (
     SKIP_COUNT_RESET,
 )
 
+DATE_COLUMNS = ("date_1", "date_2", "date_3", "date_4")
+
 
 def _parse_date(date_str: str) -> date | None:
     """Parse an ISO 8601 date string, returning None for 'NA'."""
@@ -33,12 +35,7 @@ def _format_date(d: date | None) -> str:
 
 def _parse_row_dates(row: dict) -> list[date | None]:
     """Extract and parse the four date fields from a CSV row."""
-    return [
-        _parse_date(row["date_1"]),
-        _parse_date(row["date_2"]),
-        _parse_date(row["date_3"]),
-        _parse_date(row["date_4"]),
-    ]
+    return [_parse_date(row[column]) for column in DATE_COLUMNS]
 
 
 def _compute_dates(row: dict) -> Dates:
@@ -164,10 +161,8 @@ def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_
 
 def update_task_dates(task_id: int, dates: list[date | None], csv_path: str) -> None:
     def apply_update(row: dict) -> None:
-        row["date_1"] = _format_date(dates[0])
-        row["date_2"] = _format_date(dates[1])
-        row["date_3"] = _format_date(dates[2])
-        row["date_4"] = _format_date(dates[3])
+        for index, column in enumerate(DATE_COLUMNS):
+            row[column] = _format_date(dates[index])
 
     _update_task_in_csv(task_id, apply_update, csv_path)
 
