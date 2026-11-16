@@ -130,6 +130,15 @@ def _sorted_tasks(tasks: list[Task], odd_cycle: bool) -> list[Task]:
     return sorted(tasks, key=sort_key)
 
 
+def _take_top_task(pool: list[Task], odd_cycle: bool) -> Task | None:
+    """Remove and return the highest-priority task in the pool, if any."""
+    if not pool:
+        return None
+    top_task = _sorted_tasks(pool, odd_cycle)[0]
+    pool.remove(top_task)
+    return top_task
+
+
 def filter_n_tasks_by_context(
     tasks: list[Task], context: Context, reference_date: date, available_slots: int
 ) -> tuple[list[Task], list[Task]]:
@@ -142,16 +151,14 @@ def filter_n_tasks_by_context(
     selected_tasks: list[Task] = []
     odd_cycle = True
     while len(selected_tasks) < available_slots:
-        starred_sorted = _sorted_tasks(starred_pool, odd_cycle)
-        if starred_sorted:
-            selected_tasks.append(starred_sorted[0])
-            starred_pool.remove(starred_sorted[0])
+        starred_task = _take_top_task(starred_pool, odd_cycle)
+        if starred_task is not None:
+            selected_tasks.append(starred_task)
         if len(selected_tasks) >= available_slots:
             break
-        non_starred_sorted = _sorted_tasks(non_starred_pool, odd_cycle)
-        if non_starred_sorted:
-            selected_tasks.append(non_starred_sorted[0])
-            non_starred_pool.remove(non_starred_sorted[0])
+        non_starred_task = _take_top_task(non_starred_pool, odd_cycle)
+        if non_starred_task is not None:
+            selected_tasks.append(non_starred_task)
         odd_cycle = not odd_cycle
     deferred_tasks = non_starred_pool
     return selected_tasks, deferred_tasks
