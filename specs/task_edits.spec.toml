@@ -96,8 +96,8 @@ run = "pytest tests/test_acceptance_task_edits.py::test_description_whitespace_i
 
 [[criteria]]
 description = """
-When the description contains a literal backslash followed by n, the write
-stores those two characters and the response returns them unchanged.
+When the description contains the two characters backslash and n, the response
+returns those exact characters, and a later read reports them unchanged.
 """
 [criteria.verify]
 type = "command"
