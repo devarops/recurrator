@@ -5,6 +5,8 @@ from shutil import copyfile
 import recurrator.io as io
 
 # Test data constants
+THREE_TASKS_CSV = "tests/data/test_three_tasks.csv"
+
 TASK_2_ORIGINAL_DATES = [None, None, date(2024, 1, 8), date(2024, 12, 7)]
 TASK_2_UPDATED_DATES = [None, None, date(2025, 2, 1), date(2025, 11, 2)]
 TASK_2_COMPLETION_DATE = date(2025, 2, 28)

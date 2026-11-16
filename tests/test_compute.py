@@ -3,6 +3,7 @@ import recurrator.io as io
 from recurrator import Context, Task
 from recurrator.models import Dates
 from datetime import date
+from conftest import THREE_TASKS_CSV
 
 
 def _date_list(d1, d2, d3, d4):
@@ -122,11 +123,11 @@ def test_compute_rolling_dates():
 
 def test_get_task_by_id():
 
-    assert isinstance(io.get_task_by_id(3, "tests/data/test_three_tasks.csv"), Task)
+    assert isinstance(io.get_task_by_id(3, THREE_TASKS_CSV), Task)
 
 
 def test_filter_all_tasks_by_context():
-    all_tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
+    all_tasks = io.import_tasks_from_csv(THREE_TASKS_CSV)
     context = Context.CHORES
     filtered_tasks = rc.filter_all_tasks_by_context(all_tasks, context)
     assert len(filtered_tasks) == 2
@@ -197,7 +198,7 @@ def test_filter_n_tasks_by_context_empty_list():
 
 def test_filter_n_tasks_by_context_early_return():
     """Verify filter_n_tasks_by_context returns all due tasks when n_tasks exceeds due count."""
-    tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
+    tasks = io.import_tasks_from_csv(THREE_TASKS_CSV)
     context = Context.CHORES
     reference_date = date(2026, 6, 6)
     n_tasks = 3

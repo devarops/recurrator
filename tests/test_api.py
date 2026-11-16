@@ -7,6 +7,7 @@ from conftest import (
     _copy_fixture,
     _get_file_checksum,
     _assert_file_unchanged,
+    THREE_TASKS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
 )
@@ -162,7 +163,7 @@ def test_get_nonexistent_task_returns_404():
 def test_set_task_as_done():
     """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
 
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
     original_checksum = _get_file_checksum(csv_path)
     original_tasks = io.import_tasks_from_csv(csv_path)
 
@@ -195,7 +196,7 @@ def test_set_task_as_done():
 def test_task_done_idempotency():
     """Verify POST /task/{id}/done returns 409 on consecutive duplicate completion."""
 
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
     original_checksum = _get_file_checksum(csv_path)
     original_tasks = io.import_tasks_from_csv(csv_path)
 

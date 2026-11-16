@@ -9,6 +9,7 @@ from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
     _verify_task_as_done,
+    THREE_TASKS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_2_UPDATED_DATES,
     TASK_2_COMPLETION_DATE,
@@ -61,7 +62,7 @@ def test_import_tasks_from_csv_starred_task():
 
 def test_import_tasks_from_csv_two_contexts():
     """Verify import_tasks_from_csv correctly handles multiple contexts in CSV file."""
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
     task_list = io.import_tasks_from_csv(csv_path)
 
     # Returns a list with three Tasks
@@ -78,7 +79,7 @@ def test_import_tasks_from_csv_two_contexts():
 def test_import_dates_from_csv():
     """Verify import_dates_from_csv correctly parses dates from CSV file."""
     task_id = 2
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
     obtained_dates = io.import_dates_from_csv(task_id, csv_path)
     assert isinstance(obtained_dates, list)
 
@@ -88,7 +89,7 @@ def test_import_dates_from_csv():
 def test_update_task_dates_in_csv():
     """Verify update_task_dates correctly writes dates to CSV file."""
     task_id = 2
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
 
     original_checksum = _get_file_checksum(csv_path)
 
@@ -105,7 +106,7 @@ def test_update_task_dates_in_csv():
 def test_update_task_skip_count_in_csv():
     """Verify update_task_skip_count_in_csv correctly updates skip count."""
     task_id = 2
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
 
     original_checksum = _get_file_checksum(csv_path)
 
@@ -134,7 +135,7 @@ def test_write_preserves_quotes_in_description():
 
 def test_failed_write_leaves_the_file_unchanged(monkeypatch):
     """Verify a write that fails partway does not touch the stored file."""
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
     original_checksum = _get_file_checksum(csv_path)
     calls = {"count": 0}
 
@@ -154,7 +155,7 @@ def test_failed_write_leaves_the_file_unchanged(monkeypatch):
 
 def test_update_task_as_done_in_csv():
     """Verify update_task_as_done_in_csv correctly updates dates and skip count."""
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
     original_checksum = _get_file_checksum(csv_path)
 
     # Scenario 1: Task with partial dates (some None values)
@@ -190,7 +191,7 @@ def test_import_tasks_from_csv_latest_done_date():
 def test_update_task_skip_date_in_csv():
     """Verify update_task_skip_date correctly updates skip_date in CSV."""
     task_id = 2
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
 
     original_checksum = _get_file_checksum(csv_path)
 
@@ -211,7 +212,7 @@ def test_update_task_skip_date_in_csv():
 def test_update_task_as_skipped_in_csv():
     """Verify update_task_as_skipped increments skip_count and updates skip_date."""
     task_id = 2
-    csv_path = "tests/data/test_three_tasks.csv"
+    csv_path = THREE_TASKS_CSV
 
     original_checksum = _get_file_checksum(csv_path)
 
