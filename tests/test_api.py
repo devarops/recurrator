@@ -420,9 +420,7 @@ def test_task_done_changes_solo_rating(tmp_path):
     """Verify completing a solo task changes its rating."""
     csv_path = _copy_fixture(GLICKO_SOLO_CSV, tmp_path)
 
-    before = _task_field(csv_path, 1, "rating")
-    _complete(csv_path, 1)
-    after = _task_field(csv_path, 1, "rating")
+    before, after = _field_before_and_after_completion(csv_path, 1, 1, "rating")
 
     assert after != before
 
