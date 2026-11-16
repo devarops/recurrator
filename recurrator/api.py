@@ -54,7 +54,7 @@ def _task_to_dict(task: io.Task, reference_date: date | None = None) -> dict:
     }
 
 
-def _load_tasks_and_date(csv_path: str, reference_date: str) -> tuple:
+def _load_tasks_and_date(csv_path: str, reference_date: str) -> tuple[list[io.Task], date]:
     """Import tasks from CSV and parse the reference date."""
     tasks = io.import_tasks_from_csv(csv_path)
     parsed_reference_date = date.fromisoformat(reference_date)
