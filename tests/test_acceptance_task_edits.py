@@ -48,3 +48,19 @@ def test_description_unknown_task_returns_404(tmp_path):
 
     assert response.status_code == 404
     assert "error" in response.json()
+
+
+def test_description_whitespace_is_preserved(tmp_path):
+    """Padded text survives the write and comes back from a later read."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+    text = "\t  Buy milk\n- [ ] eggs  \t\n"
+
+    response = client.patch(f"/api/task/2/description?csv={csv_path}", json={"description": text})
+
+    assert response.status_code == 200
+    assert response.json() == {"id": 2, "description": text}
+
+    stored = client.get(f"/api/task/2?csv={csv_path}")
+
+    assert stored.status_code == 200
+    assert stored.json()["description"] == text
