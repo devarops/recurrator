@@ -8,7 +8,7 @@ from recurrator.io import Context
 from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
-    _verify_task_as_done,
+    _restore_completion_fields,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
     SINGLE_TASK_CSV,
@@ -157,6 +157,33 @@ def test_failed_write_leaves_the_file_unchanged(monkeypatch):
 
     _assert_file_unchanged(csv_path, original_checksum)
     assert not Path(csv_path + ".tmp").exists()
+
+
+def _verify_task_as_done(
+    task_id: int,
+    csv_path: str,
+    completion_date: date,
+    expected_dates: list,
+    original_dates: list,
+) -> None:
+    """Verify and undo task completion scenario.
+
+    Args:
+        task_id: ID of the task to test
+        csv_path: Path to CSV file
+        completion_date: Date the task was marked as done
+        expected_dates: Expected dates after completion
+        original_dates: Original dates to restore after test
+    """
+    original_task = io.get_task_by_id(task_id, csv_path)
+    original_skip_count = original_task.skip_count
+
+    io.update_task_as_done(task_id, completion_date, csv_path)
+    assert io.get_task_by_id(task_id, csv_path).skip_count == 0
+
+    assert io.import_dates_from_csv(task_id, csv_path) == expected_dates
+
+    _restore_completion_fields(task_id, original_skip_count, original_dates, csv_path)
 
 
 def test_update_task_as_done_in_csv():
