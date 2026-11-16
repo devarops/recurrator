@@ -99,7 +99,6 @@ description = """
 When the description contains a literal backslash followed by n, the write
 stores those two characters and the response returns them unchanged.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_backslash_and_n_are_ordinary_text"
