@@ -9,7 +9,6 @@ name = "task_detail"
 description = """
 When a task is read, latest_done_date equals the fourth stored completion date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_detail.py::test_detail_reports_last_completion"
