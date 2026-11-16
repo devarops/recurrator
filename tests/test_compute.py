@@ -203,7 +203,7 @@ def test_filter_n_tasks_by_context_early_return():
     reference_date = date(2026, 6, 6)
     n_tasks = 3
     expected_selected_tasks = rc.filter_due_tasks_by_context(tasks, context, reference_date)
-    obtained_selected_tasks, deferred_tasks = rc.filter_n_tasks_by_context(
+    obtained_selected_tasks, _ = rc.filter_n_tasks_by_context(
         tasks, context, reference_date, n_tasks
     )
     assert obtained_selected_tasks == expected_selected_tasks
@@ -215,7 +215,7 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
     context = Context.CASA
     reference_date = date(2026, 5, 2)
     n_tasks = 1
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    selected, _ = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     assert len(selected) == n_tasks
 
 
@@ -225,7 +225,7 @@ def test_filter_n_tasks_by_context_selects_starred_first():
     context = Context.CHORES
     reference_date = date(2026, 4, 24)
     n_tasks = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    selected, _ = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     assert 7 in [task.id for task in selected]
 
 
@@ -235,7 +235,7 @@ def test_filter_n_tasks_by_context_deferred_excludes_starred():
     context = Context.CASA
     reference_date = date(2026, 5, 2)
     n_tasks = 1
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    _, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     assert all(not t.starred for t in deferred)
 
 
@@ -245,7 +245,7 @@ def test_filter_n_tasks_by_context_interleaves_starred_and_non_starred():
     context = Context.CHORES
     reference_date = date(2026, 5, 10)
     n_tasks = 2
-    selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
+    selected, _ = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
     assert any(not t.starred for t in selected)
 
 
