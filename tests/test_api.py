@@ -9,8 +9,8 @@ from conftest import (
     _read_task_on,
     _complete,
     _read_context_task_ids,
+    _read_due_contexts,
     _read_task_ids,
-    client,
     CONTEXTS_CSV,
     EIGHT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -230,7 +230,7 @@ def test_get_due_contexts():
 
     csv_path = CONTEXTS_CSV
     reference_date = "2026-05-01"
-    response = client.get(f"/api/context/?csv={csv_path}&date={reference_date}")
+    response = _read_due_contexts(csv_path, reference_date)
 
     assert response.status_code == 200
 
