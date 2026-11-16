@@ -67,3 +67,16 @@ def test_description_whitespace_is_preserved(tmp_path):
 
     assert response.status_code == 200
     assert response.json()["description"] == text
+
+
+def test_backslash_and_n_are_ordinary_text(tmp_path):
+    """A backslash and an n are stored as two characters, not as a line break."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+    text = "one\\ntwo"
+
+    _assert_description_written(csv_path, 2, text)
+
+    response = _read_task(csv_path, 2)
+
+    assert response.status_code == 200
+    assert response.json()["description"] == text
