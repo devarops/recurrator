@@ -166,6 +166,13 @@ def test_get_task_by_id_starred():
     assert response.json() == expected_data
 
 
+def test_get_task_by_id_reports_last_completion():
+    """Verify GET /task/{id} returns the fourth stored completion date."""
+    response = _read_task(THREE_TASKS_CSV, 2)
+
+    assert response.json()["latest_done_date"] == "2024-12-07"
+
+
 def test_get_nonexistent_task_returns_404():
     """Verify GET /task/{id} returns 404 when the task is not found."""
     response = _read_task(SINGLE_TASK_CSV, 999)
