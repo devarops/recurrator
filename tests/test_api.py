@@ -7,6 +7,7 @@ from conftest import (
     _copy_fixture,
     _get_file_checksum,
     _assert_file_unchanged,
+    CONTEXTS_CSV,
     THREE_TASKS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
@@ -222,7 +223,7 @@ def test_task_done_idempotency():
 def test_get_due_contexts():
     """Verify GET /context/ returns the correct list of contexts from due tasks."""
 
-    csv_path = "tests/data/test_contexts.csv"
+    csv_path = CONTEXTS_CSV
     reference_date = "2026-05-01"
     response = client.get(f"/api/context/?csv={csv_path}&date={reference_date}")
 

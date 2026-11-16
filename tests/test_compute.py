@@ -3,7 +3,7 @@ import recurrator.io as io
 from recurrator import Context, Task
 from recurrator.models import Dates
 from datetime import date
-from conftest import THREE_TASKS_CSV
+from conftest import CONTEXTS_CSV, THREE_TASKS_CSV
 
 
 def _date_list(d1, d2, d3, d4):
@@ -134,7 +134,7 @@ def test_filter_all_tasks_by_context():
 
 
 def test_filter_due_tasks_by_context():
-    all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    all_tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     context = Context.CASA
     filtered_tasks = rc.filter_due_tasks_by_context(
         all_tasks, context, reference_date=date(2026, 5, 2)
@@ -151,14 +151,14 @@ def test_filter_due_tasks_by_context():
 
 
 def test_filter_due_tasks():
-    all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    all_tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     filtered_tasks = rc.filter_due_tasks(all_tasks, reference_date=date(2026, 4, 25))
     assert len(filtered_tasks) == 5
     assert [task.id for task in filtered_tasks] == [1, 2, 4, 7, 8]
 
 
 def test_filter_due_contexts():
-    all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    all_tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     filtered_contexts = rc.filter_due_contexts(all_tasks, reference_date=date(2026, 5, 1))
     assert len(filtered_contexts) == 3
     assert filtered_contexts == [Context.CASA, Context.CHORES, Context.LAPTOP]
@@ -211,7 +211,7 @@ def test_filter_n_tasks_by_context_early_return():
 
 def test_filter_n_tasks_by_context_respects_n_tasks():
     """Verify filter_n_tasks_by_context selects at most n_tasks when due tasks exceed n_tasks."""
-    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     context = Context.CASA
     reference_date = date(2026, 5, 2)
     n_tasks = 1
@@ -221,7 +221,7 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
 
 def test_filter_n_tasks_by_context_selects_starred_first():
     """Verify starred tasks are selected before non-starred when due tasks exceed n_tasks."""
-    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     context = Context.CHORES
     reference_date = date(2026, 4, 24)
     n_tasks = 2
@@ -231,7 +231,7 @@ def test_filter_n_tasks_by_context_selects_starred_first():
 
 def test_filter_n_tasks_by_context_deferred_excludes_starred():
     """Verify deferred only contains non-starred tasks when all due tasks are starred."""
-    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     context = Context.CASA
     reference_date = date(2026, 5, 2)
     n_tasks = 1
@@ -241,7 +241,7 @@ def test_filter_n_tasks_by_context_deferred_excludes_starred():
 
 def test_filter_n_tasks_by_context_interleaves_starred_and_non_starred():
     """Verify starred and non-starred tasks are interleaved, not all-starred-first."""
-    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     context = Context.CHORES
     reference_date = date(2026, 5, 10)
     n_tasks = 2
@@ -306,7 +306,7 @@ def test_compute_available_wip_slots():
 
 def test_count_completed_today():
     """Verify count_completed_today counts tasks whose latest_done_date matches reference_date."""
-    tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
+    tasks = io.import_tasks_from_csv(CONTEXTS_CSV)
     assert rc.count_completed_today(tasks, date(2026, 2, 28)) == 2
 
 

@@ -9,6 +9,7 @@ from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
     _verify_task_as_done,
+    CONTEXTS_CSV,
     THREE_TASKS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_2_UPDATED_DATES,
@@ -49,7 +50,7 @@ def test_import_tasks_from_csv_single_task():
 
 def test_import_tasks_from_csv_starred_task():
     """Verify import_tasks_from_csv computes coins correctly for a starred task."""
-    csv_path = "tests/data/test_contexts.csv"
+    csv_path = CONTEXTS_CSV
     task_list = io.import_tasks_from_csv(csv_path)
 
     # Find the starred task with ID 1
