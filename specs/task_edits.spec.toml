@@ -86,8 +86,9 @@ run = "pytest tests/test_acceptance_task_edits.py::test_malformed_description_bo
 
 [[criteria]]
 description = """
-When the description carries leading or trailing whitespace, the write stores
-it untrimmed, and the response returns that exact text.
+When the description has non-whitespace text with leading or trailing
+whitespace, the response returns that exact text, and a later read
+reports it unchanged.
 """
 [criteria.verify]
 type = "command"
