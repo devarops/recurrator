@@ -68,6 +68,11 @@ def _error_response(message: str, status_code: int) -> JSONResponse:
     return JSONResponse(content={"error": message}, status_code=status_code)
 
 
+def _task_not_found_response() -> JSONResponse:
+    """Return the 404 envelope for an id that names no task."""
+    return _error_response("Task not found", 404)
+
+
 @app.exception_handler(RequestValidationError)
 async def _invalid_request_response(
     request: Request, exception: RequestValidationError
@@ -100,7 +105,7 @@ def get_task_by_id(
     csv_path = _resolve_csv_path(csv)
     task = _find_task(task_id, csv_path)
     if task is None:
-        return _error_response("Task not found", 404)
+        return _task_not_found_response()
     parsed_reference_date = date.fromisoformat(reference_date) if reference_date else date.today()
     return _task_to_dict(task, parsed_reference_date)
 
@@ -144,7 +149,7 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     """Replace a task's description with the given text."""
     csv_path = _resolve_csv_path(csv)
     if _find_task(task_id, csv_path) is None:
-        return _error_response("Task not found", 404)
+        return _task_not_found_response()
     if not body.description.strip():
         return _error_response("Description must not be empty", 400)
     io.update_task_description(task_id, body.description, csv_path)
