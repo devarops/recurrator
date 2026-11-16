@@ -3,7 +3,7 @@ import recurrator.io as io
 from recurrator import Context, Task
 from recurrator.models import Dates
 from datetime import date
-from conftest import CONTEXTS_CSV, THREE_TASKS_CSV
+from conftest import CONTEXTS_CSV, THREE_TASKS_CSV, UNIVERSE_MEDIANS_EVEN_CSV
 
 
 def _date_list(d1, d2, d3, d4):
@@ -384,7 +384,7 @@ def test_compute_universe_medians_single_task():
 
 def test_compute_universe_medians_even_count():
     """Verify an even number of tasks returns the mean of the middle ratings."""
-    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
 
     medians = rc.compute_universe_medians(tasks, date(2026, 11, 8))
 
@@ -393,7 +393,7 @@ def test_compute_universe_medians_even_count():
 
 def test_build_synthetic_opponent_uses_universe_medians():
     """Verify the synthetic opponent carries the universe medians."""
-    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
 
     opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
 
@@ -402,7 +402,7 @@ def test_build_synthetic_opponent_uses_universe_medians():
 
 def test_build_synthetic_opponent_anchors_at_reference_date():
     """Verify the synthetic opponent is anchored to the reference date."""
-    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
 
     opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
 
@@ -411,7 +411,7 @@ def test_build_synthetic_opponent_anchors_at_reference_date():
 
 def test_build_synthetic_opponent_has_no_task_id():
     """Verify the synthetic opponent has no stored task id."""
-    tasks = io.import_tasks_from_csv("tests/data/test_universe_medians_even.csv")
+    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
 
     opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
 

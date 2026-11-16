@@ -16,6 +16,7 @@ SINGLE_TASK_CSV = "tests/data/test_single_task.csv"
 GLICKO_CONTRACT_CSV = "tests/data/acceptance_glicko_integer_contract.csv"
 TWO_RATINGS_CSV = "tests/data/test_two_ratings.csv"
 TWO_RATINGS_FROZEN_CSV = "tests/data/test_two_ratings_frozen.csv"
+UNIVERSE_MEDIANS_EVEN_CSV = "tests/data/test_universe_medians_even.csv"
 
 TASK_2_ORIGINAL_DATES = [None, None, date(2024, 1, 8), date(2024, 12, 7)]
 TASK_2_UPDATED_DATES = [None, None, date(2025, 2, 1), date(2025, 11, 2)]
