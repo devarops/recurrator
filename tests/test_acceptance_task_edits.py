@@ -3,11 +3,16 @@ import csv
 from conftest import THREE_TASKS_CSV, _copy_fixture, _read_task, client
 
 
-def _write_description(csv_path, task_id, text):
-    """Write a description and check that the confirmation carries it."""
-    response = client.patch(
+def _patch_description(csv_path, task_id, text):
+    """Send a description through the API."""
+    return client.patch(
         f"/api/task/{task_id}/description?csv={csv_path}", json={"description": text}
     )
+
+
+def _write_description(csv_path, task_id, text):
+    """Write a description and check that the confirmation carries it."""
+    response = _patch_description(csv_path, task_id, text)
 
     assert response.status_code == 200
     assert response.json() == {"id": task_id, "description": text}
@@ -33,9 +38,7 @@ def test_empty_description_is_rejected(tmp_path):
     before = _read_task(csv_path, 2).json()["description"]
 
     for text in ("", "   ", "\n\t "):
-        response = client.patch(
-            f"/api/task/2/description?csv={csv_path}", json={"description": text}
-        )
+        response = _patch_description(csv_path, 2, text)
 
         assert response.status_code == 400
         assert "error" in response.json()
@@ -47,7 +50,7 @@ def test_description_unknown_task_returns_404(tmp_path):
     """A write for a missing task is refused instead of silently succeeding."""
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
 
-    response = client.patch(f"/api/task/999/description?csv={csv_path}", json={"description": "x"})
+    response = _patch_description(csv_path, 999, "x")
 
     assert response.status_code == 404
     assert "error" in response.json()
