@@ -32,9 +32,7 @@ def test_description_is_written_verbatim(tmp_path):
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
     text = "Line one\n- [ ] two\n\n**bold** and _italic_"
 
-    _assert_description_written(csv_path, 2, text)
-
-    assert _read_task(csv_path, 2).json()["description"] == text
+    _assert_description_reads_back(csv_path, 2, text)
 
     with open(csv_path, newline="") as file:
         stored = list(csv.DictReader(file))
