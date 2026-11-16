@@ -5,6 +5,7 @@ from conftest import (
     _copy_fixture,
     _get_file_checksum,
     _assert_file_unchanged,
+    _read_task,
     client,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -38,7 +39,7 @@ def _stored_tasks(csv_path, task_ids):
 
 def _task_field(csv_path, task_id, field_name):
     """Read one field of a stored task through the API."""
-    return client.get(f"/api/task/{task_id}?csv={csv_path}").json()[field_name]
+    return _read_task(csv_path, task_id).json()[field_name]
 
 
 def _complete(csv_path, task_id):
@@ -48,7 +49,7 @@ def _complete(csv_path, task_id):
 
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
-    undated = client.get(f"/api/task/{task_id}?csv={fixture}")
+    undated = _read_task(fixture, task_id)
     dated = client.get(f"/api/task/{task_id}?csv={fixture}&date={date.today().isoformat()}")
 
     assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
@@ -168,7 +169,7 @@ def test_set_task_as_done():
     original_tasks = io.import_tasks_from_csv(csv_path)
 
     task_id = 5
-    original_task = client.get(f"/api/task/{task_id}?csv={csv_path}").json()
+    original_task = _read_task(csv_path, task_id).json()
     response = _complete(csv_path, task_id)
 
     assert response.status_code == 200

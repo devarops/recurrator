@@ -1,20 +1,17 @@
 import csv
 from datetime import date
 
-from conftest import GLICKO_CONTRACT_CSV, _copy_fixture, client
+from conftest import GLICKO_CONTRACT_CSV, _copy_fixture, _read_task, client
 
 
 def _ratings(csv_path, task_ids):
     """Return each task's rating from the fixture."""
-    return {
-        task_id: client.get(f"/api/task/{task_id}?csv={csv_path}").json()["rating"]
-        for task_id in task_ids
-    }
+    return {task_id: _read_task(csv_path, task_id).json()["rating"] for task_id in task_ids}
 
 
 def test_glicko_integer_contract(tmp_path):
     """Rating and rating deviation are integers when a task is read or completed."""
-    response = client.get(f"/api/task/8?csv={GLICKO_CONTRACT_CSV}")
+    response = _read_task(GLICKO_CONTRACT_CSV, 8)
     assert response.status_code == 200
 
     task = response.json()
@@ -104,7 +101,7 @@ def test_glicko_simultaneous_update(tmp_path):
     assert response.status_code == 200
 
     completed = response.json()
-    opponent = client.get(f"/api/task/2?csv={csv_path}").json()
+    opponent = _read_task(csv_path, 2).json()
 
     assert (completed["rating"], completed["rating_deviation"]) == (1367, 292)
     assert (opponent["rating"], opponent["rating_deviation"]) == (1733, 292)
@@ -134,12 +131,12 @@ def test_glicko_solo_completion(tmp_path):
     assert context_before.status_code == 200
     assert context_before.json() == [1]
 
-    before = client.get(f"/api/task/1?csv={csv_path}").json()["rating"]
+    before = _read_task(csv_path, 1).json()["rating"]
 
     response = client.post(f"/api/task/1/done?csv={csv_path}")
     assert response.status_code == 200
 
-    after = client.get(f"/api/task/1?csv={csv_path}").json()["rating"]
+    after = _read_task(csv_path, 1).json()["rating"]
     assert after != before
 
     assert client.get(f"/api/task/?csv={csv_path}").json() == [1]
@@ -151,7 +148,7 @@ def test_glicko_default_date_projection(tmp_path):
     csv_path = _copy_fixture("tests/data/acceptance_glicko_default_date_projection.csv", tmp_path)
     today = date.today().isoformat()
 
-    undated = client.get(f"/api/task/1?csv={csv_path}")
+    undated = _read_task(csv_path, 1)
     dated = client.get(f"/api/task/1?csv={csv_path}&date={today}")
 
     assert undated.status_code == 200
@@ -166,7 +163,7 @@ def test_glicko_completion_anchor(tmp_path):
     completed = client.post(f"/api/task/8/done?csv={csv_path}")
     assert completed.status_code == 200
 
-    undated = client.get(f"/api/task/8?csv={csv_path}")
+    undated = _read_task(csv_path, 8)
 
     assert undated.json()["rating_deviation"] == completed.json()["rating_deviation"]
 

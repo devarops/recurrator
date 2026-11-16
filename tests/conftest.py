@@ -35,6 +35,11 @@ TASK_5_EXPECTED_AFTER_COMPLETION = [
 ]
 
 
+def _read_task(csv_path, task_id):
+    """Read one task through the API."""
+    return client.get(f"/api/task/{task_id}?csv={csv_path}")
+
+
 def _copy_fixture(fixture, tmp_path):
     """Copy a task fixture into the test's temporary directory."""
     csv_path = tmp_path / "tasks.csv"
