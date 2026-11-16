@@ -11,6 +11,8 @@ Every entry point accepts the same optional query parameter:
 
 A task is due when its `due_date` is on or before the reference date. Reference dates are ISO 8601 (`YYYY-MM-DD`).
 
+Every non-200 response carries an `error` field: `{"error": "<message>"}`, including the 422 responses returned for a malformed body.
+
 ## Endpoints
 
 ### GET /api/task/
@@ -163,8 +165,8 @@ Sets whether a task is starred.
 - **Returns**: An object with these fields:
   - `id` (integer)
   - `starred` (boolean)
-- **Errors**: 404 when no task has the given ID; 422 when `starred` is missing or not a boolean
-- **Notes**: The write is idempotent: setting the value the task already has returns 200. `coins` doubles when a task is starred, visible on the next read.
+- **Errors**: 404 when no task has the given ID; 422 with an `error` message when `starred` is missing or not a boolean
+- **Notes**: The write is idempotent: setting the value the task already has returns 200.
 
 ### PATCH /api/task/{id}/description
 
@@ -177,7 +179,7 @@ Replaces a task's description.
 - **Returns**: An object with these fields:
   - `id` (integer)
   - `description` (string)
-- **Errors**: 422 when `description` is missing or not a string; 404 when no task has the given ID; 400 when the description is empty or only whitespace
+- **Errors**: 422 with an `error` message when `description` is missing or not a string; 404 when no task has the given ID; 400 when the description is empty or only whitespace
 - **Notes**: The body is validated before the task is looked up, and the task before the text: a malformed body returns 422, an unknown ID returns 404 even when the description is empty, and only an existing task with an empty description returns 400. The text is stored verbatim, including markdown and real line breaks; it is not trimmed. A read returns the same text unchanged, and the characters backslash and n are ordinary text.
 
 ### POST /api/task/{id}/done

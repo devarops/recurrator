@@ -17,16 +17,6 @@ run = "pytest tests/test_acceptance_task_edits.py::test_starred_task_is_reported
 
 [[criteria]]
 description = """
-When a starred task is read, its coins are twice the recurrence days, and
-unstarring it restores the single value.
-"""
-skip = "Not implemented"
-[criteria.verify]
-type = "command"
-run = "pytest tests/test_acceptance_task_edits.py::test_starred_task_doubles_coins"
-
-[[criteria]]
-description = """
 When the same starred value is written twice, both writes return 200 with the
 same confirmation subset.
 """
@@ -38,12 +28,23 @@ run = "pytest tests/test_acceptance_task_edits.py::test_starring_is_idempotent"
 [[criteria]]
 description = """
 When no task has the given ID, the starred write returns 404 with an error
-message.
+field in the body.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_star_unknown_task_returns_404"
+
+[[criteria]]
+description = """
+When the body omits the starred flag or sends a non-boolean, the write returns
+422 with an error field in the body, and a later read reports the previous
+value.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_malformed_starred_body_is_rejected"
 
 [[criteria]]
 description = """
@@ -57,7 +58,7 @@ run = "pytest tests/test_acceptance_task_edits.py::test_description_is_written_v
 [[criteria]]
 description = """
 When the description is empty or only whitespace, the write returns 400 with an
-error message, and a later read reports the previous text.
+error field in the body, and a later read reports the previous text.
 """
 [criteria.verify]
 type = "command"
@@ -66,7 +67,7 @@ run = "pytest tests/test_acceptance_task_edits.py::test_empty_description_is_rej
 [[criteria]]
 description = """
 When no task has the given ID, the description write returns 404 with an error
-message.
+field in the body.
 """
 [criteria.verify]
 type = "command"
@@ -75,7 +76,8 @@ run = "pytest tests/test_acceptance_task_edits.py::test_description_unknown_task
 [[criteria]]
 description = """
 When the body omits the description or sends a non-string, the write returns
-422 with an error message, and a later read reports the previous text.
+422 with an error field in the body, and a later read reports the previous
+text.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -94,8 +96,18 @@ run = "pytest tests/test_acceptance_task_edits.py::test_description_whitespace_i
 
 [[criteria]]
 description = """
+When the description contains a literal backslash followed by n, the write
+stores those two characters and the response returns them unchanged.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_backslash_and_n_are_ordinary_text"
+
+[[criteria]]
+description = """
 When no task has the given ID and the description is empty, the write returns
-404, because the task is looked up before the text is validated.
+404 with an error field in the body.
 """
 skip = "Not implemented"
 [criteria.verify]
