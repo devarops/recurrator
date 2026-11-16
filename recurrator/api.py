@@ -48,6 +48,7 @@ def _task_to_dict(task: io.Task, reference_date: date | None) -> dict:
         "skip_count": task.skip_count,
         "starred": task.starred,
         "latest_date": task.latest_date.isoformat(),
+        "latest_done_date": task.latest_done_date.isoformat(),
         "recurrence_days": task.recurrence_days,
         "due_date": task.due_date.isoformat(),
         "coins": task.coins,
