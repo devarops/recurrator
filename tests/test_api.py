@@ -155,7 +155,7 @@ def test_get_task_by_id_starred():
 
 def test_get_nonexistent_task_returns_404():
     """Verify GET /task/{id} returns 404 when the task is not found."""
-    response = client.get("/api/task/999?csv=tests/data/test_single_task.csv")
+    response = _read_task("tests/data/test_single_task.csv", 999)
 
     assert response.status_code == 404
 
@@ -291,7 +291,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
 
 def test_get_task_by_id_rating():
     """Verify GET /task/{id} returns the task rating."""
-    response = client.get("/api/task/8?csv=tests/data/acceptance_glicko_integer_contract.csv")
+    response = _read_task(GLICKO_CONTRACT_CSV, 8)
 
     assert response.json()["rating"] == 1500
 
@@ -303,9 +303,7 @@ def test_get_task_by_id_rating_deviation():
 
 def test_get_task_by_id_projects_rating_deviation():
     """Verify GET /task/{id} projects the deviation to the requested date."""
-    response = client.get(
-        "/api/task/1?csv=tests/data/acceptance_glicko_inactivity_growth.csv&date=2026-11-08"
-    )
+    response = _read_task_on("tests/data/acceptance_glicko_inactivity_growth.csv", 1, "2026-11-08")
 
     assert response.json()["rating_deviation"] > 350
 
