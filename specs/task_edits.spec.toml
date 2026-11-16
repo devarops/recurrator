@@ -105,8 +105,8 @@ run = "pytest tests/test_acceptance_task_edits.py::test_backslash_and_n_are_ordi
 
 [[criteria]]
 description = """
-When no task has the given ID and the description is empty, the write returns
-404 with an error field in the body.
+When no task has the given ID and the description is empty or only
+whitespace, the write returns 404 with an error field in the body.
 """
 [criteria.verify]
 type = "command"
