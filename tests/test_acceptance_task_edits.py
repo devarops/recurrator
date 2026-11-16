@@ -80,3 +80,14 @@ def test_backslash_and_n_are_ordinary_text(tmp_path):
     text = "one\\ntwo"
 
     _assert_description_reads_back(csv_path, 2, text)
+
+
+def test_unknown_task_takes_precedence_over_an_empty_description(tmp_path):
+    """A missing task answers 404 before the text is refused."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+
+    for text in ("", "   ", "\n\t "):
+        response = _patch_description(csv_path, 999, text)
+
+        assert response.status_code == 404
+        assert "error" in response.json()
