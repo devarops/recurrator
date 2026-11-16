@@ -137,9 +137,7 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
     return ",".join(line_parts)
 
 
-def _update_task_in_csv(
-    task_id: int, apply_update: Callable[[dict], None], csv_path: str
-) -> None:
+def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_path: str) -> None:
     """Generic CSV update: read, apply the update to the matching row, write back atomically."""
     with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)
