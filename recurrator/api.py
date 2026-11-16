@@ -1,6 +1,7 @@
 from datetime import date
 
-from fastapi import APIRouter, FastAPI, Query
+from fastapi import APIRouter, FastAPI, Query, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
@@ -64,6 +65,14 @@ def _load_tasks_and_date(csv_path: str, reference_date: str) -> tuple[list[io.Ta
 def _error_response(message: str, status_code: int) -> JSONResponse:
     """Return the error envelope shared by every failed request."""
     return JSONResponse(content={"error": message}, status_code=status_code)
+
+
+@app.exception_handler(RequestValidationError)
+async def _invalid_request_response(
+    request: Request, exception: RequestValidationError
+) -> JSONResponse:
+    """Return the shared error envelope for a request that fails validation."""
+    return _error_response("Invalid request", 422)
 
 
 def _find_task(task_id: int, csv_path: str) -> io.Task | None:
