@@ -1,13 +1,11 @@
 import csv
 
-from conftest import THREE_TASKS_CSV, _copy_fixture, _read_task, client
-
-
-def _patch_description(csv_path, task_id, text):
-    """Send a description through the API."""
-    return client.patch(
-        f"/api/task/{task_id}/description?csv={csv_path}", json={"description": text}
-    )
+from conftest import (
+    THREE_TASKS_CSV,
+    _copy_fixture,
+    _patch_description,
+    _read_task,
+)
 
 
 def _assert_description_written(csv_path, task_id, text):
