@@ -64,7 +64,7 @@ def test_description_whitespace_is_preserved(tmp_path):
 
     _write_description(csv_path, 2, text)
 
-    stored = client.get(f"/api/task/2?csv={csv_path}")
+    response = client.get(f"/api/task/2?csv={csv_path}")
 
-    assert stored.status_code == 200
-    assert stored.json()["description"] == text
+    assert response.status_code == 200
+    assert response.json()["description"] == text
