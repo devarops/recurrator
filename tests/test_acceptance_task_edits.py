@@ -1,6 +1,12 @@
 import csv
 
-from conftest import THREE_TASKS_CSV, _copy_fixture, _patch_description, _read_task, client
+from conftest import (
+    THREE_TASKS_CSV,
+    _copy_fixture,
+    _patch_description,
+    _patch_description_body,
+    _read_task,
+)
 
 
 def _assert_description_written(csv_path, task_id, text):
@@ -92,7 +98,7 @@ def test_malformed_description_body_is_rejected(tmp_path):
     previous = _read_task(csv_path, 2).json()["description"]
 
     for payload in ({}, {"description": 123}, {"description": None}):
-        response = client.patch(f"/api/task/2/description?csv={csv_path}", json=payload)
+        response = _patch_description_body(csv_path, 2, payload)
 
         assert response.status_code == 422
         assert "error" in response.json()

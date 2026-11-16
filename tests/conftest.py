@@ -57,11 +57,14 @@ def _complete(csv_path, task_id):
     return client.post(f"/api/task/{task_id}/done?csv={csv_path}")
 
 
+def _patch_description_body(csv_path, task_id, body):
+    """Send a description request body through the API."""
+    return client.patch(f"/api/task/{task_id}/description?csv={csv_path}", json=body)
+
+
 def _patch_description(csv_path, task_id, text):
     """Send a description through the API."""
-    return client.patch(
-        f"/api/task/{task_id}/description?csv={csv_path}", json={"description": text}
-    )
+    return _patch_description_body(csv_path, task_id, {"description": text})
 
 
 def _read_context_task_ids(csv_path, context, reference_date):
