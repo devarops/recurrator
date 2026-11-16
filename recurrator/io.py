@@ -134,15 +134,16 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
 
 
 def _update_task_in_csv(
-    task_id: int, modify_row: Callable[[dict, int], None], csv_path: str
+    task_id: int, apply_update: Callable[[dict], None], csv_path: str
 ) -> None:
-    """Generic CSV update: read, apply modification callback, write back atomically."""
+    """Generic CSV update: read, apply the update to the matching row, write back atomically."""
     with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
         fieldnames = reader.fieldnames
     for row in rows:
-        modify_row(row, task_id)
+        if int(row["id"]) == task_id:
+            apply_update(row)
     assert fieldnames is not None
 
     temporary_path = f"{csv_path}.tmp"
@@ -160,24 +161,22 @@ def _update_task_in_csv(
 
 
 def update_task_dates(task_id: int, dates: list[date | None], csv_path: str) -> None:
-    def modify_row(row: dict, task_id: int) -> None:
-        if int(row["id"]) == task_id:
-            row["date_1"] = _format_date(dates[0])
-            row["date_2"] = _format_date(dates[1])
-            row["date_3"] = _format_date(dates[2])
-            row["date_4"] = _format_date(dates[3])
+    def apply_update(row: dict) -> None:
+        row["date_1"] = _format_date(dates[0])
+        row["date_2"] = _format_date(dates[1])
+        row["date_3"] = _format_date(dates[2])
+        row["date_4"] = _format_date(dates[3])
 
-    _update_task_in_csv(task_id, modify_row, csv_path)
+    _update_task_in_csv(task_id, apply_update, csv_path)
 
 
 def _set_csv_field(task_id: int, field_name: str, value: str, csv_path: str) -> None:
     """Set a single CSV field value for the matching task ID."""
 
-    def modify_row(row: dict, task_id: int) -> None:
-        if int(row["id"]) == task_id:
-            row[field_name] = value
+    def apply_update(row: dict) -> None:
+        row[field_name] = value
 
-    _update_task_in_csv(task_id, modify_row, csv_path)
+    _update_task_in_csv(task_id, apply_update, csv_path)
 
 
 def update_task_description(task_id: int, description: str, csv_path: str) -> None:
