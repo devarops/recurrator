@@ -30,6 +30,11 @@ def _restore_skip_fields(csv_path, tasks):
         io.update_task_skip_date(task_id, None, csv_path)
 
 
+def _stored_tasks(csv_path, task_ids):
+    """Read the stored tasks for the given ids, keyed by id."""
+    return {task_id: io.get_task_by_id(task_id, csv_path) for task_id in task_ids}
+
+
 def _task_field(csv_path, task_id, field_name):
     """Read one field of a stored task through the API."""
     return client.get(f"/api/task/{task_id}?csv={csv_path}").json()[field_name]
@@ -218,9 +223,7 @@ def test_get_tasks_by_context():
     original_checksum = _get_file_checksum(csv_path)
 
     deferred_task_ids = [7, 8]
-    original_deferred_tasks = {
-        task_id: io.get_task_by_id(task_id, csv_path) for task_id in deferred_task_ids
-    }
+    original_deferred_tasks = _stored_tasks(csv_path, deferred_task_ids)
 
     response = client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
 
@@ -245,9 +248,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
     original_checksum = _get_file_checksum(csv_path)
 
     deferred_task_ids = [7, 8]
-    original_deferred_tasks = {
-        task_id: io.get_task_by_id(task_id, csv_path) for task_id in deferred_task_ids
-    }
+    original_deferred_tasks = _stored_tasks(csv_path, deferred_task_ids)
 
     response = client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
 
