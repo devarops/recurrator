@@ -1,12 +1,11 @@
 from datetime import date
 
-from fastapi.testclient import TestClient
-from recurrator.api import app
 import recurrator.io as io
 from conftest import (
     _copy_fixture,
     _get_file_checksum,
     _assert_file_unchanged,
+    client,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
     THREE_TASKS_CSV,
@@ -14,8 +13,6 @@ from conftest import (
     TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
 )
-
-client = TestClient(app)
 
 
 def _restore_rating_fields(csv_path, tasks):

@@ -1,11 +1,7 @@
 import csv
 from datetime import date
 
-from fastapi.testclient import TestClient
-from recurrator.api import app
-from conftest import GLICKO_CONTRACT_CSV, _copy_fixture
-
-client = TestClient(app)
+from conftest import GLICKO_CONTRACT_CSV, _copy_fixture, client
 
 
 def _ratings(csv_path, task_ids):

@@ -1,10 +1,6 @@
 import csv
 
-from fastapi.testclient import TestClient
-from recurrator.api import app
-from conftest import THREE_TASKS_CSV, _copy_fixture
-
-client = TestClient(app)
+from conftest import THREE_TASKS_CSV, _copy_fixture, client
 
 
 def _write_description(csv_path, task_id, text):

@@ -2,7 +2,12 @@ import hashlib
 from datetime import date
 from shutil import copyfile
 
+from fastapi.testclient import TestClient
+
 import recurrator.io as io
+from recurrator.api import app
+
+client = TestClient(app)
 
 # Test data constants
 THREE_TASKS_CSV = "tests/data/test_three_tasks.csv"
