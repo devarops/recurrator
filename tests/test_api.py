@@ -26,6 +26,11 @@ from conftest import (
 )
 
 
+def _snapshot_tasks_file(csv_path):
+    """Record a file's checksum and its tasks before a test mutates it."""
+    return _get_file_checksum(csv_path), io.import_tasks_from_csv(csv_path)
+
+
 def _restore_rating_fields(csv_path, tasks):
     """Restore every task's rating, deviation, and anchor."""
     for task in tasks:
@@ -170,8 +175,7 @@ def test_set_task_as_done():
     """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
 
     csv_path = THREE_TASKS_CSV
-    original_checksum = _get_file_checksum(csv_path)
-    original_tasks = io.import_tasks_from_csv(csv_path)
+    original_checksum, original_tasks = _snapshot_tasks_file(csv_path)
 
     task_id = 5
     original_task = _read_task(csv_path, task_id).json()
@@ -199,8 +203,7 @@ def test_task_done_idempotency():
     """Verify POST /task/{id}/done returns 409 on consecutive duplicate completion."""
 
     csv_path = THREE_TASKS_CSV
-    original_checksum = _get_file_checksum(csv_path)
-    original_tasks = io.import_tasks_from_csv(csv_path)
+    original_checksum, original_tasks = _snapshot_tasks_file(csv_path)
 
     task_id = 2
     original_skip_count = io.get_task_by_id(task_id, csv_path).skip_count
