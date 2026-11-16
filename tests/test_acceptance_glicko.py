@@ -1,7 +1,7 @@
 import csv
 from datetime import date
 
-from conftest import GLICKO_CONTRACT_CSV, _copy_fixture, _read_task, client
+from conftest import GLICKO_CONTRACT_CSV, _copy_fixture, _read_task, _read_task_on, client
 
 
 def _ratings(csv_path, task_ids):
@@ -67,8 +67,8 @@ def test_glicko_inactivity_growth():
     fixture = "tests/data/acceptance_glicko_inactivity_growth.csv"
     reference_date = "2026-11-08"
 
-    older = client.get(f"/api/task/1?csv={fixture}&date={reference_date}")
-    newer = client.get(f"/api/task/2?csv={fixture}&date={reference_date}")
+    older = _read_task_on(fixture, 1, reference_date)
+    newer = _read_task_on(fixture, 2, reference_date)
 
     assert older.status_code == 200
     assert newer.status_code == 200
@@ -149,7 +149,7 @@ def test_glicko_default_date_projection(tmp_path):
     today = date.today().isoformat()
 
     undated = _read_task(csv_path, 1)
-    dated = client.get(f"/api/task/1?csv={csv_path}&date={today}")
+    dated = _read_task_on(csv_path, 1, today)
 
     assert undated.status_code == 200
     assert dated.status_code == 200
@@ -172,6 +172,6 @@ def test_glicko_deviation_growth():
     """A year without a match projects the deviation to 362."""
     fixture = "tests/data/acceptance_glicko_deviation_growth.csv"
 
-    response = client.get(f"/api/task/1?csv={fixture}&date=2026-11-08")
+    response = _read_task_on(fixture, 1, "2026-11-08")
 
     assert response.json()["rating_deviation"] == 362

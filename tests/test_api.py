@@ -6,6 +6,7 @@ from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
     _read_task,
+    _read_task_on,
     client,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -50,7 +51,7 @@ def _complete(csv_path, task_id):
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
     undated = _read_task(fixture, task_id)
-    dated = client.get(f"/api/task/{task_id}?csv={fixture}&date={date.today().isoformat()}")
+    dated = _read_task_on(fixture, task_id, date.today().isoformat())
 
     assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
 
@@ -88,7 +89,7 @@ def test_get_multiple_task_ids():
 
 def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
-    response = client.get("/api/task/8?csv=tests/data/test_single_task.csv&date=2025-08-19")
+    response = _read_task_on("tests/data/test_single_task.csv", 8, "2025-08-19")
 
     assert response.status_code == 200
 
@@ -111,7 +112,7 @@ def test_get_task_by_id_default_csv():
 
 def test_get_task_by_id_alternative_csv():
 
-    response = client.get("/api/task/3?csv=tests/data/test_three_tasks.csv&date=2026-03-07")
+    response = _read_task_on("tests/data/test_three_tasks.csv", 3, "2026-03-07")
 
     expected_data = {
         "id": 3,
@@ -133,7 +134,7 @@ def test_get_task_by_id_alternative_csv():
 
 def test_get_task_by_id_starred():
     """Verify GET /task/{id} returns coins doubled for a starred task."""
-    response = client.get("/api/task/1?csv=tests/data/test_contexts.csv&date=2026-04-04")
+    response = _read_task_on("tests/data/test_contexts.csv", 1, "2026-04-04")
 
     assert response.status_code == 200
 
