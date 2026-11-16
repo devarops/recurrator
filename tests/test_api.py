@@ -27,9 +27,7 @@ def test_get_single_task_id():
     """Verify GET /task/ returns a list of raw task IDs."""
     response = client.get("/api/task/?csv=tests/data/test_single_task.csv")
 
-    expected_status_code = 200
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 200
 
     expected_data = [8]
     obtained_data = response.json()
@@ -49,9 +47,7 @@ def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
     response = client.get("/api/task/8?csv=tests/data/test_single_task.csv&date=2025-08-19")
 
-    expected_status_code = 200
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 200
 
     expected_data = {
         "id": 8,
@@ -96,9 +92,7 @@ def test_get_task_by_id_starred():
     """Verify GET /task/{id} returns coins doubled for a starred task."""
     response = client.get("/api/task/1?csv=tests/data/test_contexts.csv&date=2026-04-04")
 
-    expected_status_code = 200
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 200
 
     expected_data = {
         "id": 1,
@@ -121,9 +115,7 @@ def test_get_nonexistent_task_returns_404():
     """Verify GET /task/{id} returns 404 when the task is not found."""
     response = client.get("/api/task/999?csv=tests/data/test_single_task.csv")
 
-    expected_status_code = 404
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 404
 
 
 def test_set_task_as_done():
@@ -137,9 +129,7 @@ def test_set_task_as_done():
     original_task = client.get(f"/api/task/{task_id}?csv={csv_path}").json()
     response = client.post(f"/api/task/{task_id}/done?csv={csv_path}")
 
-    expected_status_code = 200
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 200
 
     expected_skip_count = 0
     obtained_task = response.json()
@@ -194,9 +184,7 @@ def test_get_due_contexts():
     reference_date = "2026-05-01"
     response = client.get(f"/api/context/?csv={csv_path}&date={reference_date}")
 
-    expected_status_code = 200
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 200
 
     expected_contexts = ["casa", "chores", "laptop"]
     obtained_contexts = response.json()
@@ -219,9 +207,7 @@ def test_get_tasks_by_context():
 
     response = client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
 
-    expected_status_code = 200
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 200
 
     expected_task_ids = [1, 2, 3, 4, 5, 6]
     obtained_task_ids = response.json()
@@ -251,9 +237,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
 
     response = client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
 
-    expected_status_code = 200
-    obtained_status_code = response.status_code
-    assert obtained_status_code == expected_status_code
+    assert response.status_code == 200
 
     deferred_task_id = 7
     original_skip_count = original_deferred_tasks[deferred_task_id].skip_count
