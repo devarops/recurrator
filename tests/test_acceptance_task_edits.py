@@ -10,8 +10,8 @@ def _patch_description(csv_path, task_id, text):
     )
 
 
-def _write_description(csv_path, task_id, text):
-    """Write a description and check that the confirmation carries it."""
+def _assert_description_written(csv_path, task_id, text):
+    """Send a description and check that the confirmation carries it."""
     response = _patch_description(csv_path, task_id, text)
 
     assert response.status_code == 200
@@ -23,7 +23,7 @@ def test_description_is_written_verbatim(tmp_path):
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
     text = "Line one\n- [ ] two\n\n**bold** and _italic_"
 
-    _write_description(csv_path, 2, text)
+    _assert_description_written(csv_path, 2, text)
 
     assert _read_task(csv_path, 2).json()["description"] == text
 
@@ -61,7 +61,7 @@ def test_description_whitespace_is_preserved(tmp_path):
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
     text = "\t  Buy milk\n- [ ] eggs  \t\n"
 
-    _write_description(csv_path, 2, text)
+    _assert_description_written(csv_path, 2, text)
 
     response = _read_task(csv_path, 2)
 
