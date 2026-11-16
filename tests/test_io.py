@@ -12,6 +12,7 @@ from conftest import (
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
     THREE_TASKS_CSV,
+    TWO_RATINGS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_2_UPDATED_DATES,
     TASK_2_COMPLETION_DATE,
@@ -254,7 +255,7 @@ def test_import_tasks_from_csv_rating_deviation():
 def test_update_task_rating_date_in_csv():
     """Verify update_task_rating_date writes and restores the rating anchor."""
     task_id = 1
-    csv_path = "tests/data/test_two_ratings.csv"
+    csv_path = TWO_RATINGS_CSV
 
     original_checksum = _get_file_checksum(csv_path)
     original_task = io.get_task_by_id(task_id, csv_path)

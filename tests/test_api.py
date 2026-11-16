@@ -10,6 +10,7 @@ from conftest import (
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
     THREE_TASKS_CSV,
+    TWO_RATINGS_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
 )
@@ -337,7 +338,7 @@ def test_task_done_rating_deviation(tmp_path):
 
 def test_task_done_decreases_completed_rating(tmp_path):
     """Verify completing one of two tasks lowers its rating."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
     before = _task_field(csv_path, 1, "rating")
     response = _complete(csv_path, 1)
@@ -347,7 +348,7 @@ def test_task_done_decreases_completed_rating(tmp_path):
 
 def test_task_done_increases_opponent_rating(tmp_path):
     """Verify completing one of two tasks raises the opponent rating."""
-    _assert_opponent_rating_rises("tests/data/test_two_ratings.csv", tmp_path)
+    _assert_opponent_rating_rises(TWO_RATINGS_CSV, tmp_path)
 
 
 def test_task_done_changes_equal_rated_opponent(tmp_path):
@@ -368,7 +369,7 @@ def test_task_done_keeps_not_due_peer_rating(tmp_path):
 
 def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     """Verify the completed rating change exceeds the one-point placeholder."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
     before = _task_field(csv_path, 1, "rating")
     response = _complete(csv_path, 1)
@@ -378,7 +379,7 @@ def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
 
 def test_task_done_preserves_total_rating(tmp_path):
     """Verify a two-participant match conserves the total rating."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
     before = sum(_task_field(csv_path, task_id, "rating") for task_id in (1, 2))
     response = _complete(csv_path, 1)
@@ -440,7 +441,7 @@ def test_task_done_changes_solo_rating(tmp_path):
 
 def test_task_done_updates_rating_date_anchor(tmp_path):
     """Verify a completion moves the completed task's rating anchor to today."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
     _complete(csv_path, 1)
 
