@@ -112,7 +112,7 @@ def test_get_task_by_id_default_csv():
 
 def test_get_task_by_id_alternative_csv():
 
-    response = _read_task_on("tests/data/test_three_tasks.csv", 3, "2026-03-07")
+    response = _read_task_on(THREE_TASKS_CSV, 3, "2026-03-07")
 
     expected_data = {
         "id": 3,
@@ -134,7 +134,7 @@ def test_get_task_by_id_alternative_csv():
 
 def test_get_task_by_id_starred():
     """Verify GET /task/{id} returns coins doubled for a starred task."""
-    response = _read_task_on("tests/data/test_contexts.csv", 1, "2026-04-04")
+    response = _read_task_on(CONTEXTS_CSV, 1, "2026-04-04")
 
     assert response.status_code == 200
 
