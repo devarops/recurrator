@@ -15,6 +15,8 @@ from conftest import (
     THREE_TASKS_CSV,
     TWO_RATINGS_CSV,
     TASK_2_ORIGINAL_DATES,
+    TASK_2_ORIGINAL_SKIP_COUNT,
+    TASK_2_ORIGINAL_SKIP_DATE,
     TASK_2_UPDATED_DATES,
     TASK_2_COMPLETION_DATE,
     TASK_2_EXPECTED_AFTER_COMPLETION,
@@ -118,8 +120,8 @@ def test_update_task_skip_count_in_csv():
     assert io.import_tasks_from_csv(csv_path)[0].skip_count == 5
 
     # Undo changes to CSV file for other tests
-    io.update_task_skip_count(task_id, 10, csv_path)
-    assert io.import_tasks_from_csv(csv_path)[0].skip_count == 10
+    io.update_task_skip_count(task_id, TASK_2_ORIGINAL_SKIP_COUNT, csv_path)
+    assert io.import_tasks_from_csv(csv_path)[0].skip_count == TASK_2_ORIGINAL_SKIP_COUNT
 
     _assert_file_unchanged(csv_path, original_checksum)
 
@@ -207,8 +209,7 @@ def test_update_task_skip_date_in_csv():
     assert updated_task.latest_date == new_skip_date
 
     # Undo changes to CSV file for other tests
-    original_skip_date = date(2025, 5, 2)
-    io.update_task_skip_date(task_id, original_skip_date, csv_path)
+    io.update_task_skip_date(task_id, TASK_2_ORIGINAL_SKIP_DATE, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
 
@@ -231,8 +232,7 @@ def test_update_task_as_skipped_in_csv():
 
     # Undo changes to CSV file for other tests
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    original_skip_date = date(2025, 5, 2)
-    io.update_task_skip_date(task_id, original_skip_date, csv_path)
+    io.update_task_skip_date(task_id, TASK_2_ORIGINAL_SKIP_DATE, csv_path)
 
     _assert_file_unchanged(csv_path, original_checksum)
 
