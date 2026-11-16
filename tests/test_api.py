@@ -45,6 +45,25 @@ def _complete(csv_path, task_id):
     return client.post(f"/api/task/{task_id}/done?csv={csv_path}")
 
 
+def _assert_undated_matches_today(fixture, task_id):
+    """Assert that an undated read projects the deviation to today."""
+    undated = client.get(f"/api/task/{task_id}?csv={fixture}")
+    dated = client.get(f"/api/task/{task_id}?csv={fixture}&date={date.today().isoformat()}")
+
+    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
+
+
+def _assert_opponent_rating_rises(fixture, tmp_path):
+    """Assert that completing task 1 raises task 2's rating."""
+    csv_path = _copy_fixture(fixture, tmp_path)
+
+    before = _task_field(csv_path, 2, "rating")
+    _complete(csv_path, 1)
+    after = _task_field(csv_path, 2, "rating")
+
+    assert after > before
+
+
 def test_get_single_task_id():
     """Verify GET /task/ returns a list of raw task IDs."""
     response = client.get("/api/task/?csv=tests/data/test_single_task.csv")
@@ -276,14 +295,6 @@ def test_get_task_by_id_rating():
     assert response.json()["rating"] == 1500
 
 
-def _assert_undated_matches_today(fixture, task_id):
-    """Assert that an undated read projects the deviation to today."""
-    undated = client.get(f"/api/task/{task_id}?csv={fixture}")
-    dated = client.get(f"/api/task/{task_id}?csv={fixture}&date={date.today().isoformat()}")
-
-    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
-
-
 def test_get_task_by_id_rating_deviation():
     """Verify GET /task/{id} returns the projected task rating deviation."""
     _assert_undated_matches_today("tests/data/acceptance_glicko_integer_contract.csv", 8)
@@ -329,17 +340,6 @@ def test_task_done_decreases_completed_rating(tmp_path):
     response = _complete(csv_path, 1)
 
     assert response.json()["rating"] < before
-
-
-def _assert_opponent_rating_rises(fixture, tmp_path):
-    """Assert that completing task 1 raises task 2's rating."""
-    csv_path = _copy_fixture(fixture, tmp_path)
-
-    before = _task_field(csv_path, 2, "rating")
-    _complete(csv_path, 1)
-    after = _task_field(csv_path, 2, "rating")
-
-    assert after > before
 
 
 def test_task_done_increases_opponent_rating(tmp_path):
