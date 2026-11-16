@@ -1,7 +1,14 @@
 import csv
 from datetime import date
 
-from conftest import GLICKO_CONTRACT_CSV, _copy_fixture, _read_task, _read_task_on, client
+from conftest import (
+    GLICKO_CONTRACT_CSV,
+    _copy_fixture,
+    _read_task,
+    _read_task_on,
+    _complete,
+    client,
+)
 
 
 def _ratings(csv_path, task_ids):
@@ -20,7 +27,7 @@ def test_glicko_integer_contract(tmp_path):
 
     completion_csv = _copy_fixture(GLICKO_CONTRACT_CSV, tmp_path)
 
-    response = client.post(f"/api/task/8/done?csv={completion_csv}")
+    response = _complete(completion_csv, 8)
     assert response.status_code == 200
 
     completed = response.json()
@@ -34,7 +41,7 @@ def test_glicko_four_tasks(tmp_path):
 
     before = _ratings(csv_path, range(1, 7))
 
-    response = client.post(f"/api/task/1/done?csv={csv_path}")
+    response = _complete(csv_path, 1)
     assert response.status_code == 200
 
     after = _ratings(csv_path, range(1, 7))
@@ -52,7 +59,7 @@ def test_glicko_early_completion(tmp_path):
 
     before = _ratings(csv_path, range(1, 6))
 
-    response = client.post(f"/api/task/5/done?csv={csv_path}")
+    response = _complete(csv_path, 5)
     assert response.status_code == 200
 
     after = _ratings(csv_path, range(1, 6))
@@ -97,7 +104,7 @@ def test_glicko_simultaneous_update(tmp_path):
         writer.writeheader()
         writer.writerows(rows)
 
-    response = client.post(f"/api/task/1/done?csv={csv_path}")
+    response = _complete(csv_path, 1)
     assert response.status_code == 200
 
     completed = response.json()
@@ -113,7 +120,7 @@ def test_glicko_context_isolation(tmp_path):
 
     before = _ratings(csv_path, range(1, 4))
 
-    response = client.post(f"/api/task/1/done?csv={csv_path}")
+    response = _complete(csv_path, 1)
     assert response.status_code == 200
 
     after = _ratings(csv_path, range(1, 4))
@@ -133,7 +140,7 @@ def test_glicko_solo_completion(tmp_path):
 
     before = _read_task(csv_path, 1).json()["rating"]
 
-    response = client.post(f"/api/task/1/done?csv={csv_path}")
+    response = _complete(csv_path, 1)
     assert response.status_code == 200
 
     after = _read_task(csv_path, 1).json()["rating"]
@@ -160,7 +167,7 @@ def test_glicko_completion_anchor(tmp_path):
     """A completion moves the anchor so the next undated read matches."""
     csv_path = _copy_fixture(GLICKO_CONTRACT_CSV, tmp_path)
 
-    completed = client.post(f"/api/task/8/done?csv={csv_path}")
+    completed = _complete(csv_path, 8)
     assert completed.status_code == 200
 
     undated = _read_task(csv_path, 8)

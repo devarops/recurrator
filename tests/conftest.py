@@ -45,6 +45,11 @@ def _read_task_on(csv_path, task_id, reference_date):
     return client.get(f"/api/task/{task_id}?csv={csv_path}&date={reference_date}")
 
 
+def _complete(csv_path, task_id):
+    """Mark a task done through the API."""
+    return client.post(f"/api/task/{task_id}/done?csv={csv_path}")
+
+
 def _copy_fixture(fixture, tmp_path):
     """Copy a task fixture into the test's temporary directory."""
     csv_path = tmp_path / "tasks.csv"

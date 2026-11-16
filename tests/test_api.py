@@ -7,6 +7,7 @@ from conftest import (
     _assert_file_unchanged,
     _read_task,
     _read_task_on,
+    _complete,
     client,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -41,11 +42,6 @@ def _stored_tasks(csv_path, task_ids):
 def _task_field(csv_path, task_id, field_name):
     """Read one field of a stored task through the API."""
     return _read_task(csv_path, task_id).json()[field_name]
-
-
-def _complete(csv_path, task_id):
-    """Mark a task done through the API."""
-    return client.post(f"/api/task/{task_id}/done?csv={csv_path}")
 
 
 def _assert_undated_matches_today(fixture, task_id):
