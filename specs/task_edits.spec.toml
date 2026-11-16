@@ -79,7 +79,6 @@ When the body omits the description or sends a non-string, the write returns
 422 with an error field in the body, and a later read reports the previous
 text.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_malformed_description_body_is_rejected"
