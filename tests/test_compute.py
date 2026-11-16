@@ -48,14 +48,10 @@ def test_compute_intervals():
         date(2024, 1, 3),
         date(2024, 1, 4),
     )
-    expected_intervals = [1, 1, 1]
-    obtained_intervals = rc.compute_intervals(dates)
-    assert obtained_intervals == expected_intervals
+    assert rc.compute_intervals(dates) == [1, 1, 1]
 
     dates = _date_list(None, None, date(2024, 1, 2), date(2024, 1, 4))
-    expected_intervals = [2]
-    obtained_intervals = rc.compute_intervals(dates)
-    assert obtained_intervals == expected_intervals
+    assert rc.compute_intervals(dates) == [2]
 
 
 def test_compute_latest_date():
@@ -63,34 +59,24 @@ def test_compute_latest_date():
 
     date_4 = date(2024, 1, 3)
     skip_date = date(2024, 1, 2)
-    expected_latest_date = date_4
-    obtained_latest_date = rc.compute_latest_date(date_4, skip_date)
-    assert obtained_latest_date == expected_latest_date
+    assert rc.compute_latest_date(date_4, skip_date) == date_4
 
     date_4 = date(2024, 1, 2)
     skip_date = None
-    expected_latest_date = date_4
-    obtained_latest_date = rc.compute_latest_date(date_4, skip_date)
-    assert obtained_latest_date == expected_latest_date
+    assert rc.compute_latest_date(date_4, skip_date) == date_4
 
 
 def test_compute_recurrence_days():
     """Verify compute_recurrence_days returns median of intervals."""
 
     intervals = [1, 2, 3]
-    expected_recurrence_days = 2
-    obtained_recurrence_days = rc.compute_recurrence_days(intervals)
-    assert obtained_recurrence_days == expected_recurrence_days
+    assert rc.compute_recurrence_days(intervals) == 2
 
     intervals_with_none = [None, None, 7]
-    expected_recurrence_days = 7
-    obtained_recurrence_days = rc.compute_recurrence_days(intervals_with_none)
-    assert obtained_recurrence_days == expected_recurrence_days
+    assert rc.compute_recurrence_days(intervals_with_none) == 7
 
     intervals_all_none = [None, None, None]
-    expected_recurrence_days = 14
-    obtained_recurrence_days = rc.compute_recurrence_days(intervals_all_none)
-    assert obtained_recurrence_days == expected_recurrence_days
+    assert rc.compute_recurrence_days(intervals_all_none) == 14
 
 
 def test_compute_due_date():
@@ -98,9 +84,7 @@ def test_compute_due_date():
 
     latest_date = date(2024, 1, 1)
     recurrence_days = 14
-    expected_due_date = date(2024, 1, 15)
-    obtained_due_date = rc.compute_due_date(latest_date, recurrence_days)
-    assert obtained_due_date == expected_due_date
+    assert rc.compute_due_date(latest_date, recurrence_days) == date(2024, 1, 15)
 
 
 def test_compute_rolling_dates():
@@ -118,8 +102,7 @@ def test_compute_rolling_dates():
         date(2024, 1, 4),
         new_date,
     )
-    obtained_dates = rc.compute_rolling_dates(old_dates, new_date)
-    assert obtained_dates == expected_dates
+    assert rc.compute_rolling_dates(old_dates, new_date) == expected_dates
 
     old_dates = _date_list(
         date(2024, 1, 4),
@@ -134,23 +117,19 @@ def test_compute_rolling_dates():
         date(2024, 1, 2),
         date(2024, 1, 4),
     )
-    obtained_dates = rc.compute_rolling_dates(old_dates, new_date)
-    assert obtained_dates == expected_dates
+    assert rc.compute_rolling_dates(old_dates, new_date) == expected_dates
 
 
 def test_get_task_by_id():
 
-    obtained_task = io.get_task_by_id(3, "tests/data/test_three_tasks.csv")
-    assert isinstance(obtained_task, Task)
+    assert isinstance(io.get_task_by_id(3, "tests/data/test_three_tasks.csv"), Task)
 
 
 def test_filter_all_tasks_by_context():
     all_tasks = io.import_tasks_from_csv("tests/data/test_three_tasks.csv")
     context = Context.CHORES
     filtered_tasks = rc.filter_all_tasks_by_context(all_tasks, context)
-    obtained_length = len(filtered_tasks)
-    expected_length = 2
-    assert obtained_length == expected_length
+    assert len(filtered_tasks) == 2
 
 
 def test_filter_due_tasks_by_context():
@@ -159,64 +138,40 @@ def test_filter_due_tasks_by_context():
     filtered_tasks = rc.filter_due_tasks_by_context(
         all_tasks, context, reference_date=date(2026, 5, 2)
     )
-    obtained_length = len(filtered_tasks)
-    expected_length = 2
-    assert obtained_length == expected_length
-
-    obtained_ids = [task.id for task in filtered_tasks]
-    expected_ids = [1, 6]
-    assert obtained_ids == expected_ids
+    assert len(filtered_tasks) == 2
+    assert [task.id for task in filtered_tasks] == [1, 6]
 
     context = Context.CHORES
     filtered_tasks = rc.filter_due_tasks_by_context(
         all_tasks, context, reference_date=date(2026, 4, 24)
     )
-    obtained_length = len(filtered_tasks)
-    expected_length = 3
-    assert obtained_length == expected_length
-
-    obtained_ids = [task.id for task in filtered_tasks]
-    expected_ids = [2, 4, 7]
-    assert obtained_ids == expected_ids
+    assert len(filtered_tasks) == 3
+    assert [task.id for task in filtered_tasks] == [2, 4, 7]
 
 
 def test_filter_due_tasks():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     filtered_tasks = rc.filter_due_tasks(all_tasks, reference_date=date(2026, 4, 25))
-    obtained_length = len(filtered_tasks)
-    expected_length = 5
-    assert obtained_length == expected_length
-
-    obtained_ids = [task.id for task in filtered_tasks]
-    expected_ids = [1, 2, 4, 7, 8]
-    assert obtained_ids == expected_ids
+    assert len(filtered_tasks) == 5
+    assert [task.id for task in filtered_tasks] == [1, 2, 4, 7, 8]
 
 
 def test_filter_due_contexts():
     all_tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
     filtered_contexts = rc.filter_due_contexts(all_tasks, reference_date=date(2026, 5, 1))
-    expected_length = 3
-    obtained_length = len(filtered_contexts)
-    assert obtained_length == expected_length
-
-    expected_contexts = [Context.CASA, Context.CHORES, Context.LAPTOP]
-    obtained_contexts = filtered_contexts
-    assert obtained_contexts == expected_contexts
+    assert len(filtered_contexts) == 3
+    assert filtered_contexts == [Context.CASA, Context.CHORES, Context.LAPTOP]
 
 
 def test_compute_coins():
     """Verify compute_coins returns recurrence days for an unstarred task."""
     recurrence_days = 14
     is_starred = False
-    expected_coins = 14
-    obtained_coins = rc.compute_coins(recurrence_days, is_starred)
-    assert obtained_coins == expected_coins
+    assert rc.compute_coins(recurrence_days, is_starred) == 14
 
     recurrence_days = 21
     is_starred = True
-    expected_coins = 42
-    obtained_coins = rc.compute_coins(recurrence_days, is_starred)
-    assert obtained_coins == expected_coins
+    assert rc.compute_coins(recurrence_days, is_starred) == 42
 
 
 def test_is_done_allowed():
@@ -260,8 +215,7 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
     reference_date = date(2026, 5, 2)
     n_tasks = 1
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    obtained_length = len(selected)
-    assert obtained_length == n_tasks
+    assert len(selected) == n_tasks
 
 
 def test_filter_n_tasks_by_context_selects_starred_first():
@@ -271,9 +225,7 @@ def test_filter_n_tasks_by_context_selects_starred_first():
     reference_date = date(2026, 4, 24)
     n_tasks = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    obtained_ids = [t.id for t in selected]
-    expected_starred_task_id = 7
-    assert expected_starred_task_id in obtained_ids
+    assert 7 in [task.id for task in selected]
 
 
 def test_filter_n_tasks_by_context_deferred_excludes_starred():
@@ -348,16 +300,13 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
 
 def test_compute_available_wip_slots():
     """Verify compute_available_wip_slots returns remaining capacity, clamped to zero."""
-    expected_value = 2
-    obtained_value = rc.compute_available_wip_slots(6, 4)
-    assert obtained_value == expected_value
+    assert rc.compute_available_wip_slots(6, 4) == 2
 
 
 def test_count_completed_today():
     """Verify count_completed_today counts tasks whose latest_done_date matches reference_date."""
     tasks = io.import_tasks_from_csv("tests/data/test_contexts.csv")
-    obtained = rc.count_completed_today(tasks, date(2026, 2, 28))
-    assert obtained == 2
+    assert rc.count_completed_today(tasks, date(2026, 2, 28)) == 2
 
 
 def test_filter_one_extra_task_empty_list():
@@ -365,8 +314,7 @@ def test_filter_one_extra_task_empty_list():
     tasks: list[Task] = []
     context = Context.CASA
     reference_date = date(2026, 1, 1)
-    obtained = rc.filter_one_extra_task(tasks, context, reference_date)
-    assert obtained == []
+    assert rc.filter_one_extra_task(tasks, context, reference_date) == []
 
 
 def test_compute_elapsed_rating_periods_for_a_year():
