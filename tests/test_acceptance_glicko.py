@@ -7,6 +7,7 @@ from conftest import (
     _read_task,
     _read_task_on,
     _complete,
+    _read_context_tasks,
     client,
 )
 
@@ -134,7 +135,7 @@ def test_glicko_solo_completion(tmp_path):
     csv_path = _copy_fixture("tests/data/acceptance_glicko_solo_completion.csv", tmp_path)
     reference_date = "2026-11-08"
 
-    context_before = client.get(f"/api/context/chores?csv={csv_path}&date={reference_date}")
+    context_before = _read_context_tasks(csv_path, "chores", reference_date)
     assert context_before.status_code == 200
     assert context_before.json() == [1]
 
@@ -147,7 +148,7 @@ def test_glicko_solo_completion(tmp_path):
     assert after != before
 
     assert client.get(f"/api/task/?csv={csv_path}").json() == [1]
-    assert client.get(f"/api/context/chores?csv={csv_path}&date={reference_date}").json() == []
+    assert _read_context_tasks(csv_path, "chores", reference_date).json() == []
 
 
 def test_glicko_default_date_projection(tmp_path):

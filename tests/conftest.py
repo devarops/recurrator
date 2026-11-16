@@ -50,6 +50,11 @@ def _complete(csv_path, task_id):
     return client.post(f"/api/task/{task_id}/done?csv={csv_path}")
 
 
+def _read_context_tasks(csv_path, context, reference_date):
+    """Read the prioritized task ids for one context at a reference date."""
+    return client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
+
+
 def _copy_fixture(fixture, tmp_path):
     """Copy a task fixture into the test's temporary directory."""
     csv_path = tmp_path / "tasks.csv"
