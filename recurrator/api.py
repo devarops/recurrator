@@ -66,6 +66,14 @@ def _error_response(message: str, status_code: int) -> JSONResponse:
     return JSONResponse(content={"error": message}, status_code=status_code)
 
 
+def _find_task(task_id: int, csv_path: str) -> io.Task | None:
+    """Return the stored task, or None when no task has the id."""
+    try:
+        return io.get_task_by_id(task_id, csv_path)
+    except ValueError:
+        return None
+
+
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
@@ -80,9 +88,8 @@ def get_task_by_id(
     reference_date: str = Query(None, alias="date"),
 ):
     csv_path = _resolve_csv_path(csv)
-    try:
-        task = io.get_task_by_id(task_id, csv_path)
-    except ValueError:
+    task = _find_task(task_id, csv_path)
+    if task is None:
         return _error_response("Task not found", 404)
     parsed_reference_date = date.fromisoformat(reference_date) if reference_date else date.today()
     return _task_to_dict(task, parsed_reference_date)
@@ -126,9 +133,7 @@ class DescriptionUpdate(BaseModel):
 def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
     """Replace a task's description with the given text."""
     csv_path = _resolve_csv_path(csv)
-    try:
-        io.get_task_by_id(task_id, csv_path)
-    except ValueError:
+    if _find_task(task_id, csv_path) is None:
         return _error_response("Task not found", 404)
     if not body.description.strip():
         return _error_response("Description must not be empty", 400)
