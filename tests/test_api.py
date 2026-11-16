@@ -23,6 +23,13 @@ def _restore_rating_fields(csv_path, tasks):
         io.update_task_rating_date(task.id, task.rating_date, csv_path)
 
 
+def _restore_skip_fields(csv_path, tasks):
+    """Restore the skip fields of tasks that a context read deferred."""
+    for task_id, task in tasks.items():
+        io.update_task_skip_count(task_id, task.skip_count, csv_path)
+        io.update_task_skip_date(task_id, None, csv_path)
+
+
 def test_get_single_task_id():
     """Verify GET /task/ returns a list of raw task IDs."""
     response = client.get("/api/task/?csv=tests/data/test_single_task.csv")
@@ -213,10 +220,7 @@ def test_get_tasks_by_context():
     obtained_task_ids = response.json()
     assert obtained_task_ids == expected_task_ids
 
-    # Undo changes to CSV file for other tests
-    for task_id, original_task in original_deferred_tasks.items():
-        io.update_task_skip_count(task_id, original_task.skip_count, csv_path)
-        io.update_task_skip_date(task_id, None, csv_path)
+    _restore_skip_fields(csv_path, original_deferred_tasks)
 
     _assert_file_unchanged(csv_path, original_checksum)
 
@@ -249,10 +253,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
     obtained_latest_date = updated_task.latest_date
     assert obtained_latest_date == expected_latest_date
 
-    # Undo changes to CSV file for other tests
-    for task_id, original_task in original_deferred_tasks.items():
-        io.update_task_skip_count(task_id, original_task.skip_count, csv_path)
-        io.update_task_skip_date(task_id, None, csv_path)
+    _restore_skip_fields(csv_path, original_deferred_tasks)
 
     _assert_file_unchanged(csv_path, original_checksum)
 
