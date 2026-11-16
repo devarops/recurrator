@@ -38,7 +38,7 @@ def _rating_fields(task: io.Task, reference_date: date | None = None) -> dict:
     }
 
 
-def _task_to_dict(task: io.Task, reference_date: date | None = None) -> dict:
+def _task_to_dict(task: io.Task, reference_date: date | None) -> dict:
     """Convert Task object to API response dictionary."""
     return {
         "id": task.id,
