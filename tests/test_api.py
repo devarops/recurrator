@@ -12,6 +12,7 @@ from conftest import (
     _read_due_contexts,
     _read_task_ids,
     _patch_description,
+    _patch_description_body,
     _restore_completion_fields,
     CONTEXTS_CSV,
     EIGHT_TASKS_CSV,
@@ -441,3 +442,12 @@ def test_empty_description_for_unknown_task_returns_404(tmp_path):
     response = _patch_description(csv_path, 999, "")
 
     assert response.status_code == 404
+
+
+def test_malformed_description_body_returns_error_field(tmp_path):
+    """A body without the text is refused with the shared error envelope."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+
+    response = _patch_description_body(csv_path, 2, {})
+
+    assert "error" in response.json()
