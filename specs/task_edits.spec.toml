@@ -89,7 +89,6 @@ description = """
 When the description carries leading or trailing whitespace, the write stores
 it untrimmed, and the response returns that exact text.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_description_whitespace_is_preserved"
