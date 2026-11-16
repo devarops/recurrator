@@ -26,48 +26,24 @@ def test_import_tasks_from_csv_single_task():
 
     # Returns a list with one Task
     assert isinstance(task_list, list)
-    expected_list_length = 1
-    obtained_list_length = len(task_list)
-    assert obtained_list_length == expected_list_length
+    assert len(task_list) == 1
 
     first_task = task_list[0]
 
     # Basic attributes from CSV
-    expected_id = 8
-    obtained_id = first_task.id
-    assert obtained_id == expected_id
-
-    expected_description = "TypeLit.io"
-    obtained_description = first_task.description
-    assert obtained_description == expected_description
-
+    assert first_task.id == 8
+    assert first_task.description == "TypeLit.io"
     assert isinstance(first_task.context, Context)
-
-    expected_skip_count = 1
-    obtained_skip_count = first_task.skip_count
-    assert obtained_skip_count == expected_skip_count
-
-    expected_starred = False
-    obtained_starred = first_task.starred
-    assert obtained_starred == expected_starred
+    assert first_task.skip_count == 1
+    assert first_task.starred is False
 
     # Computed attributes
-    expected_latest_date = date(2025, 11, 17)
-    obtained_latest_date = first_task.latest_date
-    assert obtained_latest_date == expected_latest_date
-
-    expected_recurrence_days = 14
-    obtained_recurrence_days = first_task.recurrence_days
-    assert obtained_recurrence_days == expected_recurrence_days
-
-    expected_due_date = date(2025, 12, 1)
-    obtained_due_date = first_task.due_date
-    assert obtained_due_date == expected_due_date
+    assert first_task.latest_date == date(2025, 11, 17)
+    assert first_task.recurrence_days == 14
+    assert first_task.due_date == date(2025, 12, 1)
 
     # Computed coins
-    expected_coins = 14
-    obtained_coins = first_task.coins
-    assert obtained_coins == expected_coins
+    assert first_task.coins == 14
 
 
 def test_import_tasks_from_csv_starred_task():
@@ -78,17 +54,9 @@ def test_import_tasks_from_csv_starred_task():
     # Find the starred task with ID 1
     task_1 = [t for t in task_list if t.id == 1][0]
 
-    expected_starred = True
-    obtained_starred = task_1.starred
-    assert obtained_starred == expected_starred
-
-    expected_recurrence_days = 21
-    obtained_recurrence_days = task_1.recurrence_days
-    assert obtained_recurrence_days == expected_recurrence_days
-
-    expected_coins = 42
-    obtained_coins = task_1.coins
-    assert obtained_coins == expected_coins
+    assert task_1.starred is True
+    assert task_1.recurrence_days == 21
+    assert task_1.coins == 42
 
 
 def test_import_tasks_from_csv_two_contexts():
@@ -98,17 +66,13 @@ def test_import_tasks_from_csv_two_contexts():
 
     # Returns a list with three Tasks
     assert isinstance(task_list, list)
-    expected_list_length = 3
-    obtained_list_length = len(task_list)
-    assert obtained_list_length == expected_list_length
+    assert len(task_list) == 3
 
     last_task_index = len(task_list) - 1
     last_task = task_list[last_task_index]
 
     # Basic attributes from CSV
-    expected_id = 5
-    obtained_id = last_task.id
-    assert obtained_id == expected_id
+    assert last_task.id == 5
 
 
 def test_import_dates_from_csv():
@@ -129,13 +93,11 @@ def test_update_task_dates_in_csv():
     original_checksum = _get_file_checksum(csv_path)
 
     io.update_task_dates(task_id, TASK_2_UPDATED_DATES, csv_path)
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == TASK_2_UPDATED_DATES
+    assert io.import_dates_from_csv(task_id, csv_path) == TASK_2_UPDATED_DATES
 
     # Undo changes to CSV file for other tests
     io.update_task_dates(task_id, TASK_2_ORIGINAL_DATES, csv_path)
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == TASK_2_ORIGINAL_DATES
+    assert io.import_dates_from_csv(task_id, csv_path) == TASK_2_ORIGINAL_DATES
 
     _assert_file_unchanged(csv_path, original_checksum)
 
@@ -147,16 +109,12 @@ def test_update_task_skip_count_in_csv():
 
     original_checksum = _get_file_checksum(csv_path)
 
-    expected_skip_count = 5
-    io.update_task_skip_count(task_id, expected_skip_count, csv_path)
-    obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
-    assert obtained_skip_count == expected_skip_count
+    io.update_task_skip_count(task_id, 5, csv_path)
+    assert io.import_tasks_from_csv(csv_path)[0].skip_count == 5
 
     # Undo changes to CSV file for other tests
-    original_skip_count = 10
-    io.update_task_skip_count(task_id, original_skip_count, csv_path)
-    obtained_skip_count = io.import_tasks_from_csv(csv_path)[0].skip_count
-    assert obtained_skip_count == original_skip_count
+    io.update_task_skip_count(task_id, 10, csv_path)
+    assert io.import_tasks_from_csv(csv_path)[0].skip_count == 10
 
     _assert_file_unchanged(csv_path, original_checksum)
 
@@ -166,11 +124,9 @@ def test_write_preserves_quotes_in_description():
     task_id = 1
     csv_path = "tests/data/test_quoted_description.csv"
     original_checksum = _get_file_checksum(csv_path)
-    expected_description = 'He said "hola" once, and left.'
 
     io.update_task_skip_count(task_id, 3, csv_path)
-    obtained_description = io.get_task_by_id(task_id, csv_path).description
-    assert obtained_description == expected_description
+    assert io.get_task_by_id(task_id, csv_path).description == 'He said "hola" once, and left.'
 
     io.update_task_skip_count(task_id, 0, csv_path)
     _assert_file_unchanged(csv_path, original_checksum)
@@ -227,9 +183,8 @@ def test_import_tasks_from_csv_latest_done_date():
     csv_path = "tests/data/test_single_task.csv"
     tasks = io.import_tasks_from_csv(csv_path)
     first_task = tasks[0]
-    expected_latest_done_date = date(2025, 8, 19)
-    obtained_latest_done_date = first_task.latest_done_date
-    assert obtained_latest_done_date == expected_latest_done_date
+
+    assert first_task.latest_done_date == date(2025, 8, 19)
 
 
 def test_update_task_skip_date_in_csv():
@@ -266,13 +221,8 @@ def test_update_task_as_skipped_in_csv():
     io.update_task_as_skipped(task_id, new_skip_date, csv_path)
 
     updated_task = io.get_task_by_id(task_id, csv_path)
-    expected_skip_count = original_skip_count + 1
-    obtained_skip_count = updated_task.skip_count
-    assert obtained_skip_count == expected_skip_count
-
-    expected_skip_date = new_skip_date
-    obtained_skip_date = updated_task.latest_date
-    assert obtained_skip_date == expected_skip_date
+    assert updated_task.skip_count == original_skip_count + 1
+    assert updated_task.latest_date == new_skip_date
 
     # Undo changes to CSV file for other tests
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
@@ -287,9 +237,7 @@ def test_import_tasks_from_csv_rating():
     csv_path = "tests/data/acceptance_glicko_integer_contract.csv"
     task_list = io.import_tasks_from_csv(csv_path)
 
-    expected_rating = 1500
-    obtained_rating = task_list[0].rating
-    assert obtained_rating == expected_rating
+    assert task_list[0].rating == 1500
 
 
 def test_import_tasks_from_csv_rating_deviation():
@@ -297,9 +245,7 @@ def test_import_tasks_from_csv_rating_deviation():
     csv_path = "tests/data/acceptance_glicko_integer_contract.csv"
     task_list = io.import_tasks_from_csv(csv_path)
 
-    expected_rating_deviation = 350
-    obtained_rating_deviation = task_list[0].rating_deviation
-    assert obtained_rating_deviation == expected_rating_deviation
+    assert task_list[0].rating_deviation == 350
 
 
 def test_update_task_rating_date_in_csv():
