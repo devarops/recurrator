@@ -8,7 +8,7 @@ from conftest import (
     _read_task,
     _read_task_on,
     _complete,
-    _read_context_tasks,
+    _read_context_task_ids,
     _read_task_ids,
     client,
     CONTEXTS_CSV,
@@ -245,7 +245,7 @@ def test_get_tasks_by_context():
     deferred_task_ids = [7, 8]
     original_deferred_tasks = _stored_tasks(csv_path, deferred_task_ids)
 
-    response = _read_context_tasks(csv_path, context, reference_date)
+    response = _read_context_task_ids(csv_path, context, reference_date)
 
     assert response.status_code == 200
 
@@ -270,7 +270,7 @@ def test_get_tasks_by_context_defers_remaining_tasks():
     deferred_task_ids = [7, 8]
     original_deferred_tasks = _stored_tasks(csv_path, deferred_task_ids)
 
-    response = _read_context_tasks(csv_path, context, reference_date)
+    response = _read_context_task_ids(csv_path, context, reference_date)
 
     assert response.status_code == 200
 
