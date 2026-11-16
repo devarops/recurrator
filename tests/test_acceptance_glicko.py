@@ -8,7 +8,7 @@ from conftest import (
     _read_task_on,
     _complete,
     _read_context_tasks,
-    client,
+    _read_task_ids,
 )
 
 
@@ -147,7 +147,7 @@ def test_glicko_solo_completion(tmp_path):
     after = _read_task(csv_path, 1).json()["rating"]
     assert after != before
 
-    assert client.get(f"/api/task/?csv={csv_path}").json() == [1]
+    assert _read_task_ids(csv_path).json() == [1]
     assert _read_context_tasks(csv_path, "chores", reference_date).json() == []
 
 

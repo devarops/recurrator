@@ -9,6 +9,7 @@ from conftest import (
     _read_task_on,
     _complete,
     _read_context_tasks,
+    _read_task_ids,
     client,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -66,7 +67,7 @@ def _assert_opponent_rating_rises(fixture, tmp_path):
 
 def test_get_single_task_id():
     """Verify GET /task/ returns a list of raw task IDs."""
-    response = client.get("/api/task/?csv=tests/data/test_single_task.csv")
+    response = _read_task_ids("tests/data/test_single_task.csv")
 
     assert response.status_code == 200
 
@@ -77,7 +78,7 @@ def test_get_single_task_id():
 
 def test_get_multiple_task_ids():
     """Verify GET /task/ returns a list of raw task IDs when multiple tasks are present."""
-    response = client.get("/api/task/?csv=tests/data/test_three_tasks.csv")
+    response = _read_task_ids(THREE_TASKS_CSV)
 
     expected_data = [2, 3, 5]
     obtained_data = response.json()

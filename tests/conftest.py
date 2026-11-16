@@ -55,6 +55,11 @@ def _read_context_tasks(csv_path, context, reference_date):
     return client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
 
 
+def _read_task_ids(csv_path):
+    """Read the ids of every task through the API."""
+    return client.get(f"/api/task/?csv={csv_path}")
+
+
 def _copy_fixture(fixture, tmp_path):
     """Copy a task fixture into the test's temporary directory."""
     csv_path = tmp_path / "tasks.csv"
