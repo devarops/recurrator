@@ -82,18 +82,14 @@ def test_get_single_task_id():
 
     assert response.status_code == 200
 
-    expected_data = [8]
-    obtained_data = response.json()
-    assert obtained_data == expected_data
+    assert response.json() == [8]
 
 
 def test_get_multiple_task_ids():
     """Verify GET /task/ returns a list of raw task IDs when multiple tasks are present."""
     response = _read_task_ids(THREE_TASKS_CSV)
 
-    expected_data = [2, 3, 5]
-    obtained_data = response.json()
-    assert obtained_data == expected_data
+    assert response.json() == [2, 3, 5]
 
 
 def test_get_task_by_id_default_csv():
@@ -115,8 +111,7 @@ def test_get_task_by_id_default_csv():
         "rating": 1500,
         "rating_deviation": 350,
     }
-    obtained_data = response.json()
-    assert obtained_data == expected_data
+    assert response.json() == expected_data
 
 
 def test_get_task_by_id_alternative_csv():
@@ -137,8 +132,7 @@ def test_get_task_by_id_alternative_csv():
         "rating_deviation": 350,
     }
 
-    obtained_data = response.json()
-    assert obtained_data == expected_data
+    assert response.json() == expected_data
 
 
 def test_get_task_by_id_starred():
@@ -160,8 +154,7 @@ def test_get_task_by_id_starred():
         "rating": 1500,
         "rating_deviation": 350,
     }
-    obtained_data = response.json()
-    assert obtained_data == expected_data
+    assert response.json() == expected_data
 
 
 def test_get_nonexistent_task_returns_404():
@@ -233,9 +226,7 @@ def test_get_due_contexts():
 
     assert response.status_code == 200
 
-    expected_contexts = ["casa", "chores", "laptop"]
-    obtained_contexts = response.json()
-    assert obtained_contexts == expected_contexts
+    assert response.json() == ["casa", "chores", "laptop"]
 
 
 def test_get_tasks_by_context():
@@ -254,9 +245,7 @@ def test_get_tasks_by_context():
 
     assert response.status_code == 200
 
-    expected_task_ids = [1, 2, 3, 4, 5, 6]
-    obtained_task_ids = response.json()
-    assert obtained_task_ids == expected_task_ids
+    assert response.json() == [1, 2, 3, 4, 5, 6]
 
     _restore_skip_fields(csv_path, original_deferred_tasks)
 
@@ -282,12 +271,8 @@ def test_get_tasks_by_context_defers_remaining_tasks():
     deferred_task_id = 7
     original_skip_count = original_deferred_tasks[deferred_task_id].skip_count
     updated_task = io.get_task_by_id(deferred_task_id, csv_path)
-    obtained_skip_count = updated_task.skip_count
-    assert obtained_skip_count == original_skip_count + 1
-
-    expected_latest_date = date(2026, 5, 2)
-    obtained_latest_date = updated_task.latest_date
-    assert obtained_latest_date == expected_latest_date
+    assert updated_task.skip_count == original_skip_count + 1
+    assert updated_task.latest_date == date(2026, 5, 2)
 
     _restore_skip_fields(csv_path, original_deferred_tasks)
 
