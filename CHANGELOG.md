@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PATCH /task/{id}/description` replaces a task's description.
 - `rating` and `rating_deviation` fields in the `GET /task/{id}` and
   `POST /task/{id}/done` responses.
+- `latest_done_date` field in the `GET /task/{id}` response, reporting the
+  last completion date independent of the skip date.
 - `GET /task/{id}` accepts an optional `date` query parameter and projects
   `rating_deviation` to that date.
 
@@ -36,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GET /task/{id}` now returns **404 Not Found** with the standard error
   envelope `{"error": "Task not found"}` when the task ID is not found,
   instead of serializing an HTTP 200 array response.
+- Malformed request bodies now return **422 Unprocessable Entity** with the
+  standard error envelope `{"error": "<message>"}` instead of the framework's
+  validation detail.
 
 ## [0.6.0] - 2026-06-07
 
