@@ -7,15 +7,22 @@ from conftest import THREE_TASKS_CSV, _copy_fixture
 client = TestClient(app)
 
 
+def _write_description(csv_path, task_id, text):
+    """Write a description and check that the confirmation carries it."""
+    response = client.patch(
+        f"/api/task/{task_id}/description?csv={csv_path}", json={"description": text}
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"id": task_id, "description": text}
+
+
 def test_description_is_written_verbatim(tmp_path):
     """A written description reads back unchanged, markdown and line breaks included."""
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
     text = "Line one\n- [ ] two\n\n**bold** and _italic_"
 
-    response = client.patch(f"/api/task/2/description?csv={csv_path}", json={"description": text})
-
-    assert response.status_code == 200
-    assert response.json() == {"id": 2, "description": text}
+    _write_description(csv_path, 2, text)
 
     assert client.get(f"/api/task/2?csv={csv_path}").json()["description"] == text
 
@@ -55,10 +62,7 @@ def test_description_whitespace_is_preserved(tmp_path):
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
     text = "\t  Buy milk\n- [ ] eggs  \t\n"
 
-    response = client.patch(f"/api/task/2/description?csv={csv_path}", json={"description": text})
-
-    assert response.status_code == 200
-    assert response.json() == {"id": 2, "description": text}
+    _write_description(csv_path, 2, text)
 
     stored = client.get(f"/api/task/2?csv={csv_path}")
 
