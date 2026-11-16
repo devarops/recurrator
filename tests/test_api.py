@@ -12,6 +12,7 @@ from conftest import (
     _read_task_ids,
     client,
     CONTEXTS_CSV,
+    EIGHT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
     SINGLE_TASK_CSV,
     THREE_TASKS_CSV,
@@ -238,7 +239,7 @@ def test_get_due_contexts():
 def test_get_tasks_by_context():
     """Verify GET /context/{context_id} returns prioritized task IDs."""
 
-    csv_path = "tests/data/test_eight_tasks.csv"
+    csv_path = EIGHT_TASKS_CSV
     reference_date = "2026-05-02"
     context = "chores"
 
@@ -263,7 +264,7 @@ def test_get_tasks_by_context():
 def test_get_tasks_by_context_defers_remaining_tasks():
     """Verify deferred tasks get skip_count incremented and skip_date set."""
 
-    csv_path = "tests/data/test_eight_tasks.csv"
+    csv_path = EIGHT_TASKS_CSV
     reference_date = "2026-05-02"
     context = "chores"
 
