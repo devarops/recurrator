@@ -98,14 +98,10 @@ def _verify_task_as_done(
     original_task = io.get_task_by_id(task_id, csv_path)
     original_skip_count = original_task.skip_count
 
-    expected_skip_count = 0
     io.update_task_as_done(task_id, completion_date, csv_path)
-    updated_task = io.get_task_by_id(task_id, csv_path)
-    obtained_skip_count = updated_task.skip_count
-    assert obtained_skip_count == expected_skip_count
+    assert io.get_task_by_id(task_id, csv_path).skip_count == 0
 
-    obtained_dates = io.import_dates_from_csv(task_id, csv_path)
-    assert obtained_dates == expected_dates
+    assert io.import_dates_from_csv(task_id, csv_path) == expected_dates
 
     # Undo changes to CSV file for other tests
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
