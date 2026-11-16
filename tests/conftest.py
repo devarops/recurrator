@@ -12,6 +12,7 @@ client = TestClient(app)
 # Test data constants
 THREE_TASKS_CSV = "tests/data/test_three_tasks.csv"
 CONTEXTS_CSV = "tests/data/test_contexts.csv"
+SINGLE_TASK_CSV = "tests/data/test_single_task.csv"
 GLICKO_CONTRACT_CSV = "tests/data/acceptance_glicko_integer_contract.csv"
 TWO_RATINGS_CSV = "tests/data/test_two_ratings.csv"
 

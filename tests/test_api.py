@@ -13,6 +13,7 @@ from conftest import (
     client,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
+    SINGLE_TASK_CSV,
     THREE_TASKS_CSV,
     TWO_RATINGS_CSV,
     TASK_2_ORIGINAL_DATES,
@@ -67,7 +68,7 @@ def _assert_opponent_rating_rises(fixture, tmp_path):
 
 def test_get_single_task_id():
     """Verify GET /task/ returns a list of raw task IDs."""
-    response = _read_task_ids("tests/data/test_single_task.csv")
+    response = _read_task_ids(SINGLE_TASK_CSV)
 
     assert response.status_code == 200
 
@@ -87,7 +88,7 @@ def test_get_multiple_task_ids():
 
 def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
-    response = _read_task_on("tests/data/test_single_task.csv", 8, "2025-08-19")
+    response = _read_task_on(SINGLE_TASK_CSV, 8, "2025-08-19")
 
     assert response.status_code == 200
 
@@ -155,7 +156,7 @@ def test_get_task_by_id_starred():
 
 def test_get_nonexistent_task_returns_404():
     """Verify GET /task/{id} returns 404 when the task is not found."""
-    response = _read_task("tests/data/test_single_task.csv", 999)
+    response = _read_task(SINGLE_TASK_CSV, 999)
 
     assert response.status_code == 404
 

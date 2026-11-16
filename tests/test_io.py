@@ -11,6 +11,7 @@ from conftest import (
     _verify_task_as_done,
     CONTEXTS_CSV,
     GLICKO_CONTRACT_CSV,
+    SINGLE_TASK_CSV,
     THREE_TASKS_CSV,
     TWO_RATINGS_CSV,
     TASK_2_ORIGINAL_DATES,
@@ -25,7 +26,7 @@ from conftest import (
 
 def test_import_tasks_from_csv_single_task():
     """Verify import_tasks_from_csv returns valid task from CSV file."""
-    csv_path = "tests/data/test_single_task.csv"
+    csv_path = SINGLE_TASK_CSV
     task_list = io.import_tasks_from_csv(csv_path)
 
     # Returns a list with one Task
@@ -184,7 +185,7 @@ def test_update_task_as_done_in_csv():
 
 def test_import_tasks_from_csv_latest_done_date():
     """Verify imported task has latest_done_date matching date_4 from CSV."""
-    csv_path = "tests/data/test_single_task.csv"
+    csv_path = SINGLE_TASK_CSV
     tasks = io.import_tasks_from_csv(csv_path)
     first_task = tasks[0]
 
