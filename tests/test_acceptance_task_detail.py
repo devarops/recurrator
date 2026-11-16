@@ -1,0 +1,16 @@
+from conftest import _copy_fixture, _read_task
+
+
+def test_detail_reports_last_completion(tmp_path):
+    """A read reports the fourth completion date and the later skip date."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_task_detail_reports_last_completion.csv", tmp_path
+    )
+
+    response = _read_task(csv_path, 1)
+
+    assert response.status_code == 200
+
+    body = response.json()
+    assert body["latest_done_date"] == "2025-05-02"
+    assert body["latest_date"] == "2025-07-01"
