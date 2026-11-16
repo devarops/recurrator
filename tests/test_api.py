@@ -16,6 +16,7 @@ from conftest import (
     SINGLE_TASK_CSV,
     THREE_TASKS_CSV,
     TWO_RATINGS_CSV,
+    TWO_RATINGS_FROZEN_CSV,
     TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
 )
@@ -386,7 +387,7 @@ def test_task_done_preserves_total_rating(tmp_path):
 
 def test_task_done_lowers_completed_rating_deviation(tmp_path):
     """Verify a completion lowers the completed task deviation."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
     before = _task_field(csv_path, 1, "rating_deviation")
     response = _complete(csv_path, 1)
@@ -396,7 +397,7 @@ def test_task_done_lowers_completed_rating_deviation(tmp_path):
 
 def test_task_done_lowers_opponent_rating_deviation(tmp_path):
     """Verify a completion lowers the opponent deviation."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
     before = _task_field(csv_path, 2, "rating_deviation")
     _complete(csv_path, 1)
@@ -407,7 +408,7 @@ def test_task_done_lowers_opponent_rating_deviation(tmp_path):
 
 def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
     """Verify the completed deviation drop exceeds the placeholder."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
     before = _task_field(csv_path, 1, "rating_deviation")
     response = _complete(csv_path, 1)
@@ -417,7 +418,7 @@ def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
 
 def test_task_done_sets_completed_rating_to_simultaneous_value(tmp_path):
     """Verify the completed rating matches a simultaneous Glicko update."""
-    csv_path = _copy_fixture("tests/data/test_two_ratings_frozen.csv", tmp_path)
+    csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
     response = _complete(csv_path, 1)
 
