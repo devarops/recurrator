@@ -179,17 +179,13 @@ def test_set_task_as_done():
 
     assert response.status_code == 200
 
-    expected_skip_count = 0
-    obtained_task = response.json()
-    obtained_skip_count = obtained_task["skip_count"]
-    assert obtained_skip_count == expected_skip_count
+    completed = response.json()
+    assert completed["skip_count"] == 0
 
     original_skip_count = original_task["skip_count"]
-    assert obtained_skip_count != original_skip_count
+    assert completed["skip_count"] != original_skip_count
 
-    original_due_date = original_task["due_date"]
-    obtained_due_date = obtained_task["due_date"]
-    assert obtained_due_date != original_due_date
+    assert completed["due_date"] != original_task["due_date"]
 
     # Undo changes to CSV file for other tests
     io.update_task_skip_count(task_id, original_skip_count, csv_path)
