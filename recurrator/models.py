@@ -4,6 +4,7 @@ from datetime import date
 from ._contexts import Context
 
 SKIP_COUNT_RESET = 0
+N_DATES = 4
 GLICKO_RATING_DEFAULT = 1500
 GLICKO_RATING_DEVIATION_DEFAULT = 350
 GLICKO_RATING_DEVIATION_MIN = 45

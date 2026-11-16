@@ -13,6 +13,7 @@ from .models import (
     GLICKO_RATING_PERIODS_PER_DAY,
     GLICKO_SCALE,
     GLICKO_VOLATILITY_DEFAULT,
+    N_DATES,
     SyntheticOpponent,
     Task,
 )
@@ -49,9 +50,9 @@ def compute_due_date(latest_date: date, recurrence_days: int) -> date:
 
 
 def compute_rolling_dates(dates: list[date | None], new_date: date) -> list[date | None]:
-    """Merge new_date into a rolling window of the four most recent dates."""
-    all_dates = sorted([d for d in dates if d is not None] + [new_date])[-4:]
-    return [None] * (4 - len(all_dates)) + all_dates
+    """Merge new_date into a rolling window of the most recent stored dates."""
+    all_dates = sorted([d for d in dates if d is not None] + [new_date])[-N_DATES:]
+    return [None] * (N_DATES - len(all_dates)) + all_dates
 
 
 def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Task]:

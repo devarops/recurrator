@@ -17,10 +17,11 @@ from .models import (
     Task,
     GLICKO_RATING_DEFAULT,
     GLICKO_RATING_DEVIATION_DEFAULT,
+    N_DATES,
     SKIP_COUNT_RESET,
 )
 
-DATE_COLUMNS = ("date_1", "date_2", "date_3", "date_4")
+DATE_COLUMNS = tuple(f"date_{index}" for index in range(1, N_DATES + 1))
 
 
 def _parse_date(date_str: str) -> date | None:
@@ -45,7 +46,7 @@ def _compute_dates(row: dict) -> Dates:
         Dates object with all four computed date attributes.
     """
     dates = _parse_row_dates(row)
-    last_completion_date = dates[3]
+    last_completion_date = dates[N_DATES - 1]
     assert last_completion_date is not None
 
     skip_date = _parse_date(row["skip_date"])
@@ -113,7 +114,7 @@ def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
         csv_path: Path to the CSV file.
 
     Returns:
-        A list of exactly 4 date values (None for "NA" entries).
+        A list with one value per date column (None for "NA" entries).
 
     Raises:
         ValueError: If task_id is not found in the CSV.
