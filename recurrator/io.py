@@ -86,34 +86,34 @@ def _row_to_task(row: dict) -> Task:
     )
 
 
-def import_tasks_from_csv(path: str) -> list[Task]:
+def import_tasks_from_csv(csv_path: str) -> list[Task]:
     """Import tasks from a CSV file.
 
     Args:
-        path: Path to the CSV file.
+        csv_path: Path to the CSV file.
 
     Returns:
         List of Task objects with attributes from CSV rows.
     """
-    with open(path, newline="") as csvfile:
+    with open(csv_path, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
         return [_row_to_task(row) for row in reader]
 
 
-def _find_task_row(rows: Iterable[dict], task_id: int, path: str) -> dict:
+def _find_task_row(rows: Iterable[dict], task_id: int, csv_path: str) -> dict:
     """Return the CSV row whose id column matches, or raise ValueError."""
     for row in rows:
         if int(row["id"]) == task_id:
             return row
-    raise ValueError(f"Task {task_id} not found in {path}")
+    raise ValueError(f"Task {task_id} not found in {csv_path}")
 
 
-def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
+def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
     """Import the raw date fields for a given task from a CSV file.
 
     Args:
         task_id: The task ID to look up.
-        path: Path to the CSV file.
+        csv_path: Path to the CSV file.
 
     Returns:
         A list of exactly 4 date values (None for "NA" entries).
@@ -121,8 +121,8 @@ def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
     Raises:
         ValueError: If task_id is not found in the CSV.
     """
-    with open(path, newline="") as f:
-        return _parse_row_dates(_find_task_row(csv.DictReader(f), task_id, path))
+    with open(csv_path, newline="") as f:
+        return _parse_row_dates(_find_task_row(csv.DictReader(f), task_id, csv_path))
 
 
 def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
