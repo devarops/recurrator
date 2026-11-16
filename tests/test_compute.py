@@ -10,6 +10,27 @@ def _date_list(d1, d2, d3, d4):
     return [d1, d2, d3, d4]
 
 
+def _chores_task(
+    task_id: int,
+    description: str,
+    skip_count: int = 0,
+    starred: bool = False,
+    recurrence_days: int = 7,
+    due_date: date = date(2026, 6, 1),
+) -> Task:
+    """Build a chores task whose dates and coins follow the given schedule."""
+    dates = Dates(date(2026, 6, 1), date(2026, 6, 1), recurrence_days, due_date)
+    return Task(
+        task_id,
+        description,
+        Context.CHORES,
+        skip_count,
+        starred,
+        dates,
+        rc.compute_coins(recurrence_days, starred),
+    )
+
+
 def test_compute_intervals():
     """Verify compute_intervals returns correct day intervals."""
 
@@ -271,24 +292,8 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
     """Verify non-starred tasks are sorted by skip_count DESC before selection."""
     reference_date = date(2026, 6, 6)
     tasks = [
-        Task(
-            1,
-            "Low skip",
-            Context.CHORES,
-            0,
-            False,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
-            7,
-        ),
-        Task(
-            2,
-            "High skip",
-            Context.CHORES,
-            3,
-            False,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
-            7,
-        ),
+        _chores_task(1, "Low skip"),
+        _chores_task(2, "High skip", skip_count=3),
     ]
     expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
@@ -300,24 +305,8 @@ def test_filter_n_tasks_by_context_sorts_non_starred_by_recurrence_days():
     """Verify non-starred tasks with equal skip_count are sorted by recurrence_days DESC."""
     reference_date = date(2026, 6, 6)
     tasks = [
-        Task(
-            1,
-            "Low rec",
-            Context.CHORES,
-            0,
-            False,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
-            7,
-        ),
-        Task(
-            2,
-            "High rec",
-            Context.CHORES,
-            0,
-            False,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 21, date(2026, 6, 1)),
-            21,
-        ),
+        _chores_task(1, "Low rec"),
+        _chores_task(2, "High rec", recurrence_days=21),
     ]
     expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
@@ -329,24 +318,8 @@ def test_filter_n_tasks_by_context_sorts_starred_by_recurrence_days():
     """Verify starred tasks with equal skip_count and due_date are sorted by recurrence_days DESC."""
     reference_date = date(2026, 6, 6)
     tasks = [
-        Task(
-            1,
-            "Low rec",
-            Context.CHORES,
-            0,
-            True,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
-            14,
-        ),
-        Task(
-            2,
-            "High rec",
-            Context.CHORES,
-            0,
-            True,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 21, date(2026, 6, 1)),
-            42,
-        ),
+        _chores_task(1, "Low rec", starred=True),
+        _chores_task(2, "High rec", starred=True, recurrence_days=21),
     ]
     expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
@@ -358,24 +331,8 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
     """Verify starred tasks are sorted by skip_count DESC before selection."""
     reference_date = date(2026, 6, 6)
     tasks = [
-        Task(
-            1,
-            "Low skip",
-            Context.CHORES,
-            0,
-            True,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
-            14,
-        ),
-        Task(
-            2,
-            "High skip",
-            Context.CHORES,
-            3,
-            True,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
-            14,
-        ),
+        _chores_task(1, "Low skip", starred=True),
+        _chores_task(2, "High skip", starred=True, skip_count=3),
     ]
     expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
@@ -387,24 +344,8 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
     """Verify starred tasks with equal skip_count are sorted by due_date ASC."""
     reference_date = date(2026, 6, 6)
     tasks = [
-        Task(
-            1,
-            "Later due",
-            Context.CHORES,
-            0,
-            True,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 6)),
-            14,
-        ),
-        Task(
-            2,
-            "Earlier due",
-            Context.CHORES,
-            0,
-            True,
-            Dates(date(2026, 6, 1), date(2026, 6, 1), 7, date(2026, 6, 1)),
-            14,
-        ),
+        _chores_task(1, "Later due", starred=True, due_date=date(2026, 6, 6)),
+        _chores_task(2, "Earlier due", starred=True),
     ]
     expected_selected_id = 2
     selected, deferred = rc.filter_n_tasks_by_context(tasks, Context.CHORES, reference_date, 1)
