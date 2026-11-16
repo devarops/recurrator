@@ -1,6 +1,6 @@
 import csv
 import os
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from datetime import date
 
 from .compute import (
@@ -100,6 +100,14 @@ def import_tasks_from_csv(path: str) -> list[Task]:
         return [_row_to_task(row) for row in reader]
 
 
+def _find_task_row(rows: Iterable[dict], task_id: int, path: str) -> dict:
+    """Return the CSV row whose id column matches, or raise ValueError."""
+    for row in rows:
+        if int(row["id"]) == task_id:
+            return row
+    raise ValueError(f"Task {task_id} not found in {path}")
+
+
 def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
     """Import the raw date fields for a given task from a CSV file.
 
@@ -114,11 +122,7 @@ def import_dates_from_csv(task_id: int, path: str) -> list[date | None]:
         ValueError: If task_id is not found in the CSV.
     """
     with open(path, newline="") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            if int(row["id"]) == task_id:
-                return _parse_row_dates(row)
-    raise ValueError(f"Task {task_id} not found in {path}")
+        return _parse_row_dates(_find_task_row(csv.DictReader(f), task_id, path))
 
 
 def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
@@ -229,8 +233,5 @@ def get_task_by_id(task_id: int, csv_path: str) -> Task:
     Raises:
         ValueError: If task not found
     """
-    tasks = import_tasks_from_csv(csv_path)
-    task = next((task for task in tasks if task.id == task_id), None)
-    if task is None:
-        raise ValueError(f"Task {task_id} not found in {csv_path}")
-    return task
+    with open(csv_path, newline="") as csvfile:
+        return _row_to_task(_find_task_row(csv.DictReader(csvfile), task_id, csv_path))
