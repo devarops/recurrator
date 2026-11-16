@@ -154,8 +154,8 @@ def filter_n_tasks_by_context(
         starred_task = _take_top_task(starred_pool, odd_cycle)
         if starred_task is not None:
             selected_tasks.append(starred_task)
-        if len(selected_tasks) >= available_slots:
-            break
+            if len(selected_tasks) >= available_slots:
+                break
         non_starred_task = _take_top_task(non_starred_pool, odd_cycle)
         if non_starred_task is not None:
             selected_tasks.append(non_starred_task)
