@@ -60,6 +60,14 @@ def _task_field(csv_path, task_id, field_name):
     return _read_task(csv_path, task_id).json()[field_name]
 
 
+def _field_before_and_after_completion(csv_path, completed_task_id, observed_task_id, field_name):
+    """Return the observed task's field before and after a completion."""
+    before = _task_field(csv_path, observed_task_id, field_name)
+    _complete(csv_path, completed_task_id)
+    after = _task_field(csv_path, observed_task_id, field_name)
+    return before, after
+
+
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
     undated = _read_task(fixture, task_id)
@@ -72,9 +80,7 @@ def _assert_opponent_rating_rises(fixture, tmp_path):
     """Assert that completing task 1 raises task 2's rating."""
     csv_path = _copy_fixture(fixture, tmp_path)
 
-    before = _task_field(csv_path, 2, "rating")
-    _complete(csv_path, 1)
-    after = _task_field(csv_path, 2, "rating")
+    before, after = _field_before_and_after_completion(csv_path, 1, 2, "rating")
 
     assert after > before
 
@@ -346,9 +352,7 @@ def test_task_done_keeps_not_due_peer_rating(tmp_path):
     """Verify completing a due task leaves a not-due peer's rating unchanged."""
     csv_path = _copy_fixture("tests/data/test_due_and_not_due.csv", tmp_path)
 
-    before = _task_field(csv_path, 2, "rating")
-    _complete(csv_path, 1)
-    after = _task_field(csv_path, 2, "rating")
+    before, after = _field_before_and_after_completion(csv_path, 1, 2, "rating")
 
     assert after == before
 
@@ -388,9 +392,7 @@ def test_task_done_lowers_opponent_rating_deviation(tmp_path):
     """Verify a completion lowers the opponent deviation."""
     csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
-    before = _task_field(csv_path, 2, "rating_deviation")
-    _complete(csv_path, 1)
-    after = _task_field(csv_path, 2, "rating_deviation")
+    before, after = _field_before_and_after_completion(csv_path, 1, 2, "rating_deviation")
 
     assert after < before
 
