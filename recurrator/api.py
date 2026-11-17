@@ -102,7 +102,9 @@ def get_all_tasks(csv: str = Query(None)):
 
 @api.get("/task/due/{reference_date}")
 def get_due_task_ids(reference_date: date, csv: str = Query(None)):
-    return []
+    csv_path = _resolve_csv_path(csv)
+    tasks = io.import_tasks_from_csv(csv_path)
+    return [task.id for task in tasks]
 
 
 @api.get("/task/{task_id}")
