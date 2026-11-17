@@ -25,15 +25,15 @@ def compute_intervals(dates: list[date | None]) -> list[int]:
     return [(b - a).days for a, b in zip(valid_dates, valid_dates[1:])]
 
 
-def compute_latest_date(last_completion_date: date, skip_date: date | None) -> date:
+def compute_latest_date(latest_done_date: date, skip_date: date | None) -> date:
     """Return the latest (max) of the two dates.
 
-    last_completion_date is required (never None from CSV parsing).
+    latest_done_date is required (never None from CSV parsing).
     skip_date may be None if the task was never skipped.
     """
     if skip_date is None:
-        return last_completion_date
-    return max(last_completion_date, skip_date)
+        return latest_done_date
+    return max(latest_done_date, skip_date)
 
 
 def compute_recurrence_days(intervals: Sequence[int | None]) -> int:
@@ -102,11 +102,11 @@ def compute_coins(recurrence_days: int, is_starred: bool) -> int:
     return recurrence_days * 2 if is_starred else recurrence_days
 
 
-def is_done_allowed(last_completion_date: date | None, reference_date: date) -> bool:
+def is_done_allowed(latest_done_date: date | None, reference_date: date) -> bool:
     """Return whether a task can be marked as done, rejecting same-day and consecutive-day completions."""
-    if last_completion_date is None:
+    if latest_done_date is None:
         return True
-    return (reference_date - last_completion_date).days >= MIN_DAYS_GAP
+    return (reference_date - latest_done_date).days >= MIN_DAYS_GAP
 
 
 def compute_available_wip_slots(wip_limit: int, completed_today: int) -> int:

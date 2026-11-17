@@ -54,11 +54,11 @@ def _compute_dates(row: dict) -> Dates:
         Dates object with all four computed date attributes.
     """
     dates = _parse_row_dates(row)
-    last_completion_date = dates[N_DATES - 1]
-    assert last_completion_date is not None
+    latest_done_date = dates[N_DATES - 1]
+    assert latest_done_date is not None
 
     skip_date = _parse_date(row["skip_date"])
-    latest_date = compute_latest_date(last_completion_date, skip_date)
+    latest_date = compute_latest_date(latest_done_date, skip_date)
 
     intervals = compute_intervals(dates)
     recurrence_days = compute_recurrence_days(intervals)
@@ -66,7 +66,7 @@ def _compute_dates(row: dict) -> Dates:
     due_date = compute_due_date(latest_date, recurrence_days)
 
     return Dates(
-        latest_done_date=last_completion_date,
+        latest_done_date=latest_done_date,
         latest_date=latest_date,
         recurrence_days=recurrence_days,
         due_date=due_date,
