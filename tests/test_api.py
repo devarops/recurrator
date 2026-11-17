@@ -119,13 +119,6 @@ def test_due_task_ids_malformed_date_returns_422():
     assert response.status_code == 422
 
 
-def test_due_task_ids_include_a_due_task():
-    """Verify a dated due read includes a task due by that date."""
-    response = _read_due_task_ids(THREE_TASKS_CSV, "2026-01-01")
-
-    assert 5 in response.json()
-
-
 def test_due_task_ids_list_only_tasks_due_by_the_date():
     """Verify a dated due read lists only the tasks due by that date."""
     response = _read_due_task_ids(THREE_TASKS_CSV, "2026-01-01")
