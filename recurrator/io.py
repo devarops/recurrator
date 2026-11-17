@@ -34,6 +34,14 @@ def _format_date(d: date | None) -> str:
     return d.isoformat() if d is not None else "NA"
 
 
+def _read_csv_rows(csv_path: str) -> tuple[list[dict], Sequence[str] | None]:
+    """Read the task file as rows plus the header that names their columns."""
+    with open(csv_path, newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        rows = list(reader)
+        return rows, reader.fieldnames
+
+
 def _parse_row_dates(row: dict) -> list[date | None]:
     """Extract and parse the four date fields from a CSV row."""
     return [_parse_date(row[column]) for column in DATE_COLUMNS]
@@ -93,9 +101,8 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
     Returns:
         List of Task objects with attributes from CSV rows.
     """
-    with open(csv_path, newline="") as csvfile:
-        reader = csv.DictReader(csvfile)
-        return [_row_to_task(row) for row in reader]
+    rows, _ = _read_csv_rows(csv_path)
+    return [_row_to_task(row) for row in rows]
 
 
 def _is_task_row(row: dict, task_id: int) -> bool:
@@ -124,8 +131,8 @@ def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
     Raises:
         ValueError: If task_id is not found in the CSV.
     """
-    with open(csv_path, newline="") as f:
-        return _parse_row_dates(_find_task_row(csv.DictReader(f), task_id, csv_path))
+    rows, _ = _read_csv_rows(csv_path)
+    return _parse_row_dates(_find_task_row(rows, task_id, csv_path))
 
 
 def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
@@ -142,10 +149,7 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
 
 def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_path: str) -> None:
     """Generic CSV update: read, apply the update to the matching row, write back atomically."""
-    with open(csv_path, newline="") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-        fieldnames = reader.fieldnames
+    rows, fieldnames = _read_csv_rows(csv_path)
     for row in rows:
         if _is_task_row(row, task_id):
             apply_update(row)
@@ -232,5 +236,5 @@ def get_task_by_id(task_id: int, csv_path: str) -> Task:
     Raises:
         ValueError: If task not found
     """
-    with open(csv_path, newline="") as csvfile:
-        return _row_to_task(_find_task_row(csv.DictReader(csvfile), task_id, csv_path))
+    rows, _ = _read_csv_rows(csv_path)
+    return _row_to_task(_find_task_row(rows, task_id, csv_path))
