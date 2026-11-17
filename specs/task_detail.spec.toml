@@ -30,7 +30,6 @@ description = """
 When a task is completed, the response includes the new latest_done_date, equal
 to the completion date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_detail.py::test_completion_returns_last_completion"
