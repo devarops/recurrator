@@ -20,6 +20,15 @@ def _ratings(csv_path, task_ids):
     return {task_id: _read_task(csv_path, task_id).json()["rating"] for task_id in task_ids}
 
 
+def _ratings_before_and_after_completion(csv_path, task_ids, completed_task_id):
+    """Return every task's rating before and after completing one task."""
+    before = _ratings(csv_path, task_ids)
+    response = _complete(csv_path, completed_task_id)
+    assert response.status_code == 200
+    after = _ratings(csv_path, task_ids)
+    return before, after
+
+
 def test_glicko_integer_contract(tmp_path):
     """Rating and rating deviation are integers when a task is read or completed."""
     response = _read_task(GLICKO_CONTRACT_CSV, 8)
@@ -43,12 +52,7 @@ def test_glicko_four_tasks(tmp_path):
     """The completed task loses rating, its three due peers change, and others keep theirs."""
     csv_path = _copy_fixture("tests/data/acceptance_glicko_four_tasks.csv", tmp_path)
 
-    before = _ratings(csv_path, range(1, 7))
-
-    response = _complete(csv_path, 1)
-    assert response.status_code == 200
-
-    after = _ratings(csv_path, range(1, 7))
+    before, after = _ratings_before_and_after_completion(csv_path, range(1, 7), 1)
 
     assert after[1] < before[1]
     for task_id in (2, 3, 4):
@@ -61,12 +65,7 @@ def test_glicko_early_completion(tmp_path):
     """A not-yet-due completion joins the four due tasks and all five ratings change."""
     csv_path = _copy_fixture("tests/data/acceptance_glicko_early_completion.csv", tmp_path)
 
-    before = _ratings(csv_path, range(1, 6))
-
-    response = _complete(csv_path, 5)
-    assert response.status_code == 200
-
-    after = _ratings(csv_path, range(1, 6))
+    before, after = _ratings_before_and_after_completion(csv_path, range(1, 6), 5)
 
     assert after[5] < before[5]
     for task_id in range(1, 5):
@@ -122,12 +121,7 @@ def test_glicko_context_isolation(tmp_path):
     """Completing a task in one context leaves another context's rating unchanged."""
     csv_path = _copy_fixture("tests/data/acceptance_glicko_context_isolation.csv", tmp_path)
 
-    before = _ratings(csv_path, range(1, 4))
-
-    response = _complete(csv_path, 1)
-    assert response.status_code == 200
-
-    after = _ratings(csv_path, range(1, 4))
+    before, after = _ratings_before_and_after_completion(csv_path, range(1, 4), 1)
 
     assert after[2] != before[2]
     assert after[3] == before[3]
