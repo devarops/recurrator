@@ -6,11 +6,6 @@ from datetime import date
 from conftest import CONTEXTS_CSV, THREE_TASKS_CSV, UNIVERSE_MEDIANS_EVEN_CSV
 
 
-def _date_list(d1, d2, d3, d4):
-    """Create a list of four dates, allowing None values."""
-    return [d1, d2, d3, d4]
-
-
 def _chores_task(
     task_id: int,
     description: str,
@@ -43,15 +38,15 @@ def _selected_task_id(tasks, reference_date, available_slots):
 def test_compute_intervals():
     """Verify compute_intervals returns correct day intervals."""
 
-    dates = _date_list(
+    dates = [
         date(2024, 1, 1),
         date(2024, 1, 2),
         date(2024, 1, 3),
         date(2024, 1, 4),
-    )
+    ]
     assert rc.compute_intervals(dates) == [1, 1, 1]
 
-    dates = _date_list(None, None, date(2024, 1, 2), date(2024, 1, 4))
+    dates = [None, None, date(2024, 1, 2), date(2024, 1, 4)]
     assert rc.compute_intervals(dates) == [2]
 
 
@@ -90,34 +85,14 @@ def test_compute_due_date():
 
 def test_compute_rolling_dates():
     """Verify compute_rolling_dates returns the four most recent dates."""
-    old_dates = _date_list(
-        None,
-        None,
-        date(2024, 1, 2),
-        date(2024, 1, 4),
-    )
+    old_dates = [None, None, date(2024, 1, 2), date(2024, 1, 4)]
     new_date = date(2024, 1, 6)
-    expected_dates = _date_list(
-        None,
-        date(2024, 1, 2),
-        date(2024, 1, 4),
-        new_date,
-    )
+    expected_dates = [None, date(2024, 1, 2), date(2024, 1, 4), new_date]
     assert rc.compute_rolling_dates(old_dates, new_date) == expected_dates
 
-    old_dates = _date_list(
-        date(2024, 1, 4),
-        None,
-        date(2024, 1, 2),
-        None,
-    )
+    old_dates = [date(2024, 1, 4), None, date(2024, 1, 2), None]
     new_date = date(2024, 1, 1)
-    expected_dates = _date_list(
-        None,
-        new_date,
-        date(2024, 1, 2),
-        date(2024, 1, 4),
-    )
+    expected_dates = [None, new_date, date(2024, 1, 2), date(2024, 1, 4)]
     assert rc.compute_rolling_dates(old_dates, new_date) == expected_dates
 
 
