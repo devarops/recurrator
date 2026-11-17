@@ -56,11 +56,11 @@ def _task_to_dict(task: io.Task, reference_date: date | None) -> dict:
     }
 
 
-def _load_tasks_and_date(csv_path: str, reference_date: str) -> tuple[list[io.Task], date]:
+def _load_tasks_and_date(csv_path: str, reference_date_str: str) -> tuple[list[io.Task], date]:
     """Import tasks from CSV and parse the reference date."""
     tasks = io.import_tasks_from_csv(csv_path)
-    parsed_reference_date = date.fromisoformat(reference_date)
-    return tasks, parsed_reference_date
+    reference_date = date.fromisoformat(reference_date_str)
+    return tasks, reference_date
 
 
 def _error_response(message: str, status_code: int) -> JSONResponse:
@@ -100,43 +100,43 @@ def get_all_tasks(csv: str = Query(None)):
 def get_task_by_id(
     task_id: int,
     csv: str = Query(None),
-    reference_date: str = Query(None, alias="date"),
+    reference_date_str: str = Query(None, alias="date"),
 ):
     csv_path = _resolve_csv_path(csv)
     task = _find_task(task_id, csv_path)
     if task is None:
         return _task_not_found_response()
-    parsed_reference_date = date.fromisoformat(reference_date) if reference_date else date.today()
-    return _task_to_dict(task, parsed_reference_date)
+    reference_date = date.fromisoformat(reference_date_str) if reference_date_str else date.today()
+    return _task_to_dict(task, reference_date)
 
 
 @api.get("/context/{context_id}")
 def get_tasks_by_context(
     context_id: str,
     csv: str = Query(None),
-    reference_date: str = Query(None, alias="date"),
+    reference_date_str: str = Query(None, alias="date"),
 ):
     """Return prioritized task IDs for the given context."""
     csv_path = _resolve_csv_path(csv)
-    tasks, parsed_reference_date = _load_tasks_and_date(csv_path, reference_date)
+    tasks, reference_date = _load_tasks_and_date(csv_path, reference_date_str)
     context = Context(context_id)
     tasks_in_context = compute.filter_all_tasks_by_context(tasks, context)
-    completed_today = compute.count_completed_today(tasks_in_context, parsed_reference_date)
+    completed_today = compute.count_completed_today(tasks_in_context, reference_date)
     available_slots = compute.compute_available_wip_slots(WIP_LIMIT, completed_today)
     selected, deferred = compute.filter_n_tasks_by_context(
-        tasks, context, parsed_reference_date, available_slots
+        tasks, context, reference_date, available_slots
     )
     for task in deferred:
-        io.update_task_as_skipped(task.id, parsed_reference_date, csv_path)
+        io.update_task_as_skipped(task.id, reference_date, csv_path)
     return [task.id for task in selected]
 
 
 @api.get("/context/")
-def get_due_contexts(csv: str = Query(None), reference_date: str = Query(None, alias="date")):
+def get_due_contexts(csv: str = Query(None), reference_date_str: str = Query(None, alias="date")):
     """Return unique contexts from tasks due on or before the given date."""
     csv_path = _resolve_csv_path(csv)
-    tasks, parsed_reference_date = _load_tasks_and_date(csv_path, reference_date)
-    due_contexts = compute.filter_due_contexts(tasks, parsed_reference_date)
+    tasks, reference_date = _load_tasks_and_date(csv_path, reference_date_str)
+    due_contexts = compute.filter_due_contexts(tasks, reference_date)
     return [context.value for context in due_contexts]
 
 
