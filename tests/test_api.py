@@ -12,6 +12,7 @@ from conftest import (
     _read_task_on,
     _complete,
     _read_context_task_ids,
+    _read_due_task_ids,
     _read_due_contexts,
     _read_task_ids,
     _patch_description,
@@ -109,6 +110,13 @@ def test_get_multiple_task_ids():
     response = _read_task_ids(THREE_TASKS_CSV)
 
     assert response.json() == [2, 3, 5]
+
+
+def test_due_task_ids_malformed_date_returns_422():
+    """Verify a malformed due date is refused as invalid input."""
+    response = _read_due_task_ids(THREE_TASKS_CSV, "not-a-date")
+
+    assert response.status_code == 422
 
 
 def test_get_task_by_id_default_csv():
