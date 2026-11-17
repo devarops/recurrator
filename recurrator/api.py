@@ -67,7 +67,7 @@ def _task_to_dict(task: io.Task, reference_date: date) -> dict:
 
 def _load_tasks_and_date(csv_path: str, reference_date_str: str) -> tuple[list[io.Task], date]:
     """Import tasks from CSV and parse the reference date."""
-    tasks = io.import_tasks_from_csv(csv_path)
+    tasks = _load_tasks(csv_path)
     reference_date = date.fromisoformat(reference_date_str)
     return tasks, reference_date
 
@@ -179,7 +179,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
 
     io.update_task_as_done(task_id, today, csv_path)
 
-    tasks = io.import_tasks_from_csv(csv_path)
+    tasks = _load_tasks(csv_path)
     opponents = compute.select_opponents(tasks, current_task, today)
     updates = compute.compute_match_updates(current_task, opponents, today)
     for updated_id, (rating, rating_deviation) in updates.items():
