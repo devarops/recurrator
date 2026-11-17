@@ -71,6 +71,13 @@ def _field_before_and_after_completion(csv_path, completed_task_id, observed_tas
     return before, after
 
 
+def _completed_field_before_and_after(csv_path, task_id, field_name):
+    """Return the completed task's field before the completion and in its response."""
+    before = _task_field(csv_path, task_id, field_name)
+    response = _complete(csv_path, task_id)
+    return before, response.json()[field_name]
+
+
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
     undated = _read_task(fixture, task_id)
@@ -331,10 +338,9 @@ def test_task_done_decreases_completed_rating(tmp_path):
     """Verify completing one of two tasks lowers its rating."""
     csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
-    before = _task_field(csv_path, 1, "rating")
-    response = _complete(csv_path, 1)
+    before, after = _completed_field_before_and_after(csv_path, 1, "rating")
 
-    assert response.json()["rating"] < before
+    assert after < before
 
 
 def test_task_done_increases_opponent_rating(tmp_path):
@@ -360,10 +366,9 @@ def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     """Verify the completed rating change exceeds the one-point placeholder."""
     csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
-    before = _task_field(csv_path, 1, "rating")
-    response = _complete(csv_path, 1)
+    before, after = _completed_field_before_and_after(csv_path, 1, "rating")
 
-    assert before - response.json()["rating"] > 1
+    assert before - after > 1
 
 
 def test_task_done_preserves_total_rating(tmp_path):
@@ -381,10 +386,9 @@ def test_task_done_lowers_completed_rating_deviation(tmp_path):
     """Verify a completion lowers the completed task deviation."""
     csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
-    before = _task_field(csv_path, 1, "rating_deviation")
-    response = _complete(csv_path, 1)
+    before, after = _completed_field_before_and_after(csv_path, 1, "rating_deviation")
 
-    assert response.json()["rating_deviation"] < before
+    assert after < before
 
 
 def test_task_done_lowers_opponent_rating_deviation(tmp_path):
@@ -400,10 +404,9 @@ def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
     """Verify the completed deviation drop exceeds the placeholder."""
     csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
-    before = _task_field(csv_path, 1, "rating_deviation")
-    response = _complete(csv_path, 1)
+    before, after = _completed_field_before_and_after(csv_path, 1, "rating_deviation")
 
-    assert before - response.json()["rating_deviation"] > 1
+    assert before - after > 1
 
 
 def test_task_done_sets_completed_rating_to_simultaneous_value(tmp_path):
