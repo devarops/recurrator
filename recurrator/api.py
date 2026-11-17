@@ -23,6 +23,11 @@ def _resolve_csv_path(csv: str | None = None) -> str:
     return csv or DEFAULT_TASKS_CSV_PATH
 
 
+def _load_tasks(csv: str | None) -> list[io.Task]:
+    """Import every stored task from the resolved task file."""
+    return io.import_tasks_from_csv(_resolve_csv_path(csv))
+
+
 def _anchored_rating_fields(task: io.Task) -> dict:
     """Return the Glicko fields with the stored deviation."""
     return {
@@ -95,16 +100,12 @@ def _find_task(task_id: int, csv_path: str) -> io.Task | None:
 
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
-    csv_path = _resolve_csv_path(csv)
-    tasks = io.import_tasks_from_csv(csv_path)
-    return [task.id for task in tasks]
+    return [task.id for task in _load_tasks(csv)]
 
 
 @api.get("/task/due/{reference_date}")
 def get_due_task_ids(reference_date: date, csv: str = Query(None)):
-    csv_path = _resolve_csv_path(csv)
-    tasks = io.import_tasks_from_csv(csv_path)
-    return [task.id for task in tasks]
+    return [task.id for task in _load_tasks(csv)]
 
 
 @api.get("/task/{task_id}")
