@@ -51,7 +51,8 @@ def compute_due_date(latest_date: date, recurrence_days: int) -> date:
 
 def compute_rolling_dates(dates: list[date | None], new_date: date) -> list[date | None]:
     """Merge new_date into a rolling window of the most recent stored dates."""
-    all_dates = sorted([d for d in dates if d is not None] + [new_date])[-N_DATES:]
+    stored_dates = [stored_date for stored_date in dates if stored_date is not None]
+    all_dates = sorted(stored_dates + [new_date])[-N_DATES:]
     return [None] * (N_DATES - len(all_dates)) + all_dates
 
 
