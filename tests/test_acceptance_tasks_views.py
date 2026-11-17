@@ -1,4 +1,4 @@
-from conftest import _read_task_ids, client
+from conftest import _read_task_ids, _read_task_ids_on
 
 
 def test_all_tasks_are_listed():
@@ -15,7 +15,7 @@ def test_date_query_parameter_is_ignored():
     csv_path = "tests/data/acceptance_tasks_views_all_tasks.csv"
 
     undated = _read_task_ids(csv_path)
-    dated = client.get(f"/api/task/?csv={csv_path}&date=2026-01-01")
+    dated = _read_task_ids_on(csv_path, "2026-01-01")
 
     assert undated.status_code == 200
 

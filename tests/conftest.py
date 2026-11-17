@@ -79,6 +79,11 @@ def _read_task_ids(csv_path):
     return client.get(f"/api/task/?csv={csv_path}")
 
 
+def _read_task_ids_on(csv_path, reference_date):
+    """Read every task id through the API at a reference date."""
+    return client.get(f"/api/task/?csv={csv_path}&date={reference_date}")
+
+
 def _read_due_contexts(csv_path, reference_date):
     """Read the contexts with a due task at a reference date."""
     return client.get(f"/api/context/?csv={csv_path}&date={reference_date}")
