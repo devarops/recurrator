@@ -21,8 +21,8 @@ from .models import (
 
 def compute_intervals(dates: list[date | None]) -> list[int]:
     """Compute intervals in days between consecutive non-None dates."""
-    valid_dates = [d for d in dates if d is not None]
-    return [(b - a).days for a, b in zip(valid_dates, valid_dates[1:])]
+    valid_dates = [date_value for date_value in dates if date_value is not None]
+    return [(later - earlier).days for earlier, later in zip(valid_dates, valid_dates[1:])]
 
 
 def compute_latest_date(latest_done_date: date, skip_date: date | None) -> date:
@@ -38,7 +38,7 @@ def compute_latest_date(latest_done_date: date, skip_date: date | None) -> date:
 
 def compute_recurrence_days(intervals: Sequence[int | None]) -> int:
     """Compute recurrence days as the median of non-None intervals."""
-    valid_intervals = [i for i in intervals if i is not None]
+    valid_intervals = [interval for interval in intervals if interval is not None]
     if not valid_intervals:
         return DEFAULT_RECURRENCE_DAYS
     return round(median(valid_intervals))
@@ -148,8 +148,8 @@ def filter_n_tasks_by_context(
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
     if len(due_tasks) <= available_slots:
         return due_tasks, []
-    starred_pool = [t for t in due_tasks if t.starred]
-    non_starred_pool = [t for t in due_tasks if not t.starred]
+    starred_pool = [task for task in due_tasks if task.starred]
+    non_starred_pool = [task for task in due_tasks if not task.starred]
     selected_tasks: list[Task] = []
     odd_cycle = True
     while len(selected_tasks) < available_slots:
