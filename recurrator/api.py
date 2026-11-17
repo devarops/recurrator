@@ -105,7 +105,8 @@ def get_all_tasks(csv: str = Query(None)):
 
 @api.get("/task/due/{reference_date}")
 def get_due_task_ids(reference_date: date, csv: str = Query(None)):
-    return [task.id for task in _load_tasks(csv)]
+    due_tasks = compute.filter_due_tasks(_load_tasks(csv), reference_date)
+    return [task.id for task in due_tasks]
 
 
 @api.get("/task/{task_id}")
