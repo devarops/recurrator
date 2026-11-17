@@ -1,9 +1,11 @@
 from conftest import _read_task_ids, _read_task_ids_on
 
+TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
+
 
 def test_all_tasks_are_listed():
     """The collection lists every ID in file order, including the future task."""
-    response = _read_task_ids("tests/data/acceptance_tasks_views_all_tasks.csv")
+    response = _read_task_ids(TASKS_VIEWS_CSV)
 
     assert response.status_code == 200
 
@@ -12,10 +14,8 @@ def test_all_tasks_are_listed():
 
 def test_date_query_parameter_is_ignored():
     """A date query does not narrow the task collection."""
-    csv_path = "tests/data/acceptance_tasks_views_all_tasks.csv"
-
-    undated = _read_task_ids(csv_path)
-    dated = _read_task_ids_on(csv_path, "2026-01-01")
+    undated = _read_task_ids(TASKS_VIEWS_CSV)
+    dated = _read_task_ids_on(TASKS_VIEWS_CSV, "2026-01-01")
 
     assert undated.status_code == 200
 
