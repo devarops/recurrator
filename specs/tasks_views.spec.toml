@@ -19,7 +19,6 @@ description = """
 When a task is due on or before the reference date, a dated due read of the task
 collection returns its ID, and no ID whose due date is later.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_due_tasks_are_listed_for_a_date"
