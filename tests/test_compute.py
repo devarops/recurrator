@@ -35,6 +35,12 @@ def _selected_task_id(tasks, reference_date, available_slots):
     return selected[0].id
 
 
+def _even_universe_opponent():
+    """Build the synthetic opponent from the even-sized universe at the glicko date."""
+    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
+    return rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
+
+
 def test_compute_intervals():
     """Verify compute_intervals returns correct day intervals."""
 
@@ -368,26 +374,20 @@ def test_compute_universe_medians_even_count():
 
 def test_build_synthetic_opponent_uses_universe_medians():
     """Verify the synthetic opponent carries the universe medians."""
-    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
-
-    opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
+    opponent = _even_universe_opponent()
 
     assert (opponent.rating, opponent.rating_deviation) == (1550, 350)
 
 
 def test_build_synthetic_opponent_anchors_at_reference_date():
     """Verify the synthetic opponent is anchored to the reference date."""
-    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
-
-    opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
+    opponent = _even_universe_opponent()
 
     assert opponent.rating_date == date(2026, 11, 8)
 
 
 def test_build_synthetic_opponent_has_no_task_id():
     """Verify the synthetic opponent has no stored task id."""
-    tasks = io.import_tasks_from_csv(UNIVERSE_MEDIANS_EVEN_CSV)
-
-    opponent = rc.build_synthetic_opponent(tasks, date(2026, 11, 8))
+    opponent = _even_universe_opponent()
 
     assert opponent.id is None
