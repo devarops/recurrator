@@ -23,23 +23,27 @@ def _resolve_csv_path(csv: str | None = None) -> str:
     return csv or DEFAULT_TASKS_CSV_PATH
 
 
-def _rating_fields(task: io.Task, reference_date: date | None = None) -> dict:
-    """Return the Glicko fields shared by task responses."""
-    if reference_date is None:
-        rating_deviation = task.rating_deviation
-    else:
-        rating_deviation = round(
-            compute.compute_live_rating_deviation(
-                task.rating_deviation, task.rating_date, reference_date
-            )
-        )
+def _anchored_rating_fields(task: io.Task) -> dict:
+    """Return the Glicko fields with the stored deviation."""
     return {
         "rating": task.rating,
-        "rating_deviation": rating_deviation,
+        "rating_deviation": task.rating_deviation,
     }
 
 
-def _task_to_dict(task: io.Task, reference_date: date | None) -> dict:
+def _projected_rating_fields(task: io.Task, reference_date: date) -> dict:
+    """Return the Glicko fields with the deviation projected to reference_date."""
+    return {
+        "rating": task.rating,
+        "rating_deviation": round(
+            compute.compute_live_rating_deviation(
+                task.rating_deviation, task.rating_date, reference_date
+            )
+        ),
+    }
+
+
+def _task_to_dict(task: io.Task, reference_date: date) -> dict:
     """Convert Task object to API response dictionary."""
     return {
         "id": task.id,
@@ -52,7 +56,7 @@ def _task_to_dict(task: io.Task, reference_date: date | None) -> dict:
         "recurrence_days": task.recurrence_days,
         "due_date": task.due_date.isoformat(),
         "coins": task.coins,
-        **_rating_fields(task, reference_date),
+        **_projected_rating_fields(task, reference_date),
     }
 
 
@@ -180,7 +184,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
         "id": updated_task.id,
         "skip_count": updated_task.skip_count,
         "due_date": updated_task.due_date.isoformat(),
-        **_rating_fields(updated_task),
+        **_anchored_rating_fields(updated_task),
     }
 
 
