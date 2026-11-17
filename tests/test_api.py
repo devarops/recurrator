@@ -126,6 +126,13 @@ def test_due_task_ids_include_a_due_task():
     assert 5 in response.json()
 
 
+def test_due_task_ids_list_only_tasks_due_by_the_date():
+    """Verify a dated due read lists only the tasks due by that date."""
+    response = _read_due_task_ids(THREE_TASKS_CSV, "2026-01-01")
+
+    assert response.json() == [5]
+
+
 def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
     response = _read_task_on(SINGLE_TASK_CSV, 8, "2025-08-19")
