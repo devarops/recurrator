@@ -334,6 +334,15 @@ def test_task_done_rating_deviation(tmp_path):
     assert isinstance(response.json()["rating_deviation"], int)
 
 
+def test_task_done_reports_last_completion(tmp_path):
+    """Verify POST /task/{id}/done includes the last completion date."""
+    csv_path = _copy_fixture(GLICKO_CONTRACT_CSV, tmp_path)
+
+    response = _complete(csv_path, 8)
+
+    assert "latest_done_date" in response.json()
+
+
 def test_task_done_decreases_completed_rating(tmp_path):
     """Verify completing one of two tasks lowers its rating."""
     csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
