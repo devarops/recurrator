@@ -2,6 +2,7 @@ import csv
 
 from conftest import (
     THREE_TASKS_CSV,
+    _assert_error_response,
     _copy_fixture,
     _patch_description,
     _patch_description_body,
@@ -47,8 +48,7 @@ def test_empty_description_is_rejected(tmp_path):
     for text in ("", "   ", "\n\t "):
         response = _patch_description(csv_path, 2, text)
 
-        assert response.status_code == 400
-        assert "error" in response.json()
+        _assert_error_response(response, 400)
 
     assert _read_task(csv_path, 2).json()["description"] == before
 
@@ -59,8 +59,7 @@ def test_description_unknown_task_returns_404(tmp_path):
 
     response = _patch_description(csv_path, 999, "x")
 
-    assert response.status_code == 404
-    assert "error" in response.json()
+    _assert_error_response(response, 404)
 
 
 def test_description_whitespace_is_preserved(tmp_path):
@@ -86,8 +85,7 @@ def test_unknown_task_takes_precedence_over_an_empty_description(tmp_path):
     for text in ("", "   ", "\n\t "):
         response = _patch_description(csv_path, 999, text)
 
-        assert response.status_code == 404
-        assert "error" in response.json()
+        _assert_error_response(response, 404)
 
 
 def test_malformed_description_body_is_rejected(tmp_path):
@@ -98,7 +96,6 @@ def test_malformed_description_body_is_rejected(tmp_path):
     for payload in ({}, {"description": 123}, {"description": None}):
         response = _patch_description_body(csv_path, 2, payload)
 
-        assert response.status_code == 422
-        assert "error" in response.json()
+        _assert_error_response(response, 422)
 
     assert _read_task(csv_path, 2).json()["description"] == previous

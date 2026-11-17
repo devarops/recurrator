@@ -4,6 +4,7 @@ import recurrator.io as io
 from conftest import (
     _copy_fixture,
     _get_file_checksum,
+    _assert_error_response,
     _assert_file_unchanged,
     _read_task,
     _read_task_on,
@@ -224,8 +225,7 @@ def test_task_done_idempotency():
         assert first_response.status_code == 200
 
         second_response = _complete(csv_path, task_id)
-        assert second_response.status_code == 409
-        assert "error" in second_response.json()
+        _assert_error_response(second_response, 409)
     finally:
         # Undo changes to CSV file for other tests
         _restore_completion_fields(task_id, original_skip_count, TASK_2_ORIGINAL_DATES, csv_path)

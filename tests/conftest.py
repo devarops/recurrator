@@ -103,6 +103,12 @@ def _assert_file_unchanged(path: str, original_checksum: str) -> None:
     assert final_checksum == original_checksum, "CSV was modified after undo"
 
 
+def _assert_error_response(response, status_code: int) -> None:
+    """Assert a refused request carries the status and the shared error envelope."""
+    assert response.status_code == status_code
+    assert "error" in response.json()
+
+
 def _restore_completion_fields(task_id: int, skip_count: int, dates: list, csv_path: str) -> None:
     """Restore the fields a completion changes on the completed task."""
     io.update_task_skip_count(task_id, skip_count, csv_path)
