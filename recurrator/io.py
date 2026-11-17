@@ -169,58 +169,66 @@ def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_
             os.unlink(temporary_path)
 
 
+def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
+    """Set several CSV fields of the matching task in a single write."""
+
+    def apply_update(row: dict) -> None:
+        row.update(values)
+
+    _update_task_in_csv(task_id, apply_update, csv_path)
+
+
+def _format_row_dates(dates: list[date | None]) -> dict[str, str]:
+    """Pair each date column with its formatted value."""
+    return {column: _format_date(dates[index]) for index, column in enumerate(DATE_COLUMNS)}
+
+
 def update_task_dates(task_id: int, dates: list[date | None], csv_path: str) -> None:
-    def apply_update(row: dict) -> None:
-        for index, column in enumerate(DATE_COLUMNS):
-            row[column] = _format_date(dates[index])
-
-    _update_task_in_csv(task_id, apply_update, csv_path)
-
-
-def _set_csv_field(task_id: int, field_name: str, value: str, csv_path: str) -> None:
-    """Set a single CSV field value for the matching task ID."""
-
-    def apply_update(row: dict) -> None:
-        row[field_name] = value
-
-    _update_task_in_csv(task_id, apply_update, csv_path)
+    _set_csv_fields(task_id, _format_row_dates(dates), csv_path)
 
 
 def update_task_description(task_id: int, description: str, csv_path: str) -> None:
-    _set_csv_field(task_id, "description", description, csv_path)
+    _set_csv_fields(task_id, {"description": description}, csv_path)
 
 
 def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
-    _set_csv_field(task_id, "skip_count", str(skip_count), csv_path)
+    _set_csv_fields(task_id, {"skip_count": str(skip_count)}, csv_path)
 
 
 def update_task_skip_date(task_id: int, skip_date: date | None, csv_path: str) -> None:
-    _set_csv_field(task_id, "skip_date", _format_date(skip_date), csv_path)
+    _set_csv_fields(task_id, {"skip_date": _format_date(skip_date)}, csv_path)
 
 
 def update_task_rating(task_id: int, rating: int, csv_path: str) -> None:
-    _set_csv_field(task_id, "rating", str(rating), csv_path)
+    _set_csv_fields(task_id, {"rating": str(rating)}, csv_path)
 
 
 def update_task_rating_deviation(task_id: int, rating_deviation: int, csv_path: str) -> None:
-    _set_csv_field(task_id, "rating_deviation", str(rating_deviation), csv_path)
+    _set_csv_fields(task_id, {"rating_deviation": str(rating_deviation)}, csv_path)
 
 
 def update_task_rating_date(task_id: int, rating_date: date, csv_path: str) -> None:
-    _set_csv_field(task_id, "rating_date", _format_date(rating_date), csv_path)
+    _set_csv_fields(task_id, {"rating_date": _format_date(rating_date)}, csv_path)
 
 
 def update_task_as_skipped(task_id: int, skip_date: date, csv_path: str) -> None:
     current_task = get_task_by_id(task_id, csv_path)
-    update_task_skip_count(task_id, current_task.skip_count + 1, csv_path)
-    update_task_skip_date(task_id, skip_date, csv_path)
+    _set_csv_fields(
+        task_id,
+        {
+            "skip_count": str(current_task.skip_count + 1),
+            "skip_date": _format_date(skip_date),
+        },
+        csv_path,
+    )
 
 
 def update_task_as_done(task_id: int, completion_date: date, csv_path: str) -> None:
     current_dates = import_dates_from_csv(task_id, csv_path)
     rotated_dates = compute_rolling_dates(current_dates, completion_date)
-    update_task_dates(task_id, rotated_dates, csv_path)
-    update_task_skip_count(task_id, SKIP_COUNT_RESET, csv_path)
+    updated_fields = _format_row_dates(rotated_dates)
+    updated_fields["skip_count"] = str(SKIP_COUNT_RESET)
+    _set_csv_fields(task_id, updated_fields, csv_path)
 
 
 def get_task_by_id(task_id: int, csv_path: str) -> Task:
