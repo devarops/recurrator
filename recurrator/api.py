@@ -28,6 +28,11 @@ def _load_tasks(csv: str | None) -> list[io.Task]:
     return io.import_tasks_from_csv(_resolve_csv_path(csv))
 
 
+def _task_ids(tasks: list[io.Task]) -> list[int]:
+    """Return every task's id, preserving the given order."""
+    return [task.id for task in tasks]
+
+
 def _anchored_rating_fields(task: io.Task) -> dict:
     """Return the Glicko fields with the stored deviation."""
     return {
@@ -100,13 +105,13 @@ def _find_task(task_id: int, csv_path: str) -> io.Task | None:
 
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
-    return [task.id for task in _load_tasks(csv)]
+    return _task_ids(_load_tasks(csv))
 
 
 @api.get("/task/due/{reference_date}")
 def get_due_task_ids(reference_date: date, csv: str = Query(None)):
     due_tasks = compute.filter_due_tasks(_load_tasks(csv), reference_date)
-    return [task.id for task in due_tasks]
+    return _task_ids(due_tasks)
 
 
 @api.get("/task/{task_id}")
@@ -141,7 +146,7 @@ def get_tasks_by_context(
     )
     for task in deferred:
         io.update_task_as_skipped(task.id, reference_date, csv_path)
-    return [task.id for task in selected]
+    return _task_ids(selected)
 
 
 @api.get("/context/")
