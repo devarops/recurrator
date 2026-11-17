@@ -1,5 +1,7 @@
 from datetime import date
 
+import pytest
+
 import recurrator.io as io
 from conftest import (
     _copy_fixture,
@@ -246,54 +248,41 @@ def test_get_due_contexts():
     assert response.json() == ["casa", "chores", "laptop"]
 
 
-def test_get_tasks_by_context():
-    """Verify GET /context/{context_id} returns prioritized task IDs."""
-
+@pytest.fixture
+def deferred_context_read():
+    """Read the eight-task chores context, restoring the fields it defers."""
     csv_path = EIGHT_TASKS_CSV
-    reference_date = "2026-05-02"
-    context = "chores"
-
+    original_deferred_tasks = _stored_tasks(csv_path, [7, 8])
     original_checksum = _get_file_checksum(csv_path)
 
-    deferred_task_ids = [7, 8]
-    original_deferred_tasks = _stored_tasks(csv_path, deferred_task_ids)
+    response = _read_context_task_ids(csv_path, "chores", "2026-05-02")
 
-    response = _read_context_task_ids(csv_path, context, reference_date)
+    yield response, original_deferred_tasks
+
+    _restore_skip_fields(csv_path, original_deferred_tasks)
+    _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_get_tasks_by_context(deferred_context_read):
+    """Verify GET /context/{context_id} returns prioritized task IDs."""
+    response, _ = deferred_context_read
 
     assert response.status_code == 200
 
     assert response.json() == [1, 2, 3, 4, 5, 6]
 
-    _restore_skip_fields(csv_path, original_deferred_tasks)
 
-    _assert_file_unchanged(csv_path, original_checksum)
-
-
-def test_get_tasks_by_context_defers_remaining_tasks():
+def test_get_tasks_by_context_defers_remaining_tasks(deferred_context_read):
     """Verify deferred tasks get skip_count incremented and skip_date set."""
-
-    csv_path = EIGHT_TASKS_CSV
-    reference_date = "2026-05-02"
-    context = "chores"
-
-    original_checksum = _get_file_checksum(csv_path)
-
-    deferred_task_ids = [7, 8]
-    original_deferred_tasks = _stored_tasks(csv_path, deferred_task_ids)
-
-    response = _read_context_task_ids(csv_path, context, reference_date)
+    response, original_deferred_tasks = deferred_context_read
 
     assert response.status_code == 200
 
     deferred_task_id = 7
     original_skip_count = original_deferred_tasks[deferred_task_id].skip_count
-    updated_task = io.get_task_by_id(deferred_task_id, csv_path)
+    updated_task = io.get_task_by_id(deferred_task_id, EIGHT_TASKS_CSV)
     assert updated_task.skip_count == original_skip_count + 1
     assert updated_task.latest_date == date(2026, 5, 2)
-
-    _restore_skip_fields(csv_path, original_deferred_tasks)
-
-    _assert_file_unchanged(csv_path, original_checksum)
 
 
 def test_get_task_by_id_rating():
