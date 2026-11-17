@@ -8,9 +8,8 @@ name = "tasks_views"
 [[criteria]]
 description = """
 When the task file holds several tasks, a read of the task collection returns
-every task ID in file order, including tasks that are not yet due.
+every task ID in file order, including a task that is not yet due.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_all_tasks_are_listed"
