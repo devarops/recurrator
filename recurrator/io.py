@@ -29,9 +29,9 @@ def _parse_date(date_str: str) -> date | None:
     return date.fromisoformat(date_str) if date_str != "NA" else None
 
 
-def _format_date(d: date | None) -> str:
+def _format_date(date_value: date | None) -> str:
     """Format a date to ISO 8601 string, or 'NA' for None."""
-    return d.isoformat() if d is not None else "NA"
+    return date_value.isoformat() if date_value is not None else "NA"
 
 
 def _read_csv_rows(csv_path: str) -> tuple[list[dict], Sequence[str] | None]:
@@ -157,12 +157,12 @@ def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_
 
     temporary_path = f"{csv_path}.tmp"
     try:
-        with open(temporary_path, "w", newline="") as f:
-            f.write(",".join(fieldnames) + "\n")
+        with open(temporary_path, "w", newline="") as temporary_file:
+            temporary_file.write(",".join(fieldnames) + "\n")
             for row in rows:
-                f.write(_format_csv_line(fieldnames, row) + "\n")
-            f.flush()
-            os.fsync(f.fileno())
+                temporary_file.write(_format_csv_line(fieldnames, row) + "\n")
+            temporary_file.flush()
+            os.fsync(temporary_file.fileno())
         os.replace(temporary_path, csv_path)
     finally:
         if os.path.exists(temporary_path):
