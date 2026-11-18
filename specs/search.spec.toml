@@ -35,22 +35,69 @@ run = "pytest tests/test_acceptance_search.py::test_unrelated_query_returns_noth
 
 [[criteria]]
 description = """
-When the query differs from a description only in case or accents, the search
-returns that task.
+When the query differs from a description only in case, accents, or the amount
+of whitespace between words, the search returns that task.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_acceptance_search.py::test_case_and_accents_are_ignored"
+run = "pytest tests/test_acceptance_search.py::test_case_accents_and_whitespace_are_ignored"
 
 [[criteria]]
 description = """
-When the query is missing, the search returns every task.
+When the query is missing, the search returns the first 20 tasks in file order.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_acceptance_search.py::test_missing_query_returns_every_task"
+run = "pytest tests/test_acceptance_search.py::test_missing_query_returns_first_page"
+
+[[criteria]]
+description = """
+When the query is missing and page is 2, the search returns the next 20 tasks.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_second_page_continues_the_list"
+
+[[criteria]]
+description = """
+When the query is missing and a limit is given, each page holds that many tasks.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_limit_sets_the_page_size"
+
+[[criteria]]
+description = """
+When the query is missing and the page lies past the last one, the search
+returns an empty list.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_page_past_the_end_is_empty"
+
+[[criteria]]
+description = """
+When limit or page is not an integer or is less than 1, the search returns 422.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_invalid_pagination_is_rejected"
+
+[[criteria]]
+description = """
+When the query is present, limit and page have no effect and every match is
+returned.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_pagination_is_ignored_with_a_query"
 
 [[criteria]]
 description = """
@@ -74,8 +121,17 @@ run = "pytest tests/test_acceptance_search.py::test_short_query_is_rejected"
 
 [[criteria]]
 description = """
-When a task matches, the response carries the full task object, including
-latest_done_date.
+When several tasks match, the search returns them by descending similarity,
+ties in file order.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_matches_are_ranked_by_similarity"
+
+[[criteria]]
+description = """
+When a task matches, the response carries the full task object.
 """
 skip = "Not implemented"
 [criteria.verify]

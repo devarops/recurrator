@@ -65,13 +65,15 @@ Returns one task with its computed schedule.
 
 ### GET /api/search/
 
-Returns the tasks whose description matches a query.
+Returns one page of tasks, or the tasks whose description matches a query.
 
 - **Query parameters**:
-  - `query` (string, optional) — text to match against each description; without it, every task is returned
-- **Returns**: `[{...}, ...]` — full task objects, with the same fields as `GET /api/task/{id}`, in an order the API does not define
-- **Errors**: 400 when `query` is present but empty, or shorter than three characters after trimming; the body contains an `error` message
-- **Notes**: A description matches when its similarity to the query is at least 80, measured with RapidFuzz's WRatio after folding case and accents. Only `description` is matched; context names are not. The query is trimmed before the length check and before matching. Read-only.
+  - `query` (string, optional) — text to match against each description
+  - `limit` (integer, optional) — page size when `query` is absent; defaults to 20
+  - `page` (integer, optional) — 1-based page number when `query` is absent; defaults to 1
+- **Returns**: `[{...}, ...]` — full task objects, with the same fields as `GET /api/task/{id}`
+- **Errors**: 400 when `query` is present but empty, or shorter than three characters after trimming, with the body `{"error": "<message>"}`; 422 when `limit` or `page` is not an integer or is less than 1
+- **Notes**: Without `query`, the response is one page of the task list in file order: up to `limit` tasks starting after `(page - 1) * limit`, and a page past the end is empty. A page holding fewer than `limit` tasks is the last one. With `query`, `limit` and `page` have no effect and every match is returned, sorted by similarity descending with ties in file order. A description matches when its similarity to the query is at least 80, measured with RapidFuzz's WRatio after folding case and accents and collapsing each run of whitespace to one space. Only `description` is matched; context names are not. The query is trimmed and its whitespace collapsed before the length check and before matching. Read-only.
 
 ### GET /api/context/
 
