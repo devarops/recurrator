@@ -16,7 +16,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 
 ## Add one extra task when at least one and fewer than 6 tasks are due
 
-`filter_one_extra_task` exists in `compute.py` as a stub returning `[]`. Implement the acceptance criteria in `specs/one_extra_task.spec.toml` and call the selector from `GET /api/context/{context_id}` after the WIP selection. Keep it complementary to `filter_n_tasks_by_context`.
+`filter_one_extra_task` exists in `compute.py` as a stub returning `[]`. Implement the acceptance criteria in `specs/one_extra_task.spec.toml` and call the selector from the dated due read, `GET /api/context/{context_id}/due/{date}`, after the WIP selection. Keep it complementary to `filter_n_tasks_by_context`.
 
 ## Coins from Glicko rating
 
