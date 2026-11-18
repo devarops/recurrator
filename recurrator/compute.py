@@ -167,7 +167,7 @@ def filter_n_tasks_by_context(
 
 
 def filter_one_extra_task(tasks: list[Task], context: Context, reference_date: date) -> list[Task]:
-    """Return one upcoming task to pad the list when fewer than 6 tasks are due."""
+    """Return one upcoming task to pad a non-empty list that is under the WIP limit."""
     return []
 
 

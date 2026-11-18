@@ -20,13 +20,13 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_extra_task_when_fewe
 
 [[criteria]]
 description = """
-When a context has no due tasks and an upcoming task with recurrence days
-greater than 30 exists, the response contains that one extra task.
+When a context has no due tasks, the response contains no tasks, even if an
+upcoming task with recurrence days greater than 30 exists.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_acceptance_one_extra_task.py::test_extra_task_when_zero_due"
+run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_when_zero_due"
 
 [[criteria]]
 description = """
@@ -51,8 +51,8 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_withou
 
 [[criteria]]
 description = """
-When the extra task is appended, it belongs to the completed context, is not
-due, and its skip_count and skip_date remain unchanged.
+When the extra task is appended, its context field equals the requested
+context, it is not due, and its skip_count and skip_date remain unchanged.
 """
 skip = "Not implemented"
 [criteria.verify]

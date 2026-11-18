@@ -4,7 +4,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 
 - Add json schema validation for config file — backlog only
 - Set min and max recurrence days — backlog only
-- Add one extra task when we have fewer than 6 tasks — [details below](#add-one-extra-task-when-we-have-fewer-than-6-tasks)
+- Add one extra task when at least one and fewer than 6 tasks are due — [details below](#add-one-extra-task-when-at-least-one-and-fewer-than-6-tasks-are-due)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Describe every response in the OpenAPI document — [details below](#describe-every-response-in-the-openapi-document)
 - Move the relative date labels from the client into compute_* and the API — backlog only
@@ -14,7 +14,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Add blockers: a task is blocked while its blocker's row exists; removal needs DELETE /api/task/{id} — backlog only
 - Add sub-tasks: completing any child completes its parent upward, never downward; skip a parent completed in the last two days — backlog only
 
-## Add one extra task when we have fewer than 6 tasks
+## Add one extra task when at least one and fewer than 6 tasks are due
 
 `filter_one_extra_task` exists in `compute.py` as a stub returning `[]`. Implement the acceptance criteria in `specs/one_extra_task.spec.toml` and call the selector from `GET /api/context/{context_id}` after the WIP selection. Keep it complementary to `filter_n_tasks_by_context`.
 
