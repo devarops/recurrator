@@ -115,7 +115,7 @@ Returns prioritized task IDs for one context, limited by available work-in-progr
 - **Path parameters**:
   - `context_id` (string) — a context named by at least one task in the task data file
   - `date` (ISO 8601 date) — reference date
-- **Returns**: `[<integer>, ...]` — selected task IDs in priority order
+- **Returns**: `[<integer>, ...]` — selected task IDs
 - **Errors**: 404 when no task names the given context
 - **Notes**: Tasks completed on `date` reduce the available capacity. Surplus non-starred tasks are deferred: their `skip_count` is incremented and `skip_date` is set to `date`, so this read endpoint also writes to the task data file. Deferred tasks are not returned.
 
@@ -209,7 +209,7 @@ Marks a task as completed on the server's current date.
   - `rating` (integer)
   - `rating_deviation` (integer)
 - **Errors**: 409 when the task was completed on the current date or the previous day; the body contains an `error` message
-- **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date, also updates the rating and deviation of the other tasks in the same context, and anchors the updated deviations to the completion date.
+- **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date, also updates the rating and deviation of the other due tasks in the same context, and anchors the updated deviations to the completion date.
 
 ## Redirects
 

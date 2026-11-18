@@ -71,8 +71,9 @@ run = "pytest tests/test_acceptance_context_views.py::test_context_tasks_are_rea
 [[criteria]]
 description = """
 When a context has more due tasks than its available work-in-progress slots, a
-dated due read returns the prioritized selection in priority order and omits the
-deferred tasks.
+dated due read returns exactly as many tasks as there are slots, all from that
+context, and omits the deferred tasks. A starred task is never deferred, and a
+task with more skips is chosen before one with fewer.
 """
 skip = "Not implemented"
 [criteria.verify]

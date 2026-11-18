@@ -4,14 +4,15 @@ name = "one_extra_task"
 
 # Every criterion is a scenario a user can observe through the HTTP API.
 # Each one stays skipped until its test in tests/test_acceptance_one_extra_task.py exists.
+# A task is upcoming when its due date falls after the reference date.
 
 [[criteria]]
 description = """
 When a context has at least one and fewer than the work-in-progress limit of
-due and overdue tasks, and an upcoming task with recurrence days greater than
-30 exists, the response appends exactly one extra task after the due tasks.
-The extra task is the nearest such task, with larger recurrence days breaking a
-due-date tie.
+due tasks, and an upcoming task above the long-recurrence threshold exists, the
+response appends exactly one extra task after the selected due tasks. The extra
+task is the upcoming task with the earliest due date, with larger recurrence
+days breaking a tie.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -21,7 +22,7 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_extra_task_when_fewe
 [[criteria]]
 description = """
 When a context has no due tasks, the response contains no tasks, even if an
-upcoming task with recurrence days greater than 30 exists.
+upcoming task above the long-recurrence threshold exists.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -30,8 +31,8 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_when_z
 
 [[criteria]]
 description = """
-When a context has at least the work-in-progress limit of due and overdue
-tasks, the response contains only the WIP-selected due tasks and no extra task.
+When a context has at least the work-in-progress limit of due tasks, the
+response contains only the WIP-selected due tasks and no extra task.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -40,9 +41,9 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_at_lim
 
 [[criteria]]
 description = """
-When a context has fewer than the work-in-progress limit of due tasks but no
-upcoming task with recurrence days greater than 30 exists, the response
-contains only the due tasks and no extra task.
+When a context has at least one and fewer than the work-in-progress limit of
+due tasks but no upcoming task above the long-recurrence threshold exists, the
+response contains only the due tasks and no extra task.
 """
 skip = "Not implemented"
 [criteria.verify]

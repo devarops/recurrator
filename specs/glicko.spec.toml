@@ -16,8 +16,8 @@ run = "pytest tests/test_acceptance_glicko.py::test_glicko_integer_contract"
 [[criteria]]
 description = """
 When four tasks are due in one context and one is completed, the completed
-task loses rating, the other three change, and every other task keeps its
-rating.
+task loses rating, the other three change, a task in the same context that is
+not yet due keeps its rating, and a task in another context keeps its too.
 """
 [criteria.verify]
 type = "command"
@@ -34,8 +34,7 @@ run = "pytest tests/test_acceptance_glicko.py::test_glicko_early_completion"
 
 [[criteria]]
 description = """
-When the context page holds a single due task, completing it changes its
-rating and no synthetic task appears in the task list.
+When a context holds a single due task, completing it changes its rating.
 """
 [criteria.verify]
 type = "command"
