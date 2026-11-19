@@ -33,3 +33,23 @@ to the completion date.
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_detail.py::test_completion_returns_last_completion"
+
+[[criteria]]
+description = """
+When a task belongs to one context, its detail reports a one-element contexts
+array holding that context ID.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_detail.py::test_detail_reports_a_single_context_array"
+
+[[criteria]]
+description = """
+When a task belongs to several contexts, its detail reports them in a sorted,
+deduplicated contexts array.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_detail.py::test_detail_reports_multiple_contexts"

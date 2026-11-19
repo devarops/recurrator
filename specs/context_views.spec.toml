@@ -7,9 +7,9 @@ name = "context_views"
 
 [[criteria]]
 description = """
-When the task file names several contexts, a read of the context collection
-returns every context that appears at least once, sorted alphabetically,
-including contexts with no due task.
+When the context data holds several contexts, a read of the context collection
+returns every context ID from the context data, sorted alphabetically, including
+a context that no task names.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -18,9 +18,19 @@ run = "pytest tests/test_acceptance_context_views.py::test_all_contexts_are_list
 
 [[criteria]]
 description = """
+When a request points contexts_csv at a different context file, the context
+collection returns that file's context IDs rather than the configured file's.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_contexts_csv_selects_the_context_file"
+
+[[criteria]]
+description = """
 When a context has at least one task due on or before the reference date, a
 dated due read of the context collection includes it, and excludes every
-context whose tasks are all later.
+context with no due task.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -49,53 +59,42 @@ run = "pytest tests/test_acceptance_context_views.py::test_due_read_without_trai
 
 [[criteria]]
 description = """
-When the context collection is read with a date query parameter, it returns the
-same contexts as a read without it, so the parameter does not narrow the list.
+When one context is read through its detail route, the response carries its
+ID, display name, description, and every scope it names, with the scopes sorted
+alphabetically and deduplicated.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_acceptance_context_views.py::test_date_query_parameter_is_ignored"
+run = "pytest tests/test_acceptance_context_views.py::test_context_detail_reports_its_fields"
 
 [[criteria]]
 description = """
-When one context is read without a due segment, the response returns every task
-ID in that context and changes neither the skip count nor the skip date of any
-task.
+When a context has no tasks, its detail route still returns the context and
+its scopes, because the context data is authoritative.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_acceptance_context_views.py::test_context_tasks_are_read_only"
+run = "pytest tests/test_acceptance_context_views.py::test_context_detail_lists_an_unused_context"
 
 [[criteria]]
 description = """
-When a context has more due tasks than its available work-in-progress slots, a
-dated due read returns exactly as many tasks as there are slots, all from that
-context, and omits the deferred tasks. A starred task is never deferred, and a
-task with more skips is chosen before one with fewer.
-"""
-skip = "Not implemented"
-[criteria.verify]
-type = "command"
-run = "pytest tests/test_acceptance_context_views.py::test_due_tasks_are_prioritized"
-
-[[criteria]]
-description = """
-When a dated due read defers the surplus, each deferred non-starred task gains
-one skip count and its skip date becomes the reference date.
-"""
-skip = "Not implemented"
-[criteria.verify]
-type = "command"
-run = "pytest tests/test_acceptance_context_views.py::test_deferred_tasks_are_skipped"
-
-[[criteria]]
-description = """
-When the context is absent from the task file, both the bare read and the dated
-due read return 404 with an error message.
+When the context is absent from the context data, the detail route returns 404
+with an error message.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_unknown_context_returns_404"
+
+[[criteria]]
+description = """
+When the detail route omits the trailing slash, the response redirects with 307
+to the detail route with the trailing slash and does not return the context
+object.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_context_views.py::test_context_detail_without_trailing_slash_redirects"

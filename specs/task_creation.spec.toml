@@ -18,7 +18,7 @@ run = "pytest tests/test_acceptance_task_creation.py::test_created_task_is_due_t
 [[criteria]]
 description = """
 When a task is created, the 201 response carries the full task object: the new
-description and context, and every field GET /api/task/{id} returns.
+description and contexts array, and every field GET /api/task/{id} returns.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -63,6 +63,26 @@ skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_creation.py::test_created_task_starts_neutral"
+
+[[criteria]]
+description = """
+When a task is created with several stored contexts, a later read reports
+exactly those contexts, sorted alphabetically and deduplicated.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_created_task_keeps_multiple_contexts"
+
+[[criteria]]
+description = """
+When contexts names a stored context that no task uses yet, the creation
+succeeds, because the context data is authoritative.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_created_task_can_use_an_unused_context"
 
 [[criteria]]
 description = """
@@ -126,13 +146,43 @@ run = "pytest tests/test_acceptance_task_creation.py::test_malformed_description
 
 [[criteria]]
 description = """
-When the context is missing or names no stored context, the request returns 422
+When contexts is missing, is not an array, or contains a non-string, the request
+returns 422 and the task data file gains no row.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_malformed_contexts_are_refused"
+
+[[criteria]]
+description = """
+When contexts is empty, the request returns 422 and the task data file gains no
+row, because every task needs at least one context.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_empty_contexts_are_refused"
+
+[[criteria]]
+description = """
+When contexts names an ID absent from the context data, the request returns 422
 and the task data file gains no row.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_creation.py::test_unknown_context_is_refused"
+
+[[criteria]]
+description = """
+When contexts repeats an ID, the request returns 422 and the task data file
+gains no row.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_creation.py::test_duplicate_contexts_are_refused"
 
 [[criteria]]
 description = """

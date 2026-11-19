@@ -7,6 +7,17 @@ name = "search"
 
 [[criteria]]
 description = """
+When the search read omits the trailing slash, the response redirects with 307
+to the search collection with the trailing slash and does not return task
+objects.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_search_without_trailing_slash_redirects"
+
+[[criteria]]
+description = """
 When the query appears in a description, the search returns that task.
 """
 skip = "Not implemented"
@@ -32,6 +43,16 @@ skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_search.py::test_unrelated_query_returns_nothing"
+
+[[criteria]]
+description = """
+When the query matches a context ID, display name, or scope but no description,
+the search returns no tasks, because only descriptions are matched.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_context_names_are_not_matched"
 
 [[criteria]]
 description = """
@@ -131,9 +152,20 @@ run = "pytest tests/test_acceptance_search.py::test_matches_are_ranked_by_simila
 
 [[criteria]]
 description = """
-When a task matches, the response carries the full task object.
+When a task matches, the response carries the full task object, including its
+contexts array.
 """
 skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_search.py::test_results_carry_full_task_objects"
+
+[[criteria]]
+description = """
+When a matching task belongs to several contexts, its search result reports
+them in a sorted, deduplicated contexts array.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_search.py::test_results_carry_contexts"

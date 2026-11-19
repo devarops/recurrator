@@ -110,3 +110,75 @@ whitespace, the write returns 404 with an error field in the body.
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_unknown_task_takes_precedence_over_an_empty_description"
+
+[[criteria]]
+description = """
+When contexts are written, the response returns the task ID and the new
+contexts, sorted alphabetically and deduplicated, and a later read reports the
+same contexts.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_contexts_are_written"
+
+[[criteria]]
+description = """
+When contexts names a stored context that no task uses, the write succeeds,
+because the context data is authoritative.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_contexts_write_accepts_an_unused_context"
+
+[[criteria]]
+description = """
+When the same contexts are written twice, both writes return 200 with the same
+confirmation subset.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_context_write_is_idempotent"
+
+[[criteria]]
+description = """
+When no task has the given ID, the contexts write returns 404 with an error
+field in the body.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_contexts_unknown_task_returns_404"
+
+[[criteria]]
+description = """
+When contexts is missing, is not an array, contains a non-string, is empty,
+repeats a context, or names no stored context, the write returns 422 with an
+error field in the body, and a later read reports the previous contexts.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_invalid_contexts_are_rejected"
+
+[[criteria]]
+description = """
+When the body omits contexts or sends a non-array, the write returns 422 even
+when no task has the given ID.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_malformed_contexts_body_takes_precedence_over_an_unknown_task"
+
+[[criteria]]
+description = """
+When no task has the given ID and the contexts list is empty, the write returns
+404 with an error field in the body.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_edits.py::test_unknown_task_takes_precedence_over_an_empty_context_list"

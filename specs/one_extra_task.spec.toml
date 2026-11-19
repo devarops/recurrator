@@ -5,14 +5,15 @@ name = "one_extra_task"
 # Every criterion is a scenario a user can observe through the HTTP API.
 # Each one stays skipped until its test in tests/test_acceptance_one_extra_task.py exists.
 # A task is upcoming when its due date falls after the reference date.
+# The extra task is selected only when a dated due read is narrowed to one context.
 
 [[criteria]]
 description = """
-When a context has at least one and fewer than the work-in-progress limit of
-due tasks, and an upcoming task above the long-recurrence threshold exists, the
-response appends exactly one extra task after the selected due tasks. The extra
-task is the upcoming task with the earliest due date, with larger recurrence
-days breaking a tie.
+When a dated due read narrowed to one context has at least one and fewer than the
+work-in-progress limit of due tasks, and an upcoming task above the
+long-recurrence threshold belongs to that context, the response contains the
+selected due tasks plus exactly one extra task. The extra task is the upcoming
+task with the earliest due date, with larger recurrence days breaking a tie.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -21,8 +22,9 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_extra_task_when_fewe
 
 [[criteria]]
 description = """
-When a context has no due tasks, the response contains no tasks, even if an
-upcoming task above the long-recurrence threshold exists.
+When a dated due read narrowed to one context has no due tasks, the response
+contains no tasks, even if an upcoming task above the long-recurrence threshold
+belongs to that context.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -31,8 +33,9 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_when_z
 
 [[criteria]]
 description = """
-When a context has at least the work-in-progress limit of due tasks, the
-response contains only the WIP-selected due tasks and no extra task.
+When a dated due read narrowed to one context has at least the work-in-progress
+limit of due tasks, the response contains only the WIP-selected due tasks and no
+extra task.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -41,9 +44,11 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_at_lim
 
 [[criteria]]
 description = """
-When a context has at least one and fewer than the work-in-progress limit of
-due tasks but no upcoming task above the long-recurrence threshold exists, the
-response contains only the due tasks and no extra task.
+When a dated due read narrowed to one context has at least one and fewer than the
+work-in-progress limit of due tasks but no upcoming task above the
+long-recurrence threshold belongs to that context, the response contains only
+the due tasks and no extra task, even if an upcoming task at or below the
+threshold exists.
 """
 skip = "Not implemented"
 [criteria.verify]
@@ -52,7 +57,18 @@ run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_withou
 
 [[criteria]]
 description = """
-When the extra task is appended, its context field equals the requested
+When a dated due read carries more than one context, no extra task is included,
+even if an upcoming task above the long-recurrence threshold belongs to the
+OR-union.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_one_extra_task.py::test_no_extra_task_for_multiple_contexts"
+
+[[criteria]]
+description = """
+When the extra task is included, its contexts array contains the requested
 context, it is not due, and its skip_count and skip_date remain unchanged.
 """
 skip = "Not implemented"

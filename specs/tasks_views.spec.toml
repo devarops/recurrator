@@ -45,9 +45,136 @@ run = "pytest tests/test_acceptance_tasks_views.py::test_due_read_without_traili
 
 [[criteria]]
 description = """
-When the task collection is read with a date query parameter, it returns the
-same IDs as a read without it, so the parameter does not narrow the list.
+When one context is requested, the task collection returns every task whose
+contexts array contains it, in file order.
 """
+skip = "Not implemented"
 [criteria.verify]
 type = "command"
-run = "pytest tests/test_acceptance_tasks_views.py::test_date_query_parameter_is_ignored"
+run = "pytest tests/test_acceptance_tasks_views.py::test_context_filter_returns_matching_tasks"
+
+[[criteria]]
+description = """
+When several contexts are requested, the task collection returns every task
+whose contexts array contains at least one of them, once each, in file order, so
+the values combine with OR.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_multiple_contexts_are_unioned"
+
+[[criteria]]
+description = """
+When the same context appears more than once, the response equals the response
+with that context once, because repeated values collapse.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_duplicate_contexts_collapse"
+
+[[criteria]]
+description = """
+When the requested context is stored in the context data but no task names it,
+the task collection returns an empty list rather than 404.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_unused_context_filter_is_empty"
+
+[[criteria]]
+description = """
+When a requested context is absent from the context data, the task collection
+returns 404 with an error message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_unknown_context_filter_returns_404"
+
+[[criteria]]
+description = """
+When a requested context value is empty, the task collection returns 422 with an
+error message.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_empty_context_filter_is_rejected"
+
+[[criteria]]
+description = """
+When a dated due read carries no context, it returns every due task in file
+order and changes no skip count or skip date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_no_context_due_read_is_read_only"
+
+[[criteria]]
+description = """
+When a dated due read repeats one context, the repeated value collapses, so the
+request applies the single-context work-in-progress rules rather than the
+multiple-context read-only rule.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_duplicate_contexts_collapse_in_due_read"
+
+[[criteria]]
+description = """
+When a dated due read carries a context absent from the context data, it returns
+404 with an error message and changes no skip count or skip date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_unknown_context_in_due_read_returns_404"
+
+[[criteria]]
+description = """
+When a dated due read carries an empty context value, it returns 422 with an
+error message and changes no skip count or skip date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_empty_context_in_due_read_is_rejected"
+
+[[criteria]]
+description = """
+When a dated due read is narrowed to one context with more due tasks than its
+available work-in-progress slots, it returns exactly as many tasks as there are
+slots, all from that context, and omits the deferred tasks. A starred task is
+never deferred, and a task with more skips is chosen before one with fewer.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_due_tasks_are_prioritized"
+
+[[criteria]]
+description = """
+When a dated due read narrowed to one context defers the surplus, each deferred
+non-starred task gains one skip count and its skip date becomes the reference
+date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_deferred_tasks_are_skipped"
+
+[[criteria]]
+description = """
+When a dated due read carries more than one context, it returns the OR-union of
+the due tasks, deduplicated and in file order, and changes no skip count or skip
+date.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_tasks_views.py::test_multi_context_due_read_is_read_only"

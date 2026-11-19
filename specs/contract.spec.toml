@@ -15,3 +15,34 @@ skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_response_properties"
+
+[[criteria]]
+description = """
+When the task detail schema is read, contexts is declared as an array whose
+items are strings.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_task_contexts"
+
+[[criteria]]
+description = """
+When the context detail schema is read, it declares id, display_name,
+description, and scopes, and scopes is an array whose items are strings.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_context_properties"
+
+[[criteria]]
+description = """
+When the context collection and its due variants are described, each declares
+an array of strings, and the task collection and its due variants declare an
+array of integers.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_collection_items"

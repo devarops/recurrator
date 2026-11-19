@@ -17,7 +17,8 @@ run = "pytest tests/test_acceptance_glicko.py::test_glicko_integer_contract"
 description = """
 When four tasks are due in one context and one is completed, the completed
 task loses rating, the other three change, a task in the same context that is
-not yet due keeps its rating, and a task in another context keeps its too.
+not yet due keeps its rating, and a task that shares no context with the
+completed task keeps its too.
 """
 [criteria.verify]
 type = "command"
@@ -51,12 +52,43 @@ run = "pytest tests/test_acceptance_glicko.py::test_glicko_simultaneous_update"
 
 [[criteria]]
 description = """
-When a task is completed in one context, tasks in another context keep their
-ratings.
+When a task is completed in one context, a task that shares no context with it
+keeps its rating.
 """
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_context_isolation"
+
+[[criteria]]
+description = """
+When a completed task belongs to two contexts, every due task that shares at
+least one of those contexts takes part in one event, and a task that shares both
+contexts participates once.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_shared_context_event"
+
+[[criteria]]
+description = """
+When a completed task belongs to two contexts and a due task shares only the
+second context, that task's rating changes.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_second_context_participates"
+
+[[criteria]]
+description = """
+When a completed task belongs to two contexts and two due tasks share no context
+with it, both keep their ratings.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_glicko.py::test_glicko_shared_context_isolation"
 
 [[criteria]]
 description = """
