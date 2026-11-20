@@ -55,9 +55,14 @@ def compute_rolling_dates(dates: list[date | None], new_date: date) -> list[date
     return [None] * (N_DATES - len(all_dates)) + all_dates
 
 
+def filter_tasks_by_any_context(tasks: list[Task], contexts: set[str]) -> list[Task]:
+    """Filter tasks that name at least one of the given context ids."""
+    return [task for task in tasks if contexts & set(task.contexts)]
+
+
 def filter_all_tasks_by_context(tasks: list[Task], context: str) -> list[Task]:
     """Filter a list of tasks by the given context id."""
-    return [task for task in tasks if context in task.contexts]
+    return filter_tasks_by_any_context(tasks, {context})
 
 
 def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
@@ -83,13 +88,9 @@ def filter_due_tasks_by_context(
 
 def filter_opponents(tasks: list[Task], completed_task: Task, reference_date: date) -> list[Task]:
     """Return other due tasks that share at least one context with the completed task."""
-    completed_contexts = set(completed_task.contexts)
     due_tasks = filter_due_tasks(tasks, reference_date)
-    return [
-        task
-        for task in due_tasks
-        if task.id != completed_task.id and completed_contexts & set(task.contexts)
-    ]
+    sharing_context = filter_tasks_by_any_context(due_tasks, set(completed_task.contexts))
+    return [task for task in sharing_context if task.id != completed_task.id]
 
 
 def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[str]:

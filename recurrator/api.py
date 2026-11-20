@@ -127,9 +127,8 @@ def get_due_task_ids(
     if len(requested_contexts) == 1:
         return _selected_task_ids(tasks, requested_contexts[0], reference_date, csv_path)
     if requested_contexts:
-        requested = set(requested_contexts)
         due_tasks = compute.filter_due_tasks(tasks, reference_date)
-        return _task_ids([task for task in due_tasks if requested & set(task.contexts)])
+        return _task_ids(compute.filter_tasks_by_any_context(due_tasks, set(requested_contexts)))
     return _task_ids(compute.filter_due_tasks(tasks, reference_date))
 
 
