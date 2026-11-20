@@ -268,6 +268,40 @@ def test_filter_n_tasks_by_context_sorts_starred_by_skip_count():
     assert _selected_task_id(tasks, reference_date, 1) == 2
 
 
+def test_filter_n_tasks_by_context_second_selection_prefers_more_skips():
+    """Verify the even cycle selects the task with more skips first."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        _chores_task(1, "Most skips", skip_count=5),
+        _chores_task(2, "Some skips", skip_count=3),
+        _chores_task(3, "No skips"),
+    ]
+    selected, _ = rc.filter_n_tasks_by_context(tasks, "chores", reference_date, 2)
+    assert [task.id for task in selected] == [1, 2]
+
+
+def test_filter_n_tasks_by_context_second_selection_prefers_longer_recurrence():
+    """Verify the even cycle selects the longer recurrence before the shorter one."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        _chores_task(1, "First due", due_date=date(2026, 6, 1)),
+        _chores_task(2, "Longer recurrence", recurrence_days=21, due_date=date(2026, 6, 6)),
+        _chores_task(3, "Shorter recurrence", recurrence_days=7, due_date=date(2026, 6, 6)),
+    ]
+    selected, _ = rc.filter_n_tasks_by_context(tasks, "chores", reference_date, 2)
+    assert [task.id for task in selected] == [1, 2]
+
+
+def test_filter_n_tasks_by_context_prefers_due_date_over_recurrence():
+    """Verify the first selection orders by due date before recurrence days."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        _chores_task(1, "Earlier due", due_date=date(2026, 6, 1)),
+        _chores_task(2, "Longer recurrence", recurrence_days=21, due_date=date(2026, 6, 6)),
+    ]
+    assert _selected_task_id(tasks, reference_date, 1) == 1
+
+
 def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
     """Verify starred tasks with equal skip_count are sorted by due_date ASC."""
     reference_date = date(2026, 6, 6)
@@ -281,6 +315,12 @@ def test_filter_n_tasks_by_context_sorts_starred_by_due_date():
 def test_compute_available_wip_slots():
     """Verify compute_available_wip_slots returns remaining capacity, clamped to zero."""
     assert rc.compute_available_wip_slots(6, 4) == 2
+
+
+def test_compute_available_wip_slots_clamps_to_zero():
+    """Verify capacity never falls below zero when completions reach or pass the limit."""
+    assert rc.compute_available_wip_slots(6, 6) == 0
+    assert rc.compute_available_wip_slots(6, 7) == 0
 
 
 def test_count_completed_today():

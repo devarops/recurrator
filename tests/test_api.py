@@ -9,6 +9,7 @@ from conftest import (
     _read_task,
     _read_task_on,
     _complete,
+    _read_context_task_ids,
     _read_due_task_ids,
     _read_due_contexts,
     _read_task_ids,
@@ -16,6 +17,7 @@ from conftest import (
     _patch_description_body,
     _restore_completion_fields,
     CONTEXT_TASKS_CSV,
+    EIGHT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
     GLICKO_DEFAULT_DATE_CSV,
     GLICKO_INACTIVITY_CSV,
@@ -252,6 +254,38 @@ def test_get_due_contexts():
     assert response.status_code == 200
 
     assert response.json() == ["casa", "chores", "laptop"]
+
+
+def test_due_read_defers_tasks_beyond_the_available_slots(tmp_path):
+    """Verify a single-context due read defers the surplus tasks."""
+    csv_path = _copy_fixture(EIGHT_TASKS_CSV, tmp_path)
+
+    response = _read_context_task_ids(csv_path, "chores", "2026-05-02")
+
+    assert response.status_code == 200
+    selected_ids = response.json()
+    assert len(selected_ids) == 6
+
+    deferred_tasks = [
+        task for task in io.import_tasks_from_csv(csv_path) if task.id not in selected_ids
+    ]
+    assert [task.id for task in deferred_tasks] == [7, 8]
+    assert all(task.skip_count == 1 for task in deferred_tasks)
+    assert all(task.latest_date == date(2026, 5, 2) for task in deferred_tasks)
+
+
+def test_due_read_reduces_the_slots_for_completions_today(tmp_path):
+    """Verify a completion today costs one slot in the same context."""
+    csv_path = _copy_fixture(EIGHT_TASKS_CSV, tmp_path)
+    reference_date = date.today()
+
+    completion = _complete(csv_path, 1)
+    assert completion.status_code == 200
+
+    response = _read_context_task_ids(csv_path, "chores", reference_date.isoformat())
+
+    assert response.status_code == 200
+    assert len(response.json()) == 5
 
 
 def test_get_task_by_id_rating():
