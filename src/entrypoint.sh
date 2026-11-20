@@ -12,6 +12,5 @@ CONFIG_DIR="${RECURRATOR_CONFIG_DIR:-/root/.config/recurrator}"
 cd "${WORKDIR}"
 
 "${WORKDIR}/src/create_config.sh" "${CONFIG_DIR}/config.json"
-"${WORKDIR}/src/create_contexts.sh" "${CONFIG_DIR}/datapackage.json"
 
 exec "$@"

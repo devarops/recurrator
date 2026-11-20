@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
 
-from ._contexts import Context
-
 SKIP_COUNT_RESET = 0
 N_DATES = 4
 GLICKO_RATING_DEFAULT = 1500
@@ -25,6 +23,16 @@ class Dates:
 
 
 @dataclass
+class Context:
+    """One context definition from the context data file."""
+
+    id: str
+    display_name: str
+    description: str
+    scopes: list[str]
+
+
+@dataclass
 class SyntheticOpponent:
     """An internal opponent built from the universe medians."""
 
@@ -41,7 +49,7 @@ class Task:
         self,
         id: int,
         description: str,
-        context: Context,
+        contexts: list[str],
         skip_count: int,
         starred: bool,
         dates: Dates,
@@ -52,7 +60,7 @@ class Task:
     ):
         self.id = id
         self.description = description
-        self.context = context
+        self.contexts = contexts
         self.skip_count = skip_count
         self.starred = starred
         self.latest_done_date = dates.latest_done_date

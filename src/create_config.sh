@@ -25,6 +25,7 @@ if [ -n "$CONFIG_SOURCE" ]; then
     ' "$CONFIG_SOURCE" >> "$OUTPUT"
 else
     cat >> "$OUTPUT" <<- 'EOF'
+DEFAULT_CONTEXTS_CSV_PATH = "/root/.config/recurrator/contexts.csv"
 DEFAULT_RECURRENCE_DAYS = 14
 DEFAULT_TASKS_CSV_PATH = "/root/.config/recurrator/tasks.csv"
 LONG_RECURRENCE_DAYS = 30

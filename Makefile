@@ -50,7 +50,6 @@ clean:
 	rm --force --recursive tests/__pycache__
 	rm --force --recursive mutants
 	rm --force coverage.xml
-	rm --force ${module}/_contexts.py
 	rm --force ${module}/_config.py
 
 coverage: setup
@@ -61,11 +60,8 @@ format:
 	black --line-length 100 ${module}
 	black --line-length 100 tests
 
-install: recurrator/_contexts.py recurrator/_config.py
+install: recurrator/_config.py
 	pip install --editable .
-
-recurrator/_contexts.py: src/create_contexts.sh
-	src/create_contexts.sh
 
 recurrator/_config.py: src/create_config.sh
 	src/create_config.sh

@@ -7,7 +7,6 @@ import glicko2  # type: ignore[import-untyped]
 
 from ._config import DEFAULT_RECURRENCE_DAYS, MIN_DAYS_GAP
 from .models import (
-    Context,
     GLICKO_RATING_DEVIATION_MAX,
     GLICKO_RATING_DEVIATION_MIN,
     GLICKO_RATING_PERIODS_PER_DAY,
@@ -56,9 +55,9 @@ def compute_rolling_dates(dates: list[date | None], new_date: date) -> list[date
     return [None] * (N_DATES - len(all_dates)) + all_dates
 
 
-def filter_all_tasks_by_context(tasks: list[Task], context: Context) -> list[Task]:
-    """Filter a list of tasks by the given context."""
-    return [task for task in tasks if task.context == context]
+def filter_all_tasks_by_context(tasks: list[Task], context: str) -> list[Task]:
+    """Filter a list of tasks by the given context id."""
+    return [task for task in tasks if context in task.contexts]
 
 
 def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
@@ -71,7 +70,7 @@ def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
 
 
 def filter_due_tasks_by_context(
-    tasks: list[Task], context: Context, reference_date: date
+    tasks: list[Task], context: str, reference_date: date
 ) -> list[Task]:
     """Filter tasks by context and due/overdue status.
 
@@ -83,19 +82,22 @@ def filter_due_tasks_by_context(
 
 
 def filter_opponents(tasks: list[Task], completed_task: Task, reference_date: date) -> list[Task]:
-    """Return other due or overdue tasks in the completed task's context."""
-    due_tasks = filter_due_tasks_by_context(tasks, completed_task.context, reference_date)
-    return [task for task in due_tasks if task.id != completed_task.id]
-
-
-def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[Context]:
-    """Return a list of contexts that have at least one due task.
-
-    Contexts appear sorted alphabetically by their value.
-    """
+    """Return other due tasks that share at least one context with the completed task."""
+    completed_contexts = set(completed_task.contexts)
     due_tasks = filter_due_tasks(tasks, reference_date)
-    unique_due_contexts = {task.context for task in due_tasks}
-    return sorted(unique_due_contexts, key=lambda context: context.value)
+    return [
+        task
+        for task in due_tasks
+        if task.id != completed_task.id and completed_contexts & set(task.contexts)
+    ]
+
+
+def filter_due_contexts(tasks: list[Task], reference_date: date) -> list[str]:
+    """Return the context ids that have at least one due task, sorted."""
+    due_contexts = {
+        context for task in filter_due_tasks(tasks, reference_date) for context in task.contexts
+    }
+    return sorted(due_contexts)
 
 
 def compute_coins(recurrence_days: int, is_starred: bool) -> int:
@@ -142,7 +144,7 @@ def _take_top_task(pool: list[Task], odd_cycle: bool) -> Task | None:
 
 
 def filter_n_tasks_by_context(
-    tasks: list[Task], context: Context, reference_date: date, available_slots: int
+    tasks: list[Task], context: str, reference_date: date, available_slots: int
 ) -> tuple[list[Task], list[Task]]:
     """Prioritize tasks within a context by alternating-sort selection."""
     due_tasks = filter_due_tasks_by_context(tasks, context, reference_date)
@@ -166,7 +168,7 @@ def filter_n_tasks_by_context(
     return selected_tasks, deferred_tasks
 
 
-def filter_one_extra_task(tasks: list[Task], context: Context, reference_date: date) -> list[Task]:
+def filter_one_extra_task(tasks: list[Task], context: str, reference_date: date) -> list[Task]:
     """Return one upcoming task to pad a non-empty list that is under the WIP limit."""
     return []
 

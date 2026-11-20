@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 from collections.abc import Callable, Iterable, Sequence
 from datetime import date
@@ -12,7 +13,6 @@ from .compute import (
     compute_rolling_dates,
 )
 from .models import (
-    Context,
     Dates,
     Task,
     GLICKO_RATING_DEFAULT,
@@ -73,6 +73,11 @@ def _compute_dates(row: dict) -> Dates:
     )
 
 
+def _parse_contexts(contexts_cell: str) -> list[str]:
+    """Parse a task's JSON context array into sorted, unique ids."""
+    return sorted(dict.fromkeys(json.loads(contexts_cell)))
+
+
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
     dates = _compute_dates(row)
@@ -81,7 +86,7 @@ def _row_to_task(row: dict) -> Task:
     return Task(
         id=int(row["id"]),
         description=row["description"],
-        context=Context(row["context"]),
+        contexts=_parse_contexts(row["contexts"]),
         skip_count=int(row["skip_count"]),
         starred=starred,
         dates=dates,
@@ -136,11 +141,14 @@ def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
 
 
 def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
-    """Format a CSV row, quoting only the description field."""
+    """Format a CSV row, quoting the fields that need it."""
     line_parts = []
     for field in fieldnames:
         value = row[field]
-        if field == "description":
+        needs_quotes = field in ("description", "contexts") or any(
+            character in value for character in ',"\n'
+        )
+        if needs_quotes:
             line_parts.append('"' + value.replace('"', '""') + '"')
         else:
             line_parts.append(value)
