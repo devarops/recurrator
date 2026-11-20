@@ -75,7 +75,7 @@ def _compute_dates(row: dict) -> Dates:
 
 def _parse_contexts(contexts_cell: str) -> list[str]:
     """Parse a task's JSON context array into sorted, unique ids."""
-    return sorted(dict.fromkeys(json.loads(contexts_cell)))
+    return sorted(set(json.loads(contexts_cell)))
 
 
 def _row_to_task(row: dict) -> Task:
