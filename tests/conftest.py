@@ -11,7 +11,8 @@ client = TestClient(app)
 
 # Test data constants
 THREE_TASKS_CSV = "tests/data/test_three_tasks.csv"
-CONTEXTS_CSV = "tests/data/test_contexts.csv"
+CONTEXT_TASKS_CSV = "tests/data/test_contexts.csv"
+CONTEXTS_CSV = "tests/data/contexts.csv"
 SINGLE_TASK_CSV = "tests/data/test_single_task.csv"
 GLICKO_CONTRACT_CSV = "tests/data/acceptance_glicko_integer_contract.csv"
 GLICKO_INACTIVITY_CSV = "tests/data/acceptance_glicko_inactivity_growth.csv"
@@ -70,18 +71,16 @@ def _patch_description(csv_path, task_id, text):
 
 
 def _read_context_task_ids(csv_path, context, reference_date):
-    """Read the prioritized task ids for one context at a reference date."""
-    return client.get(f"/api/context/{context}?csv={csv_path}&date={reference_date}")
+    """Read the task ids selected for one context at a reference date."""
+    return client.get(
+        f"/api/task/due/{reference_date}?csv={csv_path}&contexts_csv={CONTEXTS_CSV}"
+        f"&context={context}"
+    )
 
 
 def _read_task_ids(csv_path):
     """Read the ids of every task through the API."""
     return client.get(f"/api/task/?csv={csv_path}")
-
-
-def _read_task_ids_on(csv_path, reference_date):
-    """Read every task id through the API at a reference date."""
-    return client.get(f"/api/task/?csv={csv_path}&date={reference_date}")
 
 
 def _read_due_task_ids(csv_path, reference_date):
@@ -91,7 +90,9 @@ def _read_due_task_ids(csv_path, reference_date):
 
 def _read_due_contexts(csv_path, reference_date):
     """Read the contexts with a due task at a reference date."""
-    return client.get(f"/api/context/?csv={csv_path}&date={reference_date}")
+    return client.get(
+        f"/api/context/due/{reference_date}?csv={csv_path}&contexts_csv={CONTEXTS_CSV}"
+    )
 
 
 def _copy_fixture(fixture, tmp_path):

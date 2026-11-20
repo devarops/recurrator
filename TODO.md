@@ -15,48 +15,45 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 
 ## Align the tests with the multi-context contract
 
-The specs now describe tasks with several contexts and contexts with several scopes.
-The tests still use the single-valued context column and the deleted context and scope routes.
-Every skipped criterion names the test that must replace it.
+The specs describe tasks with several contexts and contexts with several scopes.
+The suite still names the single-valued context column and the deleted context and scope routes.
+The migration runs in three phases, and this section covers the first.
 
-### Fixtures and helpers
+### Phase 1: align the existing tests
 
-- Rename `context` to `contexts` in every task fixture under `tests/data/` and store a JSON array such as `["casa"]`.
-- Add `tests/data/contexts.csv` with `id`, `display_name`, `description`, and a JSON `scopes` array; cover overlapping scopes, an unused context, a scope named only by an unused context, and a scope named `all`.
-- Add `tests/data/contexts_without_all.csv`; it serves the absent-alias criterion and the `contexts_csv` path-selection criterion.
-- Add task fixtures with a task in several contexts for the full-membership, WIP, and shared-context Glicko criteria.
-- Add task fixtures for the one-extra-task criteria: zero due, one due under the limit, at the limit, no long-recurrence candidate, and a multiple-context request.
-- Add a task fixture with at least 40 tasks for the search pagination criteria.
-- Add an empty task fixture for the first-ID creation criterion, or create one inside the test.
-- Add both context data resources and every new task fixture to `tests/data/datapackage.json`, and replace every task resource's `context` enum with a `contexts` string field. `make check_data` must pass.
-- Rename the `CONTEXTS_CSV` constant to `CONTEXT_TASKS_CSV` and add `CONTEXT_DATA_CSV = "tests/data/contexts.csv"`.
-- Add `contexts_csv` to every test helper URL that reads contexts or validates task contexts.
-- Update `_copy_fixture` to copy the task and context fixtures into the temporary directory.
-- Replace `_read_context_task_ids` with helpers for the task collection filter and the single-context dated due read.
-- Point `_read_due_contexts` at `GET /api/context/due/{date}` and add the scope filters.
-- Add helpers for `GET /api/context/{context_id}/`, `GET /api/scope/`, and `PATCH /api/task/{id}/contexts`.
-- Remove `_read_task_ids_on` with the orphaned date-query test.
+Rewrite only the assertions the new design falsifies, plus the scaffolding they need.
+No assertion is added, no spec changes, and no production code moves.
 
-### Acceptance tests
+- Delete `test_date_query_parameter_is_ignored`, `test_import_tasks_from_csv_two_contexts`,
+  `test_get_tasks_by_context`, and `test_get_tasks_by_context_defers_remaining_tasks`, with
+  `_read_task_ids_on`, `_restore_skip_fields`, and the `deferred_context_read` fixture.
+- Rename `context` to `contexts` in every task fixture and store a JSON array such as `["casa"]`.
+- Add `tests/data/contexts.csv` with `casa`, `chores`, and `laptop`; their scopes span
+  `["personal"]`, `["work"]`, and `["work","personal"]`.
+- Rename the `CONTEXTS_CSV` constant to `CONTEXT_TASKS_CSV`; `CONTEXTS_CSV` names the new file.
+- Rewrite the task-detail expectations to `contexts` arrays, and point `_read_due_contexts` and
+  `_read_context_task_ids` at the dated due reads.
+- Replace `Context` members with context IDs in `test_compute.py` and `test_io.py`, and drop the
+  generated-context assertion from `test_entrypoint.py`.
+- Update `tests/data/datapackage.json`: rename the field in every task resource, drop the enum,
+  constrain the JSON cells by shape, and register the contexts resource.
 
-- Create `tests/test_acceptance_context_views.py` for the nine criteria in `specs/context_views.spec.toml`.
-- Create `tests/test_acceptance_scope_views.py` for the fourteen criteria in `specs/scope_views.spec.toml`.
-- Create `tests/test_acceptance_one_extra_task.py` for the six criteria in `specs/one_extra_task.spec.toml`.
-- Create `tests/test_acceptance_task_creation.py` for the nineteen criteria in `specs/task_creation.spec.toml`.
-- Create `tests/test_acceptance_search.py` for the seventeen criteria in `specs/search.spec.toml`.
-- Create `tests/test_acceptance_contract.py` for the four criteria in `specs/contract.spec.toml`.
-- Update `tests/test_acceptance_tasks_views.py`: delete `test_date_query_parameter_is_ignored`; add the fifteen skipped criteria for the context filter, WIP selection, multi-context read-only, due-read errors, and the two older route tests.
-- Update `tests/test_acceptance_task_detail.py` with its three skipped criteria.
-- Update `tests/test_acceptance_task_edits.py` with its eleven skipped criteria.
-- Update `tests/test_acceptance_glicko.py` with its three shared-context criteria and repoint the existing context reads at the dated due route.
-- Remove `skip = "Not implemented"` from each criterion as its test lands.
+The expected state is red: `pytest tests` and `mypy tests` fail against the interface that does
+not exist yet, while `black` and `flake8` stay clean.
+The same commit rewrites this section and lists every test as rewritten, deleted, or untouched.
 
-### Unit tests
+### Phase 2: production
 
-- `tests/test_api.py`: change the task-detail assertions from `context` to `contexts`, update the expected context lists for multi-context tasks, point the context helpers at the task collection and dated due routes, and cover the context filter, context detail, scope list, `contexts_csv` path, `PATCH contexts`, and the single-context WIP mode.
-- `tests/test_compute.py`: update every task context expectation to `contexts`; add a multi-context task and assert full membership in the context filters, WIP selection, deferral, completion counts, and the Glicko opponent set.
-- `tests/test_io.py`: parse and write the JSON `contexts` cell, add a task with several contexts, read the context data CSV, and assert the writer quotes the JSON cell.
-- `tests/test_entrypoint.py`: update the generated-module fixture to the context data file and assert the new default context path; the old `context` enum fixture no longer matches the contract.
+Rewrite `models`, `compute`, `io`, and `api`; retire `create_contexts.sh`, `_contexts.py`, and
+their Makefile and entrypoint wiring; add `default_contexts_csv_path` to the generated config.
+Migrate the data repository first: `context.csv` becomes `contexts.csv` with `id`,
+`display_name`, `description`, and `scopes`, where `both` becomes `["work","personal"]`;
+`is_not` stays as an unread column.
+
+### Phase 3: the missing tests
+
+Create the six acceptance files the specs name, add the fixture data each criterion needs, and
+remove one `skip = "Not implemented"` per test through the normal Red-Green-Refactor cycle.
 
 ## Add one extra task when at least one and fewer than the work-in-progress limit are due
 

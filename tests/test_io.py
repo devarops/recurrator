@@ -4,12 +4,11 @@ from pathlib import Path
 import pytest
 
 import recurrator.io as io
-from recurrator.io import Context
 from conftest import (
     _get_file_checksum,
     _assert_file_unchanged,
     _restore_completion_fields,
-    CONTEXTS_CSV,
+    CONTEXT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
     SINGLE_TASK_CSV,
     THREE_TASKS_CSV,
@@ -40,7 +39,7 @@ def test_import_tasks_from_csv_single_task():
     # Basic attributes from CSV
     assert first_task.id == 8
     assert first_task.description == "TypeLit.io"
-    assert isinstance(first_task.context, Context)
+    assert first_task.contexts == ["laptop"]
     assert first_task.skip_count == 1
     assert first_task.starred is False
 
@@ -55,7 +54,7 @@ def test_import_tasks_from_csv_single_task():
 
 def test_import_tasks_from_csv_starred_task():
     """Verify import_tasks_from_csv computes coins correctly for a starred task."""
-    csv_path = CONTEXTS_CSV
+    csv_path = CONTEXT_TASKS_CSV
     task_list = io.import_tasks_from_csv(csv_path)
 
     # Find the starred task with ID 1
@@ -64,22 +63,6 @@ def test_import_tasks_from_csv_starred_task():
     assert task_1.starred is True
     assert task_1.recurrence_days == 21
     assert task_1.coins == 42
-
-
-def test_import_tasks_from_csv_two_contexts():
-    """Verify import_tasks_from_csv correctly handles multiple contexts in CSV file."""
-    csv_path = THREE_TASKS_CSV
-    task_list = io.import_tasks_from_csv(csv_path)
-
-    # Returns a list with three Tasks
-    assert isinstance(task_list, list)
-    assert len(task_list) == 3
-
-    last_task_index = len(task_list) - 1
-    last_task = task_list[last_task_index]
-
-    # Basic attributes from CSV
-    assert last_task.id == 5
 
 
 def test_import_dates_from_csv():

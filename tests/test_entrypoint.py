@@ -9,7 +9,7 @@ REPO_ROOT = next(
     for parent in Path(__file__).resolve().parents
     if (parent / "src" / "create_config.sh").is_file()
 )
-SCRIPTS = ["create_config.sh", "create_contexts.sh", "entrypoint.sh"]
+SCRIPTS = ["create_config.sh", "entrypoint.sh"]
 
 
 def _write_fixture_data(config_dir: Path) -> None:
@@ -17,28 +17,11 @@ def _write_fixture_data(config_dir: Path) -> None:
     (config_dir / "config.json").write_text(
         json.dumps(
             {
+                "default_contexts_csv_path": "/root/.config/recurrator/contexts.csv",
                 "default_recurrence_days": 14,
                 "default_tasks_csv_path": "/root/.config/recurrator/tasks.csv",
                 "min_days_gap": 2,
                 "wip_limit": 9,
-            }
-        )
-    )
-    (config_dir / "datapackage.json").write_text(
-        json.dumps(
-            {
-                "resources": [
-                    {
-                        "schema": {
-                            "fields": [
-                                {
-                                    "name": "context",
-                                    "constraints": {"enum": ["casa", "mandado"]},
-                                }
-                            ]
-                        }
-                    }
-                ]
             }
         )
     )
@@ -53,8 +36,8 @@ def _copy_scripts(repo: Path) -> None:
         os.chmod(destination, 0o755)
 
 
-def test_entrypoint_generates_modules_and_executes_command(tmp_path):
-    """The entrypoint must generate both modules before running the command."""
+def test_entrypoint_generates_config_and_executes_command(tmp_path):
+    """The entrypoint must generate the config module before running the command."""
     repo = tmp_path / "repo"
     _copy_scripts(repo)
 
@@ -72,4 +55,3 @@ def test_entrypoint_generates_modules_and_executes_command(tmp_path):
 
     assert result.stdout.strip() == "command-ran"
     assert "WIP_LIMIT = 9" in (repo / "recurrator" / "_config.py").read_text()
-    assert 'MANDADO = "mandado"' in (repo / "recurrator" / "_contexts.py").read_text()

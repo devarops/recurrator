@@ -18,15 +18,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -119,15 +115,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -220,15 +212,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -321,15 +309,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -422,15 +406,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -523,15 +503,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -624,15 +600,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -725,15 +697,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -826,15 +794,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -927,15 +891,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1028,15 +988,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1129,15 +1085,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1230,15 +1182,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1331,15 +1279,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1432,15 +1376,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1533,15 +1473,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1634,15 +1570,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1735,15 +1667,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1836,15 +1764,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -1937,15 +1861,11 @@
             }
           },
           {
-            "name": "context",
+            "name": "contexts",
             "type": "string",
             "constraints": {
               "required": true,
-              "enum": [
-                "casa",
-                "chores",
-                "laptop"
-              ]
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
             }
           },
           {
@@ -2019,6 +1939,46 @@
         ],
         "missingValues": [
           "NA"
+        ]
+      }
+    },
+    {
+      "name": "contexts",
+      "path": "contexts.csv",
+      "profile": "tabular-data-resource",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "unique": true
+            }
+          },
+          {
+            "name": "display_name",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "constraints": {
+              "required": true
+            }
+          },
+          {
+            "name": "scopes",
+            "type": "string",
+            "constraints": {
+              "required": true,
+              "pattern": "^\\[\\s*\"[^\"]+\"(\\s*,\\s*\"[^\"]+\")*\\s*\\]$"
+            }
+          }
         ]
       }
     }

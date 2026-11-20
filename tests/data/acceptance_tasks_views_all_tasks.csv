@@ -1,4 +1,4 @@
-id,context,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred,rating,rating_deviation,rating_date
-7,chores,"Due task seven",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
-2,chores,"Far future task",2098-12-11,2098-12-18,2098-12-25,2099-01-01,0,NA,0,1500,350,2099-01-01
-9,chores,"Due task nine",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+id,contexts,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred,rating,rating_deviation,rating_date
+7,"[""chores""]",Due task seven,NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+2,"[""chores""]",Far future task,2098-12-11,2098-12-18,2098-12-25,2099-01-01,0,NA,0,1500,350,2099-01-01
+9,"[""chores""]",Due task nine,NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
