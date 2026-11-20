@@ -100,7 +100,7 @@ def get_all_tasks(csv: str = Query(None)):
     return _task_ids(_load_tasks(_resolve_csv_path(csv)))
 
 
-def _selected_task_ids(
+def _apply_wip_selection(
     tasks: list[io.Task], context: str, reference_date: date, csv_path: str
 ) -> list[int]:
     """Apply work-in-progress selection to one context, deferring the surplus."""
@@ -125,7 +125,7 @@ def get_due_task_ids(
     tasks = _load_tasks(csv_path)
     requested_contexts = list(dict.fromkeys(context or []))
     if len(requested_contexts) == 1:
-        return _selected_task_ids(tasks, requested_contexts[0], reference_date, csv_path)
+        return _apply_wip_selection(tasks, requested_contexts[0], reference_date, csv_path)
     due_tasks = compute.filter_due_tasks(tasks, reference_date)
     if requested_contexts:
         return _task_ids(compute.filter_tasks_by_any_context(due_tasks, set(requested_contexts)))
