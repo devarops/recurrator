@@ -121,6 +121,7 @@ def _reject_invalid_context_row(row: dict) -> None:
     _reject_empty_field(row, "id")
     _reject_empty_field(row, "display_name")
     _reject_empty_field(row, "description")
+    _reject_empty_field(row, "scopes")
     scopes = json.loads(row["scopes"])
     if scopes == []:
         raise ValueError("Context scopes must not be empty")
