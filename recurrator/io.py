@@ -128,8 +128,8 @@ def _validate_context_row(row: dict) -> None:
 
 def _reject_duplicate_context_ids(rows: list[dict]) -> None:
     """Reject duplicate context ids across the given rows."""
-    ids = [row["id"] for row in rows]
-    if len(ids) != len(set(ids)):
+    ids = {row["id"] for row in rows}
+    if len(ids) != len(rows):
         raise ValueError("Context ids must be unique")
 
 
