@@ -65,7 +65,6 @@ When a completed task belongs to two contexts, every due task that shares at
 least one of those contexts takes part in one event, and a task that shares both
 contexts participates once.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_shared_context_event"
