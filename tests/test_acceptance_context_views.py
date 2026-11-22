@@ -93,3 +93,12 @@ def test_context_detail_lists_an_unused_context():
     assert response.json()["id"] == "garden"
 
     assert response.json()["scopes"] == ["personal", "work"]
+
+
+def test_unknown_context_returns_404():
+    """The detail route returns 404 with an error message for an unknown context."""
+    response = client.get(_contexts_url("context/missing/"))
+
+    assert response.status_code == 404
+
+    assert "error" in response.json()
