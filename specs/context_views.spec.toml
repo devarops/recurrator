@@ -39,7 +39,6 @@ description = """
 When the due read carries no date, it returns the same contexts as the due read
 for today's date in America/Los_Angeles.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_undated_due_read_uses_today"
