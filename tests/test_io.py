@@ -346,3 +346,8 @@ def test_import_contexts_from_csv_rejects_blank_display_name(tmp_path):
 def test_import_contexts_from_csv_rejects_id_with_slash(tmp_path):
     """Verify the reader refuses a context id that spans path segments."""
     _assert_contexts_csv_rejected(tmp_path, 'ca/sa,Home,Home projects.,"[""personal""]"')
+
+
+def test_import_contexts_from_csv_rejects_reserved_due_id(tmp_path):
+    """Verify the reader refuses the reserved due context id."""
+    _assert_contexts_csv_rejected(tmp_path, 'due,Home,Home projects.,"[""personal""]"')
