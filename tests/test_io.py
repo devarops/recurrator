@@ -351,3 +351,16 @@ def test_import_contexts_from_csv_rejects_id_with_slash(tmp_path):
 def test_import_contexts_from_csv_rejects_reserved_due_id(tmp_path):
     """Verify the reader refuses the reserved due context id."""
     _assert_contexts_csv_rejected(tmp_path, 'due,Home,Home projects.,"[""personal""]"')
+
+
+def test_import_contexts_from_csv_returns_the_stored_context(tmp_path):
+    """Verify the reader returns a context from a valid file."""
+    csv_path = tmp_path / "contexts.csv"
+    csv_path.write_text(
+        "id,display_name,description,scopes\n"
+        'casa,Home,Home projects.,"[""personal""]"\n'
+    )
+
+    contexts = io.import_contexts_from_csv(csv_path)
+
+    assert [context.id for context in contexts] == ["casa"]
