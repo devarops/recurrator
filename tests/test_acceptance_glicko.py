@@ -194,3 +194,15 @@ def test_glicko_shared_context_event(tmp_path):
     for task_id in (2, 3, 4):
         assert after[task_id] != before[task_id]
     assert after[5] == before[5]
+
+
+def test_glicko_second_context_participates(tmp_path):
+    """A peer that shares only the second context changes rating."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_glicko_second_context_participates.csv", tmp_path
+    )
+
+    before, after = _ratings_before_and_after_completion(csv_path, range(1, 3), 1)
+
+    assert after[1] < before[1]
+    assert after[2] != before[2]
