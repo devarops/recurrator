@@ -67,7 +67,6 @@ description = """
 When a context has no tasks, its detail route still returns the context and
 its scopes, because the context data is authoritative.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_context_detail_lists_an_unused_context"
