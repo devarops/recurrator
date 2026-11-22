@@ -63,3 +63,22 @@ def test_due_read_without_trailing_slash_redirects():
     assert "/api/context/due/" in response.headers["location"]
 
     assert response.content == b""
+
+
+def test_context_detail_reports_its_fields():
+    """The detail route returns the context fields and sorted scopes."""
+    response = client.get(
+        _contexts_url(
+            "context/garden/",
+            "tests/data/acceptance_context_views_context_detail.csv",
+        )
+    )
+
+    assert response.status_code == 200
+
+    assert response.json() == {
+        "id": "garden",
+        "display_name": "Garden",
+        "description": "Outdoor upkeep: beds, hedges, and the watering schedule.",
+        "scopes": ["personal", "work"],
+    }
