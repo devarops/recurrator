@@ -127,15 +127,21 @@ def _reject_invalid_context_id(row: dict) -> None:
         raise ValueError("Context id must be a single path segment")
 
 
+def _parse_context_scopes(row: dict) -> list[str]:
+    """Parse a context row's scopes array and reject an empty one."""
+    scopes = json.loads(row["scopes"])
+    if scopes == []:
+        raise ValueError("Context scopes must not be empty")
+    return scopes
+
+
 def _reject_invalid_context_row(row: dict) -> None:
     """Reject a context row with an invalid id or an empty required field."""
     _reject_invalid_context_id(row)
     _reject_empty_field(row, "display_name")
     _reject_empty_field(row, "description")
     _reject_empty_field(row, "scopes")
-    scopes = json.loads(row["scopes"])
-    if scopes == []:
-        raise ValueError("Context scopes must not be empty")
+    _parse_context_scopes(row)
 
 
 def _reject_duplicate_context_ids(rows: list[dict]) -> None:
@@ -151,7 +157,7 @@ def _row_to_context(row: dict) -> Context:
         id=row["id"],
         display_name=row["display_name"],
         description=row["description"],
-        scopes=json.loads(row["scopes"]),
+        scopes=_parse_context_scopes(row),
     )
 
 
