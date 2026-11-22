@@ -120,6 +120,8 @@ def _reject_empty_field(row: dict, field: str) -> None:
 def _reject_invalid_context_row(row: dict) -> None:
     """Reject a context row with an empty id, display name, description, or scopes array."""
     _reject_empty_field(row, "id")
+    if "/" in row["id"]:
+        raise ValueError("Context id must be a single path segment")
     _reject_empty_field(row, "display_name")
     _reject_empty_field(row, "description")
     _reject_empty_field(row, "scopes")
