@@ -49,3 +49,17 @@ def test_undated_due_read_uses_today():
     undated = client.get(_contexts_url("context/due/"))
 
     assert undated.json() == dated.json()
+
+
+def test_due_read_without_trailing_slash_redirects():
+    """The slashless due read redirects to the trailing-slash form."""
+    response = client.get(
+        _contexts_url("context/due"),
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 307
+
+    assert "/api/context/due/" in response.headers["location"]
+
+    assert response.content == b""
