@@ -76,7 +76,6 @@ description = """
 When the context is absent from the context data, the detail route returns 404
 with an error message.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_unknown_context_returns_404"
