@@ -126,14 +126,19 @@ def _validate_context_row(row: dict) -> None:
         raise ValueError("Context scopes must not be empty")
 
 
+def _reject_duplicate_context_ids(rows: list[dict]) -> None:
+    """Reject duplicate context ids across the given rows."""
+    ids = [row["id"] for row in rows]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Context ids must be unique")
+
+
 def import_contexts_from_csv(csv_path: str) -> list:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
     for row in rows:
         _validate_context_row(row)
-    ids = [row["id"] for row in rows]
-    if len(ids) != len(set(ids)):
-        raise ValueError("Context ids must be unique")
+    _reject_duplicate_context_ids(rows)
     return []
 
 
