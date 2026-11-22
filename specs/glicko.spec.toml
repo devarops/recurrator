@@ -74,7 +74,6 @@ description = """
 When a completed task belongs to two contexts and a due task shares only the
 second context, that task's rating changes.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_second_context_participates"
