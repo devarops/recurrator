@@ -112,7 +112,7 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
 
 def _reject_empty_field(row: dict, field: str) -> None:
     """Reject a context row whose field is empty."""
-    if not row[field]:
+    if not row.get(field):
         raise ValueError(f"Context {field.replace('_', ' ')} must not be empty")
 
 
