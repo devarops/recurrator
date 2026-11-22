@@ -118,8 +118,10 @@ def _reject_empty_field(row: dict, field: str) -> None:
 
 
 def _reject_invalid_context_id(row: dict) -> None:
-    """Reject a context id that is empty or spans path segments."""
+    """Reject a context id that is empty, reserved, or spans path segments."""
     _reject_empty_field(row, "id")
+    if row["id"] == "due":
+        raise ValueError("Context id due is reserved")
     if "/" in row["id"]:
         raise ValueError("Context id must be a single path segment")
 
