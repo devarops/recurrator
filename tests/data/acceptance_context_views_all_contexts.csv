@@ -1,0 +1,4 @@
+id,display_name,description,scopes
+casa,Home Projects,"Household work at home beyond the children: repairs, appliances, the car, family records.","[""personal""]"
+chores,Chores,"Household upkeep a child can carry out: cleaning, laundry, tidying, the rubbish.","[""work""]"
+garden,Garden,"Outdoor upkeep: beds, hedges, and the watering schedule.","[""personal"",""work""]"
