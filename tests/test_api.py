@@ -266,6 +266,13 @@ def test_get_contexts():
     assert response.json() == ["casa", "chores", "garden"]
 
 
+def test_get_due_contexts_today():
+    """Verify GET /context/due/ returns the contexts due today."""
+    response = client.get(f"/api/context/due/?csv={CONTEXT_TASKS_CSV}")
+
+    assert response.status_code == 200
+
+
 def test_due_read_defers_tasks_beyond_the_available_slots(tmp_path):
     """Verify a single-context due read defers the surplus tasks."""
     csv_path = _copy_fixture(EIGHT_TASKS_CSV, tmp_path)
