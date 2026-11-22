@@ -30,7 +30,6 @@ When a context has at least one task due on or before the reference date, a
 dated due read of the context collection includes it, and excludes every
 context with no due task.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_due_contexts_are_listed_for_a_date"
