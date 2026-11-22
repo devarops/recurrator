@@ -164,6 +164,12 @@ def get_due_contexts(reference_date: date, csv: str = Query(None)):
     return compute.filter_due_contexts(_load_tasks(_resolve_csv_path(csv)), reference_date)
 
 
+@api.get("/context/due/")
+def get_due_contexts_today(csv: str = Query(None)):
+    """Return the context ids with at least one task due today."""
+    return get_due_contexts(date.today(), csv)
+
+
 class DescriptionUpdate(BaseModel):
     description: str
 
