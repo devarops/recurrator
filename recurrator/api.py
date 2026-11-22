@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from . import compute, io
-from ._config import DEFAULT_TASKS_CSV_PATH, WIP_LIMIT
+from ._config import DEFAULT_CONTEXTS_CSV_PATH, DEFAULT_TASKS_CSV_PATH, WIP_LIMIT
 
 app = FastAPI(
     docs_url="/api/docs",
@@ -20,6 +20,11 @@ api = APIRouter(prefix="/api")
 def _resolve_csv_path(csv: str | None = None) -> str:
     """Resolve CSV path from query parameter or default."""
     return csv or DEFAULT_TASKS_CSV_PATH
+
+
+def _resolve_contexts_csv_path(contexts_csv: str | None = None) -> str:
+    """Resolve the context CSV path from the query parameter or default."""
+    return contexts_csv or DEFAULT_CONTEXTS_CSV_PATH
 
 
 def _load_tasks(csv_path: str) -> list[io.Task]:
@@ -98,6 +103,13 @@ def _find_task(task_id: int, csv_path: str) -> io.Task | None:
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
     return _task_ids(_load_tasks(_resolve_csv_path(csv)))
+
+
+@api.get("/context/")
+def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
+    """Return every stored context id, sorted."""
+    contexts = io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv))
+    return sorted(context.id for context in contexts)
 
 
 def _apply_wip_selection(
