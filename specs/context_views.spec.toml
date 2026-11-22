@@ -48,7 +48,6 @@ description = """
 When the due read omits the trailing slash, the response redirects to the due
 collection with the trailing slash and does not list context names.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_due_read_without_trailing_slash_redirects"
