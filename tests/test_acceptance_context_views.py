@@ -102,3 +102,17 @@ def test_unknown_context_returns_404():
     assert response.status_code == 404
 
     assert "error" in response.json()
+
+
+def test_context_detail_without_trailing_slash_redirects():
+    """The slashless detail read redirects to the trailing-slash form."""
+    response = client.get(
+        _contexts_url("context/garden"),
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 307
+
+    assert "/api/context/garden/" in response.headers["location"]
+
+    assert response.content == b""
