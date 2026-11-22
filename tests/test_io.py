@@ -281,22 +281,20 @@ def test_update_task_rating_date_in_csv():
     _assert_file_unchanged(csv_path, original_checksum)
 
 
-def test_import_contexts_from_csv_rejects_empty_scopes(tmp_path):
-    """Verify the reader refuses a context with an empty scopes array."""
+def _assert_contexts_csv_rejected(tmp_path, row):
+    """Write a context file with the row and assert the reader rejects it."""
     csv_path = tmp_path / "contexts.csv"
-    csv_path.write_text("id,display_name,description,scopes\ncasa,Home,Home projects.,[]\n")
+    csv_path.write_text(f"id,display_name,description,scopes\n{row}\n")
 
     with pytest.raises(ValueError):
         io.import_contexts_from_csv(csv_path)
+
+
+def test_import_contexts_from_csv_rejects_empty_scopes(tmp_path):
+    """Verify the reader refuses a context with an empty scopes array."""
+    _assert_contexts_csv_rejected(tmp_path, "casa,Home,Home projects.,[]")
 
 
 def test_import_contexts_from_csv_rejects_empty_display_name(tmp_path):
     """Verify the reader refuses a context with an empty display name."""
-    csv_path = tmp_path / "contexts.csv"
-    csv_path.write_text(
-        "id,display_name,description,scopes\n"
-        'casa,,Home projects.,"[""personal""]"\n'
-    )
-
-    with pytest.raises(ValueError):
-        io.import_contexts_from_csv(csv_path)
+    _assert_contexts_csv_rejected(tmp_path, 'casa,,Home projects.,"[""personal""]"')
