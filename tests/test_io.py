@@ -288,3 +288,15 @@ def test_import_contexts_from_csv_rejects_empty_scopes(tmp_path):
 
     with pytest.raises(ValueError):
         io.import_contexts_from_csv(csv_path)
+
+
+def test_import_contexts_from_csv_rejects_empty_display_name(tmp_path):
+    """Verify the reader refuses a context with an empty display name."""
+    csv_path = tmp_path / "contexts.csv"
+    csv_path.write_text(
+        "id,display_name,description,scopes\n"
+        'casa,,Home projects.,"[""personal""]"\n'
+    )
+
+    with pytest.raises(ValueError):
+        io.import_contexts_from_csv(csv_path)
