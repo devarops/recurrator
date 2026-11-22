@@ -281,11 +281,11 @@ def test_update_task_rating_date_in_csv():
     _assert_file_unchanged(csv_path, original_checksum)
 
 
-def _assert_contexts_csv_rejected(tmp_path, *rows):
-    """Write a context file with the rows and assert the reader rejects it."""
+def _assert_contexts_csv_rejected(tmp_path, *rows, header="id,display_name,description,scopes"):
+    """Write a context file with the header and rows and assert the reader rejects it."""
     csv_path = tmp_path / "contexts.csv"
     body = "\n".join(rows)
-    csv_path.write_text(f"id,display_name,description,scopes\n{body}\n")
+    csv_path.write_text(f"{header}\n{body}\n")
 
     with pytest.raises(ValueError):
         io.import_contexts_from_csv(csv_path)
@@ -322,11 +322,8 @@ def test_import_contexts_from_csv_rejects_duplicate_ids(tmp_path):
 
 def test_import_contexts_from_csv_rejects_missing_display_name_column(tmp_path):
     """Verify the reader refuses a context file without a display name column."""
-    csv_path = tmp_path / "contexts.csv"
-    csv_path.write_text(
-        "id,description,scopes\n"
-        'casa,Home projects.,"[""personal""]"\n'
+    _assert_contexts_csv_rejected(
+        tmp_path,
+        'casa,Home projects.,"[""personal""]"',
+        header="id,description,scopes",
     )
-
-    with pytest.raises(ValueError):
-        io.import_contexts_from_csv(csv_path)
