@@ -20,7 +20,6 @@ description = """
 When a request points contexts_csv at a different context file, the context
 collection returns that file's context IDs rather than the configured file's.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_contexts_csv_selects_the_context_file"
