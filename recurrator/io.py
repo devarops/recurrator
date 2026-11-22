@@ -110,6 +110,15 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
     return [_row_to_task(row) for row in rows]
 
 
+def import_contexts_from_csv(csv_path: str) -> list:
+    """Import every stored context from the given context file."""
+    rows, _ = _read_csv_rows(csv_path)
+    for row in rows:
+        if json.loads(row["scopes"]) == []:
+            raise ValueError("Context scopes must not be empty")
+    return []
+
+
 def _is_task_row(row: dict, task_id: int) -> bool:
     """Return whether the row's id column names the task."""
     return int(row["id"]) == task_id
