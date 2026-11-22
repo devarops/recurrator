@@ -281,10 +281,11 @@ def test_update_task_rating_date_in_csv():
     _assert_file_unchanged(csv_path, original_checksum)
 
 
-def _assert_contexts_csv_rejected(tmp_path, row):
-    """Write a context file with the row and assert the reader rejects it."""
+def _assert_contexts_csv_rejected(tmp_path, *rows):
+    """Write a context file with the rows and assert the reader rejects it."""
     csv_path = tmp_path / "contexts.csv"
-    csv_path.write_text(f"id,display_name,description,scopes\n{row}\n")
+    body = "\n".join(rows)
+    csv_path.write_text(f"id,display_name,description,scopes\n{body}\n")
 
     with pytest.raises(ValueError):
         io.import_contexts_from_csv(csv_path)
@@ -312,12 +313,8 @@ def test_import_contexts_from_csv_rejects_empty_description(tmp_path):
 
 def test_import_contexts_from_csv_rejects_duplicate_ids(tmp_path):
     """Verify the reader refuses two contexts with the same id."""
-    csv_path = tmp_path / "contexts.csv"
-    csv_path.write_text(
-        "id,display_name,description,scopes\n"
-        'casa,Home,Home projects.,"[""personal""]"\n'
-        'casa,Garden,Garden projects.,"[""work""]"\n'
+    _assert_contexts_csv_rejected(
+        tmp_path,
+        'casa,Home,Home projects.,"[""personal""]"',
+        'casa,Garden,Garden projects.,"[""work""]"',
     )
-
-    with pytest.raises(ValueError):
-        io.import_contexts_from_csv(csv_path)
