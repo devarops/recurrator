@@ -111,7 +111,9 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
 
 
 def _validate_context_row(row: dict) -> None:
-    """Reject a context row with an empty display name or scopes array."""
+    """Reject a context row with an empty id, display name, or scopes array."""
+    if not row["id"]:
+        raise ValueError("Context id must not be empty")
     if not row["display_name"]:
         raise ValueError("Context display name must not be empty")
     scopes = json.loads(row["scopes"])
