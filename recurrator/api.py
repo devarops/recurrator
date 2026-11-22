@@ -170,6 +170,21 @@ def get_due_contexts_today(csv: str = Query(None)):
     return get_due_contexts(date.today(), csv)
 
 
+@api.get("/context/{context_id}/")
+def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str = Query(None)):
+    """Return one stored context."""
+    contexts = io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv))
+    for context in contexts:
+        if context.id == context_id:
+            return {
+                "id": context.id,
+                "display_name": context.display_name,
+                "description": context.description,
+                "scopes": sorted(set(context.scopes)),
+            }
+    return _error_response("Context not found", 404)
+
+
 class DescriptionUpdate(BaseModel):
     description: str
 
