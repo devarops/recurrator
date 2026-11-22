@@ -110,12 +110,16 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
     return [_row_to_task(row) for row in rows]
 
 
+def _reject_empty_field(row: dict, field: str) -> None:
+    """Reject a context row whose field is empty."""
+    if not row[field]:
+        raise ValueError(f"Context {field.replace('_', ' ')} must not be empty")
+
+
 def _validate_context_row(row: dict) -> None:
     """Reject a context row with an empty id, display name, or scopes array."""
-    if not row["id"]:
-        raise ValueError("Context id must not be empty")
-    if not row["display_name"]:
-        raise ValueError("Context display name must not be empty")
+    _reject_empty_field(row, "id")
+    _reject_empty_field(row, "display_name")
     scopes = json.loads(row["scopes"])
     if scopes == []:
         raise ValueError("Context scopes must not be empty")
