@@ -58,7 +58,6 @@ When one context is read through its detail route, the response carries its
 ID, display name, description, and every scope it names, with the scopes sorted
 alphabetically and deduplicated.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_context_detail_reports_its_fields"
