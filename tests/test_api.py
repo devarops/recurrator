@@ -2,6 +2,7 @@ from datetime import date
 
 import recurrator.io as io
 from conftest import (
+    client,
     _copy_fixture,
     _get_file_checksum,
     _assert_error_response,
@@ -254,6 +255,15 @@ def test_get_due_contexts():
     assert response.status_code == 200
 
     assert response.json() == ["casa", "chores", "laptop"]
+
+
+def test_get_contexts():
+    """Verify GET /context/ returns the stored context ids."""
+    response = client.get(
+        "/api/context/?contexts_csv=tests/data/acceptance_context_views_all_contexts.csv"
+    )
+
+    assert response.json() == ["casa", "chores", "garden"]
 
 
 def test_due_read_defers_tasks_beyond_the_available_slots(tmp_path):
