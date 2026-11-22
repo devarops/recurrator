@@ -116,8 +116,8 @@ def _reject_empty_field(row: dict, field: str) -> None:
         raise ValueError(f"Context {field.replace('_', ' ')} must not be empty")
 
 
-def _validate_context_row(row: dict) -> None:
-    """Reject a context row with an empty id, display name, or scopes array."""
+def _reject_invalid_context_row(row: dict) -> None:
+    """Reject a context row with an empty id, display name, description, or scopes array."""
     _reject_empty_field(row, "id")
     _reject_empty_field(row, "display_name")
     _reject_empty_field(row, "description")
@@ -137,7 +137,7 @@ def import_contexts_from_csv(csv_path: str) -> list:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
     for row in rows:
-        _validate_context_row(row)
+        _reject_invalid_context_row(row)
     _reject_duplicate_context_ids(rows)
     return []
 
