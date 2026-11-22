@@ -11,3 +11,14 @@ def test_all_contexts_are_listed():
     assert response.status_code == 200
 
     assert response.json() == ["casa", "chores", "garden"]
+
+
+def test_contexts_csv_selects_the_context_file():
+    """The collection returns the IDs from the file named by contexts_csv."""
+    acceptance = client.get(
+        f"/api/context/?csv={TASKS_CSV}&contexts_csv={CONTEXTS_CSV}"
+    )
+    shared = client.get("/api/context/?contexts_csv=tests/data/contexts.csv")
+
+    assert acceptance.json() == ["casa", "chores", "garden"]
+    assert shared.json() == ["casa", "chores", "laptop"]
