@@ -279,3 +279,12 @@ def test_update_task_rating_date_in_csv():
     assert io.get_task_by_id(task_id, csv_path).rating_date == original_task.rating_date
 
     _assert_file_unchanged(csv_path, original_checksum)
+
+
+def test_import_contexts_from_csv_rejects_empty_scopes(tmp_path):
+    """Verify the reader refuses a context with an empty scopes array."""
+    csv_path = tmp_path / "contexts.csv"
+    csv_path.write_text("id,display_name,description,scopes\ncasa,Home,Home projects.,[]\n")
+
+    with pytest.raises(ValueError):
+        io.import_contexts_from_csv(csv_path)
