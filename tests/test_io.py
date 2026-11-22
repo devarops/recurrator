@@ -281,11 +281,20 @@ def test_update_task_rating_date_in_csv():
     _assert_file_unchanged(csv_path, original_checksum)
 
 
-def _assert_contexts_csv_rejected(tmp_path, *rows, header="id,display_name,description,scopes"):
-    """Write a context file with the header and rows and assert the reader rejects it."""
+CONTEXTS_HEADER = "id,display_name,description,scopes"
+
+
+def _write_contexts_csv(tmp_path, *rows, header=CONTEXTS_HEADER):
+    """Write a context file with the header and rows and return its path."""
     csv_path = tmp_path / "contexts.csv"
     body = "\n".join(rows)
     csv_path.write_text(f"{header}\n{body}\n")
+    return csv_path
+
+
+def _assert_contexts_csv_rejected(tmp_path, *rows, header=CONTEXTS_HEADER):
+    """Write a context file with the header and rows and assert the reader rejects it."""
+    csv_path = _write_contexts_csv(tmp_path, *rows, header=header)
 
     with pytest.raises(ValueError):
         io.import_contexts_from_csv(csv_path)
@@ -355,11 +364,7 @@ def test_import_contexts_from_csv_rejects_reserved_due_id(tmp_path):
 
 def test_import_contexts_from_csv_returns_the_stored_context(tmp_path):
     """Verify the reader returns a context from a valid file."""
-    csv_path = tmp_path / "contexts.csv"
-    csv_path.write_text(
-        "id,display_name,description,scopes\n"
-        'casa,Home,Home projects.,"[""personal""]"\n'
-    )
+    csv_path = _write_contexts_csv(tmp_path, 'casa,Home,Home projects.,"[""personal""]"')
 
     contexts = io.import_contexts_from_csv(csv_path)
 
