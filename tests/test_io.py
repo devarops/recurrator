@@ -336,3 +336,8 @@ def test_import_contexts_from_csv_rejects_missing_scopes_column(tmp_path):
         "casa,Home,Home projects.",
         header="id,display_name,description",
     )
+
+
+def test_import_contexts_from_csv_rejects_blank_display_name(tmp_path):
+    """Verify the reader refuses a context whose display name is only whitespace."""
+    _assert_contexts_csv_rejected(tmp_path, 'casa,   ,Home projects.,"[""personal""]"')
