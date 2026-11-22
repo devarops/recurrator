@@ -11,7 +11,6 @@ When the context data holds several contexts, a read of the context collection
 returns every context ID from the context data, sorted alphabetically, including
 a context that no task names.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_all_contexts_are_listed"
