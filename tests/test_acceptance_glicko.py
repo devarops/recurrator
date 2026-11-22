@@ -206,3 +206,16 @@ def test_glicko_second_context_participates(tmp_path):
 
     assert after[1] < before[1]
     assert after[2] != before[2]
+
+
+def test_glicko_shared_context_isolation(tmp_path):
+    """Two tasks outside both contexts keep their ratings."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_glicko_shared_context_isolation.csv", tmp_path
+    )
+
+    before, after = _ratings_before_and_after_completion(csv_path, range(1, 4), 1)
+
+    assert after[1] < before[1]
+    assert after[2] == before[2]
+    assert after[3] == before[3]
