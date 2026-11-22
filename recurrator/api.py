@@ -74,6 +74,16 @@ def _task_to_dict(task: io.Task, reference_date: date) -> dict:
     }
 
 
+def _context_to_dict(context: io.Context) -> dict:
+    """Convert a Context object to an API response dictionary."""
+    return {
+        "id": context.id,
+        "display_name": context.display_name,
+        "description": context.description,
+        "scopes": sorted(set(context.scopes)),
+    }
+
+
 def _error_response(message: str, status_code: int) -> JSONResponse:
     """Return the error envelope shared by every failed request."""
     return JSONResponse(content={"error": message}, status_code=status_code)
@@ -176,12 +186,7 @@ def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str
     contexts = io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv))
     for context in contexts:
         if context.id == context_id:
-            return {
-                "id": context.id,
-                "display_name": context.display_name,
-                "description": context.description,
-                "scopes": sorted(set(context.scopes)),
-            }
+            return _context_to_dict(context)
     return _error_response("Context not found", 404)
 
 
