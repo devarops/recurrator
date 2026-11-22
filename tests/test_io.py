@@ -327,3 +327,12 @@ def test_import_contexts_from_csv_rejects_missing_display_name_column(tmp_path):
         'casa,Home projects.,"[""personal""]"',
         header="id,description,scopes",
     )
+
+
+def test_import_contexts_from_csv_rejects_missing_scopes_column(tmp_path):
+    """Verify the reader refuses a context file without a scopes column."""
+    _assert_contexts_csv_rejected(
+        tmp_path,
+        "casa,Home,Home projects.",
+        header="id,display_name,description",
+    )
