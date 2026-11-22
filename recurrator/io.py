@@ -161,7 +161,7 @@ def _row_to_context(row: dict) -> Context:
     )
 
 
-def import_contexts_from_csv(csv_path: str) -> list:
+def import_contexts_from_csv(csv_path: str) -> list[Context]:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
     for row in rows:
