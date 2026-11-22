@@ -82,3 +82,14 @@ def test_context_detail_reports_its_fields():
         "description": "Outdoor upkeep: beds, hedges, and the watering schedule.",
         "scopes": ["personal", "work"],
     }
+
+
+def test_context_detail_lists_an_unused_context():
+    """The detail route returns a context that no task names."""
+    response = client.get(_contexts_url("context/garden/"))
+
+    assert response.status_code == 200
+
+    assert response.json()["id"] == "garden"
+
+    assert response.json()["scopes"] == ["personal", "work"]
