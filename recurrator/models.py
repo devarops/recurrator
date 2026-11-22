@@ -23,6 +23,16 @@ class Dates:
 
 
 @dataclass
+class Context:
+    """One context definition from the context data file."""
+
+    id: str
+    display_name: str
+    description: str
+    scopes: list[str]
+
+
+@dataclass
 class SyntheticOpponent:
     """An internal opponent built from the universe medians."""
 

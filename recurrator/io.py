@@ -13,6 +13,7 @@ from .compute import (
     compute_rolling_dates,
 )
 from .models import (
+    Context,
     Dates,
     Task,
     GLICKO_RATING_DEFAULT,
@@ -144,13 +145,23 @@ def _reject_duplicate_context_ids(rows: list[dict]) -> None:
         raise ValueError("Context ids must be unique")
 
 
+def _row_to_context(row: dict) -> Context:
+    """Convert a validated context row to a Context object."""
+    return Context(
+        id=row["id"],
+        display_name=row["display_name"],
+        description=row["description"],
+        scopes=json.loads(row["scopes"]),
+    )
+
+
 def import_contexts_from_csv(csv_path: str) -> list:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
     for row in rows:
         _reject_invalid_context_row(row)
     _reject_duplicate_context_ids(rows)
-    return []
+    return [_row_to_context(row) for row in rows]
 
 
 def _is_task_row(row: dict, task_id: int) -> bool:
