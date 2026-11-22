@@ -86,7 +86,6 @@ When the detail route omits the trailing slash, the response redirects with 307
 to the detail route with the trailing slash and does not return the context
 object.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_context_views.py::test_context_detail_without_trailing_slash_redirects"
