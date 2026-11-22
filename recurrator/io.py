@@ -114,6 +114,8 @@ def import_contexts_from_csv(csv_path: str) -> list:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
     for row in rows:
+        if not row["display_name"]:
+            raise ValueError("Context display name must not be empty")
         scopes = json.loads(row["scopes"])
         if scopes == []:
             raise ValueError("Context scopes must not be empty")
