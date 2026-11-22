@@ -180,3 +180,17 @@ def test_glicko_deviation_growth():
     response = _read_task_on(fixture, 1, "2026-11-08")
 
     assert response.json()["rating_deviation"] == 362
+
+
+def test_glicko_shared_context_event(tmp_path):
+    """A two-context completion forms one event with every shared-context peer."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_glicko_shared_context_event.csv", tmp_path
+    )
+
+    before, after = _ratings_before_and_after_completion(csv_path, range(1, 6), 1)
+
+    assert after[1] < before[1]
+    for task_id in (2, 3, 4):
+        assert after[task_id] != before[task_id]
+    assert after[5] == before[5]
