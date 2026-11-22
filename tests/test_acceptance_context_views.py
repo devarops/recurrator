@@ -1,3 +1,5 @@
+from datetime import date
+
 from conftest import client
 
 TASKS_CSV = "tests/data/test_three_tasks.csv"
@@ -33,3 +35,16 @@ def test_due_contexts_are_listed_for_a_date():
     assert response.status_code == 200
 
     assert response.json() == ["casa", "chores"]
+
+
+def test_undated_due_read_uses_today():
+    """The undated due read matches the dated read for today."""
+    dated = client.get(
+        f"/api/context/due/{date.today().isoformat()}"
+        f"?csv={TASKS_CSV}&contexts_csv={CONTEXTS_CSV}"
+    )
+    undated = client.get(
+        f"/api/context/due/?csv={TASKS_CSV}&contexts_csv={CONTEXTS_CSV}"
+    )
+
+    assert undated.json() == dated.json()
