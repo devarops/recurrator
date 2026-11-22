@@ -110,15 +110,20 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
     return [_row_to_task(row) for row in rows]
 
 
+def _validate_context_row(row: dict) -> None:
+    """Reject a context row with an empty display name or scopes array."""
+    if not row["display_name"]:
+        raise ValueError("Context display name must not be empty")
+    scopes = json.loads(row["scopes"])
+    if scopes == []:
+        raise ValueError("Context scopes must not be empty")
+
+
 def import_contexts_from_csv(csv_path: str) -> list:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
     for row in rows:
-        if not row["display_name"]:
-            raise ValueError("Context display name must not be empty")
-        scopes = json.loads(row["scopes"])
-        if scopes == []:
-            raise ValueError("Context scopes must not be empty")
+        _validate_context_row(row)
     return []
 
 
