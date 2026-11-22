@@ -83,7 +83,6 @@ description = """
 When a completed task belongs to two contexts and two due tasks share no context
 with it, both keep their ratings.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_glicko.py::test_glicko_shared_context_isolation"
