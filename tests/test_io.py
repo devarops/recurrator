@@ -303,3 +303,8 @@ def test_import_contexts_from_csv_rejects_empty_display_name(tmp_path):
 def test_import_contexts_from_csv_rejects_empty_id(tmp_path):
     """Verify the reader refuses a context with an empty id."""
     _assert_contexts_csv_rejected(tmp_path, ',Home,Home projects.,"[""personal""]"')
+
+
+def test_import_contexts_from_csv_rejects_empty_description(tmp_path):
+    """Verify the reader refuses a context with an empty description."""
+    _assert_contexts_csv_rejected(tmp_path, 'casa,Home,,"[""personal""]"')
