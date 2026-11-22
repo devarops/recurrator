@@ -318,3 +318,15 @@ def test_import_contexts_from_csv_rejects_duplicate_ids(tmp_path):
         'casa,Home,Home projects.,"[""personal""]"',
         'casa,Garden,Garden projects.,"[""work""]"',
     )
+
+
+def test_import_contexts_from_csv_rejects_missing_display_name_column(tmp_path):
+    """Verify the reader refuses a context file without a display name column."""
+    csv_path = tmp_path / "contexts.csv"
+    csv_path.write_text(
+        "id,description,scopes\n"
+        'casa,Home projects.,"[""personal""]"\n'
+    )
+
+    with pytest.raises(ValueError):
+        io.import_contexts_from_csv(csv_path)
