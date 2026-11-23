@@ -58,7 +58,6 @@ def test_detail_reports_a_single_context_array(tmp_path):
     assert response.status_code == 200
 
     contexts = response.json()["contexts"]
-    assert isinstance(contexts, list)
     assert contexts == ["chores"]
 
 
@@ -72,4 +71,3 @@ def test_detail_reports_multiple_contexts(tmp_path):
 
     contexts = response.json()["contexts"]
     assert contexts == ["casa", "chores", "work"]
-    assert len(contexts) == len(set(contexts))
