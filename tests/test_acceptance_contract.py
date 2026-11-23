@@ -17,6 +17,16 @@ def _json_200_schemas(document):
                     yield method.upper(), path, schema
 
 
+def _assert_schema_is_declared(schema, method, path):
+    """Assert one 200 response declares the schema shape its type promises."""
+    location = f"{method} {path}"
+    assert schema, f"{location} declares an empty 200 schema"
+    if schema.get("type") == "object":
+        assert "properties" in schema, f"{location} declares an object schema without properties"
+    elif schema.get("type") == "array":
+        assert "items" in schema, f"{location} declares an array schema without items"
+
+
 def test_openapi_declares_response_properties():
     """Every 200 response declares a non-empty, fully shaped schema."""
     response = client.get("/api/openapi.json")
@@ -25,12 +35,4 @@ def test_openapi_declares_response_properties():
 
     document = response.json()
     for method, path, schema in _json_200_schemas(document):
-        assert schema, f"{method} {path} declares an empty 200 schema"
-        if schema.get("type") == "object":
-            assert "properties" in schema, (
-                f"{method} {path} declares an object 200 schema without properties"
-            )
-        elif schema.get("type") == "array":
-            assert "items" in schema, (
-                f"{method} {path} declares an array 200 schema without items"
-            )
+        _assert_schema_is_declared(schema, method, path)
