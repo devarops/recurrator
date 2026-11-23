@@ -12,7 +12,6 @@ client = TestClient(app)
 # Test data constants
 THREE_TASKS_CSV = "tests/data/test_three_tasks.csv"
 CONTEXT_TASKS_CSV = "tests/data/test_contexts.csv"
-CONTEXTS_CSV = "tests/data/contexts.csv"
 SINGLE_TASK_CSV = "tests/data/test_single_task.csv"
 GLICKO_CONTRACT_CSV = "tests/data/acceptance_glicko_integer_contract.csv"
 GLICKO_INACTIVITY_CSV = "tests/data/acceptance_glicko_inactivity_growth.csv"
@@ -99,9 +98,7 @@ def _read_context_task_ids(csv_path, context, reference_date):
 
 def _read_due_context_ids(csv_path, reference_date):
     """Read the contexts with a due task at a reference date."""
-    return client.get(
-        f"/api/context/due/{reference_date}?csv={csv_path}&contexts_csv={CONTEXTS_CSV}"
-    )
+    return client.get(f"/api/context/due/{reference_date}?csv={csv_path}")
 
 
 def _copy_fixture(fixture, tmp_path):
