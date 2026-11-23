@@ -3,13 +3,16 @@ from datetime import date
 from conftest import _complete, _copy_fixture, _read_task
 
 
+def _read_copied_task(fixture, tmp_path, task_id=1):
+    """Copy a task fixture and read one task from the copy."""
+    return _read_task(_copy_fixture(fixture, tmp_path), task_id)
+
+
 def test_detail_reports_last_completion(tmp_path):
     """A read reports the fourth completion date and the later skip date."""
-    csv_path = _copy_fixture(
+    response = _read_copied_task(
         "tests/data/acceptance_task_detail_reports_last_completion.csv", tmp_path
     )
-
-    response = _read_task(csv_path, 1)
 
     assert response.status_code == 200
 
@@ -33,12 +36,10 @@ def test_completion_returns_last_completion(tmp_path):
 
 def test_last_completion_ignores_the_skip_date(tmp_path):
     """A later skip date moves latest_date without moving latest_done_date."""
-    csv_path = _copy_fixture(
+    response = _read_copied_task(
         "tests/data/acceptance_task_detail_last_completion_ignores_the_skip_date.csv",
         tmp_path,
     )
-
-    response = _read_task(csv_path, 1)
 
     assert response.status_code == 200
 
@@ -50,11 +51,9 @@ def test_last_completion_ignores_the_skip_date(tmp_path):
 
 def test_detail_reports_a_single_context_array(tmp_path):
     """A task in one context reports a one-element contexts array."""
-    csv_path = _copy_fixture(
+    response = _read_copied_task(
         "tests/data/acceptance_task_detail_reports_a_single_context_array.csv", tmp_path
     )
-
-    response = _read_task(csv_path, 1)
 
     assert response.status_code == 200
 
@@ -65,11 +64,9 @@ def test_detail_reports_a_single_context_array(tmp_path):
 
 def test_detail_reports_multiple_contexts(tmp_path):
     """A task in several contexts reports them sorted and deduplicated."""
-    csv_path = _copy_fixture(
+    response = _read_copied_task(
         "tests/data/acceptance_task_detail_reports_multiple_contexts.csv", tmp_path
     )
-
-    response = _read_task(csv_path, 1)
 
     assert response.status_code == 200
 
