@@ -42,6 +42,12 @@ def _task_ids(tasks: list[io.Task]) -> list[int]:
     return [task.id for task in tasks]
 
 
+def _due_task_ids(csv_path: str, reference_date: date) -> list[int]:
+    """Return the ids of every task due on or before the date, in file order."""
+    tasks = _load_tasks(csv_path)
+    return _task_ids(compute.filter_due_tasks(tasks, reference_date))
+
+
 def _distinct_contexts(context: list[str] | None) -> list[str]:
     """Return the requested context ids without repeats, preserving order."""
     return list(dict.fromkeys(context or []))
@@ -175,8 +181,7 @@ def get_due_task_ids(
 @api.get("/task/due/")
 def get_due_tasks_today(csv: str = Query(None)):
     """Return the ids of the tasks due today."""
-    tasks = _load_tasks(_resolve_csv_path(csv))
-    return _task_ids(compute.filter_due_tasks(tasks, date.today()))
+    return _due_task_ids(_resolve_csv_path(csv), date.today())
 
 
 @api.get("/task/{task_id}")
