@@ -20,7 +20,6 @@ description = """
 When a later skip date moves latest_date forward, latest_done_date still equals
 the last completion date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_detail.py::test_last_completion_ignores_the_skip_date"
