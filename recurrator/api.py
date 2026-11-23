@@ -270,9 +270,7 @@ def _apply_rating_updates(
 ) -> None:
     """Store each task's new rating, deviation, and anchor."""
     for updated_id, (rating, rating_deviation) in updates.items():
-        io.update_task_rating(updated_id, rating, csv_path)
-        io.update_task_rating_deviation(updated_id, rating_deviation, csv_path)
-        io.update_task_rating_date(updated_id, reference_date, csv_path)
+        io.update_task_rating_fields(updated_id, rating, rating_deviation, reference_date, csv_path)
 
 
 @api.post("/task/{task_id}/done")

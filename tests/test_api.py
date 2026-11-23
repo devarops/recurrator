@@ -41,9 +41,9 @@ def _restore_rating_fields(csv_path, tasks):
     """Restore every task's rating, deviation, and anchor."""
     for task in tasks:
         assert task.rating_date is not None
-        io.update_task_rating(task.id, task.rating, csv_path)
-        io.update_task_rating_deviation(task.id, task.rating_deviation, csv_path)
-        io.update_task_rating_date(task.id, task.rating_date, csv_path)
+        io.update_task_rating_fields(
+            task.id, task.rating, task.rating_deviation, task.rating_date, csv_path
+        )
 
 
 def _task_field(csv_path, task_id, field_name):

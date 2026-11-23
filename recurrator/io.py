@@ -280,6 +280,25 @@ def update_task_rating_date(task_id: int, rating_date: date, csv_path: str) -> N
     _set_csv_fields(task_id, {"rating_date": _format_date(rating_date)}, csv_path)
 
 
+def update_task_rating_fields(
+    task_id: int,
+    rating: int,
+    rating_deviation: int,
+    rating_date: date,
+    csv_path: str,
+) -> None:
+    """Set the task's rating, deviation, and anchor in a single write."""
+    _set_csv_fields(
+        task_id,
+        {
+            "rating": str(rating),
+            "rating_deviation": str(rating_deviation),
+            "rating_date": _format_date(rating_date),
+        },
+        csv_path,
+    )
+
+
 def update_task_as_skipped(task_id: int, skip_date: date, csv_path: str) -> None:
     current_task = get_task_by_id(task_id, csv_path)
     _set_csv_fields(
