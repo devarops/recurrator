@@ -223,6 +223,17 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     return {"id": task_id, "description": body.description}
 
 
+def _completion_response(task: io.Task) -> dict:
+    """Return the confirmation fields for a completed task."""
+    return {
+        "id": task.id,
+        "skip_count": task.skip_count,
+        "due_date": task.due_date.isoformat(),
+        "latest_done_date": task.latest_done_date.isoformat(),
+        **_anchored_rating_fields(task),
+    }
+
+
 def _apply_rating_updates(
     updates: dict[int, tuple[int, int]], csv_path: str, reference_date: date
 ) -> None:
@@ -250,13 +261,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     _apply_rating_updates(updates, csv_path, today)
 
     updated_task = io.get_task_by_id(task_id, csv_path)
-    return {
-        "id": updated_task.id,
-        "skip_count": updated_task.skip_count,
-        "due_date": updated_task.due_date.isoformat(),
-        "latest_done_date": updated_task.latest_done_date.isoformat(),
-        **_anchored_rating_fields(updated_task),
-    }
+    return _completion_response(updated_task)
 
 
 app.include_router(api)
