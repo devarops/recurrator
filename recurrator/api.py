@@ -156,7 +156,7 @@ def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
 
 def _apply_wip_selection(
     tasks: list[io.Task], context: str, reference_date: date, csv_path: str
-) -> list[int]:
+) -> list[io.Task]:
     """Apply work-in-progress selection to one context, deferring the surplus."""
     tasks_in_context = compute.filter_tasks_by_context(tasks, context)
     completed_count = compute.count_completed_on(tasks_in_context, reference_date)
@@ -166,7 +166,7 @@ def _apply_wip_selection(
     )
     for task in deferred:
         io.update_task_as_skipped(task.id, reference_date, csv_path)
-    return _task_ids(selected)
+    return selected
 
 
 @api.get("/task/due/{reference_date}")
@@ -181,10 +181,14 @@ def get_due_task_ids(
         return _due_task_ids(csv_path, reference_date)
     tasks = _load_tasks(csv_path)
     if len(requested_contexts) == 1:
-        return _apply_wip_selection(tasks, requested_contexts[0], reference_date, csv_path)
-    return _task_ids(
-        compute.filter_due_tasks_by_any_context(tasks, set(requested_contexts), reference_date)
-    )
+        selected_tasks = _apply_wip_selection(
+            tasks, requested_contexts[0], reference_date, csv_path
+        )
+    else:
+        selected_tasks = compute.filter_due_tasks_by_any_context(
+            tasks, set(requested_contexts), reference_date
+        )
+    return _task_ids(selected_tasks)
 
 
 @api.get("/task/due/")
