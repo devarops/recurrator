@@ -52,16 +52,18 @@ def _task_field(csv_path, task_id, field_name):
     return _read_task_body(csv_path, task_id)[field_name]
 
 
-def _field_before_and_after_completion(csv_path, completed_task_id, observed_task_id, field_name):
-    """Return the observed task's field before and after a completion."""
+def _stored_field_before_and_after_completion(
+    csv_path, completed_task_id, observed_task_id, field_name
+):
+    """Return the observed task's field, read from the file before and after a completion."""
     before = _task_field(csv_path, observed_task_id, field_name)
     _complete(csv_path, completed_task_id)
     after = _task_field(csv_path, observed_task_id, field_name)
     return before, after
 
 
-def _completed_field_before_and_after(csv_path, task_id, field_name):
-    """Return the completed task's field before the completion and in its response."""
+def _response_field_before_and_after_completion(csv_path, task_id, field_name):
+    """Return the completed task's field, read from the file before and from its response after."""
     before = _task_field(csv_path, task_id, field_name)
     response = _complete(csv_path, task_id)
     return before, response.json()[field_name]
@@ -84,7 +86,7 @@ def _assert_opponent_rating_rises(fixture, tmp_path):
     """Assert that completing task 1 raises task 2's rating."""
     csv_path = _copy_fixture(fixture, tmp_path)
 
-    before, after = _field_before_and_after_completion(csv_path, 1, 2, "rating")
+    before, after = _stored_field_before_and_after_completion(csv_path, 1, 2, "rating")
 
     assert after > before
 
@@ -369,7 +371,7 @@ def test_task_done_decreases_completed_rating(tmp_path):
     """Verify completing one of two tasks lowers its rating."""
     csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
-    before, after = _completed_field_before_and_after(csv_path, 1, "rating")
+    before, after = _response_field_before_and_after_completion(csv_path, 1, "rating")
 
     assert after < before
 
@@ -388,7 +390,7 @@ def test_task_done_keeps_not_due_peer_rating(tmp_path):
     """Verify completing a due task leaves a not-due peer's rating unchanged."""
     csv_path = _copy_fixture("tests/data/test_due_and_not_due.csv", tmp_path)
 
-    before, after = _field_before_and_after_completion(csv_path, 1, 2, "rating")
+    before, after = _stored_field_before_and_after_completion(csv_path, 1, 2, "rating")
 
     assert after == before
 
@@ -397,7 +399,7 @@ def test_task_done_drops_completed_rating_more_than_one_point(tmp_path):
     """Verify the completed rating change exceeds the one-point placeholder."""
     csv_path = _copy_fixture(TWO_RATINGS_CSV, tmp_path)
 
-    before, after = _completed_field_before_and_after(csv_path, 1, "rating")
+    before, after = _response_field_before_and_after_completion(csv_path, 1, "rating")
 
     assert before - after > 1
 
@@ -417,7 +419,7 @@ def test_task_done_lowers_completed_rating_deviation(tmp_path):
     """Verify a completion lowers the completed task deviation."""
     csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
-    before, after = _completed_field_before_and_after(csv_path, 1, "rating_deviation")
+    before, after = _response_field_before_and_after_completion(csv_path, 1, "rating_deviation")
 
     assert after < before
 
@@ -426,7 +428,7 @@ def test_task_done_lowers_opponent_rating_deviation(tmp_path):
     """Verify a completion lowers the opponent deviation."""
     csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
-    before, after = _field_before_and_after_completion(csv_path, 1, 2, "rating_deviation")
+    before, after = _stored_field_before_and_after_completion(csv_path, 1, 2, "rating_deviation")
 
     assert after < before
 
@@ -435,7 +437,7 @@ def test_task_done_drops_completed_deviation_more_than_one_point(tmp_path):
     """Verify the completed deviation drop exceeds the placeholder."""
     csv_path = _copy_fixture(TWO_RATINGS_FROZEN_CSV, tmp_path)
 
-    before, after = _completed_field_before_and_after(csv_path, 1, "rating_deviation")
+    before, after = _response_field_before_and_after_completion(csv_path, 1, "rating_deviation")
 
     assert before - after > 1
 
@@ -453,7 +455,7 @@ def test_task_done_changes_solo_rating(tmp_path):
     """Verify completing a solo task changes its rating."""
     csv_path = _copy_fixture(GLICKO_SOLO_CSV, tmp_path)
 
-    before, after = _field_before_and_after_completion(csv_path, 1, 1, "rating")
+    before, after = _stored_field_before_and_after_completion(csv_path, 1, 1, "rating")
 
     assert after != before
 
