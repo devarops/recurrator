@@ -3,9 +3,9 @@ from datetime import date
 from conftest import _complete, _copy_fixture, _read_task
 
 
-def _read_copied_task(fixture, tmp_path, task_id=1):
-    """Copy a task fixture and read one task from the copy."""
-    return _read_task(_copy_fixture(fixture, tmp_path), task_id)
+def _read_copied_task(fixture, tmp_path):
+    """Copy a task fixture and read its first task."""
+    return _read_task(_copy_fixture(fixture, tmp_path), 1)
 
 
 def test_detail_reports_last_completion(tmp_path):
