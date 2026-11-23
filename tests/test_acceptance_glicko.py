@@ -1,6 +1,6 @@
-import csv
 from datetime import date
 
+import recurrator.io as io
 from conftest import (
     GLICKO_CONTRACT_CSV,
     GLICKO_DEFAULT_DATE_CSV,
@@ -104,17 +104,8 @@ def test_glicko_simultaneous_update(tmp_path):
     """Two different ratings match a simultaneous update, not a sequential one."""
     csv_path = _copy_fixture(GLICKO_SIMULTANEOUS_UPDATE_CSV, tmp_path)
 
-    with open(csv_path, newline="") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-        fieldnames = reader.fieldnames
-    assert fieldnames is not None
-    for row in rows:
-        row["rating_date"] = date.today().isoformat()
-    with open(csv_path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    for task in io.import_tasks_from_csv(csv_path):
+        io.update_task_rating_date(task.id, date.today(), csv_path)
 
     response = _complete(csv_path, 1)
     assert response.status_code == 200
