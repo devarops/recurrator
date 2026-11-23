@@ -279,6 +279,13 @@ def test_get_due_tasks_today():
     assert response.status_code == 200
 
 
+def test_due_tasks_without_trailing_slash_redirects():
+    """Verify GET /task/due redirects to the trailing-slash collection."""
+    response = client.get(f"/api/task/due?csv={THREE_TASKS_CSV}", follow_redirects=False)
+
+    assert response.status_code == 307
+
+
 def test_get_context_detail():
     """Verify GET /context/{id}/ returns the stored context."""
     response = client.get(
