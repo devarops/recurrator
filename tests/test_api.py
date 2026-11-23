@@ -273,6 +273,13 @@ def test_get_due_contexts_today():
     assert response.status_code == 200
 
 
+def test_get_due_tasks_today():
+    """Verify GET /task/due/ returns the tasks due today."""
+    response = client.get(f"/api/task/due/?csv={THREE_TASKS_CSV}")
+
+    assert response.status_code == 200
+
+
 def test_get_context_detail():
     """Verify GET /context/{id}/ returns the stored context."""
     response = client.get(
