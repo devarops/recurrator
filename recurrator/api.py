@@ -120,6 +120,11 @@ def _task_not_found_response() -> JSONResponse:
     return _error_response("Task not found", 404)
 
 
+def _context_not_found_response() -> JSONResponse:
+    """Return the 404 envelope for an id that names no context."""
+    return _error_response("Context not found", 404)
+
+
 @app.exception_handler(RequestValidationError)
 async def _invalid_request_response(
     request: Request, exception: RequestValidationError
@@ -228,7 +233,7 @@ def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str
     """Return one stored context."""
     context = _find_context(context_id, _resolve_contexts_csv_path(contexts_csv))
     if context is None:
-        return _error_response("Context not found", 404)
+        return _context_not_found_response()
     return _context_to_dict(context)
 
 
