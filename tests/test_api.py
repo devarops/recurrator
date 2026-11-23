@@ -496,6 +496,15 @@ def test_malformed_description_body_returns_error_field(tmp_path):
     assert "error" in response.json()
 
 
+def test_starred_write_returns_confirmation(tmp_path):
+    """Verify PATCH /task/{id}/starred confirms the new flag."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+
+    response = client.patch(f"/api/task/2/starred?csv={csv_path}", json={"starred": True})
+
+    assert response.json() == {"id": 2, "starred": True}
+
+
 def test_openapi_task_collection_declares_a_response_schema():
     """Verify GET /api/task/ declares a non-empty 200 response schema."""
     document = _read_openapi_document()
