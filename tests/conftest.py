@@ -110,6 +110,15 @@ def _read_due_context_ids(csv_path, reference_date):
     return client.get(f"/api/context/due/{reference_date}?csv={csv_path}")
 
 
+def _assert_redirect_to_trailing_slash(url, target_path):
+    """Assert a slashless read redirects to its trailing-slash form without a body."""
+    response = client.get(url, follow_redirects=False)
+
+    assert response.status_code == 307
+    assert target_path in response.headers["location"]
+    assert response.content == b""
+
+
 def _copy_fixture(fixture, tmp_path):
     """Copy a task fixture into the test's temporary directory."""
     csv_path = tmp_path / "tasks.csv"

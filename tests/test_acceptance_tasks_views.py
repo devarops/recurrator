@@ -1,6 +1,13 @@
 from datetime import date
 
-from conftest import client, _copy_fixture, _read_due_task_ids, _read_task_body, _read_task_ids
+from conftest import (
+    client,
+    _assert_redirect_to_trailing_slash,
+    _copy_fixture,
+    _read_due_task_ids,
+    _read_task_body,
+    _read_task_ids,
+)
 
 TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
 
@@ -28,13 +35,7 @@ def test_all_tasks_are_listed():
 
 def test_due_read_without_trailing_slash_redirects():
     """The slashless due read redirects and returns no task IDs."""
-    response = client.get(
-        f"/api/task/due?csv={TASKS_VIEWS_CSV}", follow_redirects=False
-    )
-
-    assert response.status_code == 307
-    assert "/api/task/due/" in response.headers["location"]
-    assert response.content == b""
+    _assert_redirect_to_trailing_slash(f"/api/task/due?csv={TASKS_VIEWS_CSV}", "/api/task/due/")
 
 
 def test_due_tasks_are_listed_for_a_date():
