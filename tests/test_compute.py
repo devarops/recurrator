@@ -27,10 +27,15 @@ def _chores_task(
     )
 
 
+def _selected_task_ids(tasks, reference_date, available_slots):
+    """Return the ids of the chores tasks the prioritizer selects, in order."""
+    selected, _ = rc.filter_n_tasks_by_context(tasks, "chores", reference_date, available_slots)
+    return [task.id for task in selected]
+
+
 def _selected_task_id(tasks, reference_date, available_slots):
     """Return the id of the top task the prioritizer selects."""
-    selected, _ = rc.filter_n_tasks_by_context(tasks, "chores", reference_date, available_slots)
-    return selected[0].id
+    return _selected_task_ids(tasks, reference_date, available_slots)[0]
 
 
 def _even_universe_opponent():
@@ -201,11 +206,8 @@ def test_filter_n_tasks_by_context_respects_n_tasks():
 def test_filter_n_tasks_by_context_selects_starred_first():
     """Verify starred tasks are selected before non-starred when due tasks exceed n_tasks."""
     tasks = io.import_tasks_from_csv(CONTEXT_TASKS_CSV)
-    context = "chores"
-    reference_date = date(2026, 4, 24)
-    n_tasks = 2
-    selected, _ = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    assert 7 in [task.id for task in selected]
+
+    assert 7 in _selected_task_ids(tasks, date(2026, 4, 24), 2)
 
 
 def test_filter_n_tasks_by_context_deferred_excludes_starred():
@@ -221,11 +223,10 @@ def test_filter_n_tasks_by_context_deferred_excludes_starred():
 def test_filter_n_tasks_by_context_interleaves_starred_and_non_starred():
     """Verify starred and non-starred tasks are interleaved, not all-starred-first."""
     tasks = io.import_tasks_from_csv(CONTEXT_TASKS_CSV)
-    context = "chores"
-    reference_date = date(2026, 5, 10)
-    n_tasks = 2
-    selected, _ = rc.filter_n_tasks_by_context(tasks, context, reference_date, n_tasks)
-    assert any(not t.starred for t in selected)
+    starred_ids = {task.id for task in tasks if task.starred}
+    selected_ids = set(_selected_task_ids(tasks, date(2026, 5, 10), 2))
+
+    assert selected_ids - starred_ids
 
 
 def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
@@ -276,8 +277,7 @@ def test_filter_n_tasks_by_context_second_selection_prefers_more_skips():
         _chores_task(2, "Some skips", skip_count=3),
         _chores_task(3, "No skips"),
     ]
-    selected, _ = rc.filter_n_tasks_by_context(tasks, "chores", reference_date, 2)
-    assert [task.id for task in selected] == [1, 2]
+    assert _selected_task_ids(tasks, reference_date, 2) == [1, 2]
 
 
 def test_filter_n_tasks_by_context_second_selection_prefers_longer_recurrence():
@@ -288,8 +288,7 @@ def test_filter_n_tasks_by_context_second_selection_prefers_longer_recurrence():
         _chores_task(2, "Longer recurrence", recurrence_days=21, due_date=date(2026, 6, 6)),
         _chores_task(3, "Shorter recurrence", recurrence_days=7, due_date=date(2026, 6, 6)),
     ]
-    selected, _ = rc.filter_n_tasks_by_context(tasks, "chores", reference_date, 2)
-    assert [task.id for task in selected] == [1, 2]
+    assert _selected_task_ids(tasks, reference_date, 2) == [1, 2]
 
 
 def test_filter_n_tasks_by_context_prefers_due_date_over_recurrence():
