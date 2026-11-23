@@ -1,4 +1,4 @@
-from conftest import _copy_fixture, _read_due_task_ids, _read_task, _read_task_ids
+from conftest import _copy_fixture, _read_due_task_ids, _read_task, _read_task_ids, client
 
 TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
 
@@ -37,3 +37,33 @@ def test_no_context_due_read_is_read_only(tmp_path):
 
     assert response.json() == [7, 9]
     assert {task_id: state(task_id) for task_id in (7, 2, 9)} == before
+
+
+def _read_due_task_ids_with_context(csv_path, reference_date, contexts):
+    """Read the due task ids for one or more context values."""
+    query = "".join(f"&context={context}" for context in contexts)
+    return client.get(f"/api/task/due/{reference_date}?csv={csv_path}{query}")
+
+
+def test_duplicate_contexts_collapse_in_due_read(tmp_path):
+    """A repeated context applies the single-context deferral rules."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_tasks_views_duplicate_contexts_collapse_in_due_read.csv",
+        tmp_path,
+    )
+    task_ids = range(1, 11)
+    before = {task_id: _read_task(csv_path, task_id).json()["skip_count"] for task_id in task_ids}
+
+    response = _read_due_task_ids_with_context(csv_path, "2026-01-01", ["chores", "chores"])
+
+    assert response.status_code == 200
+
+    returned = response.json()
+    assert set(returned) < set(task_ids)
+    after = {task_id: _read_task(csv_path, task_id).json()["skip_count"] for task_id in task_ids}
+    deferred = set(task_ids) - set(returned)
+    assert deferred
+    for task_id in deferred:
+        assert after[task_id] == before[task_id] + 1
+    for task_id in returned:
+        assert after[task_id] == before[task_id]
