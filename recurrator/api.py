@@ -17,8 +17,8 @@ app = FastAPI(
 api = APIRouter(prefix="/api")
 
 
-def _resolve_csv_path(csv: str | None = None) -> str:
-    """Resolve CSV path from query parameter or default."""
+def _resolve_tasks_csv_path(csv: str | None = None) -> str:
+    """Resolve the task CSV path from the query parameter or default."""
     return csv or DEFAULT_TASKS_CSV_PATH
 
 
@@ -141,7 +141,7 @@ def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
 
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
-    return _task_ids(_load_tasks(_resolve_csv_path(csv)))
+    return _task_ids(_load_tasks(_resolve_tasks_csv_path(csv)))
 
 
 @api.get("/context/")
@@ -172,7 +172,7 @@ def get_due_task_ids(
     csv: str = Query(None),
     context: list[str] = Query(None),
 ):
-    csv_path = _resolve_csv_path(csv)
+    csv_path = _resolve_tasks_csv_path(csv)
     requested_contexts = _distinct_contexts(context)
     if not requested_contexts:
         return _due_task_ids(csv_path, reference_date)
@@ -186,7 +186,7 @@ def get_due_task_ids(
 @api.get("/task/due/")
 def get_due_tasks_today(csv: str = Query(None)):
     """Return the ids of the tasks due today."""
-    return _due_task_ids(_resolve_csv_path(csv), date.today())
+    return _due_task_ids(_resolve_tasks_csv_path(csv), date.today())
 
 
 @api.get("/task/{task_id}")
@@ -195,7 +195,7 @@ def get_task_by_id(
     csv: str = Query(None),
     reference_date_str: str = Query(None, alias="date"),
 ):
-    csv_path = _resolve_csv_path(csv)
+    csv_path = _resolve_tasks_csv_path(csv)
     task = _find_task(task_id, csv_path)
     if task is None:
         return _task_not_found_response()
@@ -211,13 +211,13 @@ def _due_context_ids(csv_path: str, reference_date: date) -> list[str]:
 @api.get("/context/due/{reference_date}")
 def get_due_contexts(reference_date: date, csv: str = Query(None)):
     """Return the context ids with at least one task due on or before the date."""
-    return _due_context_ids(_resolve_csv_path(csv), reference_date)
+    return _due_context_ids(_resolve_tasks_csv_path(csv), reference_date)
 
 
 @api.get("/context/due/")
 def get_due_contexts_today(csv: str = Query(None)):
     """Return the context ids with at least one task due today."""
-    return _due_context_ids(_resolve_csv_path(csv), date.today())
+    return _due_context_ids(_resolve_tasks_csv_path(csv), date.today())
 
 
 @api.get("/context/{context_id}/")
@@ -236,7 +236,7 @@ class DescriptionUpdate(BaseModel):
 @api.patch("/task/{task_id}/description")
 def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
     """Replace a task's description with the given text."""
-    csv_path = _resolve_csv_path(csv)
+    csv_path = _resolve_tasks_csv_path(csv)
     if _find_task(task_id, csv_path) is None:
         return _task_not_found_response()
     if not body.description.strip():
@@ -268,7 +268,7 @@ def _apply_rating_updates(
 
 @api.post("/task/{task_id}/done")
 def post_task_done(task_id: int, csv: str = Query(None)):
-    csv_path = _resolve_csv_path(csv)
+    csv_path = _resolve_tasks_csv_path(csv)
     today = date.today()
 
     current_task = io.get_task_by_id(task_id, csv_path)
