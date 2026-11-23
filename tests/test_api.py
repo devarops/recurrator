@@ -8,7 +8,6 @@ from conftest import (
     _assert_error_response,
     _assert_file_unchanged,
     _read_task,
-    _read_task_on,
     _complete,
     _read_context_task_ids,
     _read_due_task_ids,
@@ -70,7 +69,7 @@ def _completed_field_before_and_after(csv_path, task_id, field_name):
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
     undated = _read_task(fixture, task_id)
-    dated = _read_task_on(fixture, task_id, date.today().isoformat())
+    dated = _read_task(fixture, task_id, date.today().isoformat())
 
     assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
 
@@ -116,7 +115,7 @@ def test_due_task_ids_list_only_tasks_due_by_the_date():
 
 def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
-    response = _read_task_on(SINGLE_TASK_CSV, 8, "2025-08-19")
+    response = _read_task(SINGLE_TASK_CSV, 8, "2025-08-19")
 
     assert response.status_code == 200
 
@@ -139,7 +138,7 @@ def test_get_task_by_id_default_csv():
 
 def test_get_task_by_id_alternative_csv():
 
-    response = _read_task_on(THREE_TASKS_CSV, 3, "2026-03-07")
+    response = _read_task(THREE_TASKS_CSV, 3, "2026-03-07")
 
     expected_data = {
         "id": 3,
@@ -161,7 +160,7 @@ def test_get_task_by_id_alternative_csv():
 
 def test_get_task_by_id_starred():
     """Verify GET /task/{id} returns coins doubled for a starred task."""
-    response = _read_task_on(CONTEXT_TASKS_CSV, 1, "2026-04-04")
+    response = _read_task(CONTEXT_TASKS_CSV, 1, "2026-04-04")
 
     assert response.status_code == 200
 
@@ -337,7 +336,7 @@ def test_get_task_by_id_rating_deviation():
 
 def test_get_task_by_id_projects_rating_deviation():
     """Verify GET /task/{id} projects the deviation to the requested date."""
-    response = _read_task_on(GLICKO_INACTIVITY_CSV, 1, "2026-11-08")
+    response = _read_task(GLICKO_INACTIVITY_CSV, 1, "2026-11-08")
 
     assert response.json()["rating_deviation"] > 350
 

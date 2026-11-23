@@ -8,7 +8,6 @@ from conftest import (
     GLICKO_SOLO_CSV,
     _copy_fixture,
     _read_task,
-    _read_task_on,
     _complete,
     _read_context_task_ids,
     _read_task_ids,
@@ -86,8 +85,8 @@ def test_glicko_inactivity_growth():
     fixture = GLICKO_INACTIVITY_CSV
     reference_date = "2026-11-08"
 
-    older = _read_task_on(fixture, 1, reference_date)
-    newer = _read_task_on(fixture, 2, reference_date)
+    older = _read_task(fixture, 1, reference_date)
+    newer = _read_task(fixture, 2, reference_date)
 
     assert older.status_code == 200
     assert newer.status_code == 200
@@ -154,7 +153,7 @@ def test_glicko_default_date_projection(tmp_path):
     today = date.today().isoformat()
 
     undated = _read_task(csv_path, 1)
-    dated = _read_task_on(csv_path, 1, today)
+    dated = _read_task(csv_path, 1, today)
 
     assert undated.status_code == 200
     assert dated.status_code == 200
@@ -177,7 +176,7 @@ def test_glicko_deviation_growth():
     """A year without a match projects the deviation to 362."""
     fixture = GLICKO_DEVIATION_GROWTH_CSV
 
-    response = _read_task_on(fixture, 1, "2026-11-08")
+    response = _read_task(fixture, 1, "2026-11-08")
 
     assert response.json()["rating_deviation"] == 362
 

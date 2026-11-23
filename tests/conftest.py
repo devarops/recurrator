@@ -57,11 +57,6 @@ def _read_task(csv_path, task_id, reference_date=None):
     return client.get(f"/api/task/{task_id}?csv={csv_path}{query}")
 
 
-def _read_task_on(csv_path, task_id, reference_date):
-    """Read one task through the API at a reference date."""
-    return _read_task(csv_path, task_id, reference_date)
-
-
 def _complete(csv_path, task_id):
     """Mark a task done through the API."""
     return client.post(f"/api/task/{task_id}/done?csv={csv_path}")
