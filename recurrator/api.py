@@ -172,6 +172,13 @@ def get_due_task_ids(
     return _task_ids(due_tasks)
 
 
+@api.get("/task/due/")
+def get_due_tasks_today(csv: str = Query(None)):
+    """Return the ids of the tasks due today."""
+    tasks = _load_tasks(_resolve_csv_path(csv))
+    return _task_ids(compute.filter_due_tasks(tasks, date.today()))
+
+
 @api.get("/task/{task_id}")
 def get_task_by_id(
     task_id: int,
