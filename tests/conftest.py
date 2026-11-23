@@ -71,11 +71,6 @@ def _patch_description(csv_path, task_id, text):
     return _patch_description_body(csv_path, task_id, {"description": text})
 
 
-def _read_context_task_ids(csv_path, context, reference_date):
-    """Read the task ids selected for one context at a reference date."""
-    return _read_due_task_ids(csv_path, reference_date, [context], CONTEXTS_CSV)
-
-
 def _read_task_ids(csv_path):
     """Read the ids of every task through the API."""
     return client.get(f"/api/task/?csv={csv_path}")
@@ -86,6 +81,11 @@ def _read_due_task_ids(csv_path, reference_date, contexts=None, contexts_csv=Non
     query = f"&contexts_csv={contexts_csv}" if contexts_csv else ""
     query += "".join(f"&context={context}" for context in contexts or [])
     return client.get(f"/api/task/due/{reference_date}?csv={csv_path}{query}")
+
+
+def _read_context_task_ids(csv_path, context, reference_date):
+    """Read the task ids selected for one context at a reference date."""
+    return _read_due_task_ids(csv_path, reference_date, [context], CONTEXTS_CSV)
 
 
 def _read_due_contexts(csv_path, reference_date):
