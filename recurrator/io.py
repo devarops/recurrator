@@ -1,7 +1,7 @@
 import csv
 import json
 import os
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from datetime import date
 
 from .compute import (
@@ -216,12 +216,12 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
     return ",".join(line_parts)
 
 
-def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_path: str) -> None:
-    """Generic CSV update: read, apply the update to the matching row, write back atomically."""
+def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
+    """Set several CSV fields of the matching task in a single atomic write."""
     rows, fieldnames = _read_csv_rows(csv_path)
     for row in rows:
         if _is_task_row(row, task_id):
-            apply_update(row)
+            row.update(values)
     assert fieldnames is not None
 
     temporary_path = f"{csv_path}.tmp"
@@ -236,15 +236,6 @@ def _update_task_in_csv(task_id: int, apply_update: Callable[[dict], None], csv_
     finally:
         if os.path.exists(temporary_path):
             os.unlink(temporary_path)
-
-
-def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
-    """Set several CSV fields of the matching task in a single write."""
-
-    def apply_update(row: dict) -> None:
-        row.update(values)
-
-    _update_task_in_csv(task_id, apply_update, csv_path)
 
 
 def _format_row_dates(dates: list[date | None]) -> dict[str, str]:
