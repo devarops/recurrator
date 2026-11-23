@@ -47,7 +47,6 @@ description = """
 When a task belongs to several contexts, its detail reports them in a sorted,
 deduplicated contexts array.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_detail.py::test_detail_reports_multiple_contexts"
