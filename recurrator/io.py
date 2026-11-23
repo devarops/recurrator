@@ -136,18 +136,18 @@ def _reject_invalid_context_id(row: dict) -> None:
 
 def _parse_context_scopes(row: dict) -> list[str]:
     """Parse a context row's scopes array into sorted, unique ids, rejecting an empty one."""
+    _reject_empty_field(row, "scopes")
     scopes = _parse_json_id_array(row["scopes"])
-    if scopes == []:
+    if not scopes:
         raise ValueError("Context scopes must not be empty")
     return scopes
 
 
 def _reject_invalid_context_fields(row: dict) -> None:
-    """Reject a context row with an invalid id or an empty required field."""
+    """Reject a context row with an invalid id or an empty name or description."""
     _reject_invalid_context_id(row)
     _reject_empty_field(row, "display_name")
     _reject_empty_field(row, "description")
-    _reject_empty_field(row, "scopes")
 
 
 def _reject_duplicate_context_ids(contexts: list[Context]) -> None:
