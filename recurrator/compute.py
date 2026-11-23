@@ -60,8 +60,8 @@ def filter_tasks_by_any_context(tasks: list[Task], contexts: set[str]) -> list[T
     return [task for task in tasks if contexts & set(task.contexts)]
 
 
-def filter_all_tasks_by_context(tasks: list[Task], context: str) -> list[Task]:
-    """Filter a list of tasks by the given context id."""
+def filter_tasks_by_context(tasks: list[Task], context: str) -> list[Task]:
+    """Filter tasks by the given context id."""
     return filter_tasks_by_any_context(tasks, {context})
 
 
@@ -82,7 +82,7 @@ def filter_due_tasks_by_context(
     Returns only tasks whose context matches and whose due date
     is on or before the reference date.
     """
-    context_tasks = filter_all_tasks_by_context(tasks, context)
+    context_tasks = filter_tasks_by_context(tasks, context)
     return filter_due_tasks(context_tasks, reference_date)
 
 

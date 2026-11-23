@@ -163,7 +163,7 @@ def _apply_wip_selection(
     tasks: list[io.Task], context: str, reference_date: date, csv_path: str
 ) -> list[int]:
     """Apply work-in-progress selection to one context, deferring the surplus."""
-    tasks_in_context = compute.filter_all_tasks_by_context(tasks, context)
+    tasks_in_context = compute.filter_tasks_by_context(tasks, context)
     completed_today = compute.count_completed_today(tasks_in_context, reference_date)
     available_slots = compute.compute_available_wip_slots(WIP_LIMIT, completed_today)
     selected, deferred = compute.filter_n_tasks_by_context(

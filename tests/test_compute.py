@@ -105,10 +105,10 @@ def test_get_task_by_id():
     assert isinstance(io.get_task_by_id(3, THREE_TASKS_CSV), Task)
 
 
-def test_filter_all_tasks_by_context():
+def test_filter_tasks_by_context():
     all_tasks = io.import_tasks_from_csv(THREE_TASKS_CSV)
     context = "chores"
-    filtered_tasks = rc.filter_all_tasks_by_context(all_tasks, context)
+    filtered_tasks = rc.filter_tasks_by_context(all_tasks, context)
     assert len(filtered_tasks) == 2
 
 
