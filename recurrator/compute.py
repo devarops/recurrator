@@ -132,22 +132,17 @@ def count_completed_today(tasks: list[Task], reference_date: date) -> int:
     return len(completed_today)
 
 
-def _sorted_tasks(tasks: list[Task], odd_cycle: bool) -> list[Task]:
-    """Sort tasks by the alternating selection-order key for the given cycle."""
-
-    def sort_key(task: Task) -> tuple:
-        if odd_cycle:
-            return (-task.skip_count, task.due_date, -task.recurrence_days)
-        return (-task.skip_count, -task.recurrence_days, task.due_date)
-
-    return sorted(tasks, key=sort_key)
-
-
 def _take_top_task(pool: list[Task], odd_cycle: bool) -> Task | None:
     """Remove and return the highest-priority task in the pool, if any."""
     if not pool:
         return None
-    top_task = _sorted_tasks(pool, odd_cycle)[0]
+
+    def selection_key(task: Task) -> tuple:
+        if odd_cycle:
+            return (-task.skip_count, task.due_date, -task.recurrence_days)
+        return (-task.skip_count, -task.recurrence_days, task.due_date)
+
+    top_task = min(pool, key=selection_key)
     pool.remove(top_task)
     return top_task
 
