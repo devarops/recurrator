@@ -42,6 +42,11 @@ def _task_ids(tasks: list[io.Task]) -> list[int]:
     return [task.id for task in tasks]
 
 
+def _distinct_contexts(context: list[str] | None) -> list[str]:
+    """Return the requested context ids without repeats, preserving order."""
+    return list(dict.fromkeys(context or []))
+
+
 def _anchored_rating_fields(task: io.Task) -> dict:
     """Return the Glicko fields with the stored deviation."""
     return {
@@ -158,7 +163,7 @@ def get_due_task_ids(
 ):
     csv_path = _resolve_csv_path(csv)
     tasks = _load_tasks(csv_path)
-    requested_contexts = list(dict.fromkeys(context or []))
+    requested_contexts = _distinct_contexts(context)
     if len(requested_contexts) == 1:
         return _apply_wip_selection(tasks, requested_contexts[0], reference_date, csv_path)
     due_tasks = compute.filter_due_tasks(tasks, reference_date)
