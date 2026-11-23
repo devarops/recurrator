@@ -145,9 +145,9 @@ def _take_top_task(pool: list[Task], prefer_due_date: bool) -> Task | None:
         return None
 
     def selection_key(task: Task) -> tuple:
-        if prefer_due_date:
-            return (-task.skip_count, task.due_date, -task.recurrence_days)
-        return (-task.skip_count, -task.recurrence_days, task.due_date)
+        due_date_first = (task.due_date, -task.recurrence_days)
+        tie_breakers = due_date_first if prefer_due_date else due_date_first[::-1]
+        return (-task.skip_count, *tie_breakers)
 
     top_task = min(pool, key=selection_key)
     pool.remove(top_task)
