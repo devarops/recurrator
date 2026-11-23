@@ -74,6 +74,14 @@ def filter_due_tasks(tasks: list[Task], reference_date: date) -> list[Task]:
     return [task for task in tasks if task.due_date <= reference_date]
 
 
+def filter_due_tasks_by_any_context(
+    tasks: list[Task], contexts: set[str], reference_date: date
+) -> list[Task]:
+    """Filter due tasks that name at least one of the given context ids."""
+    due_tasks = filter_due_tasks(tasks, reference_date)
+    return filter_tasks_by_any_context(due_tasks, contexts)
+
+
 def filter_due_tasks_by_context(
     tasks: list[Task], context: str, reference_date: date
 ) -> list[Task]:
@@ -82,14 +90,14 @@ def filter_due_tasks_by_context(
     Returns only tasks whose context matches and whose due date
     is on or before the reference date.
     """
-    context_tasks = filter_tasks_by_context(tasks, context)
-    return filter_due_tasks(context_tasks, reference_date)
+    return filter_due_tasks_by_any_context(tasks, {context}, reference_date)
 
 
 def filter_opponents(tasks: list[Task], completed_task: Task, reference_date: date) -> list[Task]:
     """Return other due tasks that share at least one context with the completed task."""
-    due_tasks = filter_due_tasks(tasks, reference_date)
-    sharing_context = filter_tasks_by_any_context(due_tasks, set(completed_task.contexts))
+    sharing_context = filter_due_tasks_by_any_context(
+        tasks, set(completed_task.contexts), reference_date
+    )
     return [task for task in sharing_context if task.id != completed_task.id]
 
 
