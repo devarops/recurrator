@@ -49,12 +49,8 @@ def _parse_row_dates(row: dict) -> list[date | None]:
     return [_parse_date(row[column]) for column in DATE_COLUMNS]
 
 
-def _compute_dates(row: dict) -> Dates:
-    """Compute latest_done_date, latest_date, recurrence_days, and due_date from CSV row.
-
-    Returns:
-        Dates object with all four computed date attributes.
-    """
+def _row_to_dates(row: dict) -> Dates:
+    """Convert a CSV row to its computed Dates object."""
     dates = _parse_row_dates(row)
     latest_done_date = dates[N_DATES - 1]
     assert latest_done_date is not None
@@ -82,7 +78,7 @@ def _parse_json_id_array(cell: str) -> list[str]:
 
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
-    dates = _compute_dates(row)
+    dates = _row_to_dates(row)
     starred = bool(int(row["starred"]))
 
     return Task(
