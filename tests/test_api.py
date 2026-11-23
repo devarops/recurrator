@@ -66,6 +66,15 @@ def _completed_field_before_and_after(csv_path, task_id, field_name):
     return before, response.json()[field_name]
 
 
+def _assert_task_detail(csv_path, task_id, reference_date, expected):
+    """Assert the detail read returns exactly the expected attributes."""
+    response = _read_task(csv_path, task_id, reference_date)
+
+    assert response.status_code == 200
+
+    assert response.json() == expected
+
+
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
     undated = _read_task(fixture, task_id)
@@ -115,10 +124,6 @@ def test_due_task_ids_list_only_tasks_due_by_the_date():
 
 def test_get_task_by_id_default_csv():
     """Verify GET /task/{id} returns the correct task details."""
-    response = _read_task(SINGLE_TASK_CSV, 8, "2025-08-19")
-
-    assert response.status_code == 200
-
     expected_data = {
         "id": 8,
         "description": "TypeLit.io",
@@ -133,13 +138,12 @@ def test_get_task_by_id_default_csv():
         "rating": 1500,
         "rating_deviation": 350,
     }
-    assert response.json() == expected_data
+
+    _assert_task_detail(SINGLE_TASK_CSV, 8, "2025-08-19", expected_data)
 
 
 def test_get_task_by_id_alternative_csv():
-
-    response = _read_task(THREE_TASKS_CSV, 3, "2026-03-07")
-
+    """Verify GET /task/{id} reads the task file named by csv."""
     expected_data = {
         "id": 3,
         "description": "Lavar trapos",
@@ -155,15 +159,11 @@ def test_get_task_by_id_alternative_csv():
         "rating_deviation": 350,
     }
 
-    assert response.json() == expected_data
+    _assert_task_detail(THREE_TASKS_CSV, 3, "2026-03-07", expected_data)
 
 
 def test_get_task_by_id_starred():
     """Verify GET /task/{id} returns coins doubled for a starred task."""
-    response = _read_task(CONTEXT_TASKS_CSV, 1, "2026-04-04")
-
-    assert response.status_code == 200
-
     expected_data = {
         "id": 1,
         "description": "Reparar fuga escusado",
@@ -178,7 +178,8 @@ def test_get_task_by_id_starred():
         "rating": 1500,
         "rating_deviation": 350,
     }
-    assert response.json() == expected_data
+
+    _assert_task_detail(CONTEXT_TASKS_CSV, 1, "2026-04-04", expected_data)
 
 
 def test_get_task_by_id_reports_last_completion():
