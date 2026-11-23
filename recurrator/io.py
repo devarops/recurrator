@@ -23,16 +23,17 @@ from .models import (
 )
 
 DATE_COLUMNS = tuple(f"date_{index}" for index in range(1, N_DATES + 1))
+MISSING_DATE = "NA"
 
 
 def _parse_date(date_str: str) -> date | None:
-    """Parse an ISO 8601 date string, returning None for 'NA'."""
-    return date.fromisoformat(date_str) if date_str != "NA" else None
+    """Parse an ISO 8601 date string, returning None for the missing-date sentinel."""
+    return date.fromisoformat(date_str) if date_str != MISSING_DATE else None
 
 
 def _format_date(date_value: date | None) -> str:
-    """Format a date to ISO 8601 string, or 'NA' for None."""
-    return date_value.isoformat() if date_value is not None else "NA"
+    """Format a date to ISO 8601 string, or the missing-date sentinel for None."""
+    return date_value.isoformat() if date_value is not None else MISSING_DATE
 
 
 def _read_csv_rows(csv_path: str) -> tuple[list[dict], Sequence[str] | None]:
