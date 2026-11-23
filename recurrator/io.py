@@ -268,14 +268,6 @@ def update_task_skip_date(task_id: int, skip_date: date | None, csv_path: str) -
     _set_csv_fields(task_id, {"skip_date": _format_date(skip_date)}, csv_path)
 
 
-def update_task_rating(task_id: int, rating: int, csv_path: str) -> None:
-    _set_csv_fields(task_id, {"rating": str(rating)}, csv_path)
-
-
-def update_task_rating_deviation(task_id: int, rating_deviation: int, csv_path: str) -> None:
-    _set_csv_fields(task_id, {"rating_deviation": str(rating_deviation)}, csv_path)
-
-
 def update_task_rating_date(task_id: int, rating_date: date, csv_path: str) -> None:
     _set_csv_fields(task_id, {"rating_date": _format_date(rating_date)}, csv_path)
 
