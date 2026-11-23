@@ -223,6 +223,16 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     return {"id": task_id, "description": body.description}
 
 
+def _apply_rating_updates(
+    updates: dict[int, tuple[int, int]], csv_path: str, reference_date: date
+) -> None:
+    """Store each task's new rating, deviation, and anchor."""
+    for updated_id, (rating, rating_deviation) in updates.items():
+        io.update_task_rating(updated_id, rating, csv_path)
+        io.update_task_rating_deviation(updated_id, rating_deviation, csv_path)
+        io.update_task_rating_date(updated_id, reference_date, csv_path)
+
+
 @api.post("/task/{task_id}/done")
 def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_csv_path(csv)
@@ -237,10 +247,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
     tasks = _load_tasks(csv_path)
     opponents = compute.select_opponents(tasks, current_task, today)
     updates = compute.compute_match_updates(current_task, opponents, today)
-    for updated_id, (rating, rating_deviation) in updates.items():
-        io.update_task_rating(updated_id, rating, csv_path)
-        io.update_task_rating_deviation(updated_id, rating_deviation, csv_path)
-        io.update_task_rating_date(updated_id, today, csv_path)
+    _apply_rating_updates(updates, csv_path, today)
 
     updated_task = io.get_task_by_id(task_id, csv_path)
     return {
