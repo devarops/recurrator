@@ -109,7 +109,6 @@ description = """
 When a dated due read carries no context, it returns every due task in file
 order and changes no skip count or skip date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_no_context_due_read_is_read_only"
