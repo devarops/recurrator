@@ -36,3 +36,16 @@ def test_openapi_declares_response_properties():
     document = response.json()
     for method, path, schema in _json_200_schemas(document):
         _assert_schema_is_declared(schema, method, path)
+
+
+def test_openapi_declares_task_contexts():
+    """The task detail schema declares contexts as an array of strings."""
+    response = client.get("/api/openapi.json")
+
+    assert response.status_code == 200
+
+    document = response.json()
+    schema = document["paths"]["/api/task/{task_id}"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]
+    contexts = schema["properties"]["contexts"]
+    assert contexts["type"] == "array"
+    assert contexts["items"]["type"] == "string"
