@@ -12,7 +12,7 @@ from conftest import (
     _complete,
     _read_context_task_ids,
     _read_due_task_ids,
-    _read_due_contexts,
+    _read_due_context_ids,
     _read_task_ids,
     _patch_description,
     _patch_description_body,
@@ -250,7 +250,7 @@ def test_get_due_contexts():
 
     csv_path = CONTEXT_TASKS_CSV
     reference_date = "2026-05-01"
-    response = _read_due_contexts(csv_path, reference_date)
+    response = _read_due_context_ids(csv_path, reference_date)
 
     assert response.status_code == 200
 
