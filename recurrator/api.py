@@ -181,16 +181,21 @@ def get_task_by_id(
     return _task_to_dict(task, reference_date)
 
 
+def _due_context_ids(csv_path: str, reference_date: date) -> list[str]:
+    """Return the context ids with at least one task due on or before the date."""
+    return compute.filter_due_contexts(_load_tasks(csv_path), reference_date)
+
+
 @api.get("/context/due/{reference_date}")
 def get_due_contexts(reference_date: date, csv: str = Query(None)):
     """Return the context ids with at least one task due on or before the date."""
-    return compute.filter_due_contexts(_load_tasks(_resolve_csv_path(csv)), reference_date)
+    return _due_context_ids(_resolve_csv_path(csv), reference_date)
 
 
 @api.get("/context/due/")
 def get_due_contexts_today(csv: str = Query(None)):
     """Return the context ids with at least one task due today."""
-    return get_due_contexts(date.today(), csv)
+    return _due_context_ids(_resolve_csv_path(csv), date.today())
 
 
 @api.get("/context/{context_id}/")
