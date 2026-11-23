@@ -2,6 +2,7 @@ from collections.abc import Sequence
 from datetime import date, timedelta
 from math import sqrt
 from statistics import median
+from typing import TypeVar
 
 import glicko2  # type: ignore[import-untyped]
 
@@ -17,10 +18,17 @@ from .models import (
     Task,
 )
 
+T = TypeVar("T")
+
+
+def _without_none(values: Sequence[T | None]) -> list[T]:
+    """Return the given values without the None entries, preserving order."""
+    return [value for value in values if value is not None]
+
 
 def compute_intervals(dates: list[date | None]) -> list[int]:
     """Compute intervals in days between consecutive non-None dates."""
-    valid_dates = [date_value for date_value in dates if date_value is not None]
+    valid_dates = _without_none(dates)
     return [(later - earlier).days for earlier, later in zip(valid_dates, valid_dates[1:])]
 
 
@@ -37,7 +45,7 @@ def compute_latest_date(latest_done_date: date, skip_date: date | None) -> date:
 
 def compute_recurrence_days(intervals: Sequence[int | None]) -> int:
     """Compute recurrence days as the median of non-None intervals."""
-    valid_intervals = [interval for interval in intervals if interval is not None]
+    valid_intervals = _without_none(intervals)
     if not valid_intervals:
         return DEFAULT_RECURRENCE_DAYS
     return round(median(valid_intervals))
@@ -50,7 +58,7 @@ def compute_due_date(latest_date: date, recurrence_days: int) -> date:
 
 def compute_rolling_dates(dates: list[date | None], new_date: date) -> list[date | None]:
     """Merge new_date into a rolling window of the most recent stored dates."""
-    stored_dates = [stored_date for stored_date in dates if stored_date is not None]
+    stored_dates = _without_none(dates)
     all_dates = sorted(stored_dates + [new_date])[-N_DATES:]
     return [None] * (N_DATES - len(all_dates)) + all_dates
 
