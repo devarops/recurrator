@@ -75,9 +75,14 @@ def _compute_dates(row: dict) -> Dates:
     )
 
 
+def _parse_json_id_array(cell: str) -> list[str]:
+    """Parse a JSON string array cell into sorted, unique ids."""
+    return sorted(set(json.loads(cell)))
+
+
 def _parse_contexts(contexts_cell: str) -> list[str]:
     """Parse a task's JSON context array into sorted, unique ids."""
-    return sorted(set(json.loads(contexts_cell)))
+    return _parse_json_id_array(contexts_cell)
 
 
 def _row_to_task(row: dict) -> Task:
@@ -130,7 +135,7 @@ def _reject_invalid_context_id(row: dict) -> None:
 
 def _parse_context_scopes(row: dict) -> list[str]:
     """Parse a context row's scopes array into sorted, unique ids, rejecting an empty one."""
-    scopes = sorted(set(json.loads(row["scopes"])))
+    scopes = _parse_json_id_array(row["scopes"])
     if scopes == []:
         raise ValueError("Context scopes must not be empty")
     return scopes
