@@ -140,10 +140,10 @@ def _reject_invalid_context_fields(row: dict) -> None:
     _reject_empty_field(row, "scopes")
 
 
-def _reject_duplicate_context_ids(rows: list[dict]) -> None:
-    """Reject duplicate context ids across the given rows."""
-    ids = {row["id"] for row in rows}
-    if len(ids) != len(rows):
+def _reject_duplicate_context_ids(contexts: list[Context]) -> None:
+    """Reject duplicate context ids across the given contexts."""
+    ids = {context.id for context in contexts}
+    if len(ids) != len(contexts):
         raise ValueError("Context ids must be unique")
 
 
@@ -162,7 +162,7 @@ def import_contexts_from_csv(csv_path: str) -> list[Context]:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
     contexts = [_row_to_context(row) for row in rows]
-    _reject_duplicate_context_ids(rows)
+    _reject_duplicate_context_ids(contexts)
     return contexts
 
 
