@@ -159,13 +159,14 @@ def _take_top_task(pool: list[Task], prefer_due_date: bool) -> Task | None:
 
 
 def _select_alternating_tasks(
-    pools: tuple[list[Task], list[Task]], available_slots: int
+    pools: tuple[Sequence[Task], Sequence[Task]], available_slots: int
 ) -> list[Task]:
     """Select tasks from alternating pools, reversing the sort preference each round."""
+    remaining_pools = [list(pool) for pool in pools]
     selected_tasks: list[Task] = []
     prefer_due_date = True
     while len(selected_tasks) < available_slots:
-        for pool in pools:
+        for pool in remaining_pools:
             task = _take_top_task(pool, prefer_due_date)
             if task is not None:
                 selected_tasks.append(task)
@@ -185,7 +186,8 @@ def filter_n_tasks_by_context(
     starred_pool = [task for task in due_tasks if task.starred]
     non_starred_pool = [task for task in due_tasks if not task.starred]
     selected_tasks = _select_alternating_tasks((starred_pool, non_starred_pool), available_slots)
-    return selected_tasks, non_starred_pool
+    deferred_tasks = [task for task in non_starred_pool if task not in selected_tasks]
+    return selected_tasks, deferred_tasks
 
 
 def filter_one_extra_task(tasks: list[Task], context: str, reference_date: date) -> list[Task]:
