@@ -32,6 +32,11 @@ def _load_tasks(csv_path: str) -> list[io.Task]:
     return io.import_tasks_from_csv(csv_path)
 
 
+def _load_contexts(contexts_csv_path: str) -> list[io.Context]:
+    """Import every stored context from the given context file."""
+    return io.import_contexts_from_csv(contexts_csv_path)
+
+
 def _task_ids(tasks: list[io.Task]) -> list[int]:
     """Return every task's id, preserving the given order."""
     return [task.id for task in tasks]
@@ -112,7 +117,7 @@ def _find_task(task_id: int, csv_path: str) -> io.Task | None:
 
 def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
     """Return the stored context, or None when no context has the id."""
-    for context in io.import_contexts_from_csv(contexts_csv_path):
+    for context in _load_contexts(contexts_csv_path):
         if context.id == context_id:
             return context
     return None
@@ -126,7 +131,7 @@ def get_all_tasks(csv: str = Query(None)):
 @api.get("/context/")
 def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
     """Return every stored context id, sorted."""
-    contexts = io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv))
+    contexts = _load_contexts(_resolve_contexts_csv_path(contexts_csv))
     return sorted(context.id for context in contexts)
 
 
