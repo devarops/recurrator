@@ -61,3 +61,18 @@ def test_detail_reports_a_single_context_array(tmp_path):
     contexts = response.json()["contexts"]
     assert isinstance(contexts, list)
     assert contexts == ["chores"]
+
+
+def test_detail_reports_multiple_contexts(tmp_path):
+    """A task in several contexts reports them sorted and deduplicated."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_task_detail_reports_multiple_contexts.csv", tmp_path
+    )
+
+    response = _read_task(csv_path, 1)
+
+    assert response.status_code == 200
+
+    contexts = response.json()["contexts"]
+    assert contexts == ["casa", "chores", "work"]
+    assert len(contexts) == len(set(contexts))
