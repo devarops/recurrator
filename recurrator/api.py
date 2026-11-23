@@ -2,7 +2,7 @@ from datetime import date
 
 from fastapi import APIRouter, FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel
 
 from . import compute, io
@@ -179,6 +179,12 @@ def get_due_task_ids(
 def get_due_tasks_today(csv: str = Query(None)):
     """Return the ids of the tasks due today."""
     return get_due_task_ids(date.today(), csv=csv, context=[])
+
+
+@api.get("/task/due")
+def redirect_due_tasks(csv: str = Query(None)):
+    """Redirect the slashless due read to the due collection."""
+    return RedirectResponse(url="/api/task/due/", status_code=307)
 
 
 class TaskDetail(BaseModel):
