@@ -10,7 +10,6 @@ description = """
 When a task is starred, the response returns its ID and the new flag, and a
 later read reports the task as starred.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_starred_task_is_reported"
