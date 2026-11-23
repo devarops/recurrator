@@ -21,7 +21,6 @@ description = """
 When the task detail schema is read, contexts is declared as an array whose
 items are strings.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_task_contexts"
