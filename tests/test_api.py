@@ -8,6 +8,7 @@ from conftest import (
     _assert_error_response,
     _assert_file_unchanged,
     _read_task,
+    _read_task_body,
     _complete,
     _read_context_task_ids,
     _read_due_task_ids,
@@ -48,7 +49,7 @@ def _restore_rating_fields(csv_path, tasks):
 
 def _task_field(csv_path, task_id, field_name):
     """Read one field of a stored task through the API."""
-    return _read_task(csv_path, task_id).json()[field_name]
+    return _read_task_body(csv_path, task_id)[field_name]
 
 
 def _field_before_and_after_completion(csv_path, completed_task_id, observed_task_id, field_name):
@@ -68,19 +69,15 @@ def _completed_field_before_and_after(csv_path, task_id, field_name):
 
 def _assert_task_detail(csv_path, task_id, reference_date, expected):
     """Assert the detail read returns exactly the expected attributes."""
-    response = _read_task(csv_path, task_id, reference_date)
-
-    assert response.status_code == 200
-
-    assert response.json() == expected
+    assert _read_task_body(csv_path, task_id, reference_date) == expected
 
 
 def _assert_undated_matches_today(fixture, task_id):
     """Assert that an undated read projects the deviation to today."""
-    undated = _read_task(fixture, task_id)
-    dated = _read_task(fixture, task_id, date.today().isoformat())
+    undated = _read_task_body(fixture, task_id)
+    dated = _read_task_body(fixture, task_id, date.today().isoformat())
 
-    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
+    assert undated["rating_deviation"] == dated["rating_deviation"]
 
 
 def _assert_opponent_rating_rises(fixture, tmp_path):
@@ -184,9 +181,7 @@ def test_get_task_by_id_starred():
 
 def test_get_task_by_id_reports_last_completion():
     """Verify GET /task/{id} returns the fourth stored completion date."""
-    response = _read_task(THREE_TASKS_CSV, 2)
-
-    assert response.json()["latest_done_date"] == "2024-12-07"
+    assert _read_task_body(THREE_TASKS_CSV, 2)["latest_done_date"] == "2024-12-07"
 
 
 def test_get_nonexistent_task_returns_404():
@@ -203,7 +198,7 @@ def test_set_task_as_done():
     original_checksum, original_tasks = _snapshot_tasks_file(csv_path)
 
     task_id = 5
-    original_task = _read_task(csv_path, task_id).json()
+    original_task = _read_task_body(csv_path, task_id)
     response = _complete(csv_path, task_id)
 
     assert response.status_code == 200
@@ -325,9 +320,7 @@ def test_due_read_reduces_the_slots_for_completions_today(tmp_path):
 
 def test_get_task_by_id_rating():
     """Verify GET /task/{id} returns the task rating."""
-    response = _read_task(GLICKO_CONTRACT_CSV, 8)
-
-    assert response.json()["rating"] == 1500
+    assert _read_task_body(GLICKO_CONTRACT_CSV, 8)["rating"] == 1500
 
 
 def test_get_task_by_id_rating_deviation():
@@ -337,9 +330,7 @@ def test_get_task_by_id_rating_deviation():
 
 def test_get_task_by_id_projects_rating_deviation():
     """Verify GET /task/{id} projects the deviation to the requested date."""
-    response = _read_task(GLICKO_INACTIVITY_CSV, 1, "2026-11-08")
-
-    assert response.json()["rating_deviation"] > 350
+    assert _read_task_body(GLICKO_INACTIVITY_CSV, 1, "2026-11-08")["rating_deviation"] > 350
 
 
 def test_get_task_by_id_projects_deviation_to_today():

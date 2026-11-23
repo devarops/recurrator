@@ -1,6 +1,6 @@
 from datetime import date
 
-from conftest import client, _copy_fixture, _read_due_task_ids, _read_task, _read_task_ids
+from conftest import client, _copy_fixture, _read_due_task_ids, _read_task_body, _read_task_ids
 
 TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
 
@@ -9,7 +9,7 @@ def _scheduling_state(csv_path, task_ids):
     """Return each task's skip count and due date."""
     state = {}
     for task_id in task_ids:
-        task = _read_task(csv_path, task_id).json()
+        task = _read_task_body(csv_path, task_id)
         state[task_id] = {
             "skip_count": task["skip_count"],
             "due_date": task["due_date"],

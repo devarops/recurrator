@@ -7,7 +7,7 @@ from conftest import (
     GLICKO_INACTIVITY_CSV,
     GLICKO_SOLO_CSV,
     _copy_fixture,
-    _read_task,
+    _read_task_body,
     _complete,
     _read_context_task_ids,
     _read_task_ids,
@@ -25,7 +25,7 @@ GLICKO_SHARED_CONTEXT_ISOLATION_CSV = "tests/data/acceptance_glicko_shared_conte
 
 def _ratings(csv_path, task_ids):
     """Return each task's rating from the fixture."""
-    return {task_id: _read_task(csv_path, task_id).json()["rating"] for task_id in task_ids}
+    return {task_id: _read_task_body(csv_path, task_id)["rating"] for task_id in task_ids}
 
 
 def _ratings_before_and_after_completion(csv_path, task_ids, completed_task_id):
@@ -39,10 +39,7 @@ def _ratings_before_and_after_completion(csv_path, task_ids, completed_task_id):
 
 def test_glicko_integer_contract(tmp_path):
     """Rating and rating deviation are integers when a task is read or completed."""
-    response = _read_task(GLICKO_CONTRACT_CSV, 8)
-    assert response.status_code == 200
-
-    task = response.json()
+    task = _read_task_body(GLICKO_CONTRACT_CSV, 8)
     assert isinstance(task["rating"], int)
     assert isinstance(task["rating_deviation"], int)
 
@@ -85,14 +82,11 @@ def test_glicko_inactivity_growth():
     fixture = GLICKO_INACTIVITY_CSV
     reference_date = "2026-11-08"
 
-    older = _read_task(fixture, 1, reference_date)
-    newer = _read_task(fixture, 2, reference_date)
+    older = _read_task_body(fixture, 1, reference_date)
+    newer = _read_task_body(fixture, 2, reference_date)
 
-    assert older.status_code == 200
-    assert newer.status_code == 200
-
-    older_deviation = older.json()["rating_deviation"]
-    newer_deviation = newer.json()["rating_deviation"]
+    older_deviation = older["rating_deviation"]
+    newer_deviation = newer["rating_deviation"]
 
     assert older_deviation > newer_deviation
     assert 45 <= older_deviation <= 500
@@ -110,7 +104,7 @@ def test_glicko_simultaneous_update(tmp_path):
     assert response.status_code == 200
 
     completed = response.json()
-    opponent = _read_task(csv_path, 2).json()
+    opponent = _read_task_body(csv_path, 2)
 
     assert (completed["rating"], completed["rating_deviation"]) == (1367, 292)
     assert (opponent["rating"], opponent["rating_deviation"]) == (1733, 292)
@@ -135,12 +129,12 @@ def test_glicko_solo_completion(tmp_path):
     assert context_before.status_code == 200
     assert context_before.json() == [1]
 
-    before = _read_task(csv_path, 1).json()["rating"]
+    before = _read_task_body(csv_path, 1)["rating"]
 
     response = _complete(csv_path, 1)
     assert response.status_code == 200
 
-    after = _read_task(csv_path, 1).json()["rating"]
+    after = _read_task_body(csv_path, 1)["rating"]
     assert after != before
 
     assert _read_task_ids(csv_path).json() == [1]
@@ -152,12 +146,10 @@ def test_glicko_default_date_projection(tmp_path):
     csv_path = _copy_fixture(GLICKO_DEFAULT_DATE_CSV, tmp_path)
     today = date.today().isoformat()
 
-    undated = _read_task(csv_path, 1)
-    dated = _read_task(csv_path, 1, today)
+    undated = _read_task_body(csv_path, 1)
+    dated = _read_task_body(csv_path, 1, today)
 
-    assert undated.status_code == 200
-    assert dated.status_code == 200
-    assert undated.json()["rating_deviation"] == dated.json()["rating_deviation"]
+    assert undated["rating_deviation"] == dated["rating_deviation"]
 
 
 def test_glicko_completion_anchor(tmp_path):
@@ -167,18 +159,18 @@ def test_glicko_completion_anchor(tmp_path):
     completed = _complete(csv_path, 8)
     assert completed.status_code == 200
 
-    undated = _read_task(csv_path, 8)
+    undated = _read_task_body(csv_path, 8)
 
-    assert undated.json()["rating_deviation"] == completed.json()["rating_deviation"]
+    assert undated["rating_deviation"] == completed.json()["rating_deviation"]
 
 
 def test_glicko_deviation_growth():
     """A year without a match projects the deviation to 362."""
     fixture = GLICKO_DEVIATION_GROWTH_CSV
 
-    response = _read_task(fixture, 1, "2026-11-08")
+    response = _read_task_body(fixture, 1, "2026-11-08")
 
-    assert response.json()["rating_deviation"] == 362
+    assert response["rating_deviation"] == 362
 
 
 def test_glicko_shared_context_event(tmp_path):

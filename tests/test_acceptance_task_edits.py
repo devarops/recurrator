@@ -6,7 +6,7 @@ from conftest import (
     _copy_fixture,
     _patch_description,
     _patch_description_body,
-    _read_task,
+    _read_task_body,
 )
 
 
@@ -22,10 +22,7 @@ def _assert_description_reads_back(csv_path, task_id, text):
     """Write a description and check that a later read returns it."""
     _assert_description_written(csv_path, task_id, text)
 
-    response = _read_task(csv_path, task_id)
-
-    assert response.status_code == 200
-    assert response.json()["description"] == text
+    assert _read_task_body(csv_path, task_id)["description"] == text
 
 
 def test_description_is_written_verbatim(tmp_path):
@@ -43,14 +40,14 @@ def test_description_is_written_verbatim(tmp_path):
 def test_empty_description_is_rejected(tmp_path):
     """An empty or whitespace-only description is refused and the text survives."""
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
-    before = _read_task(csv_path, 2).json()["description"]
+    before = _read_task_body(csv_path, 2)["description"]
 
     for text in ("", "   ", "\n\t "):
         response = _patch_description(csv_path, 2, text)
 
         _assert_error_response(response, 400)
 
-    assert _read_task(csv_path, 2).json()["description"] == before
+    assert _read_task_body(csv_path, 2)["description"] == before
 
 
 def test_description_unknown_task_returns_404(tmp_path):
@@ -91,11 +88,11 @@ def test_unknown_task_takes_precedence_over_an_empty_description(tmp_path):
 def test_malformed_description_body_is_rejected(tmp_path):
     """A body without the text, or with a non-string, is refused."""
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
-    previous = _read_task(csv_path, 2).json()["description"]
+    previous = _read_task_body(csv_path, 2)["description"]
 
     for payload in ({}, {"description": 123}, {"description": None}):
         response = _patch_description_body(csv_path, 2, payload)
 
         _assert_error_response(response, 422)
 
-    assert _read_task(csv_path, 2).json()["description"] == previous
+    assert _read_task_body(csv_path, 2)["description"] == previous

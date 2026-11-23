@@ -57,6 +57,15 @@ def _read_task(csv_path, task_id, reference_date=None):
     return client.get(f"/api/task/{task_id}?csv={csv_path}{query}")
 
 
+def _read_task_body(csv_path, task_id, reference_date=None):
+    """Read one task through the API, asserting that the read succeeds."""
+    response = _read_task(csv_path, task_id, reference_date)
+
+    assert response.status_code == 200
+
+    return response.json()
+
+
 def _complete(csv_path, task_id):
     """Mark a task done through the API."""
     return client.post(f"/api/task/{task_id}/done?csv={csv_path}")
