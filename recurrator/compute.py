@@ -136,8 +136,7 @@ def compute_available_wip_slots(wip_limit: int, completed_count: int) -> int:
 
 def count_completed_on(tasks: list[Task], reference_date: date) -> int:
     """Count tasks whose latest_done_date matches the reference date."""
-    completed_tasks = [task for task in tasks if task.latest_done_date == reference_date]
-    return len(completed_tasks)
+    return sum(task.latest_done_date == reference_date for task in tasks)
 
 
 def _take_top_task(pool: list[Task], prefer_due_date: bool) -> Task | None:
