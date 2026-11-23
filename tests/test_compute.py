@@ -323,10 +323,10 @@ def test_compute_available_wip_slots_clamps_to_zero():
     assert rc.compute_available_wip_slots(6, 7) == 0
 
 
-def test_count_completed_today():
-    """Verify count_completed_today counts tasks whose latest_done_date matches reference_date."""
+def test_count_completed_on():
+    """Verify count_completed_on counts tasks whose latest_done_date matches reference_date."""
     tasks = io.import_tasks_from_csv(CONTEXT_TASKS_CSV)
-    assert rc.count_completed_today(tasks, date(2026, 2, 28)) == 2
+    assert rc.count_completed_on(tasks, date(2026, 2, 28)) == 2
 
 
 def test_filter_one_extra_task_empty_list():

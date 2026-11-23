@@ -121,15 +121,15 @@ def is_done_allowed(latest_done_date: date | None, reference_date: date) -> bool
     return (reference_date - latest_done_date).days >= MIN_DAYS_GAP
 
 
-def compute_available_wip_slots(wip_limit: int, completed_today: int) -> int:
+def compute_available_wip_slots(wip_limit: int, completed_count: int) -> int:
     """Compute remaining WIP capacity, clamped to zero."""
-    return max(wip_limit - completed_today, 0)
+    return max(wip_limit - completed_count, 0)
 
 
-def count_completed_today(tasks: list[Task], reference_date: date) -> int:
+def count_completed_on(tasks: list[Task], reference_date: date) -> int:
     """Count tasks whose latest_done_date matches the reference date."""
-    completed_today = [task for task in tasks if task.latest_done_date == reference_date]
-    return len(completed_today)
+    completed_on_date = [task for task in tasks if task.latest_done_date == reference_date]
+    return len(completed_on_date)
 
 
 def _take_top_task(pool: list[Task], odd_cycle: bool) -> Task | None:
