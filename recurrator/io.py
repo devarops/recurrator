@@ -1,7 +1,7 @@
 import csv
 import json
 import os
-from collections.abc import Iterable, Sequence
+from collections.abc import Sequence
 from datetime import date
 
 from .compute import (
@@ -185,9 +185,9 @@ def _is_task_row(row: dict, task_id: int) -> bool:
     return int(row["id"]) == task_id
 
 
-def _find_task_row(rows: Iterable[dict], task_id: int, csv_path: str) -> dict:
-    """Return the CSV row whose id column matches, or raise ValueError."""
-    for row in rows:
+def _read_task_row(task_id: int, csv_path: str) -> dict:
+    """Return the task file's row for the task, or raise ValueError."""
+    for row in _read_csv_rows(csv_path):
         if _is_task_row(row, task_id):
             return row
     raise ValueError(f"Task {task_id} not found in {csv_path}")
@@ -206,8 +206,7 @@ def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
     Raises:
         ValueError: If task_id is not found in the CSV.
     """
-    rows = _read_csv_rows(csv_path)
-    return _parse_row_dates(_find_task_row(rows, task_id, csv_path))
+    return _parse_row_dates(_read_task_row(task_id, csv_path))
 
 
 def _format_csv_field(field: str, value: str) -> str:
@@ -324,5 +323,4 @@ def get_task_by_id(task_id: int, csv_path: str) -> Task:
     Raises:
         ValueError: If task not found
     """
-    rows = _read_csv_rows(csv_path)
-    return _row_to_task(_find_task_row(rows, task_id, csv_path))
+    return _row_to_task(_read_task_row(task_id, csv_path))
