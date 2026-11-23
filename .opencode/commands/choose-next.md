@@ -1,5 +1,5 @@
 ---
-description: Compare promised API behavior with the implemented API, resolve conflicts, and rank the next items by dependencies, effort, and risk.
+description: Compare promised API behavior with the implemented API, resolve conflicts, and rank the next items by unblocks, effort, and risk.
 ---
 
 # Choose Next
@@ -42,12 +42,12 @@ The backlog is a flat list of items. Do not group items into packages or atoms.
 - An item names the surface it needs or introduces: a route, a response field, a query parameter, an error code, or a described behavior.
 - A statement no acceptance test can express is not an item; it becomes a risk note on the item whose surface it touches.
 
-## Dependencies
+## Dependencies and unblocks
 
 An edge runs from A to B when B's description or verify block names a surface that A introduces and the system does not serve. Quote that surface for every edge in the page.
 
 - Apply the rule pair by pair, within a spec and across specs; same-spec order alone is not a dependency.
-- The dependency count is the number of other items that cannot be implemented before the item, excluding itself.
+- The unblocks count is the number of other items that cannot be implemented before the item, excluding itself.
 - Implemented means the surface exists, not that a test passes. Counts fall as surfaces land.
 
 ## Conflicts and ambiguities
@@ -89,7 +89,7 @@ Assign risk flags per item, from what it introduces, and quote the evidence in t
 
 Rank ready items only, in this order:
 
-1. dependency count, descending
+1. unblocks, descending
 2. effort, ascending
 3. risk flags, ascending
 4. spec path, then criterion order
@@ -103,7 +103,7 @@ After applying, run `docker exec recurrator_dev make verify`. If it fails, repor
 Overwrite `./next-backlog-items.html` with a self-contained page; no external assets, no history. It holds four sections:
 
 1. **Recommended**: the item, its action, and one line of rationale.
-2. **Ranked**: rank, item, dependencies, effort, risk, and the quoted surface for each edge below the table.
+2. **Ranked**: rank, item, unblocks, effort, risk, and the quoted surface for each edge below the table.
 3. **Blocked**: each blocked item and its blockers.
 4. **Applied**: each resolution and dedupe edit, file and old to new.
 
