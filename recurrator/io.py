@@ -136,13 +136,12 @@ def _parse_context_scopes(row: dict) -> list[str]:
     return scopes
 
 
-def _reject_invalid_context_row(row: dict) -> None:
+def _reject_invalid_context_fields(row: dict) -> None:
     """Reject a context row with an invalid id or an empty required field."""
     _reject_invalid_context_id(row)
     _reject_empty_field(row, "display_name")
     _reject_empty_field(row, "description")
     _reject_empty_field(row, "scopes")
-    _parse_context_scopes(row)
 
 
 def _reject_duplicate_context_ids(rows: list[dict]) -> None:
@@ -152,23 +151,25 @@ def _reject_duplicate_context_ids(rows: list[dict]) -> None:
         raise ValueError("Context ids must be unique")
 
 
-def _row_to_context(row: dict) -> Context:
-    """Convert a validated context row to a Context object."""
+def _row_to_context(row: dict, scopes: list[str]) -> Context:
+    """Convert a validated context row and its parsed scopes to a Context object."""
     return Context(
         id=row["id"],
         display_name=row["display_name"],
         description=row["description"],
-        scopes=_parse_context_scopes(row),
+        scopes=scopes,
     )
 
 
 def import_contexts_from_csv(csv_path: str) -> list[Context]:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
+    validated_rows = []
     for row in rows:
-        _reject_invalid_context_row(row)
+        _reject_invalid_context_fields(row)
+        validated_rows.append((row, _parse_context_scopes(row)))
     _reject_duplicate_context_ids(rows)
-    return [_row_to_context(row) for row in rows]
+    return [_row_to_context(row, scopes) for row, scopes in validated_rows]
 
 
 def _is_task_row(row: dict, task_id: int) -> bool:
