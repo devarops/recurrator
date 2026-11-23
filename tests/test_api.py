@@ -492,3 +492,12 @@ def test_malformed_description_body_returns_error_field(tmp_path):
     response = _patch_description_body(csv_path, 2, {})
 
     assert "error" in response.json()
+
+
+def test_openapi_task_collection_declares_a_response_schema():
+    """Verify GET /api/task/ declares a non-empty 200 response schema."""
+    schema = client.get("/api/openapi.json").json()["paths"]["/api/task/"]["get"][
+        "responses"
+    ]["200"]["content"]["application/json"]["schema"]
+
+    assert schema
