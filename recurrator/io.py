@@ -129,8 +129,8 @@ def _reject_invalid_context_id(row: dict) -> None:
 
 
 def _parse_context_scopes(row: dict) -> list[str]:
-    """Parse a context row's scopes array and reject an empty one."""
-    scopes = json.loads(row["scopes"])
+    """Parse a context row's scopes array into sorted, unique ids, rejecting an empty one."""
+    scopes = sorted(set(json.loads(row["scopes"])))
     if scopes == []:
         raise ValueError("Context scopes must not be empty")
     return scopes

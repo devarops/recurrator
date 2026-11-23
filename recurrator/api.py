@@ -106,7 +106,7 @@ def _context_to_dict(context: io.Context) -> dict:
         "id": context.id,
         "display_name": context.display_name,
         "description": context.description,
-        "scopes": sorted(set(context.scopes)),
+        "scopes": context.scopes,
     }
 
 
