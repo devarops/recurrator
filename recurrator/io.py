@@ -224,14 +224,8 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
     return ",".join(_format_csv_field(field, row[field]) for field in fieldnames)
 
 
-def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
-    """Set several CSV fields of the matching task in a single atomic write."""
-    rows, fieldnames = _read_csv_rows_with_fieldnames(csv_path)
-    for row in rows:
-        if _is_task_row(row, task_id):
-            row.update(values)
-    assert fieldnames is not None
-
+def _write_csv_rows(rows: list[dict], fieldnames: Sequence[str], csv_path: str) -> None:
+    """Rewrite the file with the given rows through a temporary file, then replace it."""
     temporary_path = f"{csv_path}.tmp"
     try:
         with open(temporary_path, "w", newline="") as temporary_file:
@@ -244,6 +238,17 @@ def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None
     finally:
         if os.path.exists(temporary_path):
             os.unlink(temporary_path)
+
+
+def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
+    """Set several CSV fields of the matching task in a single atomic write."""
+    rows, fieldnames = _read_csv_rows_with_fieldnames(csv_path)
+    for row in rows:
+        if _is_task_row(row, task_id):
+            row.update(values)
+    assert fieldnames is not None
+
+    _write_csv_rows(rows, fieldnames, csv_path)
 
 
 def _format_row_dates(dates: list[date | None]) -> dict[str, str]:
