@@ -47,12 +47,6 @@ def _context_ids(contexts: list[io.Context]) -> list[str]:
     return sorted(context.id for context in contexts)
 
 
-def _due_task_ids(csv_path: str, reference_date: date) -> list[int]:
-    """Return the ids of every task due on or before the date, in file order."""
-    tasks = _load_tasks(csv_path)
-    return _task_ids(compute.filter_due_tasks(tasks, reference_date))
-
-
 def _distinct_contexts(context: list[str] | None) -> list[str]:
     """Return the requested context ids without repeats, preserving order."""
     return list(dict.fromkeys(context or []))
@@ -176,11 +170,11 @@ def get_due_task_ids(
     context: list[str] = Query(None),
 ):
     csv_path = _resolve_tasks_csv_path(csv)
+    tasks = _load_tasks(csv_path)
     requested_contexts = _distinct_contexts(context)
     if not requested_contexts:
-        return _due_task_ids(csv_path, reference_date)
-    tasks = _load_tasks(csv_path)
-    if len(requested_contexts) == 1:
+        selected_tasks = compute.filter_due_tasks(tasks, reference_date)
+    elif len(requested_contexts) == 1:
         selected_tasks = _apply_wip_selection(
             tasks, requested_contexts[0], reference_date, csv_path
         )
@@ -194,7 +188,7 @@ def get_due_task_ids(
 @api.get("/task/due/")
 def get_due_tasks_today(csv: str = Query(None)):
     """Return the ids of the tasks due today."""
-    return _due_task_ids(_resolve_tasks_csv_path(csv), date.today())
+    return get_due_task_ids(date.today(), csv=csv, context=[])
 
 
 class TaskDetail(BaseModel):
@@ -250,7 +244,7 @@ def get_due_contexts(reference_date: date, csv: str = Query(None)):
 @api.get("/context/due/")
 def get_due_contexts_today(csv: str = Query(None)):
     """Return the context ids with at least one task due today."""
-    return _due_context_ids(_resolve_tasks_csv_path(csv), date.today())
+    return get_due_contexts(date.today(), csv)
 
 
 @api.get("/context/{context_id}/")
