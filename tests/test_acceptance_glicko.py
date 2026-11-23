@@ -14,6 +14,15 @@ from conftest import (
     _read_task_ids,
 )
 
+GLICKO_FOUR_TASKS_CSV = "tests/data/acceptance_glicko_four_tasks.csv"
+GLICKO_EARLY_COMPLETION_CSV = "tests/data/acceptance_glicko_early_completion.csv"
+GLICKO_SIMULTANEOUS_UPDATE_CSV = "tests/data/acceptance_glicko_simultaneous_update.csv"
+GLICKO_CONTEXT_ISOLATION_CSV = "tests/data/acceptance_glicko_context_isolation.csv"
+GLICKO_DEVIATION_GROWTH_CSV = "tests/data/acceptance_glicko_deviation_growth.csv"
+GLICKO_SHARED_CONTEXT_EVENT_CSV = "tests/data/acceptance_glicko_shared_context_event.csv"
+GLICKO_SECOND_CONTEXT_CSV = "tests/data/acceptance_glicko_second_context_participates.csv"
+GLICKO_SHARED_CONTEXT_ISOLATION_CSV = "tests/data/acceptance_glicko_shared_context_isolation.csv"
+
 
 def _ratings(csv_path, task_ids):
     """Return each task's rating from the fixture."""
@@ -50,7 +59,7 @@ def test_glicko_integer_contract(tmp_path):
 
 def test_glicko_four_tasks(tmp_path):
     """The completed task loses rating, its three due peers change, and others keep theirs."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_four_tasks.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_FOUR_TASKS_CSV, tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 7), 1)
 
@@ -63,7 +72,7 @@ def test_glicko_four_tasks(tmp_path):
 
 def test_glicko_early_completion(tmp_path):
     """A not-yet-due completion joins the four due tasks and all five ratings change."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_early_completion.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_EARLY_COMPLETION_CSV, tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 6), 5)
 
@@ -93,7 +102,7 @@ def test_glicko_inactivity_growth():
 
 def test_glicko_simultaneous_update(tmp_path):
     """Two different ratings match a simultaneous update, not a sequential one."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_simultaneous_update.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_SIMULTANEOUS_UPDATE_CSV, tmp_path)
 
     with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)
@@ -119,7 +128,7 @@ def test_glicko_simultaneous_update(tmp_path):
 
 def test_glicko_context_isolation(tmp_path):
     """Completing a task in one context leaves another context's rating unchanged."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_context_isolation.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_CONTEXT_ISOLATION_CSV, tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 4), 1)
 
@@ -175,7 +184,7 @@ def test_glicko_completion_anchor(tmp_path):
 
 def test_glicko_deviation_growth():
     """A year without a match projects the deviation to 362."""
-    fixture = "tests/data/acceptance_glicko_deviation_growth.csv"
+    fixture = GLICKO_DEVIATION_GROWTH_CSV
 
     response = _read_task_on(fixture, 1, "2026-11-08")
 
@@ -184,7 +193,7 @@ def test_glicko_deviation_growth():
 
 def test_glicko_shared_context_event(tmp_path):
     """A two-context completion forms one event with every shared-context peer."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_shared_context_event.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_SHARED_CONTEXT_EVENT_CSV, tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 6), 1)
 
@@ -196,9 +205,7 @@ def test_glicko_shared_context_event(tmp_path):
 
 def test_glicko_second_context_participates(tmp_path):
     """A peer that shares only the second context changes rating."""
-    csv_path = _copy_fixture(
-        "tests/data/acceptance_glicko_second_context_participates.csv", tmp_path
-    )
+    csv_path = _copy_fixture(GLICKO_SECOND_CONTEXT_CSV, tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 3), 1)
 
@@ -208,7 +215,7 @@ def test_glicko_second_context_participates(tmp_path):
 
 def test_glicko_shared_context_isolation(tmp_path):
     """Two tasks outside both contexts keep their ratings."""
-    csv_path = _copy_fixture("tests/data/acceptance_glicko_shared_context_isolation.csv", tmp_path)
+    csv_path = _copy_fixture(GLICKO_SHARED_CONTEXT_ISOLATION_CSV, tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 4), 1)
 
