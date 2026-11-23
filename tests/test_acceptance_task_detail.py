@@ -46,3 +46,18 @@ def test_last_completion_ignores_the_skip_date(tmp_path):
     assert body["latest_date"] == "2025-06-15"
     assert body["latest_done_date"] == "2025-02-01"
     assert body["latest_done_date"] != body["latest_date"]
+
+
+def test_detail_reports_a_single_context_array(tmp_path):
+    """A task in one context reports a one-element contexts array."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_task_detail_reports_a_single_context_array.csv", tmp_path
+    )
+
+    response = _read_task(csv_path, 1)
+
+    assert response.status_code == 200
+
+    contexts = response.json()["contexts"]
+    assert isinstance(contexts, list)
+    assert contexts == ["chores"]
