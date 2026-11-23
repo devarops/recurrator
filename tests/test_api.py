@@ -501,3 +501,12 @@ def test_openapi_task_collection_declares_a_response_schema():
     ]["content"]["application/json"]["schema"]
 
     assert schema
+
+
+def test_openapi_task_detail_declares_a_response_schema():
+    """Verify GET /api/task/{task_id} declares a non-empty 200 response schema."""
+    schema = client.get("/api/openapi.json").json()["paths"]["/api/task/{task_id}"][
+        "get"
+    ]["responses"]["200"]["content"]["application/json"]["schema"]
+
+    assert schema
