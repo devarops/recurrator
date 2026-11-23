@@ -45,14 +45,15 @@ TASK_5_EXPECTED_AFTER_COMPLETION = [
 ]
 
 
-def _read_task(csv_path, task_id):
-    """Read one task through the API."""
-    return client.get(f"/api/task/{task_id}?csv={csv_path}")
+def _read_task(csv_path, task_id, reference_date=None):
+    """Read one task through the API, optionally at a reference date."""
+    query = f"&date={reference_date}" if reference_date else ""
+    return client.get(f"/api/task/{task_id}?csv={csv_path}{query}")
 
 
 def _read_task_on(csv_path, task_id, reference_date):
     """Read one task through the API at a reference date."""
-    return client.get(f"/api/task/{task_id}?csv={csv_path}&date={reference_date}")
+    return _read_task(csv_path, task_id, reference_date)
 
 
 def _complete(csv_path, task_id):
