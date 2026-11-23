@@ -150,7 +150,7 @@ def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
 
 
 @api.get("/task/")
-def get_all_tasks(csv: str = Query(None)):
+def get_all_tasks(csv: str = Query(None)) -> list[int]:
     return _task_ids(_load_tasks(_resolve_tasks_csv_path(csv)))
 
 
