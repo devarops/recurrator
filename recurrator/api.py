@@ -53,24 +53,29 @@ def _distinct_contexts(context: list[str] | None) -> list[str]:
     return list(dict.fromkeys(context or []))
 
 
-def _anchored_rating_fields(task: io.Task) -> dict:
-    """Return the Glicko fields with the stored deviation."""
+def _rating_fields(task: io.Task, rating_deviation: int) -> dict:
+    """Return the Glicko fields with the given deviation."""
     return {
         "rating": task.rating,
-        "rating_deviation": task.rating_deviation,
+        "rating_deviation": rating_deviation,
     }
+
+
+def _anchored_rating_fields(task: io.Task) -> dict:
+    """Return the Glicko fields with the stored deviation."""
+    return _rating_fields(task, task.rating_deviation)
 
 
 def _projected_rating_fields(task: io.Task, reference_date: date) -> dict:
     """Return the Glicko fields with the deviation projected to reference_date."""
-    return {
-        "rating": task.rating,
-        "rating_deviation": round(
+    return _rating_fields(
+        task,
+        round(
             compute.compute_live_rating_deviation(
                 task.rating_deviation, task.rating_date, reference_date
             )
         ),
-    }
+    )
 
 
 def _task_to_dict(task: io.Task, reference_date: date) -> dict:
