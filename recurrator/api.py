@@ -27,16 +27,6 @@ def _resolve_contexts_csv_path(contexts_csv: str | None = None) -> str:
     return contexts_csv or DEFAULT_CONTEXTS_CSV_PATH
 
 
-def _load_tasks(csv_path: str) -> list[io.Task]:
-    """Import every stored task from the given task file."""
-    return io.import_tasks_from_csv(csv_path)
-
-
-def _load_contexts(contexts_csv_path: str) -> list[io.Context]:
-    """Import every stored context from the given context file."""
-    return io.import_contexts_from_csv(contexts_csv_path)
-
-
 def _task_ids(tasks: list[io.Task]) -> list[int]:
     """Return every task's id, preserving the given order."""
     return [task.id for task in tasks]
@@ -132,7 +122,7 @@ def _find_task(task_id: int, csv_path: str) -> io.Task | None:
 
 def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
     """Return the stored context, or None when no context has the id."""
-    for context in _load_contexts(contexts_csv_path):
+    for context in io.import_contexts_from_csv(contexts_csv_path):
         if context.id == context_id:
             return context
     return None
@@ -140,12 +130,12 @@ def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
 
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)) -> list[int]:
-    return _task_ids(_load_tasks(_resolve_tasks_csv_path(csv)))
+    return _task_ids(io.import_tasks_from_csv(_resolve_tasks_csv_path(csv)))
 
 
 @api.get("/context/")
 def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
-    return _context_ids(_load_contexts(_resolve_contexts_csv_path(contexts_csv)))
+    return _context_ids(io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv)))
 
 
 def _apply_wip_selection(
@@ -170,7 +160,7 @@ def get_due_task_ids(
     context: list[str] = Query(None),
 ):
     csv_path = _resolve_tasks_csv_path(csv)
-    tasks = _load_tasks(csv_path)
+    tasks = io.import_tasks_from_csv(csv_path)
     requested_contexts = _distinct_contexts(context)
     if not requested_contexts:
         selected_tasks = compute.filter_due_tasks(tasks, reference_date)
@@ -233,7 +223,9 @@ def get_task_by_id(
 @api.get("/context/due/{reference_date}")
 def get_due_contexts(reference_date: date, csv: str = Query(None)):
     """Return the context ids with at least one task due on or before the date."""
-    return compute.filter_due_contexts(_load_tasks(_resolve_tasks_csv_path(csv)), reference_date)
+    return compute.filter_due_contexts(
+        io.import_tasks_from_csv(_resolve_tasks_csv_path(csv)), reference_date
+    )
 
 
 @api.get("/context/due/")
@@ -297,7 +289,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
 
     io.update_task_as_done(task_id, today, csv_path)
 
-    tasks = _load_tasks(csv_path)
+    tasks = io.import_tasks_from_csv(csv_path)
     opponents = compute.select_opponents(tasks, current_task, today)
     updates = compute.compute_match_updates(current_task, opponents, today)
     _apply_rating_updates(updates, csv_path, today)
