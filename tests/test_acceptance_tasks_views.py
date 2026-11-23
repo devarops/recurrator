@@ -26,6 +26,17 @@ def test_all_tasks_are_listed():
     assert response.json() == [7, 2, 9]
 
 
+def test_due_read_without_trailing_slash_redirects():
+    """The slashless due read redirects and returns no task IDs."""
+    response = client.get(
+        f"/api/task/due?csv={TASKS_VIEWS_CSV}", follow_redirects=False
+    )
+
+    assert response.status_code == 307
+    assert "/api/task/due/" in response.headers["location"]
+    assert response.content == b""
+
+
 def test_due_tasks_are_listed_for_a_date():
     """A dated due read returns the due IDs and excludes the later task."""
     response = _read_due_task_ids(TASKS_VIEWS_CSV, "2026-01-01")
