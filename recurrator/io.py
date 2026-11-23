@@ -36,12 +36,18 @@ def _format_date(date_value: date | None) -> str:
     return date_value.isoformat() if date_value is not None else MISSING_DATE
 
 
-def _read_csv_rows(csv_path: str) -> tuple[list[dict], Sequence[str] | None]:
+def _read_csv_rows_with_fieldnames(csv_path: str) -> tuple[list[dict], Sequence[str] | None]:
     """Read the task file as rows plus the header that names their columns."""
     with open(csv_path, newline="") as csv_file:
         reader = csv.DictReader(csv_file)
         rows = list(reader)
         return rows, reader.fieldnames
+
+
+def _read_csv_rows(csv_path: str) -> list[dict]:
+    """Read the task file as rows."""
+    rows, _ = _read_csv_rows_with_fieldnames(csv_path)
+    return rows
 
 
 def _parse_row_dates(row: dict) -> list[date | None]:
@@ -114,8 +120,7 @@ def import_tasks_from_csv(csv_path: str) -> list[Task]:
     Returns:
         List of Task objects with attributes from CSV rows.
     """
-    rows, _ = _read_csv_rows(csv_path)
-    return [_row_to_task(row) for row in rows]
+    return [_row_to_task(row) for row in _read_csv_rows(csv_path)]
 
 
 def _reject_empty_field(row: dict, field: str) -> None:
@@ -170,8 +175,7 @@ def _row_to_context(row: dict) -> Context:
 
 def import_contexts_from_csv(csv_path: str) -> list[Context]:
     """Import every stored context from the given context file."""
-    rows, _ = _read_csv_rows(csv_path)
-    contexts = [_row_to_context(row) for row in rows]
+    contexts = [_row_to_context(row) for row in _read_csv_rows(csv_path)]
     _reject_duplicate_context_ids(contexts)
     return contexts
 
@@ -202,7 +206,7 @@ def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
     Raises:
         ValueError: If task_id is not found in the CSV.
     """
-    rows, _ = _read_csv_rows(csv_path)
+    rows = _read_csv_rows(csv_path)
     return _parse_row_dates(_find_task_row(rows, task_id, csv_path))
 
 
@@ -223,7 +227,7 @@ def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
 
 def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
     """Set several CSV fields of the matching task in a single atomic write."""
-    rows, fieldnames = _read_csv_rows(csv_path)
+    rows, fieldnames = _read_csv_rows_with_fieldnames(csv_path)
     for row in rows:
         if _is_task_row(row, task_id):
             row.update(values)
@@ -320,5 +324,5 @@ def get_task_by_id(task_id: int, csv_path: str) -> Task:
     Raises:
         ValueError: If task not found
     """
-    rows, _ = _read_csv_rows(csv_path)
+    rows = _read_csv_rows(csv_path)
     return _row_to_task(_find_task_row(rows, task_id, csv_path))
