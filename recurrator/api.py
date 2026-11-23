@@ -198,7 +198,32 @@ def get_due_tasks_today(csv: str = Query(None)):
     return _due_task_ids(_resolve_tasks_csv_path(csv), date.today())
 
 
-@api.get("/task/{task_id}")
+class TaskDetail(BaseModel):
+    """The task detail response returned by GET /task/{task_id}."""
+
+    id: int
+    description: str
+    contexts: list[str]
+    skip_count: int
+    starred: bool
+    latest_date: str
+    latest_done_date: str
+    recurrence_days: int
+    due_date: str
+    coins: int
+    rating: int
+    rating_deviation: int
+
+
+@api.get(
+    "/task/{task_id}",
+    response_model=None,
+    openapi_extra={
+        "responses": {
+            "200": {"content": {"application/json": {"schema": TaskDetail.model_json_schema()}}}
+        }
+    },
+)
 def get_task_by_id(
     task_id: int,
     csv: str = Query(None),
