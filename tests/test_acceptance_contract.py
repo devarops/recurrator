@@ -1,4 +1,4 @@
-from conftest import client, _read_response_schema
+from conftest import _read_openapi_document, _read_response_schema
 
 _HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 
@@ -29,22 +29,15 @@ def _assert_schema_is_declared(schema, method, path):
 
 def test_openapi_declares_response_properties():
     """Every 200 response declares a non-empty, fully shaped schema."""
-    response = client.get("/api/openapi.json")
+    document = _read_openapi_document()
 
-    assert response.status_code == 200
-
-    document = response.json()
     for method, path, schema in _json_200_schemas(document):
         _assert_schema_is_declared(schema, method, path)
 
 
 def test_openapi_declares_task_contexts():
     """The task detail schema declares contexts as an array of strings."""
-    response = client.get("/api/openapi.json")
-
-    assert response.status_code == 200
-
-    schema = _read_response_schema(response.json(), "/api/task/{task_id}")
+    schema = _read_response_schema(_read_openapi_document(), "/api/task/{task_id}")
     contexts = schema["properties"]["contexts"]
     assert contexts["type"] == "array"
     assert contexts["items"]["type"] == "string"

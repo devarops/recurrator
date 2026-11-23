@@ -44,6 +44,15 @@ TASK_5_EXPECTED_AFTER_COMPLETION = [
 ]
 
 
+def _read_openapi_document():
+    """Read the published OpenAPI document, asserting that the read succeeds."""
+    response = client.get("/api/openapi.json")
+
+    assert response.status_code == 200
+
+    return response.json()
+
+
 def _read_response_schema(document, path):
     """Return the 200 response schema of one GET path from an OpenAPI document."""
     response = document["paths"][path]["get"]["responses"]["200"]
