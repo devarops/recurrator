@@ -253,6 +253,10 @@ class DescriptionUpdate(BaseModel):
     description: str
 
 
+class StarredUpdate(BaseModel):
+    starred: bool
+
+
 @api.patch("/task/{task_id}/description")
 def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
     """Replace a task's description with the given text."""
@@ -263,6 +267,16 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
         return _error_response("Description must not be empty", 400)
     io.update_task_description(task_id, body.description, csv_path)
     return {"id": task_id, "description": body.description}
+
+
+@api.patch("/task/{task_id}/starred")
+def patch_task_starred(task_id: int, body: StarredUpdate, csv: str = Query(None)):
+    """Replace a task's starred flag with the given value."""
+    csv_path = _resolve_tasks_csv_path(csv)
+    if _find_task(task_id, csv_path) is None:
+        return _task_not_found_response()
+    io.update_task_starred(task_id, body.starred, csv_path)
+    return {"id": task_id, "starred": body.starred}
 
 
 def _completion_response(task: io.Task) -> dict:

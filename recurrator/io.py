@@ -271,6 +271,10 @@ def update_task_description(task_id: int, description: str, csv_path: str) -> No
     _set_csv_fields(task_id, {"description": description}, csv_path)
 
 
+def update_task_starred(task_id: int, starred: bool, csv_path: str) -> None:
+    _set_csv_fields(task_id, {"starred": str(int(starred))}, csv_path)
+
+
 def update_task_skip_count(task_id: int, skip_count: int, csv_path: str) -> None:
     _set_csv_fields(task_id, {"skip_count": str(skip_count)}, csv_path)
 
