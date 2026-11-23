@@ -203,7 +203,7 @@ def get_task_by_id(
     task_id: int,
     csv: str = Query(None),
     reference_date_str: str = Query(None, alias="date"),
-):
+) -> dict:
     csv_path = _resolve_tasks_csv_path(csv)
     task = _find_task(task_id, csv_path)
     if task is None:
