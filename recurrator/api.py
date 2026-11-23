@@ -122,10 +122,10 @@ def _find_task(task_id: int, csv_path: str) -> io.Task | None:
 
 def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
     """Return the stored context, or None when no context has the id."""
-    for context in io.import_contexts_from_csv(contexts_csv_path):
-        if context.id == context_id:
-            return context
-    return None
+    try:
+        return io.get_context_by_id(context_id, contexts_csv_path)
+    except ValueError:
+        return None
 
 
 @api.get("/task/")

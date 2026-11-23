@@ -180,6 +180,14 @@ def import_contexts_from_csv(csv_path: str) -> list[Context]:
     return contexts
 
 
+def get_context_by_id(context_id: str, csv_path: str) -> Context:
+    """Return the context the file stores under the id, or raise ValueError."""
+    for context in import_contexts_from_csv(csv_path):
+        if context.id == context_id:
+            return context
+    raise ValueError(f"Context {context_id} not found in {csv_path}")
+
+
 def _is_task_row(row: dict, task_id: int) -> bool:
     """Return whether the row's id column names the task."""
     return int(row["id"]) == task_id
