@@ -168,14 +168,14 @@ def get_due_task_ids(
     context: list[str] = Query(None),
 ):
     csv_path = _resolve_csv_path(csv)
-    tasks = _load_tasks(csv_path)
     requested_contexts = _distinct_contexts(context)
+    if not requested_contexts:
+        return _due_task_ids(csv_path, reference_date)
+    tasks = _load_tasks(csv_path)
     if len(requested_contexts) == 1:
         return _apply_wip_selection(tasks, requested_contexts[0], reference_date, csv_path)
     due_tasks = compute.filter_due_tasks(tasks, reference_date)
-    if requested_contexts:
-        return _task_ids(compute.filter_tasks_by_any_context(due_tasks, set(requested_contexts)))
-    return _task_ids(due_tasks)
+    return _task_ids(compute.filter_tasks_by_any_context(due_tasks, set(requested_contexts)))
 
 
 @api.get("/task/due/")
