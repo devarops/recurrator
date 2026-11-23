@@ -80,11 +80,6 @@ def _parse_json_id_array(cell: str) -> list[str]:
     return sorted(set(json.loads(cell)))
 
 
-def _parse_contexts(contexts_cell: str) -> list[str]:
-    """Parse a task's JSON context array into sorted, unique ids."""
-    return _parse_json_id_array(contexts_cell)
-
-
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
     dates = _compute_dates(row)
@@ -93,7 +88,7 @@ def _row_to_task(row: dict) -> Task:
     return Task(
         id=int(row["id"]),
         description=row["description"],
-        contexts=_parse_contexts(row["contexts"]),
+        contexts=_parse_json_id_array(row["contexts"]),
         skip_count=int(row["skip_count"]),
         starred=starred,
         dates=dates,
