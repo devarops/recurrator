@@ -164,17 +164,16 @@ def filter_n_tasks_by_context(
         return due_tasks, []
     starred_pool = [task for task in due_tasks if task.starred]
     non_starred_pool = [task for task in due_tasks if not task.starred]
+    alternating_pools = (starred_pool, non_starred_pool)
     selected_tasks: list[Task] = []
     prefer_due_date = True
     while len(selected_tasks) < available_slots:
-        starred_task = _take_top_task(starred_pool, prefer_due_date)
-        if starred_task is not None:
-            selected_tasks.append(starred_task)
+        for pool in alternating_pools:
+            task = _take_top_task(pool, prefer_due_date)
+            if task is not None:
+                selected_tasks.append(task)
             if len(selected_tasks) >= available_slots:
                 break
-        non_starred_task = _take_top_task(non_starred_pool, prefer_due_date)
-        if non_starred_task is not None:
-            selected_tasks.append(non_starred_task)
         prefer_due_date = not prefer_due_date
     deferred_tasks = non_starred_pool
     return selected_tasks, deferred_tasks
