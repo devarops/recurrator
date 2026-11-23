@@ -45,6 +45,12 @@ TASK_5_EXPECTED_AFTER_COMPLETION = [
 ]
 
 
+def _read_response_schema(document, path):
+    """Return the 200 response schema of one GET path from an OpenAPI document."""
+    response = document["paths"][path]["get"]["responses"]["200"]
+    return response["content"]["application/json"]["schema"]
+
+
 def _read_task(csv_path, task_id, reference_date=None):
     """Read one task through the API, optionally at a reference date."""
     query = f"&date={reference_date}" if reference_date else ""

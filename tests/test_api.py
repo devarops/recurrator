@@ -13,6 +13,7 @@ from conftest import (
     _read_context_task_ids,
     _read_due_task_ids,
     _read_due_context_ids,
+    _read_response_schema,
     _read_task_ids,
     _patch_description,
     _patch_description_body,
@@ -496,17 +497,13 @@ def test_malformed_description_body_returns_error_field(tmp_path):
 
 def test_openapi_task_collection_declares_a_response_schema():
     """Verify GET /api/task/ declares a non-empty 200 response schema."""
-    schema = client.get("/api/openapi.json").json()["paths"]["/api/task/"]["get"]["responses"][
-        "200"
-    ]["content"]["application/json"]["schema"]
+    document = client.get("/api/openapi.json").json()
 
-    assert schema
+    assert _read_response_schema(document, "/api/task/")
 
 
 def test_openapi_task_detail_declares_a_response_schema():
     """Verify GET /api/task/{task_id} declares a non-empty 200 response schema."""
-    schema = client.get("/api/openapi.json").json()["paths"]["/api/task/{task_id}"][
-        "get"
-    ]["responses"]["200"]["content"]["application/json"]["schema"]
+    document = client.get("/api/openapi.json").json()
 
-    assert schema
+    assert _read_response_schema(document, "/api/task/{task_id}")

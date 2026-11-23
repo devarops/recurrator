@@ -1,4 +1,4 @@
-from conftest import client
+from conftest import client, _read_response_schema
 
 _HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 
@@ -44,8 +44,7 @@ def test_openapi_declares_task_contexts():
 
     assert response.status_code == 200
 
-    document = response.json()
-    schema = document["paths"]["/api/task/{task_id}"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]
+    schema = _read_response_schema(response.json(), "/api/task/{task_id}")
     contexts = schema["properties"]["contexts"]
     assert contexts["type"] == "array"
     assert contexts["items"]["type"] == "string"
