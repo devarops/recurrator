@@ -51,18 +51,18 @@ def test_undated_due_read_uses_today():
     assert undated.json() == dated.json()
 
 
-def test_due_read_without_trailing_slash_redirects():
-    """The slashless due read redirects to the trailing-slash form."""
-    response = client.get(
-        _contexts_url("context/due"),
-        follow_redirects=False,
-    )
+def _assert_slashless_read_redirects(path, target_path):
+    """Assert a slashless context read redirects to its trailing-slash form."""
+    response = client.get(_contexts_url(path), follow_redirects=False)
 
     assert response.status_code == 307
-
-    assert "/api/context/due/" in response.headers["location"]
-
+    assert target_path in response.headers["location"]
     assert response.content == b""
+
+
+def test_due_read_without_trailing_slash_redirects():
+    """The slashless due read redirects to the trailing-slash form."""
+    _assert_slashless_read_redirects("context/due", "/api/context/due/")
 
 
 def test_context_detail_reports_its_fields():
@@ -106,13 +106,4 @@ def test_unknown_context_returns_404():
 
 def test_context_detail_without_trailing_slash_redirects():
     """The slashless detail read redirects to the trailing-slash form."""
-    response = client.get(
-        _contexts_url("context/garden"),
-        follow_redirects=False,
-    )
-
-    assert response.status_code == 307
-
-    assert "/api/context/garden/" in response.headers["location"]
-
-    assert response.content == b""
+    _assert_slashless_read_redirects("context/garden", "/api/context/garden/")
