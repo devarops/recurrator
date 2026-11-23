@@ -184,9 +184,7 @@ def test_glicko_deviation_growth():
 
 def test_glicko_shared_context_event(tmp_path):
     """A two-context completion forms one event with every shared-context peer."""
-    csv_path = _copy_fixture(
-        "tests/data/acceptance_glicko_shared_context_event.csv", tmp_path
-    )
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_shared_context_event.csv", tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 6), 1)
 
@@ -210,9 +208,7 @@ def test_glicko_second_context_participates(tmp_path):
 
 def test_glicko_shared_context_isolation(tmp_path):
     """Two tasks outside both contexts keep their ratings."""
-    csv_path = _copy_fixture(
-        "tests/data/acceptance_glicko_shared_context_isolation.csv", tmp_path
-    )
+    csv_path = _copy_fixture("tests/data/acceptance_glicko_shared_context_isolation.csv", tmp_path)
 
     before, after = _ratings_before_and_after_completion(csv_path, range(1, 4), 1)
 
