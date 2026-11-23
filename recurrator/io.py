@@ -207,19 +207,19 @@ def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
     return _parse_row_dates(_find_task_row(rows, task_id, csv_path))
 
 
+def _format_csv_field(field: str, value: str) -> str:
+    """Quote a CSV field when its name or its content requires it."""
+    needs_quotes = field in ("description", "contexts") or any(
+        character in value for character in ',"\n'
+    )
+    if needs_quotes:
+        return '"' + value.replace('"', '""') + '"'
+    return value
+
+
 def _format_csv_line(fieldnames: Sequence[str], row: dict) -> str:
     """Format a CSV row, quoting the fields that need it."""
-    line_parts = []
-    for field in fieldnames:
-        value = row[field]
-        needs_quotes = field in ("description", "contexts") or any(
-            character in value for character in ',"\n'
-        )
-        if needs_quotes:
-            line_parts.append('"' + value.replace('"', '""') + '"')
-        else:
-            line_parts.append(value)
-    return ",".join(line_parts)
+    return ",".join(_format_csv_field(field, row[field]) for field in fieldnames)
 
 
 def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
