@@ -199,13 +199,19 @@ def compute_live_rating_deviation(
     return min(max(live_deviation, GLICKO_RATING_DEVIATION_MIN), GLICKO_RATING_DEVIATION_MAX)
 
 
+def compute_live_participant_deviation(
+    participant: Task | SyntheticOpponent, reference_date: date
+) -> float:
+    """Project a participant's anchored rating deviation to reference_date."""
+    return compute_live_rating_deviation(
+        participant.rating_deviation, participant.rating_date, reference_date
+    )
+
+
 def compute_universe_medians(tasks: list[Task], reference_date: date) -> tuple[int, int]:
     """Return the median rating and live deviation of every task."""
     ratings = [task.rating for task in tasks]
-    deviations = [
-        compute_live_rating_deviation(task.rating_deviation, task.rating_date, reference_date)
-        for task in tasks
-    ]
+    deviations = [compute_live_participant_deviation(task, reference_date) for task in tasks]
     return round(median(ratings)), round(median(deviations))
 
 
@@ -242,7 +248,7 @@ def compute_match_updates(
     players: dict[int | None, _GlickoPlayer] = {
         task.id: _GlickoPlayer(
             task.rating,
-            compute_live_rating_deviation(task.rating_deviation, task.rating_date, reference_date),
+            compute_live_participant_deviation(task, reference_date),
         )
         for task in participants
     }

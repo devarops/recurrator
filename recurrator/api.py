@@ -74,12 +74,7 @@ def _anchored_rating_fields(task: io.Task) -> dict:
 def _projected_rating_fields(task: io.Task, reference_date: date) -> dict:
     """Return the Glicko fields with the deviation projected to reference_date."""
     return _rating_fields(
-        task,
-        round(
-            compute.compute_live_rating_deviation(
-                task.rating_deviation, task.rating_date, reference_date
-            )
-        ),
+        task, round(compute.compute_live_participant_deviation(task, reference_date))
     )
 
 
