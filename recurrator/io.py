@@ -147,25 +147,23 @@ def _reject_duplicate_context_ids(rows: list[dict]) -> None:
         raise ValueError("Context ids must be unique")
 
 
-def _row_to_context(row: dict, scopes: list[str]) -> Context:
-    """Convert a validated context row and its parsed scopes to a Context object."""
+def _row_to_context(row: dict) -> Context:
+    """Validate a context row and convert it to a Context object."""
+    _reject_invalid_context_fields(row)
     return Context(
         id=row["id"],
         display_name=row["display_name"],
         description=row["description"],
-        scopes=scopes,
+        scopes=_parse_context_scopes(row),
     )
 
 
 def import_contexts_from_csv(csv_path: str) -> list[Context]:
     """Import every stored context from the given context file."""
     rows, _ = _read_csv_rows(csv_path)
-    validated_rows = []
-    for row in rows:
-        _reject_invalid_context_fields(row)
-        validated_rows.append((row, _parse_context_scopes(row)))
+    contexts = [_row_to_context(row) for row in rows]
     _reject_duplicate_context_ids(rows)
-    return [_row_to_context(row, scopes) for row, scopes in validated_rows]
+    return contexts
 
 
 def _is_task_row(row: dict, task_id: int) -> bool:
