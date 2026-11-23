@@ -1,4 +1,6 @@
-from conftest import _copy_fixture, _read_due_task_ids, _read_task, _read_task_ids
+from datetime import date
+
+from conftest import client, _copy_fixture, _read_due_task_ids, _read_task, _read_task_ids
 
 TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
 
@@ -31,6 +33,16 @@ def test_due_tasks_are_listed_for_a_date():
     assert response.status_code == 200
 
     assert response.json() == [7, 9]
+
+
+def test_undated_due_read_uses_today():
+    """The undated due read matches the dated read for today."""
+    dated = _read_due_task_ids(TASKS_VIEWS_CSV, date.today().isoformat())
+    undated = client.get(f"/api/task/due/?csv={TASKS_VIEWS_CSV}")
+
+    assert undated.status_code == 200
+
+    assert undated.json() == dated.json()
 
 
 def test_no_context_due_read_is_read_only(tmp_path):
