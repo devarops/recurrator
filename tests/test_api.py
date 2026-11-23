@@ -18,6 +18,7 @@ from conftest import (
     _read_task_ids,
     _patch_description,
     _patch_description_body,
+    _patch_starred,
     _restore_completion_fields,
     CONTEXT_TASKS_CSV,
     EIGHT_TASKS_CSV,
@@ -500,7 +501,7 @@ def test_starred_write_returns_confirmation(tmp_path):
     """Verify PATCH /task/{id}/starred confirms the new flag."""
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
 
-    response = client.patch(f"/api/task/2/starred?csv={csv_path}", json={"starred": True})
+    response = _patch_starred(csv_path, 2, True)
 
     assert response.json() == {"id": 2, "starred": True}
 

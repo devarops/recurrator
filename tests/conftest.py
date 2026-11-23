@@ -89,6 +89,11 @@ def _patch_description(csv_path, task_id, text):
     return _patch_description_body(csv_path, task_id, {"description": text})
 
 
+def _patch_starred(csv_path, task_id, starred):
+    """Send a starred flag through the API."""
+    return client.patch(f"/api/task/{task_id}/starred?csv={csv_path}", json={"starred": starred})
+
+
 def _read_task_ids(csv_path):
     """Read the ids of every task through the API."""
     return client.get(f"/api/task/?csv={csv_path}")

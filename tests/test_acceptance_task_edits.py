@@ -6,18 +6,11 @@ from conftest import (
     _copy_fixture,
     _patch_description,
     _patch_description_body,
+    _patch_starred,
     _read_task_body,
-    client,
 )
 
 STARRED_TASK_CSV = "tests/data/acceptance_task_edits_starred_task_is_reported.csv"
-
-
-def _patch_starred(csv_path, task_id, starred):
-    """Send a starred flag through the API."""
-    return client.patch(
-        f"/api/task/{task_id}/starred?csv={csv_path}", json={"starred": starred}
-    )
 
 
 def _assert_description_written(csv_path, task_id, text):
