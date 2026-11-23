@@ -110,6 +110,14 @@ def _find_task(task_id: int, csv_path: str) -> io.Task | None:
         return None
 
 
+def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
+    """Return the stored context, or None when no context has the id."""
+    for context in io.import_contexts_from_csv(contexts_csv_path):
+        if context.id == context_id:
+            return context
+    return None
+
+
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)):
     return _task_ids(_load_tasks(_resolve_csv_path(csv)))
@@ -183,11 +191,10 @@ def get_due_contexts_today(csv: str = Query(None)):
 @api.get("/context/{context_id}/")
 def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str = Query(None)):
     """Return one stored context."""
-    contexts = io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv))
-    for context in contexts:
-        if context.id == context_id:
-            return _context_to_dict(context)
-    return _error_response("Context not found", 404)
+    context = _find_context(context_id, _resolve_contexts_csv_path(contexts_csv))
+    if context is None:
+        return _error_response("Context not found", 404)
+    return _context_to_dict(context)
 
 
 class DescriptionUpdate(BaseModel):
