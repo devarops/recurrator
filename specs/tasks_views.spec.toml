@@ -119,7 +119,6 @@ When a dated due read repeats one context, the repeated value collapses, so the
 request applies the single-context work-in-progress rules rather than the
 multiple-context read-only rule.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_duplicate_contexts_collapse_in_due_read"
