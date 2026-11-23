@@ -42,6 +42,11 @@ def _task_ids(tasks: list[io.Task]) -> list[int]:
     return [task.id for task in tasks]
 
 
+def _context_ids(contexts: list[io.Context]) -> list[str]:
+    """Return every context's id, sorted."""
+    return sorted(context.id for context in contexts)
+
+
 def _due_task_ids(csv_path: str, reference_date: date) -> list[int]:
     """Return the ids of every task due on or before the date, in file order."""
     tasks = _load_tasks(csv_path)
@@ -146,9 +151,7 @@ def get_all_tasks(csv: str = Query(None)):
 
 @api.get("/context/")
 def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
-    """Return every stored context id, sorted."""
-    contexts = _load_contexts(_resolve_contexts_csv_path(contexts_csv))
-    return sorted(context.id for context in contexts)
+    return _context_ids(_load_contexts(_resolve_contexts_csv_path(contexts_csv)))
 
 
 def _apply_wip_selection(
