@@ -1,4 +1,5 @@
 import hashlib
+from contextlib import contextmanager
 from datetime import date
 from shutil import copyfile
 
@@ -153,3 +154,28 @@ def _restore_completion_fields(task_id: int, skip_count: int, dates: list, csv_p
     """Restore the fields a completion changes on the completed task."""
     io.update_task_skip_count(task_id, skip_count, csv_path)
     io.update_task_dates(task_id, dates, csv_path)
+
+
+def _restore_rating_fields(csv_path: str, tasks: list) -> None:
+    """Restore every task's rating, deviation, and anchor."""
+    for task in tasks:
+        assert task.rating_date is not None
+        io.update_task_rating_fields(
+            task.id, task.rating, task.rating_deviation, task.rating_date, csv_path
+        )
+
+
+@contextmanager
+def _borrowed_tasks_file(csv_path: str, task_id: int, original_dates: list):
+    """Restore a shared task file after a test mutates it, then verify it is unchanged."""
+    original_checksum = _get_file_checksum(csv_path)
+    original_tasks = io.import_tasks_from_csv(csv_path)
+    original_skip_count = io.get_task_by_id(task_id, csv_path).skip_count
+
+    try:
+        yield
+    finally:
+        _restore_completion_fields(task_id, original_skip_count, original_dates, csv_path)
+        _restore_rating_fields(csv_path, original_tasks)
+
+    _assert_file_unchanged(csv_path, original_checksum)

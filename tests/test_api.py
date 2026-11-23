@@ -3,10 +3,9 @@ from datetime import date
 import recurrator.io as io
 from conftest import (
     client,
+    _borrowed_tasks_file,
     _copy_fixture,
-    _get_file_checksum,
     _assert_error_response,
-    _assert_file_unchanged,
     _read_task,
     _read_task_body,
     _complete,
@@ -19,7 +18,6 @@ from conftest import (
     _patch_description,
     _patch_description_body,
     _patch_starred,
-    _restore_completion_fields,
     CONTEXT_TASKS_CSV,
     EIGHT_TASKS_CSV,
     GLICKO_CONTRACT_CSV,
@@ -33,20 +31,6 @@ from conftest import (
     TASK_2_ORIGINAL_DATES,
     TASK_5_ORIGINAL_DATES,
 )
-
-
-def _snapshot_tasks_file(csv_path):
-    """Record a file's checksum and its tasks before a test mutates it."""
-    return _get_file_checksum(csv_path), io.import_tasks_from_csv(csv_path)
-
-
-def _restore_rating_fields(csv_path, tasks):
-    """Restore every task's rating, deviation, and anchor."""
-    for task in tasks:
-        assert task.rating_date is not None
-        io.update_task_rating_fields(
-            task.id, task.rating, task.rating_deviation, task.rating_date, csv_path
-        )
 
 
 def _task_field(csv_path, task_id, field_name):
@@ -199,50 +183,35 @@ def test_set_task_as_done():
     """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
 
     csv_path = THREE_TASKS_CSV
-    original_checksum, original_tasks = _snapshot_tasks_file(csv_path)
-
     task_id = 5
     original_task = _read_task_body(csv_path, task_id)
-    response = _complete(csv_path, task_id)
 
-    assert response.status_code == 200
+    with _borrowed_tasks_file(csv_path, task_id, TASK_5_ORIGINAL_DATES):
+        response = _complete(csv_path, task_id)
 
-    completed = response.json()
-    assert completed["skip_count"] == 0
+        assert response.status_code == 200
 
-    original_skip_count = original_task["skip_count"]
-    assert completed["skip_count"] != original_skip_count
+        completed = response.json()
+        assert completed["skip_count"] == 0
 
-    assert completed["due_date"] != original_task["due_date"]
+        original_skip_count = original_task["skip_count"]
+        assert completed["skip_count"] != original_skip_count
 
-    # Undo changes to CSV file for other tests
-    _restore_completion_fields(task_id, original_skip_count, TASK_5_ORIGINAL_DATES, csv_path)
-    _restore_rating_fields(csv_path, original_tasks)
-
-    _assert_file_unchanged(csv_path, original_checksum)
+        assert completed["due_date"] != original_task["due_date"]
 
 
 def test_task_done_idempotency():
     """Verify POST /task/{id}/done returns 409 on consecutive duplicate completion."""
 
     csv_path = THREE_TASKS_CSV
-    original_checksum, original_tasks = _snapshot_tasks_file(csv_path)
-
     task_id = 2
-    original_skip_count = io.get_task_by_id(task_id, csv_path).skip_count
 
-    try:
+    with _borrowed_tasks_file(csv_path, task_id, TASK_2_ORIGINAL_DATES):
         first_response = _complete(csv_path, task_id)
         assert first_response.status_code == 200
 
         second_response = _complete(csv_path, task_id)
         _assert_error_response(second_response, 409)
-    finally:
-        # Undo changes to CSV file for other tests
-        _restore_completion_fields(task_id, original_skip_count, TASK_2_ORIGINAL_DATES, csv_path)
-        _restore_rating_fields(csv_path, original_tasks)
-
-    _assert_file_unchanged(csv_path, original_checksum)
 
 
 def test_get_due_contexts():
