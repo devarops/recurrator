@@ -188,17 +188,17 @@ def get_context_by_id(context_id: str, csv_path: str) -> Context:
     raise ValueError(f"Context {context_id} not found in {csv_path}")
 
 
-def _is_task_row(row: dict, task_id: int) -> bool:
-    """Return whether the row's id column names the task."""
-    return int(row["id"]) == task_id
+def _matching_task_rows(rows: list[dict], task_id: int) -> list[dict]:
+    """Return every row whose id column names the task, in file order."""
+    return [row for row in rows if int(row["id"]) == task_id]
 
 
 def _read_task_row(task_id: int, csv_path: str) -> dict:
     """Return the task file's row for the task, or raise ValueError."""
-    for row in _read_csv_rows(csv_path):
-        if _is_task_row(row, task_id):
-            return row
-    raise ValueError(f"Task {task_id} not found in {csv_path}")
+    matching_rows = _matching_task_rows(_read_csv_rows(csv_path), task_id)
+    if not matching_rows:
+        raise ValueError(f"Task {task_id} not found in {csv_path}")
+    return matching_rows[0]
 
 
 def import_dates_from_csv(task_id: int, csv_path: str) -> list[date | None]:
@@ -251,9 +251,8 @@ def _write_csv_rows(rows: list[dict], fieldnames: Sequence[str], csv_path: str) 
 def _set_csv_fields(task_id: int, values: dict[str, str], csv_path: str) -> None:
     """Set several CSV fields of the matching task in a single atomic write."""
     rows, fieldnames = _read_csv_rows_with_fieldnames(csv_path)
-    for row in rows:
-        if _is_task_row(row, task_id):
-            row.update(values)
+    for row in _matching_task_rows(rows, task_id):
+        row.update(values)
     assert fieldnames is not None
 
     _write_csv_rows(rows, fieldnames, csv_path)
