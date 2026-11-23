@@ -76,10 +76,20 @@ def _parse_json_id_array(cell: str) -> list[str]:
     return sorted(set(json.loads(cell)))
 
 
+def _parse_row_rating_fields(row: dict) -> tuple[int, int, date | None]:
+    """Parse the rating columns, defaulting the ones an older file omits."""
+    return (
+        int(row.get("rating", GLICKO_RATING_DEFAULT)),
+        int(row.get("rating_deviation", GLICKO_RATING_DEVIATION_DEFAULT)),
+        _parse_date(row.get("rating_date", MISSING_DATE)),
+    )
+
+
 def _row_to_task(row: dict) -> Task:
     """Convert a CSV row dictionary to a Task object."""
     dates = _row_to_dates(row)
     starred = bool(int(row["starred"]))
+    rating, rating_deviation, rating_date = _parse_row_rating_fields(row)
 
     return Task(
         id=int(row["id"]),
@@ -89,9 +99,9 @@ def _row_to_task(row: dict) -> Task:
         starred=starred,
         dates=dates,
         coins=compute_coins(dates.recurrence_days, starred),
-        rating=int(row.get("rating", GLICKO_RATING_DEFAULT)),
-        rating_deviation=int(row.get("rating_deviation", GLICKO_RATING_DEVIATION_DEFAULT)),
-        rating_date=_parse_date(row["rating_date"]) if "rating_date" in row else None,
+        rating=rating,
+        rating_deviation=rating_deviation,
+        rating_date=rating_date,
     )
 
 
