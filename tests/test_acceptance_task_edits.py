@@ -7,7 +7,17 @@ from conftest import (
     _patch_description,
     _patch_description_body,
     _read_task_body,
+    client,
 )
+
+STARRED_TASK_CSV = "tests/data/acceptance_task_edits_starred_task_is_reported.csv"
+
+
+def _patch_starred(csv_path, task_id, starred):
+    """Send a starred flag through the API."""
+    return client.patch(
+        f"/api/task/{task_id}/starred?csv={csv_path}", json={"starred": starred}
+    )
 
 
 def _assert_description_written(csv_path, task_id, text):
@@ -96,3 +106,14 @@ def test_malformed_description_body_is_rejected(tmp_path):
         _assert_error_response(response, 422)
 
     assert _read_task_body(csv_path, 2)["description"] == previous
+
+
+def test_starred_task_is_reported(tmp_path):
+    """A starred write returns the new flag and a later read reports it."""
+    csv_path = _copy_fixture(STARRED_TASK_CSV, tmp_path)
+
+    response = _patch_starred(csv_path, 1, True)
+
+    assert response.status_code == 200
+    assert response.json() == {"id": 1, "starred": True}
+    assert _read_task_body(csv_path, 1)["starred"] is True
