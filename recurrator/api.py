@@ -130,12 +130,16 @@ def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
 
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)) -> list[int]:
-    return _task_ids(io.import_tasks_from_csv(_resolve_tasks_csv_path(csv)))
+    csv_path = _resolve_tasks_csv_path(csv)
+    tasks = io.import_tasks_from_csv(csv_path)
+    return _task_ids(tasks)
 
 
 @api.get("/context/")
 def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
-    return _context_ids(io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv)))
+    contexts_csv_path = _resolve_contexts_csv_path(contexts_csv)
+    contexts = io.import_contexts_from_csv(contexts_csv_path)
+    return _context_ids(contexts)
 
 
 def _select_wip_tasks_and_skip_deferred(
@@ -233,9 +237,9 @@ def get_task_by_id(
 @api.get("/context/due/{reference_date}")
 def get_due_contexts(reference_date: date, csv: str = Query(None)):
     """Return the context ids with at least one task due on or before the date."""
-    return compute.filter_due_contexts(
-        io.import_tasks_from_csv(_resolve_tasks_csv_path(csv)), reference_date
-    )
+    csv_path = _resolve_tasks_csv_path(csv)
+    tasks = io.import_tasks_from_csv(csv_path)
+    return compute.filter_due_contexts(tasks, reference_date)
 
 
 @api.get("/context/due/")
