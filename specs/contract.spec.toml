@@ -11,7 +11,6 @@ When the OpenAPI document is read, no 200 response has an empty schema. An
 object response declares properties, and an array response declares an item
 schema.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_response_properties"
