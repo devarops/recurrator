@@ -17,12 +17,12 @@ app = FastAPI(
 api = APIRouter(prefix="/api")
 
 
-def _resolve_tasks_csv_path(csv: str | None = None) -> str:
+def _resolve_tasks_csv_path(csv: str | None) -> str:
     """Resolve the task CSV path from the query parameter or default."""
     return csv or DEFAULT_TASKS_CSV_PATH
 
 
-def _resolve_contexts_csv_path(contexts_csv: str | None = None) -> str:
+def _resolve_contexts_csv_path(contexts_csv: str | None) -> str:
     """Resolve the context CSV path from the query parameter or default."""
     return contexts_csv or DEFAULT_CONTEXTS_CSV_PATH
 
