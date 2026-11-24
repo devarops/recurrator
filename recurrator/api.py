@@ -128,6 +128,53 @@ def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
         return None
 
 
+def _select_wip_tasks_and_skip_deferred(
+    tasks: list[io.Task], context: str, reference_date: date, csv_path: str
+) -> list[io.Task]:
+    """Return one context's work-in-progress tasks and skip the deferred surplus."""
+    tasks_in_context = compute.filter_tasks_by_context(tasks, context)
+    completed_count = compute.count_completed_on(tasks_in_context, reference_date)
+    available_slots = compute.compute_available_wip_slots(WIP_LIMIT, completed_count)
+    selected, deferred = compute.filter_n_tasks_by_context(
+        tasks, context, reference_date, available_slots
+    )
+    for task in deferred:
+        io.update_task_as_skipped(task.id, reference_date, csv_path)
+    return selected
+
+
+def _select_due_tasks(
+    tasks: list[io.Task], requested_contexts: list[str], reference_date: date, csv_path: str
+) -> list[io.Task]:
+    """Return the tasks due at the reference date for the requested contexts."""
+    if not requested_contexts:
+        return compute.filter_due_tasks(tasks, reference_date)
+    if len(requested_contexts) == 1:
+        return _select_wip_tasks_and_skip_deferred(
+            tasks, requested_contexts[0], reference_date, csv_path
+        )
+    return compute.filter_due_tasks_by_any_context(tasks, set(requested_contexts), reference_date)
+
+
+def _completion_response(task: io.Task) -> dict:
+    """Return the confirmation fields for a completed task."""
+    return {
+        "id": task.id,
+        "skip_count": task.skip_count,
+        "due_date": task.due_date.isoformat(),
+        "latest_done_date": task.latest_done_date.isoformat(),
+        **_anchored_rating_fields(task),
+    }
+
+
+def _apply_rating_updates(
+    updates: dict[int, tuple[int, int]], csv_path: str, reference_date: date
+) -> None:
+    """Store each task's new rating, deviation, and anchor."""
+    for updated_id, (rating, rating_deviation) in updates.items():
+        io.update_task_rating_fields(updated_id, rating, rating_deviation, reference_date, csv_path)
+
+
 class TaskDetail(BaseModel):
     """The task detail response returned by GET /task/{task_id}."""
 
@@ -165,34 +212,6 @@ def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)) ->
     contexts_csv_path = _resolve_contexts_csv_path(contexts_csv)
     contexts = io.import_contexts_from_csv(contexts_csv_path)
     return _context_ids(contexts)
-
-
-def _select_wip_tasks_and_skip_deferred(
-    tasks: list[io.Task], context: str, reference_date: date, csv_path: str
-) -> list[io.Task]:
-    """Return one context's work-in-progress tasks and skip the deferred surplus."""
-    tasks_in_context = compute.filter_tasks_by_context(tasks, context)
-    completed_count = compute.count_completed_on(tasks_in_context, reference_date)
-    available_slots = compute.compute_available_wip_slots(WIP_LIMIT, completed_count)
-    selected, deferred = compute.filter_n_tasks_by_context(
-        tasks, context, reference_date, available_slots
-    )
-    for task in deferred:
-        io.update_task_as_skipped(task.id, reference_date, csv_path)
-    return selected
-
-
-def _select_due_tasks(
-    tasks: list[io.Task], requested_contexts: list[str], reference_date: date, csv_path: str
-) -> list[io.Task]:
-    """Return the tasks due at the reference date for the requested contexts."""
-    if not requested_contexts:
-        return compute.filter_due_tasks(tasks, reference_date)
-    if len(requested_contexts) == 1:
-        return _select_wip_tasks_and_skip_deferred(
-            tasks, requested_contexts[0], reference_date, csv_path
-        )
-    return compute.filter_due_tasks_by_any_context(tasks, set(requested_contexts), reference_date)
 
 
 @api.get("/task/due/{reference_date}")
@@ -286,25 +305,6 @@ def patch_task_starred(task_id: int, body: StarredUpdate, csv: str = Query(None)
         return _task_not_found_response()
     io.update_task_starred(task_id, body.starred, csv_path)
     return {"id": task_id, "starred": body.starred}
-
-
-def _completion_response(task: io.Task) -> dict:
-    """Return the confirmation fields for a completed task."""
-    return {
-        "id": task.id,
-        "skip_count": task.skip_count,
-        "due_date": task.due_date.isoformat(),
-        "latest_done_date": task.latest_done_date.isoformat(),
-        **_anchored_rating_fields(task),
-    }
-
-
-def _apply_rating_updates(
-    updates: dict[int, tuple[int, int]], csv_path: str, reference_date: date
-) -> None:
-    """Store each task's new rating, deviation, and anchor."""
-    for updated_id, (rating, rating_deviation) in updates.items():
-        io.update_task_rating_fields(updated_id, rating, rating_deviation, reference_date, csv_path)
 
 
 @api.post("/task/{task_id}/done")
