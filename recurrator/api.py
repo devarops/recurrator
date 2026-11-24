@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, FastAPI, Query, Request
+from fastapi import APIRouter, FastAPI, Query, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel
@@ -96,12 +96,12 @@ def _error_response(message: str, status_code: int) -> JSONResponse:
 
 def _task_not_found_response() -> JSONResponse:
     """Return the 404 envelope for an id that names no task."""
-    return _error_response("Task not found", 404)
+    return _error_response("Task not found", status.HTTP_404_NOT_FOUND)
 
 
 def _context_not_found_response() -> JSONResponse:
     """Return the 404 envelope for an id that names no context."""
-    return _error_response("Context not found", 404)
+    return _error_response("Context not found", status.HTTP_404_NOT_FOUND)
 
 
 @app.exception_handler(RequestValidationError)
@@ -109,7 +109,7 @@ async def _invalid_request_response(
     request: Request, exception: RequestValidationError
 ) -> JSONResponse:
     """Return the shared error envelope for a request that fails validation."""
-    return _error_response("Invalid request", 422)
+    return _error_response("Invalid request", status.HTTP_422_UNPROCESSABLE_CONTENT)
 
 
 def _find_task(task_id: int, csv_path: str) -> io.Task | None:
@@ -233,10 +233,14 @@ def get_due_tasks_today(csv: str = Query(None)) -> list[int]:
     return get_due_task_ids(date.today(), csv=csv, context=[])
 
 
-@api.get("/task/due", response_class=RedirectResponse, status_code=307)
+@api.get(
+    "/task/due",
+    response_class=RedirectResponse,
+    status_code=status.HTTP_307_TEMPORARY_REDIRECT,
+)
 def redirect_due_tasks(csv: str = Query(None)):
     """Redirect the slashless due read to the due collection."""
-    return RedirectResponse(url="/api/task/due/", status_code=307)
+    return RedirectResponse(url="/api/task/due/", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
 @api.get(
@@ -292,7 +296,7 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     if _find_task(task_id, csv_path) is None:
         return _task_not_found_response()
     if not body.description.strip():
-        return _error_response("Description must not be empty", 400)
+        return _error_response("Description must not be empty", status.HTTP_400_BAD_REQUEST)
     io.update_task_description(task_id, body.description, csv_path)
     return {"id": task_id, "description": body.description}
 
@@ -314,7 +318,7 @@ def post_task_done(task_id: int, csv: str = Query(None)):
 
     current_task = io.get_task_by_id(task_id, csv_path)
     if not compute.is_done_allowed(current_task.latest_done_date, today):
-        return _error_response("Task was already completed too recently", 409)
+        return _error_response("Task was already completed too recently", status.HTTP_409_CONFLICT)
 
     io.update_task_as_done(task_id, today, csv_path)
 
