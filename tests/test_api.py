@@ -15,6 +15,7 @@ from conftest import (
     _read_due_task_ids,
     _read_due_context_ids,
     _read_openapi_document,
+    _read_get_responses,
     _read_response_schema,
     _read_task_ids,
     _patch_description,
@@ -496,4 +497,4 @@ def test_openapi_due_redirect_declares_no_200_response():
     """Verify GET /api/task/due declares no 200 response, because it only redirects."""
     document = _read_openapi_document()
 
-    assert "200" not in document["paths"]["/api/task/due"]["get"]["responses"]
+    assert "200" not in _read_get_responses(document, "/api/task/due")
