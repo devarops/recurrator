@@ -262,7 +262,7 @@ def get_task_by_id(
 
 
 @api.get("/context/due/{reference_date}")
-def get_due_contexts(reference_date: date, csv: str = Query(None)):
+def get_due_contexts(reference_date: date, csv: str = Query(None)) -> list[str]:
     """Return the context ids with at least one task due on or before the date."""
     csv_path = _resolve_tasks_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
