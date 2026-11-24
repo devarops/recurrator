@@ -498,3 +498,10 @@ def test_openapi_due_redirect_declares_no_200_response():
     document = _read_openapi_document()
 
     assert "200" not in _read_get_responses(document, "/api/task/due")
+
+
+def test_openapi_context_collection_declares_an_item_schema():
+    """Verify GET /api/context/ declares an item schema for its array response."""
+    document = _read_openapi_document()
+
+    assert "items" in _read_response_schema(document, "/api/context/")
