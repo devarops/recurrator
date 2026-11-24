@@ -89,6 +89,15 @@ def _context_to_dict(context: io.Context) -> dict:
     }
 
 
+def _success_response_schema(schema: dict) -> dict:
+    """Return the OpenAPI extra that documents the 200 response with this schema."""
+    return {
+        "responses": {
+            str(status.HTTP_200_OK): {"content": {"application/json": {"schema": schema}}}
+        }
+    }
+
+
 def _error_response(message: str, status_code: int) -> JSONResponse:
     """Return the error envelope shared by every failed request."""
     return JSONResponse(content={"error": message}, status_code=status_code)
@@ -246,13 +255,7 @@ def redirect_due_tasks(csv: str = Query(None)):
 @api.get(
     "/task/{task_id}",
     response_model=None,
-    openapi_extra={
-        "responses": {
-            str(status.HTTP_200_OK): {
-                "content": {"application/json": {"schema": TaskDetail.model_json_schema()}}
-            }
-        }
-    },
+    openapi_extra=_success_response_schema(TaskDetail.model_json_schema()),
 )
 def get_task_by_id(
     task_id: int,
