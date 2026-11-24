@@ -201,6 +201,15 @@ class TaskDetail(BaseModel):
     rating_deviation: int
 
 
+class ContextDetail(BaseModel):
+    """The context detail response returned by GET /context/{context_id}/."""
+
+    id: str
+    display_name: str
+    description: str
+    scopes: list[str]
+
+
 class DescriptionUpdate(BaseModel):
     description: str
 
@@ -284,7 +293,10 @@ def get_due_contexts_today(csv: str = Query(None)) -> list[str]:
     return get_due_contexts(date.today(), csv)
 
 
-@api.get("/context/{context_id}/")
+@api.get(
+    "/context/{context_id}/",
+    openapi_extra=_success_response_schema(ContextDetail.model_json_schema()),
+)
 def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str = Query(None)):
     """Return one stored context."""
     contexts_csv_path = _resolve_contexts_csv_path(contexts_csv)
