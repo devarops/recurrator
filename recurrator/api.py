@@ -181,7 +181,7 @@ def get_due_tasks_today(csv: str = Query(None)):
     return get_due_task_ids(date.today(), csv=csv, context=[])
 
 
-@api.get("/task/due")
+@api.get("/task/due", response_class=RedirectResponse, status_code=307)
 def redirect_due_tasks(csv: str = Query(None)):
     """Redirect the slashless due read to the due collection."""
     return RedirectResponse(url="/api/task/due/", status_code=307)
