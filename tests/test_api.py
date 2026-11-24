@@ -486,6 +486,7 @@ def test_starred_write_returns_confirmation(tmp_path):
         ("/api/context/", "items"),
         ("/api/task/due/{reference_date}", "items"),
         ("/api/task/due/", "items"),
+        ("/api/context/due/{reference_date}", "items"),
     ],
 )
 def test_openapi_path_declares_its_schema_shape_key(path, shape_key):
@@ -493,13 +494,6 @@ def test_openapi_path_declares_its_schema_shape_key(path, shape_key):
     document = _read_openapi_document()
 
     assert shape_key in _read_response_schema(document, path)
-
-
-def test_openapi_due_context_read_declares_an_item_schema():
-    """Verify GET /api/context/due/{reference_date} declares an item schema."""
-    document = _read_openapi_document()
-
-    assert "items" in _read_response_schema(document, "/api/context/due/{reference_date}")
 
 
 def test_openapi_due_redirect_declares_no_200_response():
