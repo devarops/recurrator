@@ -53,7 +53,7 @@ clean:
 	rm --force ${module}/_config.py
 
 coverage: setup
-	pytest --cov=${module} --cov-report=xml --verbose && \
+	pytest tests --cov=${module} --cov-report=xml --ignore-glob='*_acceptance_*.py' --verbose && \
 	coverage report --show-missing
 
 format:
@@ -76,7 +76,7 @@ mutants: setup
 setup: clean install
 
 tests:
-	pytest --verbose tests --ignore-glob='*_acceptance_*.py'
+	pytest tests --ignore-glob='*_acceptance_*.py' --verbose
 
 test-shell:
 	shellspec
