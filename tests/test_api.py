@@ -494,3 +494,10 @@ def test_openapi_task_detail_declares_response_properties():
     document = _read_openapi_document()
 
     assert "properties" in _read_response_schema(document, "/api/task/{task_id}")
+
+
+def test_openapi_due_redirect_declares_no_200_response():
+    """Verify GET /api/task/due declares no 200 response, because it only redirects."""
+    document = _read_openapi_document()
+
+    assert "200" not in document["paths"]["/api/task/due"]["get"]["responses"]
