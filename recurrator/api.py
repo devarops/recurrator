@@ -248,7 +248,9 @@ def redirect_due_tasks(csv: str = Query(None)):
     response_model=None,
     openapi_extra={
         "responses": {
-            "200": {"content": {"application/json": {"schema": TaskDetail.model_json_schema()}}}
+            str(status.HTTP_200_OK): {
+                "content": {"application/json": {"schema": TaskDetail.model_json_schema()}}
+            }
         }
     },
 )
