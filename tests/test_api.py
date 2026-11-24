@@ -494,6 +494,13 @@ def test_openapi_path_declares_its_schema_shape_key(path, shape_key):
     assert shape_key in _read_response_schema(document, path)
 
 
+def test_openapi_undated_due_read_declares_an_item_schema():
+    """Verify GET /api/task/due/ declares an item schema."""
+    document = _read_openapi_document()
+
+    assert "items" in _read_response_schema(document, "/api/task/due/")
+
+
 def test_openapi_due_redirect_declares_no_200_response():
     """Verify GET /api/task/due declares no 200 response, because it only redirects."""
     document = _read_openapi_document()
