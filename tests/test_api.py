@@ -486,11 +486,18 @@ def test_openapi_path_declares_a_response_schema(path):
     assert _read_response_schema(document, path)
 
 
-def test_openapi_task_detail_declares_response_properties():
-    """Verify GET /api/task/{task_id} declares properties in its 200 schema."""
+@pytest.mark.parametrize(
+    "path, shape_key",
+    [
+        ("/api/task/{task_id}", "properties"),
+        ("/api/context/", "items"),
+    ],
+)
+def test_openapi_path_declares_its_schema_shape_key(path, shape_key):
+    """Verify a documented path declares the key its 200 schema type promises."""
     document = _read_openapi_document()
 
-    assert "properties" in _read_response_schema(document, "/api/task/{task_id}")
+    assert shape_key in _read_response_schema(document, path)
 
 
 def test_openapi_due_redirect_declares_no_200_response():
@@ -498,10 +505,3 @@ def test_openapi_due_redirect_declares_no_200_response():
     document = _read_openapi_document()
 
     assert "200" not in _read_get_responses(document, "/api/task/due")
-
-
-def test_openapi_context_collection_declares_an_item_schema():
-    """Verify GET /api/context/ declares an item schema for its array response."""
-    document = _read_openapi_document()
-
-    assert "items" in _read_response_schema(document, "/api/context/")
