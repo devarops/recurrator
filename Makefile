@@ -53,7 +53,7 @@ clean:
 	rm --force ${module}/_config.py
 
 coverage: setup
-	pytest tests --cov=${module} --cov-report=xml --ignore-glob='*_acceptance_*.py' --verbose && \
+	pytest --cov=${module} --cov-report=xml --verbose && \
 	coverage report --show-missing
 
 format:
@@ -76,29 +76,10 @@ mutants: setup
 setup: clean install
 
 tests:
-	pytest tests --ignore-glob='*_acceptance_*.py' --verbose
+	pytest --ignore-glob='*_acceptance_*.py' --verbose
 
 test-shell:
 	shellspec
 
 verify:
 	qed verify specs
-
-red: format
-	pytest --verbose --ignore-glob='*_acceptance_*.py' \
-	&& git restore tests/*.py \
-	|| (git add tests/*.py && git commit -m "🛑🧪 Fail tests")
-	chmod g+w -R .
-
-green: format
-	pytest --verbose --ignore-glob='*_acceptance_*.py' \
-	&& (git add ${module}/*.py tests/*.py && git commit -m "✅ Pass tests") \
-	|| git restore ${module}/*.py
-	chmod g+w -R .
-
-refactor: format
-	pytest --verbose --ignore-glob='*_acceptance_*.py' \
-	&& (git add ${module}/*.py tests/*.py && git commit -m "♻️  Refactor ${message}") \
-	|| git restore ${module}/*.py tests/*.py
-	chmod g+w -R .
-
