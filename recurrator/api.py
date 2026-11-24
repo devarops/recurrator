@@ -251,7 +251,8 @@ def get_due_contexts_today(csv: str = Query(None)):
 @api.get("/context/{context_id}/")
 def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str = Query(None)):
     """Return one stored context."""
-    context = _find_context(context_id, _resolve_contexts_csv_path(contexts_csv))
+    contexts_csv_path = _resolve_contexts_csv_path(contexts_csv)
+    context = _find_context(context_id, contexts_csv_path)
     if context is None:
         return _context_not_found_response()
     return _context_to_dict(context)
