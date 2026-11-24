@@ -138,10 +138,10 @@ def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
     return _context_ids(io.import_contexts_from_csv(_resolve_contexts_csv_path(contexts_csv)))
 
 
-def _apply_wip_selection(
+def _select_wip_tasks_and_skip_deferred(
     tasks: list[io.Task], context: str, reference_date: date, csv_path: str
 ) -> list[io.Task]:
-    """Apply work-in-progress selection to one context, deferring the surplus."""
+    """Return one context's work-in-progress tasks and skip the deferred surplus."""
     tasks_in_context = compute.filter_tasks_by_context(tasks, context)
     completed_count = compute.count_completed_on(tasks_in_context, reference_date)
     available_slots = compute.compute_available_wip_slots(WIP_LIMIT, completed_count)
@@ -160,7 +160,9 @@ def _select_due_tasks(
     if not requested_contexts:
         return compute.filter_due_tasks(tasks, reference_date)
     if len(requested_contexts) == 1:
-        return _apply_wip_selection(tasks, requested_contexts[0], reference_date, csv_path)
+        return _select_wip_tasks_and_skip_deferred(
+            tasks, requested_contexts[0], reference_date, csv_path
+        )
     return compute.filter_due_tasks_by_any_context(tasks, set(requested_contexts), reference_date)
 
 
