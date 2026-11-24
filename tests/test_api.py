@@ -497,6 +497,13 @@ def test_openapi_path_declares_its_schema_shape_key(path, shape_key):
     assert shape_key in _read_response_schema(document, path)
 
 
+def test_openapi_context_detail_declares_response_properties():
+    """Verify GET /api/context/{context_id}/ declares properties in its 200 schema."""
+    document = _read_openapi_document()
+
+    assert "properties" in _read_response_schema(document, "/api/context/{context_id}/")
+
+
 def test_openapi_due_redirect_declares_no_200_response():
     """Verify GET /api/task/due declares no 200 response, because it only redirects."""
     document = _read_openapi_document()
