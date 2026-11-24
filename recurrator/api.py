@@ -153,6 +153,17 @@ def _apply_wip_selection(
     return selected
 
 
+def _select_due_tasks(
+    tasks: list[io.Task], requested_contexts: list[str], reference_date: date, csv_path: str
+) -> list[io.Task]:
+    """Return the tasks due at the reference date for the requested contexts."""
+    if not requested_contexts:
+        return compute.filter_due_tasks(tasks, reference_date)
+    if len(requested_contexts) == 1:
+        return _apply_wip_selection(tasks, requested_contexts[0], reference_date, csv_path)
+    return compute.filter_due_tasks_by_any_context(tasks, set(requested_contexts), reference_date)
+
+
 @api.get("/task/due/{reference_date}")
 def get_due_task_ids(
     reference_date: date,
@@ -162,16 +173,7 @@ def get_due_task_ids(
     csv_path = _resolve_tasks_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
     requested_contexts = _distinct_contexts(context)
-    if not requested_contexts:
-        selected_tasks = compute.filter_due_tasks(tasks, reference_date)
-    elif len(requested_contexts) == 1:
-        selected_tasks = _apply_wip_selection(
-            tasks, requested_contexts[0], reference_date, csv_path
-        )
-    else:
-        selected_tasks = compute.filter_due_tasks_by_any_context(
-            tasks, set(requested_contexts), reference_date
-        )
+    selected_tasks = _select_due_tasks(tasks, requested_contexts, reference_date, csv_path)
     return _task_ids(selected_tasks)
 
 
