@@ -270,7 +270,7 @@ def get_due_contexts(reference_date: date, csv: str = Query(None)) -> list[str]:
 
 
 @api.get("/context/due/")
-def get_due_contexts_today(csv: str = Query(None)):
+def get_due_contexts_today(csv: str = Query(None)) -> list[str]:
     """Return the context ids with at least one task due today."""
     return get_due_contexts(date.today(), csv)
 
