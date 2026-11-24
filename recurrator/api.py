@@ -228,7 +228,7 @@ def get_due_task_ids(
 
 
 @api.get("/task/due/")
-def get_due_tasks_today(csv: str = Query(None)):
+def get_due_tasks_today(csv: str = Query(None)) -> list[int]:
     """Return the ids of the tasks due today."""
     return get_due_task_ids(date.today(), csv=csv, context=[])
 
