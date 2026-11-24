@@ -1,5 +1,7 @@
 from datetime import date
 
+import pytest
+
 import recurrator.io as io
 from conftest import (
     client,
@@ -475,18 +477,12 @@ def test_starred_write_returns_confirmation(tmp_path):
     assert response.json() == {"id": 2, "starred": True}
 
 
-def test_openapi_task_collection_declares_a_response_schema():
-    """Verify GET /api/task/ declares a non-empty 200 response schema."""
+@pytest.mark.parametrize("path", ["/api/task/", "/api/task/{task_id}"])
+def test_openapi_path_declares_a_response_schema(path):
+    """Verify a documented path declares a non-empty 200 response schema."""
     document = _read_openapi_document()
 
-    assert _read_response_schema(document, "/api/task/")
-
-
-def test_openapi_task_detail_declares_a_response_schema():
-    """Verify GET /api/task/{task_id} declares a non-empty 200 response schema."""
-    document = _read_openapi_document()
-
-    assert _read_response_schema(document, "/api/task/{task_id}")
+    assert _read_response_schema(document, path)
 
 
 def test_openapi_task_detail_declares_response_properties():
