@@ -128,6 +128,31 @@ def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
         return None
 
 
+class TaskDetail(BaseModel):
+    """The task detail response returned by GET /task/{task_id}."""
+
+    id: int
+    description: str
+    contexts: list[str]
+    skip_count: int
+    starred: bool
+    latest_date: str
+    latest_done_date: str
+    recurrence_days: int
+    due_date: str
+    coins: int
+    rating: int
+    rating_deviation: int
+
+
+class DescriptionUpdate(BaseModel):
+    description: str
+
+
+class StarredUpdate(BaseModel):
+    starred: bool
+
+
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None)) -> list[int]:
     csv_path = _resolve_tasks_csv_path(csv)
@@ -195,23 +220,6 @@ def redirect_due_tasks(csv: str = Query(None)):
     return RedirectResponse(url="/api/task/due/", status_code=307)
 
 
-class TaskDetail(BaseModel):
-    """The task detail response returned by GET /task/{task_id}."""
-
-    id: int
-    description: str
-    contexts: list[str]
-    skip_count: int
-    starred: bool
-    latest_date: str
-    latest_done_date: str
-    recurrence_days: int
-    due_date: str
-    coins: int
-    rating: int
-    rating_deviation: int
-
-
 @api.get(
     "/task/{task_id}",
     response_model=None,
@@ -256,14 +264,6 @@ def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str
     if context is None:
         return _context_not_found_response()
     return _context_to_dict(context)
-
-
-class DescriptionUpdate(BaseModel):
-    description: str
-
-
-class StarredUpdate(BaseModel):
-    starred: bool
 
 
 @api.patch("/task/{task_id}/description")
