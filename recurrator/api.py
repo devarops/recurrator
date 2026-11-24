@@ -136,7 +136,7 @@ def get_all_tasks(csv: str = Query(None)) -> list[int]:
 
 
 @api.get("/context/")
-def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)):
+def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)) -> list[str]:
     contexts_csv_path = _resolve_contexts_csv_path(contexts_csv)
     contexts = io.import_contexts_from_csv(contexts_csv_path)
     return _context_ids(contexts)
