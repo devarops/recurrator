@@ -42,6 +42,15 @@ class SyntheticOpponent:
     id: int | None = None
 
 
+@dataclass(frozen=True)
+class Glicko:
+    """The Glicko rating fields for a task."""
+
+    rating: int = GLICKO_RATING_DEFAULT
+    rating_deviation: int = GLICKO_RATING_DEVIATION_DEFAULT
+    rating_date: date | None = None
+
+
 class Task:
     """Represents a task imported from CSV."""
 
@@ -54,9 +63,7 @@ class Task:
         starred: bool,
         dates: Dates,
         coins: int,
-        rating: int = GLICKO_RATING_DEFAULT,
-        rating_deviation: int = GLICKO_RATING_DEVIATION_DEFAULT,
-        rating_date: date | None = None,
+        glicko: Glicko = Glicko(),
     ):
         self.id = id
         self.description = description
@@ -68,6 +75,8 @@ class Task:
         self.recurrence_days = dates.recurrence_days
         self.due_date = dates.due_date
         self.coins = coins
-        self.rating = rating
-        self.rating_deviation = rating_deviation
-        self.rating_date = rating_date if rating_date is not None else dates.latest_done_date
+        self.rating = glicko.rating
+        self.rating_deviation = glicko.rating_deviation
+        self.rating_date = (
+            glicko.rating_date if glicko.rating_date is not None else dates.latest_done_date
+        )
