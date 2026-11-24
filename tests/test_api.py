@@ -478,17 +478,10 @@ def test_starred_write_returns_confirmation(tmp_path):
     assert response.json() == {"id": 2, "starred": True}
 
 
-@pytest.mark.parametrize("path", ["/api/task/", "/api/task/{task_id}"])
-def test_openapi_path_declares_a_response_schema(path):
-    """Verify a documented path declares a non-empty 200 response schema."""
-    document = _read_openapi_document()
-
-    assert _read_response_schema(document, path)
-
-
 @pytest.mark.parametrize(
     "path, shape_key",
     [
+        ("/api/task/", "items"),
         ("/api/task/{task_id}", "properties"),
         ("/api/context/", "items"),
         ("/api/task/due/{reference_date}", "items"),
