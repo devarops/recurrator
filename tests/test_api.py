@@ -499,6 +499,13 @@ def test_openapi_path_declares_its_schema_shape_key(method, path, shape_key):
     assert shape_key in _read_response_schema(document, path, method)
 
 
+def test_openapi_starred_write_declares_response_properties():
+    """Verify PATCH /api/task/{task_id}/starred declares properties in its 200 schema."""
+    document = _read_openapi_document()
+
+    assert "properties" in _read_response_schema(document, "/api/task/{task_id}/starred", "patch")
+
+
 def test_openapi_due_redirect_declares_no_200_response():
     """Verify GET /api/task/due declares no 200 response, because it only redirects."""
     document = _read_openapi_document()
