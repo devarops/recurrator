@@ -243,12 +243,25 @@ class StarredUpdate(BaseModel):
     starred: StrictBool
 
 
-@api.get("/task/")
-def get_all_tasks(csv: str = Query(None), context: list[str] = Query(None)) -> list[int]:
+@api.get(
+    "/task/",
+    response_model=None,
+    openapi_extra=_success_response_schema({"type": "array", "items": {"type": "integer"}}),
+)
+def get_all_tasks(
+    csv: str = Query(None),
+    context: list[str] = Query(None),
+    contexts_csv: str = Query(None),
+) -> list[int] | JSONResponse:
     csv_path = _resolve_tasks_csv_path(csv)
     _refuse_empty_contexts(context)
     tasks = io.import_tasks_from_csv(csv_path)
     if context:
+        contexts_csv_path = _resolve_contexts_csv_path(contexts_csv)
+        stored_contexts = io.import_contexts_from_csv(contexts_csv_path)
+        stored_ids = {stored.id for stored in stored_contexts}
+        if any(context_id not in stored_ids for context_id in context):
+            return _context_not_found_response()
         tasks = compute.filter_tasks_by_any_context(tasks, set(context))
     return _task_ids(tasks)
 
