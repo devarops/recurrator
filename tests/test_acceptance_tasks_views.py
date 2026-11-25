@@ -14,6 +14,10 @@ CONTEXT_FILTER_CSV = "tests/data/acceptance_tasks_views_context_filter_returns_m
 EMPTY_CONTEXT_FILTER_CSV = (
     "tests/data/acceptance_tasks_views_empty_context_filter_is_rejected.csv"
 )
+UNKNOWN_CONTEXT_FILTER_CSV = (
+    "tests/data/acceptance_tasks_views_unknown_context_filter_returns_404.csv"
+)
+SHARED_CONTEXTS_CSV = "tests/data/contexts.csv"
 
 
 def _scheduling_state(csv_path, task_ids):
@@ -90,6 +94,24 @@ def test_context_filter_returns_matching_tasks():
     assert naming_several_contexts
     for task_id in naming_several_contexts:
         assert returned.count(task_id) == 1
+
+
+def test_unknown_context_filter_returns_404():
+    """The collection refuses a context the context data does not store."""
+    known = client.get(
+        f"/api/task/?csv={UNKNOWN_CONTEXT_FILTER_CSV}"
+        f"&contexts_csv={SHARED_CONTEXTS_CSV}&context=chores"
+    )
+    unknown = client.get(
+        f"/api/task/?csv={UNKNOWN_CONTEXT_FILTER_CSV}"
+        f"&contexts_csv={SHARED_CONTEXTS_CSV}&context=garden"
+    )
+
+    assert known.status_code == 200
+    assert known.json()
+
+    assert unknown.status_code == 404
+    assert "error" in unknown.json()
 
 
 def test_empty_context_filter_is_rejected():
