@@ -86,7 +86,6 @@ description = """
 When a requested context is absent from the context data, the task collection
 returns 404 with an error message.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_unknown_context_filter_returns_404"
