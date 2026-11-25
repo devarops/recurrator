@@ -95,6 +95,22 @@ def test_duplicate_contexts_collapse_in_due_read(tmp_path):
         assert after[task_id]["skip_count"] == before[task_id]["skip_count"]
 
 
+def test_empty_context_in_due_read_is_rejected(tmp_path):
+    """An empty context on a dated due read is refused without any write."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_tasks_views_empty_context_in_due_read_is_rejected.csv",
+        tmp_path,
+    )
+    task_ids = range(1, 9)
+    before = _scheduling_state(csv_path, task_ids)
+
+    response = _read_due_task_ids(csv_path, "2026-01-01", [""])
+
+    assert response.status_code == 422
+    assert "error" in response.json()
+    assert _scheduling_state(csv_path, task_ids) == before
+
+
 def test_multi_context_due_read_is_read_only(tmp_path):
     """A multiple-context due read unions the due tasks without deferring any."""
     csv_path = _copy_fixture(
