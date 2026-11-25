@@ -362,6 +362,16 @@ def test_import_contexts_from_csv_rejects_reserved_due_id(tmp_path):
     _assert_contexts_csv_rejected(tmp_path, 'due,Home,Home projects.,"[""personal""]"')
 
 
+def test_import_contexts_from_csv_names_the_reserved_due_id(tmp_path):
+    """Verify the reader says which id it refuses as reserved."""
+    csv_path = _write_contexts_csv(tmp_path, 'due,Home,Home projects.,"[""personal""]"')
+
+    with pytest.raises(ValueError) as error:
+        io.import_contexts_from_csv(csv_path)
+
+    assert str(error.value) == "Context id due is reserved"
+
+
 def test_import_contexts_from_csv_returns_the_stored_context(tmp_path):
     """Verify the reader returns a context from a valid file."""
     csv_path = _write_contexts_csv(tmp_path, 'casa,Home,Home projects.,"[""personal""]"')
