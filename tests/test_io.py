@@ -423,3 +423,13 @@ def test_import_contexts_from_csv_returns_the_stored_context(tmp_path):
     contexts = io.import_contexts_from_csv(csv_path)
 
     assert [context.id for context in contexts] == ["casa"]
+
+
+def test_get_context_by_id_names_the_missing_context(tmp_path):
+    """Verify the lookup reports the absent context id and the file it read."""
+    csv_path = _write_contexts_csv(tmp_path, 'casa,Home,Home projects.,"[""personal""]"')
+
+    with pytest.raises(ValueError) as error:
+        io.get_context_by_id("garden", str(csv_path))
+
+    assert str(error.value) == f"Context garden not found in {csv_path}"
