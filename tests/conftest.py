@@ -54,14 +54,14 @@ def _read_openapi_document():
     return response.json()
 
 
-def _read_get_responses(document, path):
-    """Return the responses of one GET path from an OpenAPI document."""
-    return document["paths"][path]["get"]["responses"]
+def _read_responses(document, path, method="get"):
+    """Return the responses of one path and method from an OpenAPI document."""
+    return document["paths"][path][method]["responses"]
 
 
-def _read_response_schema(document, path):
-    """Return the 200 response schema of one GET path from an OpenAPI document."""
-    response = _read_get_responses(document, path)["200"]
+def _read_response_schema(document, path, method="get"):
+    """Return the 200 response schema of one path and method from an OpenAPI document."""
+    response = _read_responses(document, path, method)["200"]
     return response["content"]["application/json"]["schema"]
 
 
