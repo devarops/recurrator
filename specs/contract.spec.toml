@@ -29,7 +29,6 @@ description = """
 When the context detail schema is read, it declares id, display_name,
 description, and scopes, and scopes is an array whose items are strings.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_context_properties"
