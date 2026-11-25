@@ -137,6 +137,12 @@ def _find_context(context_id: str, contexts_csv_path: str) -> io.Context | None:
         return None
 
 
+def _existing_task_csv_path(task_id: int, csv: str | None) -> str | None:
+    """Return the task file path, or None when no task has the id."""
+    csv_path = _resolve_tasks_csv_path(csv)
+    return csv_path if _find_task(task_id, csv_path) is not None else None
+
+
 def _select_wip_tasks_and_skip_deferred(
     tasks: list[io.Task], context: str, reference_date: date, csv_path: str
 ) -> list[io.Task]:
@@ -340,8 +346,8 @@ def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str
 )
 def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
     """Replace a task's description with the given text."""
-    csv_path = _resolve_tasks_csv_path(csv)
-    if _find_task(task_id, csv_path) is None:
+    csv_path = _existing_task_csv_path(task_id, csv)
+    if csv_path is None:
         return _task_not_found_response()
     if not body.description.strip():
         return _error_response("Description must not be empty", status.HTTP_400_BAD_REQUEST)
@@ -355,8 +361,8 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
 )
 def patch_task_starred(task_id: int, body: StarredUpdate, csv: str = Query(None)):
     """Replace a task's starred flag with the given value."""
-    csv_path = _resolve_tasks_csv_path(csv)
-    if _find_task(task_id, csv_path) is None:
+    csv_path = _existing_task_csv_path(task_id, csv)
+    if csv_path is None:
         return _task_not_found_response()
     io.update_task_starred(task_id, body.starred, csv_path)
     return {"id": task_id, "starred": body.starred}
