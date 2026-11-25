@@ -170,7 +170,6 @@ When a dated due read carries more than one context, it returns the OR-union of
 the due tasks, deduplicated and in file order, and changes no skip count or skip
 date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_multi_context_due_read_is_read_only"
