@@ -63,30 +63,30 @@ def _projected_rating_fields(task: io.Task, reference_date: date) -> dict:
 
 
 def _task_to_dict(task: io.Task, reference_date: date) -> dict:
-    """Convert Task object to API response dictionary."""
-    return {
-        "id": task.id,
-        "description": task.description,
-        "contexts": task.contexts,
-        "skip_count": task.skip_count,
-        "starred": task.starred,
-        "latest_date": task.latest_date.isoformat(),
-        "latest_done_date": task.latest_done_date.isoformat(),
-        "recurrence_days": task.recurrence_days,
-        "due_date": task.due_date.isoformat(),
-        "coins": task.coins,
+    """Return the task detail fields, projecting the Glicko deviation to the date."""
+    return TaskDetail(
+        id=task.id,
+        description=task.description,
+        contexts=task.contexts,
+        skip_count=task.skip_count,
+        starred=task.starred,
+        latest_date=task.latest_date.isoformat(),
+        latest_done_date=task.latest_done_date.isoformat(),
+        recurrence_days=task.recurrence_days,
+        due_date=task.due_date.isoformat(),
+        coins=task.coins,
         **_projected_rating_fields(task, reference_date),
-    }
+    ).model_dump()
 
 
 def _context_to_dict(context: io.Context) -> dict:
-    """Convert a Context object to an API response dictionary."""
-    return {
-        "id": context.id,
-        "display_name": context.display_name,
-        "description": context.description,
-        "scopes": context.scopes,
-    }
+    """Return the context detail fields."""
+    return ContextDetail(
+        id=context.id,
+        display_name=context.display_name,
+        description=context.description,
+        scopes=context.scopes,
+    ).model_dump()
 
 
 def _success_response_schema(schema: dict) -> dict:
