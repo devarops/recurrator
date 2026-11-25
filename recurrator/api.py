@@ -217,6 +217,13 @@ class DescriptionConfirmation(BaseModel):
     description: str
 
 
+class StarredConfirmation(BaseModel):
+    """The confirmation returned by PATCH /task/{task_id}/starred."""
+
+    id: int
+    starred: bool
+
+
 class DescriptionUpdate(BaseModel):
     description: str
 
@@ -328,7 +335,10 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     return {"id": task_id, "description": body.description}
 
 
-@api.patch("/task/{task_id}/starred")
+@api.patch(
+    "/task/{task_id}/starred",
+    openapi_extra=_success_response_schema(StarredConfirmation.model_json_schema()),
+)
 def patch_task_starred(task_id: int, body: StarredUpdate, csv: str = Query(None)):
     """Replace a task's starred flag with the given value."""
     csv_path = _resolve_tasks_csv_path(csv)
