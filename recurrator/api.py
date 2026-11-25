@@ -173,13 +173,13 @@ def _select_due_tasks(
 
 def _completion_response(task: io.Task) -> dict:
     """Return the confirmation fields for a completed task."""
-    return {
-        "id": task.id,
-        "skip_count": task.skip_count,
-        "due_date": task.due_date.isoformat(),
-        "latest_done_date": task.latest_done_date.isoformat(),
+    return CompletionConfirmation(
+        id=task.id,
+        skip_count=task.skip_count,
+        due_date=task.due_date.isoformat(),
+        latest_done_date=task.latest_done_date.isoformat(),
         **_anchored_rating_fields(task),
-    }
+    ).model_dump()
 
 
 def _apply_rating_updates(
@@ -356,7 +356,7 @@ def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Que
     if not body.description.strip():
         return _error_response("Description must not be empty", status.HTTP_400_BAD_REQUEST)
     io.update_task_description(task_id, body.description, csv_path)
-    return {"id": task_id, "description": body.description}
+    return DescriptionConfirmation(id=task_id, description=body.description).model_dump()
 
 
 @api.patch(
@@ -369,7 +369,7 @@ def patch_task_starred(task_id: int, body: StarredUpdate, csv: str = Query(None)
     if csv_path is None:
         return _task_not_found_response()
     io.update_task_starred(task_id, body.starred, csv_path)
-    return {"id": task_id, "starred": body.starred}
+    return StarredConfirmation(id=task_id, starred=body.starred).model_dump()
 
 
 @api.post(
