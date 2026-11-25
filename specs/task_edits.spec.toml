@@ -38,7 +38,6 @@ When the body omits the starred flag or sends a non-boolean, the write returns
 422 with an error field in the body, and a later read reports the previous
 value.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_malformed_starred_body_is_rejected"
