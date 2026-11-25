@@ -305,6 +305,16 @@ def test_import_contexts_from_csv_rejects_empty_scopes(tmp_path):
     _assert_contexts_csv_rejected(tmp_path, "casa,Home,Home projects.,[]")
 
 
+def test_import_contexts_from_csv_names_the_empty_scopes(tmp_path):
+    """Verify the reader says the context scopes must not be empty."""
+    csv_path = _write_contexts_csv(tmp_path, "casa,Home,Home projects.,[]")
+
+    with pytest.raises(ValueError) as error:
+        io.import_contexts_from_csv(csv_path)
+
+    assert str(error.value) == "Context scopes must not be empty"
+
+
 def test_import_contexts_from_csv_rejects_empty_display_name(tmp_path):
     """Verify the reader refuses a context with an empty display name."""
     _assert_contexts_csv_rejected(tmp_path, 'casa,,Home projects.,"[""personal""]"')
