@@ -96,7 +96,6 @@ description = """
 When a requested context value is empty, the task collection returns 422 with an
 error message.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_empty_context_filter_is_rejected"
