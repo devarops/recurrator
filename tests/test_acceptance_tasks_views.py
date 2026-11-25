@@ -17,6 +17,9 @@ EMPTY_CONTEXT_FILTER_CSV = (
 UNKNOWN_CONTEXT_FILTER_CSV = (
     "tests/data/acceptance_tasks_views_unknown_context_filter_returns_404.csv"
 )
+MULTIPLE_CONTEXTS_CSV = (
+    "tests/data/acceptance_tasks_views_multiple_contexts_are_unioned.csv"
+)
 SHARED_CONTEXTS_CSV = "tests/data/contexts.csv"
 
 
@@ -93,6 +96,49 @@ def test_context_filter_returns_matching_tasks():
     assert excluded
     assert naming_several_contexts
     for task_id in naming_several_contexts:
+        assert returned.count(task_id) == 1
+
+
+def test_multiple_contexts_are_unioned():
+    """Several contexts select their OR-union once each, in file order."""
+    requested_contexts = {"casa", "chores"}
+    task_ids = _read_task_ids(MULTIPLE_CONTEXTS_CSV).json()
+    details = {
+        task_id: _read_task_body(MULTIPLE_CONTEXTS_CSV, task_id) for task_id in task_ids
+    }
+
+    expected = [
+        task_id
+        for task_id in task_ids
+        if requested_contexts & set(details[task_id]["contexts"])
+    ]
+    excluded = [
+        task_id
+        for task_id in task_ids
+        if not requested_contexts & set(details[task_id]["contexts"])
+    ]
+    in_every_requested_context = [
+        task_id
+        for task_id in task_ids
+        if requested_contexts <= set(details[task_id]["contexts"])
+    ]
+    per_context = set().union(
+        *(
+            _read_task_ids(MULTIPLE_CONTEXTS_CSV, [context]).json()
+            for context in sorted(requested_contexts)
+        )
+    )
+
+    response = _read_task_ids(MULTIPLE_CONTEXTS_CSV, sorted(requested_contexts))
+
+    assert response.status_code == 200
+
+    returned = response.json()
+    assert returned == expected
+    assert excluded
+    assert in_every_requested_context
+    assert set(returned) == per_context
+    for task_id in in_every_requested_context:
         assert returned.count(task_id) == 1
 
 
