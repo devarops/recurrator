@@ -10,6 +10,7 @@ from conftest import (
 )
 
 TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
+CONTEXT_FILTER_CSV = "tests/data/acceptance_tasks_views_context_filter_returns_matching_tasks.csv"
 
 
 def _scheduling_state(csv_path, task_ids):
@@ -55,6 +56,37 @@ def test_undated_due_read_uses_today():
     assert undated.status_code == 200
 
     assert undated.json() == dated.json()
+
+
+def test_context_filter_returns_matching_tasks():
+    """One context selects every task naming it, once each, in file order."""
+    all_task_ids = _read_task_ids(CONTEXT_FILTER_CSV).json()
+    details = {task_id: _read_task_body(CONTEXT_FILTER_CSV, task_id) for task_id in all_task_ids}
+    requested_context = "chores"
+
+    expected = [
+        task_id for task_id in all_task_ids if requested_context in details[task_id]["contexts"]
+    ]
+    excluded = [
+        task_id
+        for task_id in all_task_ids
+        if requested_context not in details[task_id]["contexts"]
+    ]
+    naming_several_contexts = [
+        task_id for task_id in expected if len(details[task_id]["contexts"]) > 1
+    ]
+
+    response = _read_task_ids(CONTEXT_FILTER_CSV, [requested_context])
+
+    assert response.status_code == 200
+
+    returned = response.json()
+    assert returned == expected
+    assert expected
+    assert excluded
+    assert naming_several_contexts
+    for task_id in naming_several_contexts:
+        assert returned.count(task_id) == 1
 
 
 def test_no_context_due_read_is_read_only(tmp_path):

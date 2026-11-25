@@ -1,0 +1,6 @@
+id,contexts,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred,rating,rating_deviation,rating_date
+9,"[""chores""]","Chores task nine",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+3,"[""casa""]","Home task three",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+5,"[""casa"",""chores""]","Shared task five",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+1,"[""laptop""]","Laptop task one",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+7,"[""chores""]","Chores task seven",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
