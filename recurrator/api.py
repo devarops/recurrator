@@ -42,6 +42,14 @@ def _distinct_contexts(context: list[str] | None) -> list[str]:
     return list(dict.fromkeys(context or []))
 
 
+def _refuse_empty_contexts(context: list[str] | None) -> None:
+    """Reject a requested context value that is empty."""
+    if any(not context_value for context_value in context or []):
+        raise RequestValidationError(
+            [{"loc": ("query", "context"), "msg": "Context must not be empty"}]
+        )
+
+
 def _task_to_dict(task: io.Task, reference_date: date) -> dict:
     """Return the task detail fields, projecting the Glicko deviation to the date."""
     projected_deviation = round(compute.compute_live_participant_deviation(task, reference_date))
@@ -238,10 +246,7 @@ class StarredUpdate(BaseModel):
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None), context: list[str] = Query(None)) -> list[int]:
     csv_path = _resolve_tasks_csv_path(csv)
-    if any(not context_value for context_value in context or []):
-        raise RequestValidationError(
-            [{"loc": ("query", "context"), "msg": "Context must not be empty"}]
-        )
+    _refuse_empty_contexts(context)
     tasks = io.import_tasks_from_csv(csv_path)
     if context:
         tasks = compute.filter_tasks_by_any_context(tasks, set(context))
@@ -262,10 +267,7 @@ def get_due_task_ids(
     context: list[str] = Query(None),
 ) -> list[int]:
     csv_path = _resolve_tasks_csv_path(csv)
-    if any(not context_value for context_value in context or []):
-        raise RequestValidationError(
-            [{"loc": ("query", "context"), "msg": "Context must not be empty"}]
-        )
+    _refuse_empty_contexts(context)
     tasks = io.import_tasks_from_csv(csv_path)
     requested_contexts = _distinct_contexts(context)
     selected_tasks = _select_due_tasks(tasks, requested_contexts, reference_date, csv_path)
