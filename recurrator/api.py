@@ -238,6 +238,10 @@ class StarredUpdate(BaseModel):
 @api.get("/task/")
 def get_all_tasks(csv: str = Query(None), context: list[str] = Query(None)) -> list[int]:
     csv_path = _resolve_tasks_csv_path(csv)
+    if any(not context_value for context_value in context or []):
+        raise RequestValidationError(
+            [{"loc": ("query", "context"), "msg": "Context must not be empty"}]
+        )
     tasks = io.import_tasks_from_csv(csv_path)
     if context:
         tasks = compute.filter_tasks_by_any_context(tasks, set(context))
