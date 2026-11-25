@@ -182,6 +182,13 @@ def test_get_nonexistent_task_returns_404():
     assert response.status_code == 404
 
 
+def test_get_nonexistent_task_names_the_missing_task():
+    """Verify GET /task/{id} names the missing task in its error envelope."""
+    response = _read_task(SINGLE_TASK_CSV, 999)
+
+    assert response.json() == {"error": "Task not found"}
+
+
 def test_set_task_as_done():
     """Verify POST /task/{id}/done marks the task as done and updates the due date correctly."""
 
