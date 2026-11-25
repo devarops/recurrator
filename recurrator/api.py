@@ -273,6 +273,10 @@ def get_due_task_ids(
     context: list[str] = Query(None),
 ) -> list[int]:
     csv_path = _resolve_tasks_csv_path(csv)
+    if any(not context_value for context_value in context or []):
+        raise RequestValidationError(
+            [{"loc": ("query", "context"), "msg": "Context must not be empty"}]
+        )
     tasks = io.import_tasks_from_csv(csv_path)
     requested_contexts = _distinct_contexts(context)
     selected_tasks = _select_due_tasks(tasks, requested_contexts, reference_date, csv_path)
