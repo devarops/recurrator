@@ -11,6 +11,7 @@ from conftest import (
 )
 
 STARRED_TASK_CSV = "tests/data/acceptance_task_edits_starred_task_is_reported.csv"
+STARRING_IDEMPOTENT_CSV = "tests/data/acceptance_task_edits_starring_is_idempotent.csv"
 
 
 def _assert_description_written(csv_path, task_id, text):
@@ -109,4 +110,18 @@ def test_starred_task_is_reported(tmp_path):
 
     assert response.status_code == 200
     assert response.json() == {"id": 1, "starred": True}
+    assert _read_task_body(csv_path, 1)["starred"] is True
+
+
+def test_starring_is_idempotent(tmp_path):
+    """Writing the same starred value twice returns the same confirmation each time."""
+    csv_path = _copy_fixture(STARRING_IDEMPOTENT_CSV, tmp_path)
+
+    first = _patch_starred(csv_path, 1, True)
+    second = _patch_starred(csv_path, 1, True)
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert first.json() == {"id": 1, "starred": True}
+    assert second.json() == first.json()
     assert _read_task_body(csv_path, 1)["starred"] is True
