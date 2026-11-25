@@ -193,6 +193,16 @@ def test_filter_n_tasks_by_context_early_return():
     assert obtained_selected_tasks == expected_selected_tasks
 
 
+def test_filter_n_tasks_by_context_keeps_input_order_when_due_count_equals_slots():
+    """Verify filling every slot returns the due tasks in their input order."""
+    tasks = [
+        _chores_task(1, "Not starred"),
+        _chores_task(2, "Starred", starred=True),
+    ]
+
+    assert _selected_task_ids(tasks, date(2026, 6, 6), 2) == [1, 2]
+
+
 def test_filter_n_tasks_by_context_respects_n_tasks():
     """Verify filter_n_tasks_by_context selects at most n_tasks when due tasks exceed n_tasks."""
     tasks = io.import_tasks_from_csv(CONTEXT_TASKS_CSV)
