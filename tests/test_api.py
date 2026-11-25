@@ -37,6 +37,11 @@ from conftest import (
 )
 
 
+CONTEXT_FILTER_TASKS_CSV = (
+    "tests/data/acceptance_tasks_views_context_filter_returns_matching_tasks.csv"
+)
+
+
 def _task_field(csv_path, task_id, field_name):
     """Read one field of a stored task through the API."""
     return _read_task_body(csv_path, task_id)[field_name]
@@ -95,6 +100,13 @@ def test_get_multiple_task_ids():
     response = _read_task_ids(THREE_TASKS_CSV)
 
     assert response.json() == [2, 3, 5]
+
+
+def test_task_ids_include_a_task_that_names_several_contexts():
+    """Verify a context filter selects tasks by membership, once each, in file order."""
+    response = _read_task_ids(CONTEXT_FILTER_TASKS_CSV, ["chores"])
+
+    assert response.json() == [9, 5, 7]
 
 
 def test_due_task_ids_malformed_date_returns_422():
