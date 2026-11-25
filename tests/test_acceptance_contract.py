@@ -55,3 +55,18 @@ def test_openapi_declares_context_properties():
     assert properties["description"]["type"] == "string"
     assert properties["scopes"]["type"] == "array"
     assert properties["scopes"]["items"]["type"] == "string"
+
+
+def test_openapi_declares_collection_items():
+    """The collection and due variants declare their item types."""
+    document = _read_openapi_document()
+
+    for path in ("/api/context/", "/api/context/due/{reference_date}", "/api/context/due/"):
+        schema = _read_response_schema(document, path)
+        assert schema["type"] == "array", f"GET {path} is not declared as an array"
+        assert schema["items"]["type"] == "string", f"GET {path} does not declare string items"
+
+    for path in ("/api/task/", "/api/task/due/{reference_date}", "/api/task/due/"):
+        schema = _read_response_schema(document, path)
+        assert schema["type"] == "array", f"GET {path} is not declared as an array"
+        assert schema["items"]["type"] == "integer", f"GET {path} does not declare integer items"
