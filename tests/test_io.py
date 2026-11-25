@@ -377,6 +377,16 @@ def test_import_contexts_from_csv_rejects_id_with_slash(tmp_path):
     _assert_contexts_csv_rejected(tmp_path, 'ca/sa,Home,Home projects.,"[""personal""]"')
 
 
+def test_import_contexts_from_csv_names_the_id_path_segment_requirement(tmp_path):
+    """Verify the reader names the single-path-segment rule for a slashed id."""
+    csv_path = _write_contexts_csv(tmp_path, 'ca/sa,Home,Home projects.,"[""personal""]"')
+
+    with pytest.raises(ValueError) as error:
+        io.import_contexts_from_csv(csv_path)
+
+    assert str(error.value) == "Context id must be a single path segment"
+
+
 def test_import_contexts_from_csv_rejects_reserved_due_id(tmp_path):
     """Verify the reader refuses the reserved due context id."""
     _assert_contexts_csv_rejected(tmp_path, 'due,Home,Home projects.,"[""personal""]"')
