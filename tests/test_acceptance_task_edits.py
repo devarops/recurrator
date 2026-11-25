@@ -2,8 +2,11 @@ import csv
 
 from conftest import (
     THREE_TASKS_CSV,
+    client,
     _assert_error_response,
+    _assert_file_unchanged,
     _copy_fixture,
+    _get_file_checksum,
     _patch_description,
     _patch_description_body,
     _patch_starred,
@@ -12,6 +15,9 @@ from conftest import (
 
 STARRED_TASK_CSV = "tests/data/acceptance_task_edits_starred_task_is_reported.csv"
 STARRING_IDEMPOTENT_CSV = "tests/data/acceptance_task_edits_starring_is_idempotent.csv"
+MALFORMED_STARRED_CSV = (
+    "tests/data/acceptance_task_edits_malformed_starred_body_is_rejected.csv"
+)
 
 
 def _assert_description_written(csv_path, task_id, text):
@@ -136,3 +142,16 @@ def test_star_unknown_task_returns_404(tmp_path):
     _assert_error_response(response, 404)
 
 
+def test_malformed_starred_body_is_rejected(tmp_path):
+    """A body without the flag, or with a non-boolean, is refused and the flag survives."""
+    csv_path = _copy_fixture(MALFORMED_STARRED_CSV, tmp_path)
+    checksum = _get_file_checksum(str(csv_path))
+    previous = _read_task_body(csv_path, 1)["starred"]
+
+    for payload in ({}, {"starred": None}, {"starred": "yes"}, {"starred": 1}):
+        response = client.patch(f"/api/task/1/starred?csv={csv_path}", json=payload)
+
+        _assert_error_response(response, 422)
+
+    assert _read_task_body(csv_path, 1)["starred"] == previous
+    _assert_file_unchanged(str(csv_path), checksum)
