@@ -349,6 +349,20 @@ def test_import_contexts_from_csv_rejects_duplicate_ids(tmp_path):
     )
 
 
+def test_import_contexts_from_csv_names_the_duplicate_id_requirement(tmp_path):
+    """Verify the reader says the context ids must be unique."""
+    csv_path = _write_contexts_csv(
+        tmp_path,
+        'casa,Home,Home projects.,"[""personal""]"',
+        'casa,Garden,Garden projects.,"[""work""]"',
+    )
+
+    with pytest.raises(ValueError) as error:
+        io.import_contexts_from_csv(csv_path)
+
+    assert str(error.value) == "Context ids must be unique"
+
+
 def test_import_contexts_from_csv_rejects_missing_display_name_column(tmp_path):
     """Verify the reader refuses a context file without a display name column."""
     _assert_contexts_csv_rejected(
