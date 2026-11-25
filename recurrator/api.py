@@ -3,7 +3,7 @@ from datetime import date
 from fastapi import APIRouter, FastAPI, Query, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, RedirectResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, StrictBool
 
 from . import compute, io
 from ._config import DEFAULT_CONTEXTS_CSV_PATH, DEFAULT_TASKS_CSV_PATH, WIP_LIMIT
@@ -243,7 +243,7 @@ class DescriptionUpdate(BaseModel):
 
 
 class StarredUpdate(BaseModel):
-    starred: bool
+    starred: StrictBool
 
 
 @api.get("/task/")
