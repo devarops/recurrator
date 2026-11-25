@@ -320,6 +320,16 @@ def test_import_contexts_from_csv_rejects_empty_display_name(tmp_path):
     _assert_contexts_csv_rejected(tmp_path, 'casa,,Home projects.,"[""personal""]"')
 
 
+def test_import_contexts_from_csv_names_the_empty_display_name(tmp_path):
+    """Verify the reader names the display name as the empty context field."""
+    csv_path = _write_contexts_csv(tmp_path, 'casa,,Home projects.,"[""personal""]"')
+
+    with pytest.raises(ValueError) as error:
+        io.import_contexts_from_csv(csv_path)
+
+    assert str(error.value) == "Context display name must not be empty"
+
+
 def test_import_contexts_from_csv_rejects_empty_id(tmp_path):
     """Verify the reader refuses a context with an empty id."""
     _assert_contexts_csv_rejected(tmp_path, ',Home,Home projects.,"[""personal""]"')
