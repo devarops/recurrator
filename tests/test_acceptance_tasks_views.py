@@ -11,6 +11,9 @@ from conftest import (
 
 TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
 CONTEXT_FILTER_CSV = "tests/data/acceptance_tasks_views_context_filter_returns_matching_tasks.csv"
+EMPTY_CONTEXT_FILTER_CSV = (
+    "tests/data/acceptance_tasks_views_empty_context_filter_is_rejected.csv"
+)
 
 
 def _scheduling_state(csv_path, task_ids):
@@ -87,6 +90,21 @@ def test_context_filter_returns_matching_tasks():
     assert naming_several_contexts
     for task_id in naming_several_contexts:
         assert returned.count(task_id) == 1
+
+
+def test_empty_context_filter_is_rejected():
+    """An empty context on the collection read is refused with an error message."""
+    all_task_ids = _read_task_ids(EMPTY_CONTEXT_FILTER_CSV).json()
+    valid_context = "chores"
+    valid_read = _read_task_ids(EMPTY_CONTEXT_FILTER_CSV, [valid_context])
+
+    response = _read_task_ids(EMPTY_CONTEXT_FILTER_CSV, [""])
+
+    assert valid_read.status_code == 200
+    assert set(valid_read.json()) < set(all_task_ids)
+
+    assert response.status_code == 422
+    assert "error" in response.json()
 
 
 def test_no_context_due_read_is_read_only(tmp_path):
