@@ -42,28 +42,9 @@ def _distinct_contexts(context: list[str] | None) -> list[str]:
     return list(dict.fromkeys(context or []))
 
 
-def _rating_fields(task: io.Task, rating_deviation: int) -> dict:
-    """Return the Glicko fields with the given deviation."""
-    return {
-        "rating": task.rating,
-        "rating_deviation": rating_deviation,
-    }
-
-
-def _anchored_rating_fields(task: io.Task) -> dict:
-    """Return the Glicko fields with the stored deviation."""
-    return _rating_fields(task, task.rating_deviation)
-
-
-def _projected_rating_fields(task: io.Task, reference_date: date) -> dict:
-    """Return the Glicko fields with the deviation projected to reference_date."""
-    return _rating_fields(
-        task, round(compute.compute_live_participant_deviation(task, reference_date))
-    )
-
-
 def _task_to_dict(task: io.Task, reference_date: date) -> dict:
     """Return the task detail fields, projecting the Glicko deviation to the date."""
+    projected_deviation = round(compute.compute_live_participant_deviation(task, reference_date))
     return TaskDetail(
         id=task.id,
         description=task.description,
@@ -75,7 +56,8 @@ def _task_to_dict(task: io.Task, reference_date: date) -> dict:
         recurrence_days=task.recurrence_days,
         due_date=task.due_date.isoformat(),
         coins=task.coins,
-        **_projected_rating_fields(task, reference_date),
+        rating=task.rating,
+        rating_deviation=projected_deviation,
     ).model_dump()
 
 
@@ -178,7 +160,8 @@ def _completion_response(task: io.Task) -> dict:
         skip_count=task.skip_count,
         due_date=task.due_date.isoformat(),
         latest_done_date=task.latest_done_date.isoformat(),
-        **_anchored_rating_fields(task),
+        rating=task.rating,
+        rating_deviation=task.rating_deviation,
     ).model_dump()
 
 
@@ -253,9 +236,7 @@ class StarredUpdate(BaseModel):
 
 
 @api.get("/task/")
-def get_all_tasks(
-    csv: str = Query(None), context: list[str] = Query(None)
-) -> list[int]:
+def get_all_tasks(csv: str = Query(None), context: list[str] = Query(None)) -> list[int]:
     csv_path = _resolve_tasks_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
     if context:
