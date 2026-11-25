@@ -28,7 +28,6 @@ description = """
 When no task has the given ID, the starred write returns 404 with an error
 field in the body.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_star_unknown_task_returns_404"
