@@ -1,0 +1,13 @@
+id,contexts,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred,rating,rating_deviation,rating_date
+1,"[""chores""]","Chores task one",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+2,"[""work""]","Work task two",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+3,"[""chores"",""work""]","Shared task three",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+4,"[""work""]","Future work task four",2098-12-11,2098-12-18,2098-12-25,2099-01-01,0,NA,0,1500,350,2099-01-01
+5,"[""chores""]","Chores task five",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+6,"[""work""]","Work task six",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+7,"[""chores""]","Chores task seven",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+8,"[""chores""]","Chores task eight",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+9,"[""chores""]","Chores task nine",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+10,"[""chores""]","Chores task ten",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+11,"[""errands""]","Errands task eleven",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+12,"[""work""]","Future work task twelve",2098-12-11,2098-12-18,2098-12-25,2099-01-01,0,NA,0,1500,350,2099-01-01

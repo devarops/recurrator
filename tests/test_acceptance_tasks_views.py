@@ -93,3 +93,48 @@ def test_duplicate_contexts_collapse_in_due_read(tmp_path):
         assert after[task_id]["skip_count"] == before[task_id]["skip_count"] + 1
     for task_id in returned:
         assert after[task_id]["skip_count"] == before[task_id]["skip_count"]
+
+
+def test_multi_context_due_read_is_read_only(tmp_path):
+    """A multiple-context due read unions the due tasks without deferring any."""
+    csv_path = _copy_fixture(
+        "tests/data/acceptance_tasks_views_multi_context_due_read_is_read_only.csv",
+        tmp_path,
+    )
+    reference_date = "2026-01-01"
+    requested_contexts = {"chores", "work"}
+    task_ids = _read_task_ids(csv_path).json()
+    before = _scheduling_state(csv_path, task_ids)
+
+    details = {task_id: _read_task_body(csv_path, task_id, reference_date) for task_id in task_ids}
+    expected = [
+        task_id
+        for task_id in task_ids
+        if details[task_id]["due_date"] <= reference_date
+        and requested_contexts & set(details[task_id]["contexts"])
+    ]
+    due_outside = [
+        task_id
+        for task_id in task_ids
+        if details[task_id]["due_date"] <= reference_date
+        and not requested_contexts & set(details[task_id]["contexts"])
+    ]
+    due_in_every_context = [
+        task_id
+        for task_id in task_ids
+        if details[task_id]["due_date"] <= reference_date
+        and requested_contexts <= set(details[task_id]["contexts"])
+    ]
+
+    response = _read_due_task_ids(csv_path, reference_date, sorted(requested_contexts))
+
+    assert response.status_code == 200
+
+    returned = response.json()
+    assert returned == expected
+    assert due_outside
+    assert not set(returned) & set(due_outside)
+    assert due_in_every_context
+    for task_id in due_in_every_context:
+        assert returned.count(task_id) == 1
+    assert _scheduling_state(csv_path, task_ids) == before
