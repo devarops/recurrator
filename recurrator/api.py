@@ -224,6 +224,17 @@ class StarredConfirmation(BaseModel):
     starred: bool
 
 
+class CompletionConfirmation(BaseModel):
+    """The confirmation returned by POST /task/{task_id}/done."""
+
+    id: int
+    skip_count: int
+    due_date: str
+    latest_done_date: str
+    rating: int
+    rating_deviation: int
+
+
 class DescriptionUpdate(BaseModel):
     description: str
 
@@ -348,7 +359,10 @@ def patch_task_starred(task_id: int, body: StarredUpdate, csv: str = Query(None)
     return {"id": task_id, "starred": body.starred}
 
 
-@api.post("/task/{task_id}/done")
+@api.post(
+    "/task/{task_id}/done",
+    openapi_extra=_success_response_schema(CompletionConfirmation.model_json_schema()),
+)
 def post_task_done(task_id: int, csv: str = Query(None)):
     csv_path = _resolve_tasks_csv_path(csv)
     today = date.today()
