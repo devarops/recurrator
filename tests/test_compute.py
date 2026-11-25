@@ -239,6 +239,19 @@ def test_filter_n_tasks_by_context_interleaves_starred_and_non_starred():
     assert selected_ids - starred_ids
 
 
+def test_filter_n_tasks_by_context_fills_second_slot_from_non_starred_pool():
+    """Verify a starred surplus still leaves the second slot to a non-starred task."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        _chores_task(1, "Starred first due", starred=True, due_date=date(2026, 6, 1)),
+        _chores_task(2, "Starred second due", starred=True, due_date=date(2026, 6, 2)),
+        _chores_task(3, "Starred third due", starred=True, due_date=date(2026, 6, 3)),
+        _chores_task(4, "Not starred", due_date=date(2026, 6, 1)),
+    ]
+
+    assert _selected_task_ids(tasks, reference_date, 2) == [1, 4]
+
+
 def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
     """Verify non-starred tasks are sorted by skip_count DESC before selection."""
     reference_date = date(2026, 6, 6)
