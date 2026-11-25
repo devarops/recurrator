@@ -39,7 +39,6 @@ When the context collection and its due variants are described, each declares
 an array of strings, and the task collection and its due variants declare an
 array of integers.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_contract.py::test_openapi_declares_collection_items"
