@@ -253,9 +253,13 @@ class StarredUpdate(BaseModel):
 
 
 @api.get("/task/")
-def get_all_tasks(csv: str = Query(None)) -> list[int]:
+def get_all_tasks(
+    csv: str = Query(None), context: list[str] = Query(None)
+) -> list[int]:
     csv_path = _resolve_tasks_csv_path(csv)
     tasks = io.import_tasks_from_csv(csv_path)
+    if context:
+        tasks = compute.filter_tasks_by_any_context(tasks, set(context))
     return _task_ids(tasks)
 
 
