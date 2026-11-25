@@ -210,6 +210,13 @@ class ContextDetail(BaseModel):
     scopes: list[str]
 
 
+class DescriptionConfirmation(BaseModel):
+    """The confirmation returned by PATCH /task/{task_id}/description."""
+
+    id: int
+    description: str
+
+
 class DescriptionUpdate(BaseModel):
     description: str
 
@@ -306,7 +313,10 @@ def get_context_by_id(context_id: str, csv: str = Query(None), contexts_csv: str
     return _context_to_dict(context)
 
 
-@api.patch("/task/{task_id}/description")
+@api.patch(
+    "/task/{task_id}/description",
+    openapi_extra=_success_response_schema(DescriptionConfirmation.model_json_schema()),
+)
 def patch_task_description(task_id: int, body: DescriptionUpdate, csv: str = Query(None)):
     """Replace a task's description with the given text."""
     csv_path = _resolve_tasks_csv_path(csv)
