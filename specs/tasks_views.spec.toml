@@ -136,7 +136,6 @@ description = """
 When a dated due read carries an empty context value, it returns 422 with an
 error message and changes no skip count or skip date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_empty_context_in_due_read_is_rejected"
