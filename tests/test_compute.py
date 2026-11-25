@@ -262,6 +262,21 @@ def test_filter_n_tasks_by_context_fills_second_slot_from_non_starred_pool():
     assert _selected_task_ids(tasks, reference_date, 2) == [1, 4]
 
 
+def test_filter_n_tasks_by_context_does_not_repeat_a_starred_task_in_the_non_starred_pool():
+    """Verify a small starred pool never fills a slot twice and leaves the rest deferred."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        _chores_task(1, "Starred", starred=True),
+        _chores_task(2, "Not starred first"),
+        _chores_task(3, "Not starred second"),
+    ]
+
+    selected, deferred = rc.filter_n_tasks_by_context(tasks, "chores", reference_date, 2)
+
+    assert [task.id for task in selected] == [1, 2]
+    assert [task.id for task in deferred] == [3]
+
+
 def test_filter_n_tasks_by_context_sorts_non_starred_by_skip_count():
     """Verify non-starred tasks are sorted by skip_count DESC before selection."""
     reference_date = date(2026, 6, 6)
