@@ -277,6 +277,17 @@ def test_get_context_detail():
     assert response.json()["id"] == "garden"
 
 
+def test_get_nonexistent_context_names_the_missing_context():
+    """Verify GET /context/{id}/ refuses an unknown id and says which one."""
+    response = client.get(
+        "/api/context/nowhere/"
+        "?contexts_csv=tests/data/acceptance_context_views_context_detail.csv"
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {"error": "Context not found"}
+
+
 def test_due_read_defers_tasks_beyond_the_available_slots(tmp_path):
     """Verify a single-context due read defers the surplus tasks."""
     csv_path = _copy_fixture(EIGHT_TASKS_CSV, tmp_path)
