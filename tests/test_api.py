@@ -479,31 +479,24 @@ def test_starred_write_returns_confirmation(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "path, shape_key",
+    "method, path, shape_key",
     [
-        ("/api/task/", "items"),
-        ("/api/task/{task_id}", "properties"),
-        ("/api/context/", "items"),
-        ("/api/context/{context_id}/", "properties"),
-        ("/api/task/due/{reference_date}", "items"),
-        ("/api/task/due/", "items"),
-        ("/api/context/due/{reference_date}", "items"),
-        ("/api/context/due/", "items"),
+        ("get", "/api/task/", "items"),
+        ("get", "/api/task/{task_id}", "properties"),
+        ("get", "/api/context/", "items"),
+        ("get", "/api/context/{context_id}/", "properties"),
+        ("get", "/api/task/due/{reference_date}", "items"),
+        ("get", "/api/task/due/", "items"),
+        ("get", "/api/context/due/{reference_date}", "items"),
+        ("get", "/api/context/due/", "items"),
+        ("patch", "/api/task/{task_id}/description", "properties"),
     ],
 )
-def test_openapi_path_declares_its_schema_shape_key(path, shape_key):
-    """Verify a documented path declares the key its 200 schema type promises."""
+def test_openapi_path_declares_its_schema_shape_key(method, path, shape_key):
+    """Verify a documented path and method declares the key its 200 schema type promises."""
     document = _read_openapi_document()
 
-    assert shape_key in _read_response_schema(document, path)
-
-
-def test_openapi_description_write_declares_response_properties():
-    """Verify PATCH /api/task/{task_id}/description declares properties in its 200 schema."""
-    document = _read_openapi_document()
-
-    schema = _read_response_schema(document, "/api/task/{task_id}/description", "patch")
-    assert "properties" in schema
+    assert shape_key in _read_response_schema(document, path, method)
 
 
 def test_openapi_due_redirect_declares_no_200_response():
