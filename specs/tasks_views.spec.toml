@@ -46,7 +46,6 @@ description = """
 When one context is requested, the task collection returns every task whose
 contexts array contains it, in file order.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_context_filter_returns_matching_tasks"
