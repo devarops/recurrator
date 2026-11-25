@@ -312,6 +312,18 @@ def test_filter_n_tasks_by_context_second_selection_orders_by_recurrence_only():
     assert _selected_task_ids(tasks, reference_date, 2) == [1, 3]
 
 
+def test_filter_n_tasks_by_context_third_selection_returns_to_due_date():
+    """Verify the third selection prefers an earlier due date over a longer recurrence."""
+    reference_date = date(2026, 6, 6)
+    tasks = [
+        _chores_task(1, "First due", starred=True, due_date=date(2026, 6, 1)),
+        _chores_task(2, "Second due", starred=True, recurrence_days=30, due_date=date(2026, 6, 2)),
+        _chores_task(3, "Third due", starred=True, recurrence_days=7, due_date=date(2026, 6, 3)),
+        _chores_task(4, "Fourth due", starred=True, recurrence_days=30, due_date=date(2026, 6, 4)),
+    ]
+    assert _selected_task_ids(tasks, reference_date, 3) == [1, 2, 3]
+
+
 def test_filter_n_tasks_by_context_prefers_due_date_over_recurrence():
     """Verify the first selection orders by due date before recurrence days."""
     reference_date = date(2026, 6, 6)
