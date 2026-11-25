@@ -60,7 +60,7 @@ Example unit test: `pytest tests/test_api.py::test_get_single_task_id`.
 
 ## Mutation Testing
 
-Configured in `setup.cfg` under `[mutmut]`; run `make mutants` inside the container and check survivors with `mutmut results`.
+Configured in `setup.cfg` under `[mutmut]`; `make mutants` runs the suite and fails when any mutant survives, and `mutmut results` lists them.
 
 ## TODO.md
 
