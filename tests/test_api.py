@@ -123,6 +123,16 @@ def test_empty_context_on_collection_read_is_refused():
     assert response.status_code == 422
 
 
+def test_unknown_context_on_collection_read_is_refused():
+    """Verify the task collection refuses a context absent from the context data."""
+    response = client.get(
+        f"/api/task/?csv={CONTEXT_FILTER_TASKS_CSV}"
+        "&contexts_csv=tests/data/contexts.csv&context=garden"
+    )
+
+    assert response.status_code == 404
+
+
 def test_empty_context_in_due_read_is_refused():
     """Verify a dated due read refuses an empty context value."""
     response = _read_due_task_ids(THREE_TASKS_CSV, "2026-01-01", [""])
