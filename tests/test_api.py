@@ -488,6 +488,15 @@ def test_malformed_description_body_returns_error_field(tmp_path):
     assert "error" in response.json()
 
 
+def test_non_boolean_starred_value_is_refused(tmp_path):
+    """A string flagged as boolean text is refused instead of coerced."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+
+    response = _patch_starred(csv_path, 2, "yes")
+
+    assert response.status_code == 422
+
+
 def test_starred_write_returns_confirmation(tmp_path):
     """Verify PATCH /task/{id}/starred confirms the new flag."""
     csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
