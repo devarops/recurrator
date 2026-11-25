@@ -210,24 +210,27 @@ class ContextDetail(BaseModel):
     scopes: list[str]
 
 
-class DescriptionConfirmation(BaseModel):
-    """The confirmation returned by PATCH /task/{task_id}/description."""
+class Confirmation(BaseModel):
+    """The base of the confirmations action routes return: the id and the changed fields."""
 
     id: int
+
+
+class DescriptionConfirmation(Confirmation):
+    """The confirmation returned by PATCH /task/{task_id}/description."""
+
     description: str
 
 
-class StarredConfirmation(BaseModel):
+class StarredConfirmation(Confirmation):
     """The confirmation returned by PATCH /task/{task_id}/starred."""
 
-    id: int
     starred: bool
 
 
-class CompletionConfirmation(BaseModel):
+class CompletionConfirmation(Confirmation):
     """The confirmation returned by POST /task/{task_id}/done."""
 
-    id: int
     skip_count: int
     due_date: str
     latest_done_date: str
