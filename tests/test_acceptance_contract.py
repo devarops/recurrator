@@ -41,3 +41,17 @@ def test_openapi_declares_task_contexts():
     contexts = schema["properties"]["contexts"]
     assert contexts["type"] == "array"
     assert contexts["items"]["type"] == "string"
+
+
+def test_openapi_declares_context_properties():
+    """The context detail schema declares its fields and scopes as strings."""
+    schema = _read_response_schema(_read_openapi_document(), "/api/context/{context_id}/")
+
+    properties = schema["properties"]
+
+    assert set(properties) >= {"id", "display_name", "description", "scopes"}
+    assert properties["id"]["type"] == "string"
+    assert properties["display_name"]["type"] == "string"
+    assert properties["description"]["type"] == "string"
+    assert properties["scopes"]["type"] == "array"
+    assert properties["scopes"]["items"]["type"] == "string"
