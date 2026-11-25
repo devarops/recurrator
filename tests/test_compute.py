@@ -210,6 +210,16 @@ def test_filter_n_tasks_by_context_selects_starred_first():
     assert 7 in _selected_task_ids(tasks, date(2026, 4, 24), 2)
 
 
+def test_filter_n_tasks_by_context_stops_at_the_slot_count():
+    """Verify one available slot takes the starred task and leaves the other behind."""
+    tasks = [
+        _chores_task(1, "Starred", starred=True),
+        _chores_task(2, "Not starred"),
+    ]
+
+    assert _selected_task_ids(tasks, date(2026, 6, 6), 1) == [1]
+
+
 def test_filter_n_tasks_by_context_deferred_excludes_starred():
     """Verify deferred only contains non-starred tasks when all due tasks are starred."""
     tasks = io.import_tasks_from_csv(CONTEXT_TASKS_CSV)
