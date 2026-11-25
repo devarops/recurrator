@@ -125,3 +125,14 @@ def test_starring_is_idempotent(tmp_path):
     assert first.json() == {"id": 1, "starred": True}
     assert second.json() == first.json()
     assert _read_task_body(csv_path, 1)["starred"] is True
+
+
+def test_star_unknown_task_returns_404(tmp_path):
+    """A starred write for a missing task is refused instead of silently succeeding."""
+    csv_path = _copy_fixture(THREE_TASKS_CSV, tmp_path)
+
+    response = _patch_starred(csv_path, 999, True)
+
+    _assert_error_response(response, 404)
+
+
