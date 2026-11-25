@@ -1,6 +1,8 @@
 **/__pycache__/
 .OPEN.md
-mutants/
-recurrator/_*
 /next-backlog-items.html
 harness.log
+mutants/
+recurrator/_*
+score-after.txt
+score-before.txt
