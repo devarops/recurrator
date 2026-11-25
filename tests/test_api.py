@@ -3,6 +3,7 @@ from datetime import date
 import pytest
 
 import recurrator.io as io
+from recurrator.api import _success_response_schema
 from conftest import (
     client,
     _borrowed_tasks_file,
@@ -513,3 +514,12 @@ def test_openapi_due_redirect_declares_no_200_response():
     document = _read_openapi_document()
 
     assert "200" not in _read_responses(document, "/api/task/due")
+
+
+def test_success_response_schema_wraps_the_schema_in_a_200_json_response():
+    """Verify the OpenAPI extra nests the given schema under a single JSON 200 response."""
+    schema = {"type": "object"}
+
+    assert _success_response_schema(schema) == {
+        "responses": {"200": {"content": {"application/json": {"schema": schema}}}}
+    }
