@@ -50,6 +50,12 @@ def _refuse_empty_contexts(context: list[str] | None) -> None:
         )
 
 
+def _has_unknown_context(context: list[str], contexts_csv_path: str) -> bool:
+    """Return whether any requested context is absent from the context data."""
+    stored_ids = {stored.id for stored in io.import_contexts_from_csv(contexts_csv_path)}
+    return any(context_id not in stored_ids for context_id in context)
+
+
 def _task_to_dict(task: io.Task, reference_date: date) -> dict:
     """Return the task detail fields, projecting the Glicko deviation to the date."""
     projected_deviation = round(compute.compute_live_participant_deviation(task, reference_date))
@@ -258,9 +264,7 @@ def get_all_tasks(
     tasks = io.import_tasks_from_csv(csv_path)
     if context:
         contexts_csv_path = _resolve_contexts_csv_path(contexts_csv)
-        stored_contexts = io.import_contexts_from_csv(contexts_csv_path)
-        stored_ids = {stored.id for stored in stored_contexts}
-        if any(context_id not in stored_ids for context_id in context):
+        if _has_unknown_context(context, contexts_csv_path):
             return _context_not_found_response()
         tasks = compute.filter_tasks_by_any_context(tasks, set(context))
     return _task_ids(tasks)
