@@ -56,7 +56,6 @@ When several contexts are requested, the task collection returns every task
 whose contexts array contains at least one of them, once each, in file order, so
 the values combine with OR.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_multiple_contexts_are_unioned"
