@@ -116,6 +116,13 @@ def test_due_task_ids_malformed_date_returns_422():
     assert response.status_code == 422
 
 
+def test_empty_context_on_collection_read_is_refused():
+    """Verify the task collection refuses an empty context value."""
+    response = _read_task_ids(THREE_TASKS_CSV, [""])
+
+    assert response.status_code == 422
+
+
 def test_empty_context_in_due_read_is_refused():
     """Verify a dated due read refuses an empty context value."""
     response = _read_due_task_ids(THREE_TASKS_CSV, "2026-01-01", [""])
