@@ -19,7 +19,6 @@ description = """
 When the same starred value is written twice, both writes return 200 with the
 same confirmation subset.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_task_edits.py::test_starring_is_idempotent"
