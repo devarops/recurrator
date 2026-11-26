@@ -229,23 +229,14 @@ def test_multi_context_due_read_is_read_only(tmp_path):
     before = _scheduling_state(csv_path, task_ids)
 
     details = {task_id: _read_task_body(csv_path, task_id, reference_date) for task_id in task_ids}
-    expected = [
-        task_id
-        for task_id in task_ids
-        if details[task_id]["due_date"] <= reference_date
-        and requested_contexts & set(details[task_id]["contexts"])
-    ]
+    due_ids = [task_id for task_id in task_ids if details[task_id]["due_date"] <= reference_date]
+    contexts_by_task = {task_id: set(details[task_id]["contexts"]) for task_id in task_ids}
+    expected = [task_id for task_id in due_ids if requested_contexts & contexts_by_task[task_id]]
     due_outside = [
-        task_id
-        for task_id in task_ids
-        if details[task_id]["due_date"] <= reference_date
-        and not requested_contexts & set(details[task_id]["contexts"])
+        task_id for task_id in due_ids if not requested_contexts & contexts_by_task[task_id]
     ]
     due_in_every_context = [
-        task_id
-        for task_id in task_ids
-        if details[task_id]["due_date"] <= reference_date
-        and requested_contexts <= set(details[task_id]["contexts"])
+        task_id for task_id in due_ids if requested_contexts <= contexts_by_task[task_id]
     ]
 
     response = _read_due_task_ids(csv_path, reference_date, sorted(requested_contexts))
