@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# Run the checks before every push, in the development container.
+# Activate with .pipelines/init.sh, which points core.hooksPath at .githooks.
+
+set -euo pipefail
+
+if .pipelines/check.sh; then
+    exit 0
+fi
+
+echo "Pre-push checks failed. Push aborted."
+exit 1

@@ -77,3 +77,5 @@ Targets: `tests`, `test-shell`, `check`, `coverage`, `mutants`, `check_data`, `f
 `pyproject.toml` declares `glicko2==2.1.0`; `fastapi`, `uvicorn` and `glicko2` come from `Dockerfile`, and the test tools from `Dockerfile.dev`. `glicko2` has no type stubs, so `compute.py` carries a scoped `# type: ignore[import-untyped]`. The dev tools are unpinned; run `make format` before pushing.
 
 The editable install lives in the image, so `docker compose --profile develop run --rm develop make tests` works without a long-lived container; CI starts `recurrator_dev` and `exec`s into it.
+
+`.githooks/pre-push` runs `.pipelines/check.sh` on every push, which execs `make check tests` in the running `recurrator_dev` and aborts the push on failure; `.pipelines/init.sh` sets `core.hooksPath` to activate it.
