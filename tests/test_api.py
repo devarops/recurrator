@@ -103,7 +103,7 @@ def test_get_multiple_task_ids():
 
 def test_task_ids_include_a_task_that_names_several_contexts():
     """Verify a context filter selects tasks by membership, once each, in file order."""
-    response = _read_task_ids(CONTEXT_FILTER_TASKS_CSV, ["chores"])
+    response = _read_task_ids(CONTEXT_FILTER_TASKS_CSV, ["chores"], "tests/data/contexts.csv")
 
     assert response.json() == [9, 5, 7]
 

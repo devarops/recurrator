@@ -80,7 +80,7 @@ def test_context_filter_returns_matching_tasks():
         task_id for task_id in expected if len(details[task_id]["contexts"]) > 1
     ]
 
-    response = _read_task_ids(CONTEXT_FILTER_CSV, [requested_context])
+    response = _read_task_ids(CONTEXT_FILTER_CSV, [requested_context], SHARED_CONTEXTS_CSV)
 
     assert response.status_code == 200
 
@@ -112,12 +112,14 @@ def test_multiple_contexts_are_unioned():
     ]
     per_context = set().union(
         *(
-            _read_task_ids(MULTIPLE_CONTEXTS_CSV, [context]).json()
+            _read_task_ids(MULTIPLE_CONTEXTS_CSV, [context], SHARED_CONTEXTS_CSV).json()
             for context in sorted(requested_contexts)
         )
     )
 
-    response = _read_task_ids(MULTIPLE_CONTEXTS_CSV, sorted(requested_contexts))
+    response = _read_task_ids(
+        MULTIPLE_CONTEXTS_CSV, sorted(requested_contexts), SHARED_CONTEXTS_CSV
+    )
 
     assert response.status_code == 200
 
@@ -152,7 +154,7 @@ def test_empty_context_filter_is_rejected():
     """An empty context on the collection read is refused with an error message."""
     all_task_ids = _read_task_ids(EMPTY_CONTEXT_FILTER_CSV).json()
     valid_context = "chores"
-    valid_read = _read_task_ids(EMPTY_CONTEXT_FILTER_CSV, [valid_context])
+    valid_read = _read_task_ids(EMPTY_CONTEXT_FILTER_CSV, [valid_context], SHARED_CONTEXTS_CSV)
 
     response = _read_task_ids(EMPTY_CONTEXT_FILTER_CSV, [""])
 

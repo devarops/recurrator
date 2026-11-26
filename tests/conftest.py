@@ -100,10 +100,11 @@ def _patch_starred(csv_path, task_id, starred):
     return client.patch(f"/api/task/{task_id}/starred?csv={csv_path}", json={"starred": starred})
 
 
-def _read_task_ids(csv_path, contexts=None):
+def _read_task_ids(csv_path, contexts=None, contexts_csv=None):
     """Read the ids of every task, optionally narrowed to some contexts."""
-    query = "".join(f"&context={context}" for context in contexts or [])
-    return client.get(f"/api/task/?csv={csv_path}{query}")
+    context_query = "".join(f"&context={context}" for context in contexts or [])
+    contexts_query = f"&contexts_csv={contexts_csv}" if contexts_csv else ""
+    return client.get(f"/api/task/?csv={csv_path}{contexts_query}{context_query}")
 
 
 def _read_due_task_ids(csv_path, reference_date, contexts=None):
