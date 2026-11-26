@@ -15,9 +15,7 @@ from conftest import (
 
 STARRED_TASK_CSV = "tests/data/acceptance_task_edits_starred_task_is_reported.csv"
 STARRING_IDEMPOTENT_CSV = "tests/data/acceptance_task_edits_starring_is_idempotent.csv"
-MALFORMED_STARRED_CSV = (
-    "tests/data/acceptance_task_edits_malformed_starred_body_is_rejected.csv"
-)
+MALFORMED_STARRED_CSV = "tests/data/acceptance_task_edits_malformed_starred_body_is_rejected.csv"
 
 
 def _assert_description_written(csv_path, task_id, text):

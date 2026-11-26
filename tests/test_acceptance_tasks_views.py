@@ -11,15 +11,11 @@ from conftest import (
 
 TASKS_VIEWS_CSV = "tests/data/acceptance_tasks_views_all_tasks.csv"
 CONTEXT_FILTER_CSV = "tests/data/acceptance_tasks_views_context_filter_returns_matching_tasks.csv"
-EMPTY_CONTEXT_FILTER_CSV = (
-    "tests/data/acceptance_tasks_views_empty_context_filter_is_rejected.csv"
-)
+EMPTY_CONTEXT_FILTER_CSV = "tests/data/acceptance_tasks_views_empty_context_filter_is_rejected.csv"
 UNKNOWN_CONTEXT_FILTER_CSV = (
     "tests/data/acceptance_tasks_views_unknown_context_filter_returns_404.csv"
 )
-MULTIPLE_CONTEXTS_CSV = (
-    "tests/data/acceptance_tasks_views_multiple_contexts_are_unioned.csv"
-)
+MULTIPLE_CONTEXTS_CSV = "tests/data/acceptance_tasks_views_multiple_contexts_are_unioned.csv"
 SHARED_CONTEXTS_CSV = "tests/data/contexts.csv"
 
 
@@ -78,9 +74,7 @@ def test_context_filter_returns_matching_tasks():
         task_id for task_id in all_task_ids if requested_context in details[task_id]["contexts"]
     ]
     excluded = [
-        task_id
-        for task_id in all_task_ids
-        if requested_context not in details[task_id]["contexts"]
+        task_id for task_id in all_task_ids if requested_context not in details[task_id]["contexts"]
     ]
     naming_several_contexts = [
         task_id for task_id in expected if len(details[task_id]["contexts"]) > 1
@@ -103,14 +97,10 @@ def test_multiple_contexts_are_unioned():
     """Several contexts select their OR-union once each, in file order."""
     requested_contexts = {"casa", "chores"}
     task_ids = _read_task_ids(MULTIPLE_CONTEXTS_CSV).json()
-    details = {
-        task_id: _read_task_body(MULTIPLE_CONTEXTS_CSV, task_id) for task_id in task_ids
-    }
+    details = {task_id: _read_task_body(MULTIPLE_CONTEXTS_CSV, task_id) for task_id in task_ids}
 
     expected = [
-        task_id
-        for task_id in task_ids
-        if requested_contexts & set(details[task_id]["contexts"])
+        task_id for task_id in task_ids if requested_contexts & set(details[task_id]["contexts"])
     ]
     excluded = [
         task_id
@@ -118,9 +108,7 @@ def test_multiple_contexts_are_unioned():
         if not requested_contexts & set(details[task_id]["contexts"])
     ]
     in_every_requested_context = [
-        task_id
-        for task_id in task_ids
-        if requested_contexts <= set(details[task_id]["contexts"])
+        task_id for task_id in task_ids if requested_contexts <= set(details[task_id]["contexts"])
     ]
     per_context = set().union(
         *(

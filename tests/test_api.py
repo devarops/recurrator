@@ -36,7 +36,6 @@ from conftest import (
     TASK_5_ORIGINAL_DATES,
 )
 
-
 CONTEXT_FILTER_TASKS_CSV = (
     "tests/data/acceptance_tasks_views_context_filter_returns_matching_tasks.csv"
 )
