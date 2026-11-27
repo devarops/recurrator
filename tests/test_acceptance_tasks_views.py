@@ -16,6 +16,7 @@ UNKNOWN_CONTEXT_FILTER_CSV = (
     "tests/data/acceptance_tasks_views_unknown_context_filter_returns_404.csv"
 )
 MULTIPLE_CONTEXTS_CSV = "tests/data/acceptance_tasks_views_multiple_contexts_are_unioned.csv"
+DUPLICATE_CONTEXTS_CSV = "tests/data/acceptance_tasks_views_duplicate_contexts_collapse.csv"
 SHARED_CONTEXTS_CSV = "tests/data/contexts.csv"
 
 
@@ -130,6 +131,26 @@ def test_multiple_contexts_are_unioned():
     assert set(returned) == per_context
     for task_id in in_every_requested_context:
         assert returned.count(task_id) == 1
+
+
+def test_duplicate_contexts_collapse():
+    """Repeating a context returns the same tasks as naming it once."""
+    requested_context = "chores"
+
+    single = _read_task_ids(DUPLICATE_CONTEXTS_CSV, [requested_context], SHARED_CONTEXTS_CSV)
+    repeated = _read_task_ids(
+        DUPLICATE_CONTEXTS_CSV,
+        [requested_context, requested_context],
+        SHARED_CONTEXTS_CSV,
+    )
+
+    assert single.status_code == 200
+    assert repeated.status_code == 200
+
+    expected = single.json()
+    assert expected
+    assert repeated.json() == expected
+    assert len(expected) == len(set(expected))
 
 
 def test_unknown_context_filter_returns_404():
