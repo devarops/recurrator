@@ -65,7 +65,6 @@ description = """
 When the same context appears more than once, the response equals the response
 with that context once, because repeated values collapse.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_duplicate_contexts_collapse"
