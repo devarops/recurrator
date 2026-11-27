@@ -70,7 +70,7 @@ linter:
 	$(call lint, ${module})
 	$(call lint, tests)
 
-mutants:
+mutants: setup
 	mutmut run
 	@survivors="$$(mutmut results | grep --count ': survived$$' || true)"; \
 	if [ "$${survivors}" -ne 0 ]; then \
