@@ -74,7 +74,6 @@ description = """
 When the requested context is stored in the context data but no task names it,
 the task collection returns an empty list rather than 404.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_unused_context_filter_is_empty"
