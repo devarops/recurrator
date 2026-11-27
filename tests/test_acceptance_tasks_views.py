@@ -15,6 +15,9 @@ EMPTY_CONTEXT_FILTER_CSV = "tests/data/acceptance_tasks_views_empty_context_filt
 UNKNOWN_CONTEXT_FILTER_CSV = (
     "tests/data/acceptance_tasks_views_unknown_context_filter_returns_404.csv"
 )
+UNUSED_CONTEXT_FILTER_CSV = (
+    "tests/data/acceptance_tasks_views_unused_context_filter_is_empty.csv"
+)
 MULTIPLE_CONTEXTS_CSV = "tests/data/acceptance_tasks_views_multiple_contexts_are_unioned.csv"
 DUPLICATE_CONTEXTS_CSV = "tests/data/acceptance_tasks_views_duplicate_contexts_collapse.csv"
 SHARED_CONTEXTS_CSV = "tests/data/contexts.csv"
@@ -169,6 +172,38 @@ def test_unknown_context_filter_returns_404():
 
     assert unknown.status_code == 404
     assert "error" in unknown.json()
+
+
+def test_unused_context_filter_is_empty():
+    """A stored context that no task names selects no task rather than 404."""
+    requested_context = "laptop"
+    used_context = "chores"
+    stored_contexts = client.get(
+        f"/api/context/?csv={UNUSED_CONTEXT_FILTER_CSV}"
+        f"&contexts_csv={SHARED_CONTEXTS_CSV}"
+    )
+
+    assert stored_contexts.status_code == 200
+    assert requested_context in stored_contexts.json()
+
+    task_ids = _read_task_ids(UNUSED_CONTEXT_FILTER_CSV).json()
+    details = {
+        task_id: _read_task_body(UNUSED_CONTEXT_FILTER_CSV, task_id) for task_id in task_ids
+    }
+    assert task_ids
+    assert all(requested_context not in details[task_id]["contexts"] for task_id in task_ids)
+    assert any(used_context in details[task_id]["contexts"] for task_id in task_ids)
+
+    response = _read_task_ids(
+        UNUSED_CONTEXT_FILTER_CSV, [requested_context], SHARED_CONTEXTS_CSV
+    )
+    used = _read_task_ids(UNUSED_CONTEXT_FILTER_CSV, [used_context], SHARED_CONTEXTS_CSV)
+
+    assert used.status_code == 200
+    assert used.json()
+
+    assert response.status_code == 200
+    assert response.json() == []
 
 
 def test_empty_context_filter_is_rejected():
