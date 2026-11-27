@@ -81,7 +81,7 @@ mutants: setup
 setup: clean install
 
 tests:
-	pytest --ignore-glob='*_acceptance_*.py' --verbose
+	pytest --ignore=mutants --ignore-glob='*_acceptance_*.py' --verbose
 
 test-shell:
 	shellspec
