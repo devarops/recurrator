@@ -71,7 +71,7 @@ linter:
 	$(call lint, tests)
 
 mutants: setup
-	mutmut run
+	PYTEST_ADDOPTS="$(if $(ACTIVE),--deselect $(ACTIVE))" mutmut run
 	mutmut results
 
 setup: clean install
