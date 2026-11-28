@@ -139,6 +139,13 @@ def test_empty_context_in_due_read_is_refused():
     assert response.status_code == 422
 
 
+def test_unknown_context_in_due_read_is_refused():
+    """Verify a dated due read refuses a context absent from the context data."""
+    response = _read_due_task_ids(THREE_TASKS_CSV, "2026-01-01", ["not-a-stored-context"])
+
+    assert response.status_code == 404
+
+
 def test_due_task_ids_list_only_tasks_due_by_the_date():
     """Verify a dated due read lists only the tasks due by that date."""
     response = _read_due_task_ids(THREE_TASKS_CSV, "2026-01-01")
