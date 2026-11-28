@@ -1,0 +1,118 @@
+#:schema https://raw.githubusercontent.com/tskovlund/qed/main/docs/spec.schema.json
+
+name = "task_deletion"
+
+# Every criterion is a scenario a user can observe through the HTTP API.
+# Each one stays skipped until its test in tests/test_acceptance_task_deletion.py exists.
+# Deletion removes the task's row and leaves every other row untouched.
+# A deleted ID is not reserved, because creation still takes max(id) + 1.
+
+[[criteria]]
+description = """
+When a task is deleted, the response returns its ID and a later collection read
+omits it, while every other task keeps its own ID and its relative order.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_deleted_task_leaves_the_collection"
+
+[[criteria]]
+description = """
+When a task is deleted, a later detail read of its ID returns 404 with an error
+field in the body.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_deleted_task_detail_returns_404"
+
+[[criteria]]
+description = """
+When a task is deleted, every other row keeps its stored fields, including its
+dates, rating, and rating deviation, so deletion triggers no recalculation.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_deletion_changes_no_other_task"
+
+[[criteria]]
+description = """
+When the task data file holds one task and that task is deleted, the file keeps
+its header and the collection read returns an empty list.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_deleting_the_only_task_leaves_an_empty_collection"
+
+[[criteria]]
+description = """
+When no task has the given ID, the delete returns 404 with an error field in the
+body, and the task data file does not change.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_deletion_of_an_unknown_id_returns_404"
+
+[[criteria]]
+description = """
+When the same task is deleted twice, the second request returns 404 and the task
+data file keeps the rows the first request left.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_repeated_deletion_returns_404"
+
+[[criteria]]
+description = """
+When a starred task is deleted, the request returns 200 and the row leaves the
+file, because the star protects only against deferral.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_a_starred_task_is_deleted"
+
+[[criteria]]
+description = """
+When a task completed on the current date is deleted, the request returns 200,
+because deletion has no completion window.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_a_task_completed_today_is_deleted"
+
+[[criteria]]
+description = """
+When a task that belongs to several contexts is deleted, each of those
+contexts' collection reads omit it.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_a_task_in_several_contexts_is_removed_from_each"
+
+[[criteria]]
+description = """
+When the newest task is deleted and a task is created, the created task takes
+the deleted ID, because creation still takes max(id) + 1.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_creation_reuses_a_deleted_id"
+
+[[criteria]]
+description = """
+When a request points csv at a different task data file, the delete removes the
+row there and leaves the configured task data file unchanged.
+"""
+skip = "Not implemented"
+[criteria.verify]
+type = "command"
+run = "pytest tests/test_acceptance_task_deletion.py::test_csv_selects_the_task_file"

@@ -8,6 +8,7 @@ Items marked _details below_ link to their `##` section; items marked _backlog o
 - Add one extra task when at least one and fewer than the work-in-progress limit are due — [details below](#add-one-extra-task-when-at-least-one-and-fewer-than-the-work-in-progress-limit-are-due)
 - Coins from Glicko rating — [details below](#coins-from-glicko-rating)
 - Describe every response in the OpenAPI document — [details below](#describe-every-response-in-the-openapi-document)
+- Delete tasks through the API — [details below](#delete-tasks-through-the-api)
 - Move the relative date labels from the client into compute_* and the API — backlog only
       Test: The done, overdue, and upcoming labels come from API fields, and the frontend performs no date arithmetic.
 - Add blockers: a task is blocked while its blocker's row exists; removal needs DELETE /api/task/{id} — backlog only
@@ -52,7 +53,7 @@ Migrate the data repository first: `context.csv` becomes `contexts.csv` with `id
 
 ### Phase 3: the missing tests
 
-Create the six acceptance files the specs name, add the fixture data each criterion needs, and
+Create the acceptance files the specs name, add the fixture data each criterion needs, and
 remove one `skip = "Not implemented"` per test through the normal Red-Green-Refactor cycle.
 
 ## Add one extra task when at least one and fewer than the work-in-progress limit are due
@@ -141,3 +142,30 @@ detail schemas to declare their properties and collection item types.
 
 Definition of done: `tests/test_acceptance_contract.py` exists and every criterion
 stops being skipped. Symmetric work in the frontend belongs to `recurrator.web`.
+
+## Delete tasks through the API
+
+`DELETE /api/task/{id}` is described in `DOCS.md`, and its eleven criteria are
+skipped in `specs/task_deletion.spec.toml`. None of the work below changes the
+public interface.
+
+- Add `delete_task(task_id, csv_path)` to `io.py`: read the rows and the field
+  names, drop the one matching row, and pass the rest to `_write_csv_rows`,
+  which already replaces the file through a temporary file. Raise `ValueError`
+  when no row matches, as `_read_task_row` does.
+- Add a `DeletionConfirmation` model holding only `id` and return it from the
+  route, using `_existing_task_csv_path` so the 404 envelope matches every other
+  ID endpoint. The route takes `task_id: int` and `csv: str = Query(None)`.
+- Add unit tests in `tests/test_io.py` for the matching row, its neighbours, the
+  last row, and a missing ID. Only the missing-ID case fits
+  `_assert_file_unchanged`.
+- Create `tests/test_acceptance_task_deletion.py` and the fixture data each
+  criterion needs, then remove one `skip` per test through the
+  Red-Green-Refactor cycle. A deletion cannot be undone through the API, so each
+  test works on its own copy of the task data or restores the row it removed.
+- One criterion pairs deletion with creation, so it stays skipped until
+  `specs/task_creation.spec.toml` is implemented.
+
+Deleting the row in the live file is enough because the data repository's sync
+script commits `tasks.csv` on every run, so a removed row stays in that history.
+No archive file is needed.

@@ -227,6 +227,17 @@ Marks a task as completed on the server's current date.
 - **Errors**: 409 when the task was completed on the current date or the previous day; the body contains an `error` message
 - **Notes**: The four stored completion dates shift forward, the new date becomes the latest, and the skip count resets. Completion uses the `America/Los_Angeles` calendar date. The completed task and every due task whose `contexts` array shares at least one context with it form one Glicko event; a task that shares two contexts participates once, and a task that shares no context keeps its rating. The update also anchors the updated deviations to the completion date.
 
+### DELETE /api/task/{id}
+
+Deletes a task.
+
+- **Path parameters**:
+  - `id` (integer) — task ID
+- **Returns**: An object with these fields:
+  - `id` (integer)
+- **Errors**: 404 when no task has the given ID
+- **Notes**: The task's row leaves the task data file, and every other row keeps its contents, its order, and its stored fields, including its dates, rating, and rating deviation. The file keeps its header when the last row is removed, and the collection read then returns an empty list. Deletion is unconditional: a starred task, a deferred task, and a task completed on the current date are removed like any other, because the star protects only against deferral. IDs are not reserved, so a task created after the deletion takes `max(id) + 1`, and deleting the newest task lets the next created task take its ID. Repeating the request returns 404, because no task has the ID, and the task data file does not change. The API offers no restore.
+
 ## Redirects
 
 - `GET /api/task/due` redirects with 307 to `GET /api/task/due/`
