@@ -1,72 +1,20 @@
-# Developer Guidelines & Project Standards
+# Developer Manual
 
-**Public Interface:** In this project, the **Public Interface** is the HTTP API under `/api`, defined in `api.py`, the single authoritative interface to task data.
-The browser frontend and the terminal client (TUI) are separate repositories; both are clients of this API, speak only HTTP, and never access the CSV directly.
+## Public Interface
 
-## Architecture
+The public interface is the current task and context HTTP API under `/api`, defined in `recurrator/api.py`. The browser frontend and the terminal client are separate repositories; both are clients of this API, speak only HTTP, and never access the CSV directly. `DOCS.md` lists the current elements. Planned elements are not part of the current interface; they live in `specs/*.spec.toml` and `DESIGN.md`.
 
-**Layered Module Structure (strict one-way dependencies):**
-- `models.py` — domain data structures. Zero external dependencies.
-- `compute.py` — pure business logic. Depends on `models`, the generated `_config` constants, and `glicko2`.
-- `io.py` — persistence. Depends on `compute` and `models`.
-- `api.py` — the interface. Depends on `io`.
+## Operational map
 
-**Lower layers NEVER import from higher layers.**
+- `models.py` — domain data structures; no external dependencies.
+- `compute.py` — pure business logic; depends on `models`, `_config`, and `glicko2`.
+- `io.py` — persistence; depends on `compute` and `models`.
+- `api.py` — the HTTP interface; depends on `io`.
+- Lower layers never import from higher layers.
 
-**API conventions:**
-- API is the single source of truth; clients live in other repositories and speak only HTTP.
-- Single-responsibility endpoints: list endpoints return identities, detail endpoints return attributes.
-- Action responses return confirmation subsets (`id` + changed fields), not full resources.
-- Error envelope: `{"error": "<message>"}`; non-200 responses use `JSONResponse(content=..., status_code=N)`, not a returned `(dict, int)`, which serializes as a JSON array.
+The workflow, data model, API shape, and the reasons behind them are in `DESIGN.md`. Do not restate them here.
 
-**Documentation:** `DOCS.md` lists the HTTP API only; the frontend, the TUI, and their documents live in their own repositories. `CHANGELOG.md` records only endpoint changes.
-
-**Naming conventions in `compute.py`:** Pure functions use `reference_date` (not `today`) for the cut-off/current date parameter, and `is_*` prefix for boolean-returning functions.
-
-## TDD Cycle
-
-```
-Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor
-```
-
-- **Fail sub-phase**: Write the test, run suite, confirm exactly one test fails for the right reason, commit.
-- Defer extra tests for the same behavioral gap so exactly one test fails per Red phase; add them back after Green.
-- Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import); otherwise write real assertions.
-- Tests that modify the CSV restore with the matching `update_*` and assert `_assert_file_unchanged`; see `_verify_task_as_done` or `test_task_done_idempotency`.
-
-**Acceptance specs:** `specs/*.spec.toml` holds the qed criteria; each names one user-observable HTTP API scenario and a pytest command. A criterion carries `skip = "Not implemented"` until its test in `tests/test_acceptance_*.py` exists.
-
-**Commit emoji prefixes:** 🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
-
-Example unit test: `pytest tests/test_api.py::test_get_single_task_id`.
-
-## Data Modeling & CSV Mapping
-
-- `Task` is a plain class with a `Dates` dataclass for date fields. Computed attributes (`latest_date`, `recurrence_days`, `due_date`, `coins`) are computed at read time in `io._row_to_task()`; they are not stored.
-- `latest_done_date` is stored in `date_4` but lives in `Dates` alongside computed fields, first.
-- Add a computed field in `compute.py`, orchestrate it in `_row_to_task`, and pass it to `Task.__init__`.
-- CSV conversion: `starred` `0`/`1` → `False`/`True`; dates `"NA"` → `None`, else `date.fromisoformat()`; `id`/`skip_count` → `int()`.
-- Glicko fields: `rating`, `rating_deviation`, and `rating_date` follow `starred`; the API rounds the projected float and `_GlickoPlayer` prevents a second step 6.
-- `recurrator/_contexts.py` is generated from the Frictionless datapackage and `_config.py` from `config.json` by `make install`/`src/entrypoint.sh`; both are gitignored, and `create_contexts.sh` falls back to `tests/data/datapackage.json` without production files.
-
-## Container Startup and Deployment
-
-- `Dockerfile.dev` adds the test and verification tools on top of `evaristor/recurrator:latest`; build prod first or the dev layer takes a stale base.
-- The editable install is baked in at build time; the image has no default command, so every runner supplies uvicorn.
-- `.github/workflows/actions.yml` builds `latest` then `develop`, runs `check`, `tests`, `coverage`, `mutants` and `verify`, smoke-tests prod, and pushes only if all pass; tags are `latest` and `%y%V`.
-- FastAPI serves the API under `/api`; `GET /` is not a route, there is no static mount, and this repository holds no frontend.
-- The contract surface is `GET /api/openapi.json`, `GET /api/docs`, and `GET /api/redoc`.
-- The gateway that fronts this API and the frontend belongs to `recurrator_setup`; this image publishes no static files.
-
-## Mutation Testing
-
-Configured in `setup.cfg` under `[mutmut]`; `make mutants` runs the suite and fails when any mutant survives, and `mutmut results` lists them.
-
-## TODO.md
-
-`TODO.md` keeps one checklist above detail sections: every `##` section appears as an item linked with `details below`, and items without one end with `backlog only`.
-
-## Development Environment
+## Development environment
 
 Run targets inside `develop`: `make setup && make check && make tests`, then `make verify`. The service shares the production-data mount; only `make check_data` reads it, and CI never runs it.
 
@@ -79,3 +27,48 @@ Targets: `tests`, `test-shell`, `check`, `coverage`, `mutants`, `check_data`, `f
 The editable install lives in the image, so `docker compose --profile develop run --rm develop make tests` works without a long-lived container; CI starts `recurrator_dev` and `exec`s into it.
 
 `.githooks/pre-push` runs `.pipelines/check.sh` on every push, which execs `make check tests` in the running `recurrator_dev` and aborts the push on failure; `.pipelines/init.sh` sets `core.hooksPath` to activate it.
+
+## TDD cycle
+
+Red → Fail (commit failing test) → Green (make it pass, commit) → Refactor.
+
+- **Fail sub-phase**: write the test, run the suite, confirm exactly one test fails for the right reason, commit.
+- Defer extra tests for the same behavioral gap so exactly one test fails per Red phase; add them back after Green.
+- Failing test convention: use `pass` body only when the target function doesn't exist yet (fails at import); otherwise write real assertions.
+- Tests that modify the CSV restore with the matching `update_*` and assert `_assert_file_unchanged`; see `_verify_task_as_done` or `test_task_done_idempotency`.
+
+## Acceptance specs
+
+`specs/*.spec.toml` holds the qed criteria; each names one user-observable HTTP API scenario and a pytest command. A criterion carries `skip = "Not implemented"` until its test in `tests/test_acceptance_*.py` exists.
+
+## Commit emoji prefixes
+
+🛑🧪 (Red), ✅🧪 (Green), ♻️ (refactor), 📝 (docs), 👾 (mutmut config), 🏹👾 (mutant hunting), 👷 (CI).
+
+Example unit test: `pytest tests/test_api.py::test_get_single_task_id`.
+
+## Naming conventions
+
+Pure functions use `reference_date` (not `today`) for the cut-off/current date parameter, and `is_*` prefix for boolean-returning functions.
+
+## Documentation
+
+`README.md` is the overview for non-technical readers. `DOCS.md` lists the current HTTP API elements. `DESIGN.md` is the system's workflow and design. `TODO.md` is the ordered backlog. `specs/*.spec.toml` holds the observable criteria. The frontend, the TUI, and their documents live in their own repositories.
+
+## Container and deployment
+
+`Dockerfile.dev` adds the test and verification tools on top of `evaristor/recurrator:latest`; build prod first or the dev layer takes a stale base. The editable install is baked in at build time; the image has no default command, so every runner supplies uvicorn.
+
+FastAPI serves the API under `/api`; `GET /` is not a route, there is no static mount, and this repository holds no frontend. The contract surface is `GET /api/openapi.json`, `GET /api/docs`, and `GET /api/redoc`.
+
+`.github/workflows/actions.yml` builds `latest` then `develop`, runs `check`, `tests`, `coverage`, `mutants` and `verify`, smoke-tests prod, and pushes only if all pass; tags are `latest` and `%yV`.
+
+The gateway that fronts this API and the frontend belongs to `recurrator_setup`; this image publishes no static files.
+
+## Mutation testing
+
+Configured in `setup.cfg` under `[mutmut]`; `make mutants` runs the suite and fails when any mutant survives, and `mutmut results` lists it.
+
+## TODO.md
+
+`TODO.md` is a flat ordered list: one `- [ ]` item and a six-space `Test:` line per task. The list order is the build order. The design lives in `DESIGN.md`; do not restate it here. It empties when the work is done.
