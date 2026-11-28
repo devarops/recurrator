@@ -19,6 +19,9 @@ UNUSED_CONTEXT_FILTER_CSV = "tests/data/acceptance_tasks_views_unused_context_fi
 MULTIPLE_CONTEXTS_CSV = "tests/data/acceptance_tasks_views_multiple_contexts_are_unioned.csv"
 DUPLICATE_CONTEXTS_CSV = "tests/data/acceptance_tasks_views_duplicate_contexts_collapse.csv"
 SHARED_CONTEXTS_CSV = "tests/data/contexts.csv"
+UNKNOWN_CONTEXT_IN_DUE_READ_CSV = (
+    "tests/data/acceptance_tasks_views_unknown_context_in_due_read_returns_404.csv"
+)
 
 
 def _scheduling_state(csv_path, task_ids):
@@ -28,6 +31,19 @@ def _scheduling_state(csv_path, task_ids):
         task = _read_task_body(csv_path, task_id)
         state[task_id] = {
             "skip_count": task["skip_count"],
+            "due_date": task["due_date"],
+        }
+    return state
+
+
+def _skip_scheduling_state(csv_path, task_ids):
+    """Return each task's skip count and the dates a skip would move."""
+    state = {}
+    for task_id in task_ids:
+        task = _read_task_body(csv_path, task_id)
+        state[task_id] = {
+            "skip_count": task["skip_count"],
+            "latest_date": task["latest_date"],
             "due_date": task["due_date"],
         }
     return state
@@ -266,6 +282,24 @@ def test_empty_context_in_due_read_is_rejected(tmp_path):
     assert response.status_code == 422
     assert "error" in response.json()
     assert _scheduling_state(csv_path, task_ids) == before
+
+
+def test_unknown_context_in_due_read_returns_404(tmp_path):
+    """A dated due read refuses an unknown context without touching the schedule."""
+    csv_path = _copy_fixture(UNKNOWN_CONTEXT_IN_DUE_READ_CSV, tmp_path)
+    task_ids = _read_task_ids(csv_path).json()
+    stored_contexts = client.get("/api/context/").json()
+    unknown_context = "not-a-stored-context"
+
+    assert stored_contexts
+    assert unknown_context not in stored_contexts
+
+    before = _skip_scheduling_state(csv_path, task_ids)
+    response = _read_due_task_ids(csv_path, "2026-01-01", [unknown_context])
+
+    assert response.status_code == 404
+    assert "error" in response.json()
+    assert _skip_scheduling_state(csv_path, task_ids) == before
 
 
 def test_multi_context_due_read_is_read_only(tmp_path):

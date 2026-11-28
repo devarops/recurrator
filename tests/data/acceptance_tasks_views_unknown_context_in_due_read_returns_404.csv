@@ -1,0 +1,9 @@
+id,contexts,description,date_1,date_2,date_3,date_4,skip_count,skip_date,starred,rating,rating_deviation,rating_date
+1,"[""chores""]","Due task one",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+2,"[""chores""]","Due task two",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+3,"[""chores""]","Due task three",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+4,"[""chores""]","Due task four",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+5,"[""chores""]","Due task five",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+6,"[""chores""]","Due task six",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+7,"[""chores""]","Due task seven",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
+8,"[""chores""]","Due task eight",NA,NA,NA,2020-01-01,0,NA,0,1500,350,2020-01-01
