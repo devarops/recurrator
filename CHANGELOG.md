@@ -7,37 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- Every entry point moves under the `/api` prefix. The API no longer serves the
-  frontend, and the `recurrator` CLI is removed.
-
 ### Added
 
-- `PATCH /task/{id}/description` replaces a task's description.
-- `rating` and `rating_deviation` fields in the `GET /task/{id}` and
-  `POST /task/{id}/done` responses.
-- `latest_done_date` field in the `GET /task/{id}` response, reporting the
-  last completion date independent of the skip date.
-- `GET /task/{id}` accepts an optional `date` query parameter and projects
-  `rating_deviation` to that date.
+- `GET /task/due/{date}` and `GET /task/due/` return due task IDs for a
+  reference date and for today.
+- `GET /context/due/{date}` and `GET /context/due/` return the context IDs
+  with at least one due task.
+- `PATCH /task/{id}/starred` sets a task's starred flag and returns its ID
+  and the new flag.
+- `PATCH /task/{id}/description` replaces a task's description and returns
+  its ID and the new text.
+- `latest_done_date`, `rating`, and `rating_deviation` fields in the
+  `GET /task/{id}` response and the `POST /task/{id}/done` confirmation.
+- `date` query parameter on `GET /task/{id}`.
+- `context` query parameter on `GET /task/` and `GET /task/due/{date}`,
+  repeatable and accepted as a list.
+- `contexts_csv` query parameter on `GET /task/` and `GET /context/`.
+- `GET /task/due` redirects with 307 to `GET /task/due/`.
 
 ### Changed
 
-- `POST /task/{id}/done` updates the rating and deviation of the other tasks
-  in the same context and anchors the updated deviations to the completion
-  date.
-- `GET /task/{id}` projects `rating_deviation` to today when `date` is
-  omitted.
-- `GET /task/{id}` and `POST /task/{id}/done` use `rating_date` as the
-  anchor for the projected deviation, falling back to the last completion
-  date.
+- Every entry point moves under the `/api` prefix.
+- `GET /task/{id}` returns `contexts` as an array instead of the single
+  `context` string.
+- `GET /context/` returns every stored context instead of only the contexts
+  with a due task, and drops its `date` query parameter.
+- `GET /context/{context_id}/` returns `id`, `display_name`, `description`,
+  and `scopes` instead of prioritized task IDs.
+
+### Removed
+
+- The API no longer serves the frontend, and the `recurrator` CLI is
+  removed.
 
 ### Fixed
 
 - `GET /task/{id}` now returns **404 Not Found** with the standard error
   envelope `{"error": "Task not found"}` when the task ID is not found,
   instead of serializing an HTTP 200 array response.
+- `GET /context/{context_id}/` returns **404 Not Found** with the error
+  envelope `{"error": "Context not found"}` for an unknown context.
 - Malformed request bodies now return **422 Unprocessable Entity** with the
   standard error envelope `{"error": "<message>"}` instead of the framework's
   validation detail.
