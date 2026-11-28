@@ -120,7 +120,6 @@ description = """
 When a dated due read carries a context absent from the context data, it returns
 404 with an error message and changes no skip count or skip date.
 """
-skip = "Not implemented"
 [criteria.verify]
 type = "command"
 run = "pytest tests/test_acceptance_tasks_views.py::test_unknown_context_in_due_read_returns_404"
