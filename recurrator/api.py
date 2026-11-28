@@ -277,22 +277,32 @@ def get_all_contexts(csv: str = Query(None), contexts_csv: str = Query(None)) ->
     return _context_ids(contexts)
 
 
-@api.get("/task/due/{reference_date}")
+@api.get(
+    "/task/due/{reference_date}",
+    response_model=None,
+    openapi_extra=_success_response_schema({"type": "array", "items": {"type": "integer"}}),
+)
 def get_due_task_ids(
     reference_date: date,
     csv: str = Query(None),
     context: list[str] = Query(None),
-) -> list[int]:
+) -> list[int] | JSONResponse:
     csv_path = _resolve_tasks_csv_path(csv)
     _refuse_empty_contexts(context)
-    tasks = io.import_tasks_from_csv(csv_path)
     requested_contexts = _distinct_contexts(context)
+    if _has_unknown_context(requested_contexts, _resolve_contexts_csv_path(None)):
+        return _context_not_found_response()
+    tasks = io.import_tasks_from_csv(csv_path)
     selected_tasks = _select_due_tasks(tasks, requested_contexts, reference_date, csv_path)
     return _task_ids(selected_tasks)
 
 
-@api.get("/task/due/")
-def get_due_tasks_today(csv: str = Query(None)) -> list[int]:
+@api.get(
+    "/task/due/",
+    response_model=None,
+    openapi_extra=_success_response_schema({"type": "array", "items": {"type": "integer"}}),
+)
+def get_due_tasks_today(csv: str = Query(None)) -> list[int] | JSONResponse:
     """Return the ids of the tasks due today."""
     return get_due_task_ids(date.today(), csv=csv, context=[])
 
