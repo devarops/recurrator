@@ -309,7 +309,7 @@ def test_multi_context_due_read_is_read_only(tmp_path):
         tmp_path,
     )
     reference_date = "2026-01-01"
-    requested_contexts = {"chores", "work"}
+    requested_contexts = {"casa", "chores"}
     task_ids = _read_task_ids(csv_path).json()
     before = _scheduling_state(csv_path, task_ids)
 
@@ -324,7 +324,9 @@ def test_multi_context_due_read_is_read_only(tmp_path):
         task_id for task_id in due_ids if requested_contexts <= contexts_by_task[task_id]
     ]
 
-    response = _read_due_task_ids(csv_path, reference_date, sorted(requested_contexts))
+    response = _read_due_task_ids(
+        csv_path, reference_date, sorted(requested_contexts), SHARED_CONTEXTS_CSV
+    )
 
     assert response.status_code == 200
 
